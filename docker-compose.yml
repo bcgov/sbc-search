@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  frontend:
+    container_name: bcds_frontend
+    image: node
+    volumes:
+      - ./frontend:/code
+    ports:
+      - 8080:8080
+    working_dir: /code/
+
