@@ -8,11 +8,14 @@ Development
 cp dc.dev.yml docker-compose.override.yml
 docker-compose up
 ```
+Browse to `localhost:8080`
+
 Deployment
 ```
 cp dc.prod.yml docker-compose.override.yml
 docker-compose up
 ```
+Browse to `localhost:8080`
 
 
 ## Project setup
