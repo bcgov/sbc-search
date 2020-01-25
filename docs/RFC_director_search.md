@@ -8,6 +8,7 @@ Currently, a custom ORM-like system is implemented. Standard naming (models.py),
   * Rely on expert ORM developers to generate correct, optimized SQL. Writing your own ORM is like writing assembly instead of C. There may occasionally be reason to, but in most cases it's costly and unnecessary.
   * Many of the concerns with connecting to a database are handled automatically, such as error handling, transaction management, sanitization. It's easy to miss these things, and unnecessary to develop them from scratch.
   * The models can be re-used in other projects, and for other purposes since a generic interface is generated.
+  * The existing code is already using SQLAlchemy, but not leveraging most of the benefits of this powerful library, since it's only being used to query via undifferentiated SQL directly. Using an the SQLAlchemy ORM wouldn't require any new libraries on its own.
 
 Counter-arguments. This highly-voted SO answer lists Pros and Cons. https://stackoverflow.com/questions/1279613/what-is-an-orm-how-does-it-work-and-how-should-i-use-one
 
