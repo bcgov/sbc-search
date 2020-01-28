@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-app = Flask(__name__)
+from models import Corporation, app
 
 
 @app.route('/')
@@ -9,11 +9,10 @@ def hello():
 
 @app.route('/search/<query>')
 def search(query):
+    results = Corporation.query.filter_by(CORP_NUM=query)
     return jsonify({
-        'result': query,
-        'count': 1
+        'results': [row.as_dict() for row in results]
     })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-

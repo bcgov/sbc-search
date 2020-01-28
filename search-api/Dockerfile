@@ -12,7 +12,8 @@ COPY ./requirements/repo-libraries.txt .
 
 RUN pip install --no-cache-dir -r repo-libraries.txt
 
-USER 1001
+# This may be used to lock things down but breaks alembic during dev work.
+#USER 1001
 
 # Run the server
 EXPOSE 5000
