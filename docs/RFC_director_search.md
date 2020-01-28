@@ -12,9 +12,9 @@ Currently, a custom ORM-like system is implemented. Standard naming (models.py),
 
 Counter-arguments. This highly-voted SO answer lists Pros and Cons. https://stackoverflow.com/questions/1279613/what-is-an-orm-how-does-it-work-and-how-should-i-use-one
 
-## Shared model layer
+## Shared model layer (consolidate data model)
 
-Currently legal-api and colin-api each have their own custom database interface built from scratch.
+Currently legal-api and colin-api each have their own custom database interface built from scratch, for the same database
 
 As discussed in "Use a real ORM", several of the benefits of an ORM rely on linking a given version of the code to a given version of the database, allowing designers to abstract away the database consistently in different contexts, manage migrations. This means sharing the model classes between different codebases that use the same database. Benefits:
   * Define a common database interface that can be tested in isolation, and test coverage can be reused.

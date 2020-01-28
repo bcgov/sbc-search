@@ -47,8 +47,8 @@ class Corporation(db.Model):
     BN_9 = db.Column(db.String(9))
     BN_15 = db.Column(db.String(15))
     ACCESSION_NUM = db.Column(db.String(10))
-    CORP_PASSWORD = db.Column(db.String(300))
-    PROMPT_QUESTION = db.Column(db.String(100))
+    # CORP_PASSWORD = db.Column(db.String(300))
+    # PROMPT_QUESTION = db.Column(db.String(100))
     ADMIN_EMAIL = db.Column(db.String(254))
     SEND_AR_IND = db.Column(db.String(1))
     TILMA_INVOLVED_IND = db.Column(db.String(1))
@@ -60,8 +60,8 @@ class Corporation(db.Model):
     LAST_LEDGER_DT = db.Column(db.Date)
     AR_REMINDER_OPTION = db.Column(db.String(10))
     AR_REMINDER_DATE = db.Column(db.String(20))
-    TEMP_PASSWORD = db.Column(db.String(300))
-    TEMP_PASSWORD_EXPIRY_DATE = db.Column(db.Date)
+    # TEMP_PASSWORD = db.Column(db.String(300))
+    # TEMP_PASSWORD_EXPIRY_DATE = db.Column(db.Date)
 
     def __repr__(self):
         return 'corp num: {}'.format(self.CORP_NUM)
