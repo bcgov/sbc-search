@@ -19,9 +19,21 @@ Browse to `localhost:8080`
 
 ## Migrations
 
+This project uses
+  * [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/)
+  * [Flask-Migrate](https://flask-migrate.readthedocs.io/en/latest/), based on alembic.
+
 These operations are done in the search_api container
+
+To initially get your DB up to date:
+```
+flask db upgrade
+```
+
+To create new migration scripts
 ```
 flask db migrate
-
+git add
 ```
+
 

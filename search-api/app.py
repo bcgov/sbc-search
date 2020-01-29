@@ -4,7 +4,7 @@ from models import Corporation, app
 
 @app.route('/')
 def hello():
-    return "Welcome to the director search API.s"
+    return "Welcome to the director search API."
 
 
 @app.route('/search/<query>')
