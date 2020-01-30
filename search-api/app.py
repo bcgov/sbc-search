@@ -10,7 +10,9 @@ def hello():
 @app.route('/search/<query>/<page>/')
 def search(query, page):
     results = Corporation.query\
-        .join(CorpParty, Corporation.CORP_NUM == CorpParty.CORP_NUM).paginate(int(page), 20, False)
+        .join(CorpParty, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
+            .filter((Corporation.CORP_NUM == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query))) \
+            .paginate(int(page), 20, False)
     return jsonify({
         'results': [row.as_dict() for row in results.items]
     })
