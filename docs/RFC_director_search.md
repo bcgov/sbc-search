@@ -41,3 +41,9 @@ Downsides:
   * Can encoruage unnecessary coupling between componenents.
   * It's harder for teams from being able to release without communicating and trusting one antoher. We rely on a coordinated agreement on stable branches in order to release. A simple convention to avoid this issue is to keep one branch always in a "releasable state" (as advocated for Continuous Deployment). Then, any team may test others' code integrated on this stable branch and cut a release.
 
+
+## Sharing Vue Components
+
+The monorepo pattern should facilitate this, but it still presents some level of packaging challenge to share components between separate front-end builds because NPM isnt aware of files outside the root directory it runs within, paricularly when containerized. One solution is to consolidate the front-end into a single, common subtree of `lear`
+
+
