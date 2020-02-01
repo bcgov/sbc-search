@@ -9,7 +9,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # https://stackoverflow.com
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-class Corporation(db.Model):
+class BaseModel(db.Model):
+    __abstract__ = True
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+class Corporation(BaseModel):
     __tablename__ = 'CORPORATION'
     """
     CORPORATION                    CORP_NUM                       VARCHAR2                       10                             2206759
@@ -66,10 +72,7 @@ class Corporation(db.Model):
     def __repr__(self):
         return 'corp num: {}'.format(self.CORP_NUM)
 
-    def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-class CorpParty(db.Model):
+class CorpParty(BaseModel):
     __tablename__ = 'CORP_PARTY'
     """
     CORP_PARTY                     CORP_PARTY_ID                  db.Integer                         22                             11748880
@@ -117,3 +120,6 @@ class CorpParty(db.Model):
     OFFICE_NOTIFICATION_DT = db.Column(db.Date)
     PHONE = db.Column(db.String(30))
     REASON_TYP_CD = db.Column(db.String(3))
+
+    def __repr__(self):
+        return 'corp num: {}'.format(self.CORP_PARTY_ID)
