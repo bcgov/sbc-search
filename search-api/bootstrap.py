@@ -1,16 +1,12 @@
-
+import datetime
+from dateutil.relativedelta import *
+from datetime import date
 from models import Corporation, CorpParty, db
 
-
-
-c = Corporation(
-  CORP_NUM="1234567890"
-)
-
-db.session.add(c)
-
+db.session.query(Corporation).delete(synchronize_session=False)
+db.session.query(CorpParty).delete(synchronize_session=False)
 db.session.commit()
-from models import Corporation, CorpParty, db
+
 
 CORP_NUMS = [
     "1234567890",
@@ -79,22 +75,22 @@ CORP_NAMES = [
 ]
 
 CORP_PARTY_NAMES = [
-    "Lillian Kane",
-    "Cadence Holden",
+    "Lillian Black Kane",
+    "Cadence Van Holden",
     "Gianni Dawson",
     "Hadley Sanford",
     "Brynlee Cantrell",
-    "Nathalia Marsh",
+    "Nathalia Michael Marsh",
     "Bennett Luna",
-    "Miah Kline",
+    "Miah Van Kline",
     "Taniya Frey",
     "Kennedy Michael",
-    "Shane Nelson",
+    "Shane Michael Nelson",
     "Kaiya Moreno",
     "Caden Lewis",
-    "Celeste Madden",
+    "Celeste Van Madden",
     "Eveah Mcgee",
-    "Gregory Marsh",
+    "Gregory Black Marsh",
     "Alanna Frederick",
     "Jane Shepard",
     "Bernard Dunlap",
@@ -102,34 +98,41 @@ CORP_PARTY_NAMES = [
     "Aleena Reeves",
     "Johanna Burton",
     "Iarslov Steele",
-    "Mohamed Poole",
-    "Kira Harvey",
-    "Jordin Carter",
+    "Mohamed Michael Poole",
+    "Kira Black Harvey",
+    "Jordin Van Carter",
     "Jonathon Bird",
-    "Destinee Braun",
+    "Destinee Van Braun",
     "Falia Black",
     "Rigoberto Pitts",
     "Diego Monroe",
     "Gabriela Dawson",
     "Ava Richard",
-    "Javier Atkins",
-    "Tobias Rose",
-    "Anastasia Gray",
+    "Javier Michael Atkins",
+    "Tobias Van Rose",
+    "Anastasia Black Gray",
 ]
 
 index = 0
 while index < len(CORP_NUMS):
+    
     corporation = Corporation(
         CORP_NUM=CORP_NUMS[index],
     )
     db.session.add(corporation)
 
     corp_party_name = CORP_PARTY_NAMES[index].split(" ")
+    appointment_date = datetime.datetime.now() + datetime.timedelta(weeks=-(1+index))
+    cessation_date = appointment_date 
+    
     corp_party = CorpParty(
         CORP_PARTY_ID=(index),
         CORP_NUM=CORP_NUMS[index],
-        LAST_NME=corp_party_name[0],
-        FIRST_NME=corp_party_name[1],
+        FIRST_NME=corp_party_name[0],
+        MIDDLE_NME=corp_party_name[1] if len(corp_party_name) == 3 else None,
+        LAST_NME=corp_party_name[2] if len(corp_party_name) == 3 else corp_party_name[1],
+        APPOINTMENT_DT=appointment_date,
+        CESSATION_DT=cessation_date,
     )
     db.session.add(corp_party)
 
@@ -137,16 +140,3 @@ while index < len(CORP_NUMS):
 
 db.session.commit()
 
-
-# c = Corporation(
-#   CORP_NUM="1234567890"
-# )
-
-# p = CorpParty(
-#   CORP_PARTY_ID=1,
-#   CORP_NUM="1234567890", # Foreign key to Corporation
-# )
-
-# db.session.add(c)
-
-# db.session.commit()
