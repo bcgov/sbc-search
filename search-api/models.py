@@ -146,6 +146,7 @@ class CorpName(BaseModel):
     START_EVENT_ID = db.Column(db.Integer)
     CORP_NAME_SEQ_NUM = db.Column(db.Integer)
     END_EVENT_ID = db.Column(db.Integer)
+    SRCH_NME = db.Column(db.String(35))
     CORP_NME = db.Column(db.String(150))
     DD_CORP_NUM = db.Column(db.String(10))
 
