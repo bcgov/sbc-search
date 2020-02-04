@@ -1,7 +1,7 @@
 import datetime
 from dateutil.relativedelta import *
 from datetime import date
-from models import Corporation, CorpParty, db
+from models import Corporation, CorpParty, CorpName, db
 
 db.session.query(Corporation).delete(synchronize_session=False)
 db.session.query(CorpParty).delete(synchronize_session=False)
@@ -135,6 +135,12 @@ while index < len(CORP_NUMS):
         CESSATION_DT=cessation_date,
     )
     db.session.add(corp_party)
+    
+    corp_name = CorpName(
+        CORP_NUM=CORP_NUMS[index],
+        CORP_NME=CORP_NAMES[index],
+    )
+    db.session.add(corp_name)
 
     index = index + 1
 
