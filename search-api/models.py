@@ -1,7 +1,7 @@
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@db/postgres'
@@ -9,11 +9,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # https://stackoverflow.com
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+
 class BaseModel(db.Model):
     __abstract__ = True
 
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Corporation(BaseModel):
     __tablename__ = 'CORPORATION'
@@ -72,6 +74,7 @@ class Corporation(BaseModel):
     def __repr__(self):
         return 'corp num: {}'.format(self.CORP_NUM)
 
+
 class CorpParty(BaseModel):
     __tablename__ = 'CORP_PARTY'
     """
@@ -123,3 +126,28 @@ class CorpParty(BaseModel):
 
     def __repr__(self):
         return 'corp num: {}'.format(self.CORP_PARTY_ID)
+
+
+class CorpName(BaseModel):
+    __tablename__ = 'CORP_NAME'
+    """
+    CORP_NAME                      CORP_NUM                       VARCHAR2                       10                             2484908
+    CORP_NAME                      CORP_NAME_TYP_CD               CHAR                           2                              2484908
+    CORP_NAME                      START_EVENT_ID                 NUMBER                         22                             2484908
+    CORP_NAME                      CORP_NAME_SEQ_NUM              NUMBER                         22                             2484908
+    CORP_NAME                      END_EVENT_ID                   NUMBER                         22                             251437
+    CORP_NAME                      SRCH_NME                       VARCHAR2                       35                             2484908
+    CORP_NAME                      CORP_NME                       VARCHAR2                       150                            2484909
+    CORP_NAME                      DD_CORP_NUM                    VARCHAR2                       10                             11929
+    """
+
+    CORP_NUM = db.Column(db.String(10), primary_key=True)
+    CORP_NAME_TYP_CD = db.Column(db.String(2))
+    START_EVENT_ID = db.Column(db.Integer)
+    CORP_NAME_SEQ_NUM = db.Column(db.Integer)
+    END_EVENT_ID = db.Column(db.Integer)
+    CORP_NME = db.Column(db.String(150))
+    DD_CORP_NUM = db.Column(db.String(10))
+
+    def __repr__(self):
+        return 'corp num: {}'.format(self.CORP_NUM)
