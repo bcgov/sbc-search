@@ -1,7 +1,7 @@
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@db/postgres'
@@ -9,7 +9,74 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # https://stackoverflow.com
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-class Corporation(db.Model):
+
+class BaseModel(db.Model):
+    __abstract__ = True
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+
+class Address(BaseModel):
+    __tablename__ = "ADDRESS"
+    """
+    ADDRESS                        ADDR_ID                        NUMBER                         22                             20233825
+    ADDRESS                        PROVINCE                       CHAR                           2                              18872463
+    ADDRESS                        COUNTRY_TYP_CD                 CHAR                           2                              19016927
+    ADDRESS                        POSTAL_CD                      VARCHAR2                       15                             18825296
+    ADDRESS                        ADDR_LINE_1                    VARCHAR2                       50                             16862093
+    ADDRESS                        ADDR_LINE_2                    VARCHAR2                       50                             3609613
+    ADDRESS                        ADDR_LINE_3                    VARCHAR2                       50                             482762
+    ADDRESS                        CITY                           VARCHAR2                       40                             17557057
+    ADDRESS                        ADDRESS_FORMAT_TYPE            VARCHAR2                       10                             3632701
+    ADDRESS                        ADDRESS_DESC                   VARCHAR2                       300                            3372387
+    ADDRESS                        ADDRESS_DESC_SHORT             VARCHAR2                       300                            3350206
+    ADDRESS                        DELIVERY_INSTRUCTIONS          VARCHAR2                       80                             34510
+    ADDRESS                        UNIT_NO                        VARCHAR2                       6                              699964
+    ADDRESS                        UNIT_TYPE                      VARCHAR2                       10                             11488
+    ADDRESS                        CIVIC_NO                       VARCHAR2                       6                              2210964
+    ADDRESS                        CIVIC_NO_SUFFIX                VARCHAR2                       10                             15768
+    ADDRESS                        STREET_NAME                    VARCHAR2                       30                             2221177
+    ADDRESS                        STREET_TYPE                    VARCHAR2                       10                             2167805
+    ADDRESS                        STREET_DIRECTION               VARCHAR2                       10                             292073
+    ADDRESS                        LOCK_BOX_NO                    VARCHAR2                       5                              115988
+    ADDRESS                        INSTALLATION_TYPE              VARCHAR2                       10                             47289
+    ADDRESS                        INSTALLATION_NAME              VARCHAR2                       30                             47036
+    ADDRESS                        INSTALLATION_QUALIFIER         VARCHAR2                       15                             69
+    ADDRESS                        ROUTE_SERVICE_TYPE             VARCHAR2                       10                             146477
+    ADDRESS                        ROUTE_SERVICE_NO               VARCHAR2                       4                              27530
+    ADDRESS                        PROVINCE_STATE_NAME            VARCHAR2                       30                             362
+    """
+
+    ADDR_ID = db.Column(db.Integer, primary_key=True)
+    PROVINCE = db.Column(db.String(2))
+    COUNTRY_TYP_CD = db.Column(db.String(2))
+    POSTAL_CD = db.Column(db.String(15))
+    ADDR_LINE_1 = db.Column(db.String(50))
+    ADDR_LINE_2 = db.Column(db.String(50))
+    ADDR_LINE_3 = db.Column(db.String(50))
+    CITY = db.Column(db.String(40))
+    ADDRESS_FORMAT_TYPE = db.Column(db.String(10))
+    ADDRESS_DESC = db.Column(db.String(300))
+    ADDRESS_DESC_SHORT = db.Column(db.String(300))
+    DELIVERY_INSTRUCTIONS = db.Column(db.String(80))
+    UNIT_NO = db.Column(db.String(6))
+    UNIT_TYPE = db.Column(db.String(10))
+    CIVIC_NO = db.Column(db.String(6))
+    CIVIC_NO_SUFFIX = db.Column(db.String(10))
+    STREET_NAME = db.Column(db.String(30))
+    STREET_TYPE = db.Column(db.String(10))
+    STREET_DIRECTION = db.Column(db.String(10))
+    LOCK_BOX_NO = db.Column(db.String(5))
+    INSTALLATION_TYPE = db.Column(db.String(10))
+    INSTALLATION_NAME = db.Column(db.String(30))
+    INSTALLATION_QUALIFIER = db.Column(db.String(15))
+    ROUTE_SERVICE_TYPE = db.Column(db.String(10))
+    ROUTE_SERVICE_NO = db.Column(db.String(4))
+    PROVINCE_STATE_NAME = db.Column(db.String(30))
+
+
+class Corporation(BaseModel):
     __tablename__ = 'CORPORATION'
     """
     CORPORATION                    CORP_NUM                       VARCHAR2                       10                             2206759
@@ -66,10 +133,8 @@ class Corporation(db.Model):
     def __repr__(self):
         return 'corp num: {}'.format(self.CORP_NUM)
 
-    def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-class CorpParty(db.Model):
+class CorpParty(BaseModel):
     __tablename__ = 'CORP_PARTY'
     """
     CORP_PARTY                     CORP_PARTY_ID                  db.Integer                         22                             11748880
@@ -117,3 +182,32 @@ class CorpParty(db.Model):
     OFFICE_NOTIFICATION_DT = db.Column(db.Date)
     PHONE = db.Column(db.String(30))
     REASON_TYP_CD = db.Column(db.String(3))
+
+    def __repr__(self):
+        return 'corp num: {}'.format(self.CORP_PARTY_ID)
+
+
+class CorpName(BaseModel):
+    __tablename__ = 'CORP_NAME'
+    """
+    CORP_NAME                      CORP_NUM                       VARCHAR2                       10                             2484908
+    CORP_NAME                      CORP_NAME_TYP_CD               CHAR                           2                              2484908
+    CORP_NAME                      START_EVENT_ID                 NUMBER                         22                             2484908
+    CORP_NAME                      CORP_NAME_SEQ_NUM              NUMBER                         22                             2484908
+    CORP_NAME                      END_EVENT_ID                   NUMBER                         22                             251437
+    CORP_NAME                      SRCH_NME                       VARCHAR2                       35                             2484908
+    CORP_NAME                      CORP_NME                       VARCHAR2                       150                            2484909
+    CORP_NAME                      DD_CORP_NUM                    VARCHAR2                       10                             11929
+    """
+
+    CORP_NUM = db.Column(db.String(10), primary_key=True)
+    CORP_NAME_TYP_CD = db.Column(db.String(2))
+    START_EVENT_ID = db.Column(db.Integer)
+    CORP_NAME_SEQ_NUM = db.Column(db.Integer)
+    END_EVENT_ID = db.Column(db.Integer)
+    SRCH_NME = db.Column(db.String(35))
+    CORP_NME = db.Column(db.String(150))
+    DD_CORP_NUM = db.Column(db.String(10))
+
+    def __repr__(self):
+        return 'corp num: {}'.format(self.CORP_NUM)
