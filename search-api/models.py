@@ -17,6 +17,65 @@ class BaseModel(db.Model):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
+class Address(BaseModel):
+    __tablename__ = "ADDRESS"
+    """
+    ADDRESS                        ADDR_ID                        NUMBER                         22                             20233825
+    ADDRESS                        PROVINCE                       CHAR                           2                              18872463
+    ADDRESS                        COUNTRY_TYP_CD                 CHAR                           2                              19016927
+    ADDRESS                        POSTAL_CD                      VARCHAR2                       15                             18825296
+    ADDRESS                        ADDR_LINE_1                    VARCHAR2                       50                             16862093
+    ADDRESS                        ADDR_LINE_2                    VARCHAR2                       50                             3609613
+    ADDRESS                        ADDR_LINE_3                    VARCHAR2                       50                             482762
+    ADDRESS                        CITY                           VARCHAR2                       40                             17557057
+    ADDRESS                        ADDRESS_FORMAT_TYPE            VARCHAR2                       10                             3632701
+    ADDRESS                        ADDRESS_DESC                   VARCHAR2                       300                            3372387
+    ADDRESS                        ADDRESS_DESC_SHORT             VARCHAR2                       300                            3350206
+    ADDRESS                        DELIVERY_INSTRUCTIONS          VARCHAR2                       80                             34510
+    ADDRESS                        UNIT_NO                        VARCHAR2                       6                              699964
+    ADDRESS                        UNIT_TYPE                      VARCHAR2                       10                             11488
+    ADDRESS                        CIVIC_NO                       VARCHAR2                       6                              2210964
+    ADDRESS                        CIVIC_NO_SUFFIX                VARCHAR2                       10                             15768
+    ADDRESS                        STREET_NAME                    VARCHAR2                       30                             2221177
+    ADDRESS                        STREET_TYPE                    VARCHAR2                       10                             2167805
+    ADDRESS                        STREET_DIRECTION               VARCHAR2                       10                             292073
+    ADDRESS                        LOCK_BOX_NO                    VARCHAR2                       5                              115988
+    ADDRESS                        INSTALLATION_TYPE              VARCHAR2                       10                             47289
+    ADDRESS                        INSTALLATION_NAME              VARCHAR2                       30                             47036
+    ADDRESS                        INSTALLATION_QUALIFIER         VARCHAR2                       15                             69
+    ADDRESS                        ROUTE_SERVICE_TYPE             VARCHAR2                       10                             146477
+    ADDRESS                        ROUTE_SERVICE_NO               VARCHAR2                       4                              27530
+    ADDRESS                        PROVINCE_STATE_NAME            VARCHAR2                       30                             362
+    """
+
+    ADDR_ID = db.Column(db.Integer, primary_key=True)
+    PROVINCE = db.Column(db.String(2))
+    COUNTRY_TYP_CD = db.Column(db.String(2))
+    POSTAL_CD = db.Column(db.String(15))
+    ADDR_LINE_1 = db.Column(db.String(50))
+    ADDR_LINE_2 = db.Column(db.String(50))
+    ADDR_LINE_3 = db.Column(db.String(50))
+    CITY = db.Column(db.String(40))
+    ADDRESS_FORMAT_TYPE = db.Column(db.String(10))
+    ADDRESS_DESC = db.Column(db.String(300))
+    ADDRESS_DESC_SHORT = db.Column(db.String(300))
+    DELIVERY_INSTRUCTIONS = db.Column(db.String(80))
+    UNIT_NO = db.Column(db.String(6))
+    UNIT_TYPE = db.Column(db.String(10))
+    CIVIC_NO = db.Column(db.String(6))
+    CIVIC_NO_SUFFIX = db.Column(db.String(10))
+    STREET_NAME = db.Column(db.String(30))
+    STREET_TYPE = db.Column(db.String(10))
+    STREET_DIRECTION = db.Column(db.String(10))
+    LOCK_BOX_NO = db.Column(db.String(5))
+    INSTALLATION_TYPE = db.Column(db.String(10))
+    INSTALLATION_NAME = db.Column(db.String(30))
+    INSTALLATION_QUALIFIER = db.Column(db.String(15))
+    ROUTE_SERVICE_TYPE = db.Column(db.String(10))
+    ROUTE_SERVICE_NO = db.Column(db.String(4))
+    PROVINCE_STATE_NAME = db.Column(db.String(30))
+
+
 class Corporation(BaseModel):
     __tablename__ = 'CORPORATION'
     """

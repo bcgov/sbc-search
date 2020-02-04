@@ -1,10 +1,12 @@
 import datetime
 from dateutil.relativedelta import *
 from datetime import date
-from models import Corporation, CorpParty, CorpName, db
+from models import Corporation, CorpParty, CorpName, Address, db
 
 db.session.query(Corporation).delete(synchronize_session=False)
 db.session.query(CorpParty).delete(synchronize_session=False)
+db.session.query(CorpName).delete(synchronize_session=False)
+db.session.query(Address).delete(synchronize_session=False)
 db.session.commit()
 
 
@@ -113,14 +115,60 @@ CORP_PARTY_NAMES = [
     "Anastasia Black Gray",
 ]
 
+ADDRESSES = [
+    "131 Rue Northview , Dollard-des-Ormeaux, QC, H9B 3J6",
+    "106 Saint-Georges Rue , La Prairie, QC, J5R 2L9",
+    "PO Box 273 , Beiseker, AB, T0M 0G0",
+    "1586 Des Erables Rue , Chicoutimi, QC, G7H 5V8",
+    "284 Yelverton Rd, Bethany, ON, L0A 1A0",
+    "9623 83 St NW, Edmonton, AB, T6C 3A3",
+    "109 Saskatchewan Blvd, Dauphin, MB, R7N 0M7",
+    "6950 Champchevrier Ave , Anjou, QC, H1J 1W4",
+    "20 Whitburn Cres, Nepean, ON, K2H 5K6",
+    "4-310 6 Ave S , Creston, BC, V0B 1G3",
+    "17944 Rue Foster, Pierrefonds, QC, H9K 1M2",
+    "8 Ch Moore, Wentworth, QC, J8H 0E5",
+    "127 Rue Houde , Kirkland, QC, H9J 3A8",
+    "41 Mississauga Valley, Cooksville, ON, L5A 3N5",
+    "10403 Av Vianney, Montréal, QC, H2B 2X7",
+    "606 Victoria, Saskatoon, SK, H2B 2X7",
+    "28 Helene St N, Mississauga, ON, L5G 3B7",
+    "204 Ottawa St S, Kitchener, ON, N2G 3T4",
+    "36 Tiffany Cres, Kanata, ON, K2K 1W2",
+    "14956 58A Ave, Surrey, BC, V3S 0S4",
+    "131 Rue Northview , Dollard-des-Ormeaux, QC, H9B 3J6",
+    "106 Saint-Georges Rue , La Prairie, QC, J5R 2L9",
+    "PO Box 273 , Beiseker, AB, T0M 0G0",
+    "1586 Des Erables Rue , Chicoutimi, QC, G7H 5V8",
+    "284 Yelverton Rd, Bethany, ON, L0A 1A0",
+    "9623 83 St NW, Edmonton, AB, T6C 3A3",
+    "109 Saskatchewan Blvd, Dauphin, MB, R7N 0M7",
+    "6950 Champchevrier Ave , Anjou, QC, H1J 1W4",
+    "20 Whitburn Cres, Nepean, ON, K2H 5K6",
+    "4-310 6 Ave S , Creston, BC, V0B 1G3",
+]
+
 index = 0
 while index < len(CORP_NUMS):
     
+    # ADDRESS
+    address_array = ADDRESSES[index].split(",")
+    address = Address(
+        ADDR_ID=index,
+        PROVINCE=address_array[2].strip(),
+        POSTAL_CD=address_array[3].strip(),
+        ADDR_LINE_1=address_array[0].strip(),
+        CITY=address_array[1].strip(),
+    )
+    db.session.add(address)
+    
+    # CORPORATION
     corporation = Corporation(
         CORP_NUM=CORP_NUMS[index],
     )
     db.session.add(corporation)
 
+    # CORPPARTY
     corp_party_name = CORP_PARTY_NAMES[index].split(" ")
     appointment_date = datetime.datetime.now() + datetime.timedelta(weeks=-(1+index))
     cessation_date = appointment_date 
@@ -133,9 +181,11 @@ while index < len(CORP_NUMS):
         LAST_NME=corp_party_name[2] if len(corp_party_name) == 3 else corp_party_name[1],
         APPOINTMENT_DT=appointment_date,
         CESSATION_DT=cessation_date,
+        MAILING_ADDR_ID=index,
     )
     db.session.add(corp_party)
     
+    # CORPNAME
     corp_name = CorpName(
         CORP_NUM=CORP_NUMS[index],
         CORP_NME=CORP_NAMES[index],
