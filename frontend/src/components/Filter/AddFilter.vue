@@ -30,7 +30,12 @@
       ></v-text-field>
     </div>
     <div>
-      <SbcButton class="mr-2" title="Add Filter" :variant="2"></SbcButton>
+      <SbcButton
+        class="mr-2"
+        :width="120"
+        title="Add Filter"
+        :variant="2"
+      ></SbcButton>
       <SbcButton title="Clear" :variant="2"></SbcButton>
     </div>
   </div>
@@ -45,8 +50,8 @@ export default {
 
   data() {
     return {
-      one: ["First Name", "Middle Name", "Last Name", "Address"],
-      two: ["Starts With", "Ends With", "Exact Match"]
+      one: ["Any Name", "First Name", "Middle Name", "Last Name", "Address"],
+      two: ["Contains", "Starts With", "Ends With", "Exact Match"]
     };
   }
 };
