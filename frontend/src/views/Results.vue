@@ -11,16 +11,36 @@
       <h2 class="display-1 text-center mb-10">
         Search Results
       </h2>
-      <Results></Results>
+      <Results :searchResults="searchResults"></Results>
     </section>
   </div>
 </template>
 
 <script>
 import Results from "@/components/Search/Results.vue";
+import { searchApi } from "@/plugins/SearchApi.js";
+
 export default {
   components: {
     Results
+  },
+  data() {
+    return {
+      searchResults: []
+    };
+  },
+  async mounted() {
+    const query = this.$route.query;
+    const searchParams = {
+      page: query.page,
+      query: query.searchQuery
+    };
+
+    if (!query.advanced) {
+      searchApi(searchParams).then(result => {
+        this.searchResults = result.data.results;
+      });
+    }
   }
 };
 </script>

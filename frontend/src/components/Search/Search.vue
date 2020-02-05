@@ -1,7 +1,8 @@
 <template>
-  <div class="d-flex">
+  <v-form class="d-flex" @submit.prevent="handleSubmit">
     <div>
       <v-text-field
+        v-model="searchQuery"
         dense
         type="text"
         filled
@@ -13,29 +14,38 @@
       <SbcButton
         class="ml-2"
         title="Search"
-        @click.native="handleSearch"
+        @click.native="handleSubmit"
       ></SbcButton>
-      <SbcButton class="ml-2" title="Clear" :variant="2"></SbcButton>
+      <SbcButton
+        class="ml-2"
+        title="Clear"
+        :variant="2"
+        @click.native="searchQuery = ''"
+      ></SbcButton>
     </div>
-  </div>
+  </v-form>
 </template>
 
 <script>
 import SbcButton from "@/components/SbcButton.vue";
-import ApiService from "@/plugins/ApiService.js";
 export default {
+  data() {
+    return {
+      searchQuery: null
+    };
+  },
   components: {
     SbcButton
   },
   methods: {
-    async handleSearch() {
-      const result = await ApiService.get("/person/search", {
-        params: {
+    handleSubmit() {
+      this.$router.push({
+        name: "results",
+        query: {
           page: 1,
-          query: "a"
+          searchQuery: this.searchQuery
         }
       });
-      console.log("Result", result);
     }
   }
 };
