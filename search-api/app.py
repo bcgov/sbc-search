@@ -35,6 +35,7 @@ def corporation_search():
 
     query = args["query"]
 
+    # TODO: move queries to model class.
     results = Corporation.query\
         .join(CorpParty, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
         .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)
@@ -69,6 +70,9 @@ def corpparty_search():
     operators = args.getlist('operator')
     values = args.getlist('value')
 
+    if query and len(fields) > 0:
+        raise Exception("use simple query or advanced. don't mix")
+
     if len(fields) != len(operators) or len(operators) != len(values):
         raise Exception("mismatched query param lengths: fields:{} operators:{} values:{}".format(
             len(fields),
@@ -76,6 +80,8 @@ def corpparty_search():
             len(values)))
 
     grps = list(zip(fields, operators, values))
+
+    # TODO: move queries to model class.
 
     results = CorpParty.query\
             .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
