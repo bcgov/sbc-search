@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from functools import reduce
 from models import (
     Corporation, 
     CorpParty, 
@@ -15,6 +16,25 @@ def hello():
     return "Welcome to the director search API.s"
 
 
+def _get_filter(field, operator, value):
+    
+    if field == 'ANY_NME':
+        return (_get_filter('FIRST_NME', operator, value)
+            | _get_filter('MIDDLE_NME', operator, value)
+            | _get_filter('LAST_NME', operator, value))
+
+    Field = getattr(CorpParty, field)
+    if operator == 'contains':
+        return Field.contains(value)
+    elif operator == 'exact':
+        return Field == value
+    elif operator == 'endswith':
+        return Field.endswith(value)
+    elif operator == 'startswith':
+        return Field.startswith(value)
+    else:
+        raise Exception('invalid operator: {}'.format(operator))
+
 @app.route('/corporation/search/')
 def corporation_search():
 
@@ -26,13 +46,23 @@ def corporation_search():
 
     if "query" not in args:
         return "No search query was received", 400
+
     query = args["query"]
 
+    # TODO: move queries to model class.
     results = Corporation.query\
         .join(CorpParty, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
-            .filter((Corporation.CORP_NUM == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query))) \
-            .paginate(int(page), 20, False)
-            
+        .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)
+    
+    results = results.filter(
+        (Corporation.CORP_NUM == query) |
+        (CorpName.CORP_NME.contains(query)) |
+        (CorpParty.FIRST_NME.contains(query)) |
+        (CorpParty.LAST_NME.contains(query)))
+    
+    results = results.paginate(int(page), 20, False)
+    
+    # TODO: include corpname and corpparties in serialized child using Marshmallow
     return jsonify({
         'results': [row.as_dict() for row in results.items]
     })
@@ -47,9 +77,26 @@ def corpparty_search():
     if "page" in args:
         page = int(args.get("page"))
 
-    if "query" not in args:
-        return "No search query was received", 400
-    query = args["query"]
+
+    query = args.get("query")
+
+    fields = args.getlist('field')
+    operators = args.getlist('operator')
+    values = args.getlist('value')
+    mode = args.get('mode')
+
+    if query and len(fields) > 0:
+        raise Exception("use simple query or advanced. don't mix")
+
+    if len(fields) != len(operators) or len(operators) != len(values):
+        raise Exception("mismatched query param lengths: fields:{} operators:{} values:{}".format(
+            len(fields),
+            len(operators),
+            len(values)))
+
+    grps = list(zip(fields, operators, values))
+
+    # TODO: move queries to model class.
 
     results = CorpParty.query\
             .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
@@ -65,9 +112,26 @@ def corpparty_search():
                 Corporation.CORP_NUM,
                 CorpName.CORP_NME,
                 Address.ADDR_LINE_1,
-            )\
-            .filter((CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query))) \
-            .paginate(int(page), 20, False)
+            )
+ 
+    if query:
+        results = results.filter((Corporation.CORP_NUM == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query)))
+    elif grps:
+        if mode == 'ALL':
+            def fn(accumulator, s):
+                return accumulator & _get_filter(*s)
+        else:
+            def fn(accumulator, s):
+                return accumulator | _get_filter(*s)
+        filter_grp = reduce(
+            fn,
+            grps[1:],
+            _get_filter(*grps[0])
+            )
+        results = results.filter(filter_grp)
+    else:
+        pass
+    results = results.paginate(int(page), 20, False)
 
     corp_parties = []
     for row in results.items:
