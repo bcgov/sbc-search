@@ -3,7 +3,9 @@
     <SearchFilter></SearchFilter>
     <AddFilter></AddFilter>
     <div>
-      <SbcButton title="Search"></SbcButton>
+      <router-link :to="{ name: 'results' }">
+        <SbcButton title="Search"></SbcButton>
+      </router-link>
     </div>
   </div>
 </template>

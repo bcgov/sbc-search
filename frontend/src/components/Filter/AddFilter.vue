@@ -45,8 +45,8 @@ export default {
 
   data() {
     return {
-      one: ["First Name", "Middle Name", "Last Name", "Address"],
-      two: ["Starts With", "Ends With", "Exact Match"]
+      one: ["Any Name", "First Name", "Middle Name", "Last Name", "Address"],
+      two: ["Contains", "Starts With", "Ends With", "Exact Match"]
     };
   }
 };
