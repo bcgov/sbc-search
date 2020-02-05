@@ -1,9 +1,7 @@
 from flask import Flask, request, jsonify
-<<<<<<< HEAD
 from flask_cors import CORS
 from models import Corporation, CorpParty, CorpName, Address, app
 cors = CORS(app)
-=======
 from functools import reduce
 from models import (
     Corporation, 
@@ -15,7 +13,6 @@ from models import (
     app,
 )
 
->>>>>>> dc9a704487ba341b199f62e5371a315dc112fa4b
 
 @app.route('/')
 def hello():
