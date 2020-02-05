@@ -8,7 +8,12 @@ def hello():
 
 
 def _get_filter(field, operator, value):
-    print(field, operator, value)
+    
+    if field == 'ANY_NME':
+        return (_get_filter('FIRST_NME', operator, value)
+            | _get_filter('MIDDLE_NME', operator, value)
+            | _get_filter('LAST_NME', operator, value))
+
     Field = getattr(CorpParty, field)
     if operator == 'contains':
         return Field.contains(value)
@@ -69,6 +74,7 @@ def corpparty_search():
     fields = args.getlist('field')
     operators = args.getlist('operator')
     values = args.getlist('value')
+    mode = args.get('mode')
 
     if query and len(fields) > 0:
         raise Exception("use simple query or advanced. don't mix")
@@ -102,8 +108,14 @@ def corpparty_search():
     if query:
         results = results.filter((Corporation.CORP_NUM == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query)))
     elif grps:
+        if mode == 'ALL':
+            def fn(accumulator, s):
+                return accumulator & _get_filter(*s)
+        else:
+            def fn(accumulator, s):
+                return accumulator | _get_filter(*s)
         filter_grp = reduce(
-            lambda accumulator, s: accumulator | _get_filter(*s),
+            fn,
             grps[1:],
             _get_filter(*grps[0])
             )
