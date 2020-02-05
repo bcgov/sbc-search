@@ -97,15 +97,34 @@ def person(id):
     return {}
 
 
-@app.route('/officesheld/<corppartyid>')
+@app.route('/person/officesheld/<corppartyid>')
 def officesheld(corppartyid):
     results = OfficerType.query\
             .join(OfficesHeld, OfficerType.OFFICER_TYP_CD==OfficesHeld.OFFICER_TYP_CD)\
-            .filter_by(CORP_PARTY_ID=int(corppartyid))
+            .join(CorpParty, OfficesHeld.CORP_PARTY_ID == CorpParty.CORP_PARTY_ID)\
+            .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
+            .add_columns(\
+                CorpParty.CORP_PARTY_ID, 
+                OfficerType.OFFICER_TYP_CD,
+                OfficerType.SHORT_DESC,
+                CorpParty.APPOINTMENT_DT,
+                Address.ADDR_LINE_1,
+            )\
+            .filter(CorpParty.CORP_PARTY_ID==int(corppartyid))
     
-    return jsonify({
-        'results': [row.as_dict() for row in results]
-    })
+    offices = []
+    for row in results:
+        result_dict = {}
+
+        result_dict['CORP_PARTY_ID'] = row[1]
+        result_dict['OFFICER_TYP_CD'] = row[2]
+        result_dict['SHORT_DESC'] = row[3]
+        result_dict['APPOINTMENT_DT'] = row[4]
+        result_dict['ADDR_LINE_1'] = row[5]
+
+        offices.append(result_dict)
+    
+    return jsonify({'results': offices})
 
 
 @app.route('/corporation/<id>')
