@@ -70,6 +70,18 @@ def corporation_search():
 
 @app.route('/person/search/')
 def corpparty_search():
+    """
+    Querystring parameters as follows:
+
+    You may provide query=<string> for a simple search, OR any number of querystring triples such as
+
+    field=ANY_NME|FIRST_NME|LAST_NME|<any column name>
+    &operator=exact|contains|startswith|endswith
+    &value=<string>
+
+    For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
+    curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=LAST_NME&operator=exact&value=Little&mode=ALL"
+    """
 
     args = request.args
 
@@ -87,14 +99,16 @@ def corpparty_search():
 
     if query and len(fields) > 0:
         raise Exception("use simple query or advanced. don't mix")
-
+    
+    # Only triples of clauses are allowed. So, the same number of fields, ops and values.
     if len(fields) != len(operators) or len(operators) != len(values):
         raise Exception("mismatched query param lengths: fields:{} operators:{} values:{}".format(
             len(fields),
             len(operators),
             len(values)))
 
-    grps = list(zip(fields, operators, values))
+    # Zip the lists, so ('LAST_NME', 'FIRST_NME') , ('contains', 'exact'), ('Sky', 'Apple') => (('LAST_NME', 'contains', 'Sky'), ('FIRST_NME', 'exact', 'Apple'))
+    clauses = list(zip(fields, operators, values))
 
     # TODO: move queries to model class.
 
@@ -113,30 +127,38 @@ def corpparty_search():
                 CorpName.CORP_NME,
                 Address.ADDR_LINE_1,
             )
- 
+    
+    # Simple mode - return reasonable results for a single search string:
     if query:
         results = results.filter((Corporation.CORP_NUM == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query)))
-    elif grps:
+    # Advanced mode - return precise results for a set of clauses.
+    elif clauses:
+
+        # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
         if mode == 'ALL':
             def fn(accumulator, s):
                 return accumulator & _get_filter(*s)
         else:
             def fn(accumulator, s):
                 return accumulator | _get_filter(*s)
+        
+        # We use reduce here to join all the items in clauses with the & operator or the | operator.
+        # Similar to if we did "|".join(clause), but calling the boolean operator instead.
         filter_grp = reduce(
             fn,
-            grps[1:],
-            _get_filter(*grps[0])
+            clauses[1:],
+            _get_filter(*clauses[0])
             )
         results = results.filter(filter_grp)
-    else:
-        pass
+
+    # Pagination
     results = results.paginate(int(page), 20, False)
 
     corp_parties = []
     for row in results.items:
         result_dict = {}
 
+        # TDOO: switch to marshmallow.
         result_dict['CORP_PARTY_ID'] = row[1]
         result_dict['FIRST_NME'] = row[2]
         result_dict['MIDDLE_NME'] = row[3]
