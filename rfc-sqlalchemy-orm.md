@@ -92,6 +92,8 @@ class AddressSchema(Schema):
 
 ```
 
+As you can see above, we could have used the built-in ORM instead of writing these services from scratch, saving effort and complexity in addition to the benefits discussed below.
+
 # Motivation
 
 Currently, a custom ORM-like system of custom classes is implemented. This follows typical model naming conventions, class methods for data services, and instances-as-rows pattern. However, this fails to leverage the most important benefits of using an ORM.
