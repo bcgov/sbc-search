@@ -1,6 +1,15 @@
 from flask import Flask, request, jsonify
-from models import Corporation, CorpParty, CorpName, Address, app
 from functools import reduce
+from models import (
+    Corporation, 
+    CorpParty, 
+    CorpName, 
+    Address, 
+    OfficesHeld, 
+    OfficerType, 
+    app,
+)
+
 
 @app.route('/')
 def hello():
@@ -138,16 +147,10 @@ def corpparty_search():
         result_dict['CORP_NME'] = row[8]
         result_dict['ADDR_LINE_1'] = row[9]
 
-        # print(result_dict)
         corp_parties.append(result_dict)
 
-    # print(corp_parties)
     
     return jsonify({'results': corp_parties})
-
-    # return jsonify({
-    #     'results': [row.as_dict() for row in results.items]
-    # })
 
 
 @app.route('/person/<id>')
@@ -156,6 +159,36 @@ def person(id):
     if results.count() > 0:
         return jsonify(results[0].as_dict())
     return {}
+
+
+@app.route('/person/officesheld/<corppartyid>')
+def officesheld(corppartyid):
+    results = OfficerType.query\
+            .join(OfficesHeld, OfficerType.OFFICER_TYP_CD==OfficesHeld.OFFICER_TYP_CD)\
+            .join(CorpParty, OfficesHeld.CORP_PARTY_ID == CorpParty.CORP_PARTY_ID)\
+            .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
+            .add_columns(\
+                CorpParty.CORP_PARTY_ID, 
+                OfficerType.OFFICER_TYP_CD,
+                OfficerType.SHORT_DESC,
+                CorpParty.APPOINTMENT_DT,
+                Address.ADDR_LINE_1,
+            )\
+            .filter(CorpParty.CORP_PARTY_ID==int(corppartyid))
+    
+    offices = []
+    for row in results:
+        result_dict = {}
+
+        result_dict['CORP_PARTY_ID'] = row[1]
+        result_dict['OFFICER_TYP_CD'] = row[2]
+        result_dict['SHORT_DESC'] = row[3]
+        result_dict['APPOINTMENT_DT'] = row[4]
+        result_dict['ADDR_LINE_1'] = row[5]
+
+        offices.append(result_dict)
+    
+    return jsonify({'results': offices})
 
 
 @app.route('/corporation/<id>')
