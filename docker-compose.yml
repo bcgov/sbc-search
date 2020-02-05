@@ -31,6 +31,7 @@ services:
       - ./search-api:/opt/app
     environment:
       - FLASK_ENV=development
+      - FLASK_DEBUG=1
       - PYTHONPATH=/opt/app
     networks:
       - bcros
