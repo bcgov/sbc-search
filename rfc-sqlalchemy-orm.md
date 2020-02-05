@@ -142,6 +142,7 @@ For other code: Perhaps during PostgreSQL port since some DB code will need touc
 
 1. Is there a good reason the existing CPRD interface is done without an ORM?
 1. Will SQLAlchemy's ORM work seamlessly with CPRD? We have only tried Postgres as a test database.
+1. What work has been done or is being done already on asset search/ ppr search. We should coordinate.
 
 # Thanks
 
