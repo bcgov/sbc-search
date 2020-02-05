@@ -211,3 +211,29 @@ class CorpName(BaseModel):
 
     def __repr__(self):
         return 'corp num: {}'.format(self.CORP_NUM)
+
+
+class OfficerType(BaseModel):
+    __tablename__ = "OFFICER_TYPE"
+    """
+    OFFICER_TYPE                   OFFICER_TYP_CD                 CHAR                           3                              9
+    OFFICER_TYPE                   SHORT_DESC                     VARCHAR2                       75                             9
+    OFFICER_TYPE                   FULL_DESC                      VARCHAR2                       125                            9
+    """
+
+    OFFICER_TYP_CD = db.Column(db.String(3), primary_key=True)
+    SHORT_DESC = db.Column(db.String(75))
+    FULL_DESC = db.Column(db.String(125))
+
+
+class OfficesHeld(BaseModel):
+    __tablename__ = "OFFICES_HELD"
+    """
+    OFFICES_HELD                   CORP_PARTY_ID                  NUMBER                         22                             3694791
+    OFFICES_HELD                   OFFICER_TYP_CD                 CHAR                           3                              3694794
+    OFFICES_HELD                   DD_CORP_PARTY_ID               NUMBER                         22                             7
+    """
+
+    CORP_PARTY_ID = db.Column(db.Integer, primary_key=True)
+    OFFICER_TYP_CD = db.Column(db.String(3), primary_key=True)
+    DD_CORP_PARTY_ID = db.Column(db.Integer)
