@@ -3,7 +3,7 @@
     <div class="d-inline-block filter-input-cell mr-2">First Name</div>
     <div class="d-inline-block filter-input-cell mr-2">Exact Match</div>
     <div class="d-inline-block filter-input-cell mr-2">Barbara</div>
-    <SbcButton :variant="2" title="Remove"></SbcButton>
+    <SbcButton :variant="2" :width="120" title="Remove"></SbcButton>
   </div>
 </template>
 

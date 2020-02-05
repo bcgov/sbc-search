@@ -4,13 +4,19 @@
       :headers="headers"
       :items="items"
       :items-per-page="10"
-      class="elevation-1"
+      class="elevation-1 result-table"
+      @click:row="handleClick"
     ></v-data-table>
   </div>
 </template>
 
 <script>
 export default {
+  methods: {
+    handleClick(e) {
+      console.log("Clicked", e);
+    }
+  },
   data() {
     return {
       items: [
@@ -142,4 +148,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="sass">
+.result-table tbody tr td:first-of-type
+  text-decoration: underline
+  color: #2a7cd4
+  cursor: pointer
+</style>

@@ -30,7 +30,12 @@
       ></v-text-field>
     </div>
     <div>
-      <SbcButton class="mr-2" title="Add Filter" :variant="2"></SbcButton>
+      <SbcButton
+        class="mr-2"
+        :width="120"
+        title="Add Filter"
+        :variant="2"
+      ></SbcButton>
       <SbcButton title="Clear" :variant="2"></SbcButton>
     </div>
   </div>

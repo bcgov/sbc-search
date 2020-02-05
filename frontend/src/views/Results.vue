@@ -1,7 +1,7 @@
 <template>
   <div>
     <section class="sbc-section">
-      <h1 class="display-2 mb-6 font-weight-bold">
+      <h1 class="display-1 mb-6 font-weight-bold">
         CorpParty Search - Results
       </h1>
       <div class="body-1">Date: 19/09/03</div>
