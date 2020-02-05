@@ -17,6 +17,13 @@ docker-compose up
 ```
 Browse to `localhost:8080`
 
+Updating database and create mock data
+```
+dx search_api (in nother terminal, to access the container)
+flask db upgrade (to run existing migrations and update de db)
+python bootstrap.py to create mock data
+```
+
 ## Migrations
 
 This project uses

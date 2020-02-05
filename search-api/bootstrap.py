@@ -1,12 +1,23 @@
 import datetime
 from dateutil.relativedelta import *
 from datetime import date
-from models import Corporation, CorpParty, CorpName, Address, db
+from models import (
+    Corporation, 
+    CorpParty, 
+    CorpName, 
+    Address, 
+    OfficerType, 
+    OfficesHeld, 
+    db,
+)
+
 
 db.session.query(Corporation).delete(synchronize_session=False)
 db.session.query(CorpParty).delete(synchronize_session=False)
 db.session.query(CorpName).delete(synchronize_session=False)
 db.session.query(Address).delete(synchronize_session=False)
+db.session.query(OfficerType).delete(synchronize_session=False)
+db.session.query(OfficesHeld).delete(synchronize_session=False)
 db.session.commit()
 
 
@@ -148,6 +159,30 @@ ADDRESSES = [
     "4-310 6 Ave S , Creston, BC, V0B 1G3",
 ]
 
+# OfficerType
+officer_type1 = OfficerType(
+    OFFICER_TYP_CD='SEC',
+    SHORT_DESC='Secretary',
+    FULL_DESC='Secretary',
+)
+db.session.add(officer_type1)
+
+officer_type2 = OfficerType(
+    OFFICER_TYP_CD='DIR',
+    SHORT_DESC='Director',
+    FULL_DESC='Director',
+)
+db.session.add(officer_type2)
+
+officer_type3 = OfficerType(
+    OFFICER_TYP_CD='INC',
+    SHORT_DESC='Incorporator',
+    FULL_DESC='Incorporator',
+)
+db.session.add(officer_type3)
+
+officer_types = ['SEC','DIR','INC']
+
 index = 0
 while index < len(CORP_NUMS):
     
@@ -171,10 +206,13 @@ while index < len(CORP_NUMS):
     # CORPPARTY
     corp_party_name = CORP_PARTY_NAMES[index].split(" ")
     appointment_date = datetime.datetime.now() + datetime.timedelta(weeks=-(1+index))
-    cessation_date = appointment_date 
+    cessation_date = appointment_date
+
+    party_types = ['FIO','DIR','OFF']
     
     corp_party = CorpParty(
         CORP_PARTY_ID=(index),
+        PARTY_TYP_CD=(party_types[index%3]),
         CORP_NUM=CORP_NUMS[index],
         FIRST_NME=corp_party_name[0],
         MIDDLE_NME=corp_party_name[1] if len(corp_party_name) == 3 else None,
@@ -191,6 +229,32 @@ while index < len(CORP_NUMS):
         CORP_NME=CORP_NAMES[index],
     )
     db.session.add(corp_name)
+    
+    officer_type_base1 = officer_types[0]
+    officer_type_base2 = officer_types[0]
+    if index % 3 == 0:
+        officer_type_base1= officer_types[0]
+        officer_type_base2= officer_types[1]
+    elif index % 3 == 1:
+        officer_type_base1= officer_types[0]
+        officer_type_base2= officer_types[2]
+    elif  index % 3 == 2:
+        officer_type_base1= officer_types[1]
+        officer_type_base2= officer_types[2]
+    
+    # OFFICES_HELD
+    offices_held1 = OfficesHeld(
+        CORP_PARTY_ID=index,
+        OFFICER_TYP_CD=officer_type_base1,
+    )
+
+    db.session.add(offices_held1)
+
+    offices_held2 = OfficesHeld(
+        CORP_PARTY_ID=index,
+        OFFICER_TYP_CD=officer_type_base2,
+    )
+    db.session.add(offices_held2)
 
     index = index + 1
 
