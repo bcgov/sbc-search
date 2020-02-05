@@ -8,7 +8,7 @@
 This RFC was developed as part of the Director Search. Underlying goals include:
   * Allows re-use of search components for other search functions (assets / ppr?)
   * Promotes a scalable and robust BCROS.
-  * Effectively manage technial debt, keep the codebase simple for new developers to onboard, and to make it easier to developers to avoid certain classes of bugs in the future where possible.
+  * Effectively manage technial debt, keep the codebase simple for new developers to onboard, and to make it easier for developers to avoid certain classes of bugs in the future where possible.
 
 The SQLAlchemy ORM is not currently in use by CPRD clients (repos include sbc-auth, lear, entity), which are instead using raw SQL and have implemented partial ORM-like data service classes.
 
