@@ -132,9 +132,6 @@ PeeWee is an example of another Python ORM.
 ## Do nothing
 Just keep using SQL directly.
 
-## Not doing this
-Deploying features would require more extensive SCM branch management, more advanced deployment / rollback and canary testing environments.
-
 # Adoption strategy
 
 For director search: We are using the ORM right away.
