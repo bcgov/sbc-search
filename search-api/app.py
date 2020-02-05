@@ -1,5 +1,13 @@
 from flask import Flask, request, jsonify
-from models import Corporation, CorpParty, CorpName, Address, app
+from models import (
+    Corporation, 
+    CorpParty, 
+    CorpName, 
+    Address, 
+    OfficesHeld, 
+    OfficerType, 
+    app,
+)
 
 
 @app.route('/')
@@ -75,16 +83,10 @@ def corpparty_search():
         result_dict['CORP_NME'] = row[8]
         result_dict['ADDR_LINE_1'] = row[9]
 
-        # print(result_dict)
         corp_parties.append(result_dict)
 
-    # print(corp_parties)
     
     return jsonify({'results': corp_parties})
-
-    # return jsonify({
-    #     'results': [row.as_dict() for row in results.items]
-    # })
 
 
 @app.route('/person/<id>')
@@ -93,6 +95,17 @@ def person(id):
     if results.count() > 0:
         return jsonify(results[0].as_dict())
     return {}
+
+
+@app.route('/officesheld/<corppartyid>')
+def officesheld(corppartyid):
+    results = OfficerType.query\
+            .join(OfficesHeld, OfficerType.OFFICER_TYP_CD==OfficesHeld.OFFICER_TYP_CD)\
+            .filter_by(CORP_PARTY_ID=int(corppartyid))
+    
+    return jsonify({
+        'results': [row.as_dict() for row in results]
+    })
 
 
 @app.route('/corporation/<id>')
