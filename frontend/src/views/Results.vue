@@ -18,7 +18,7 @@
 
 <script>
 import Results from "@/components/Search/Results.vue";
-import { searchApi } from "@/plugins/SearchApi.js";
+import { searchApi, advancedSearchApi } from "@/plugins/SearchApi.js";
 
 export default {
   components: {
@@ -31,13 +31,18 @@ export default {
   },
   async mounted() {
     const query = this.$route.query;
-    const searchParams = {
-      page: query.page,
-      query: query.searchQuery
-    };
 
     if (!query.advanced) {
+      const searchParams = {
+        page: query.page,
+        query: query.searchQuery
+      };
       searchApi(searchParams).then(result => {
+        this.searchResults = result.data.results;
+      });
+    } else {
+      const queryString = query.queryString;
+      advancedSearchApi(queryString).then(result => {
         this.searchResults = result.data.results;
       });
     }

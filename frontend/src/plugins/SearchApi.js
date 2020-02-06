@@ -7,3 +7,7 @@ export function searchApi(params) {
     params: params
   });
 }
+
+export function advancedSearchApi(query) {
+  return ApiService.get(`${PERSON_SEARCH_URL}/?${query}`);
+}

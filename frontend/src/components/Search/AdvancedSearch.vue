@@ -9,16 +9,7 @@
     ></SearchFilter>
     <AddFilter></AddFilter>
     <div>
-      <router-link
-        :to="{
-          name: 'results',
-          query: {
-            advanced: true
-          }
-        }"
-      >
-        <SbcButton title="Search"></SbcButton>
-      </router-link>
+      <SbcButton title="Search" @click.native="handleClick"></SbcButton>
     </div>
   </div>
 </template>
@@ -36,6 +27,29 @@ export default {
     AddFilter,
     SearchFilter,
     SbcButton
+  },
+  methods: {
+    handleClick() {
+      let queryString = "";
+      let counter = 0;
+      this.filters.map(filter => {
+        if (counter >= 1) {
+          queryString += "&";
+        }
+        queryString += Object.keys(filter)
+          .map(key => key + "=" + filter[key])
+          .join("&");
+        counter++;
+      });
+
+      this.$router.push({
+        name: "results",
+        query: {
+          advanced: true,
+          queryString: queryString
+        }
+      });
+    }
   }
 };
 </script>

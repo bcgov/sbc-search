@@ -41,7 +41,6 @@ export default {
   },
   methods: {
     handleRemove() {
-      console.log("Handle Remove");
       const filter = {
         field: this.field,
         operator: this.operator,

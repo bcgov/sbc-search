@@ -10,7 +10,7 @@ export const OPERATOR_VALUES = [
   { text: "Contains", value: "contains" },
   { text: "Starts With", value: "startswith" },
   { text: "Ends With", value: "endswith" },
-  { text: "Exact Match", value: "exactmatch" }
+  { text: "Exact Match", value: "exact" }
 ];
 
 export const RESULT_HEADERS = [
