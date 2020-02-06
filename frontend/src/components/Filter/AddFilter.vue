@@ -41,7 +41,11 @@
         @click.native.prevent="handleClick"
         type="submit"
       ></SbcButton>
-      <SbcButton title="Clear" :variant="2"></SbcButton>
+      <SbcButton
+        title="Clear"
+        @click.native.prevent="handleClear"
+        :variant="2"
+      ></SbcButton>
     </div>
   </v-form>
 </template>
@@ -66,6 +70,11 @@ export default {
   },
 
   methods: {
+    handleClear() {
+      this.field = "Any Name";
+      this.operator = "Contains";
+      this.value = "";
+    },
     handleClick() {
       const filter = {
         field: this.field,
