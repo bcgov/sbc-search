@@ -9,6 +9,7 @@
       :height="height"
       :width="width"
       :disabled="disabled"
+      :type="type"
       >{{ title }}</v-btn
     >
     <v-btn
@@ -19,6 +20,7 @@
       :height="height"
       :disabled="disabled"
       :width="width"
+      :type="type"
       >{{ title }}</v-btn
     >
   </div>
@@ -46,6 +48,10 @@ export default {
     disabled: {
       default: false,
       type: Boolean
+    },
+    type: {
+      default: null,
+      type: String
     }
   }
 };

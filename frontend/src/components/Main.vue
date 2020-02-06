@@ -13,8 +13,13 @@
         Search for a CorpParty affilated with a company
       </h2>
       <section class="sbc-section">
-        <Search />
-        <AdvancedSearch></AdvancedSearch>
+        <Search :disabled="advancedSearchActive" />
+        <SearchToggle
+          title="Advanced Search"
+          :active.sync="advancedSearchActive"
+          class="mb-3"
+        ></SearchToggle>
+        <AdvancedSearch v-if="advancedSearchActive"></AdvancedSearch>
       </section>
     </section>
   </div>
@@ -22,11 +27,18 @@
 
 <script>
 import Search from "@/components/Search/Search.vue";
+import SearchToggle from "@/components/Search/Toggle.vue";
 import AdvancedSearch from "@/components/Search/AdvancedSearch.vue";
 export default {
   components: {
     Search,
+    SearchToggle,
     AdvancedSearch
+  },
+  data() {
+    return {
+      advancedSearchActive: false
+    };
   }
 };
 </script>

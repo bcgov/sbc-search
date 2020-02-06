@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex">
+  <v-form class="d-flex">
     <div class="mr-2">
       <v-select
         v-model="field"
@@ -38,11 +38,12 @@
         :width="120"
         title="Add Filter"
         :variant="2"
-        @click.native="handleClick"
+        @click.native.prevent="handleClick"
+        type="submit"
       ></SbcButton>
       <SbcButton title="Clear" :variant="2"></SbcButton>
     </div>
-  </div>
+  </v-form>
 </template>
 
 <script>
