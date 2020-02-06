@@ -1313,7 +1313,7 @@
   resolved "https://registry.yarnpkg.com/@vue/cli-plugin-vuex/-/cli-plugin-vuex-4.1.2.tgz#5e728b56ad9de2f062a8944f838affa0297ccb99"
   integrity sha512-qsf8sfUUtTuFf24iB6vbdapvCTCt4FqLj7r66POutGWmBCTlPHsMaAXMaD2ZD53/hqr8QHd/557IUensSwj5wA==
 
-"@vue/cli-service@^4.1.0":
+"@vue/cli-service@^4.1.2":
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@vue/cli-service/-/cli-service-4.1.2.tgz#005f1dbd4626237eec79b256f3d928081884c325"
   integrity sha512-ljJ3qoR5NNHuG0HPqQyfO3xa4Ti5zCSmHp0tDYxgiVz1vMDvzPXBhGBGsc2Y1HH71BUyx3Ei+H7mWdML/+Bm9Q==
