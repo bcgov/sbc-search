@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "yarn && vue-cli-service serve --host 0.0.0.0",
-    "build": "yarn && vue-cli-service build",
+    "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },
