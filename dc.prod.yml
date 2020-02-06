@@ -5,4 +5,7 @@ services:
     command: 'yarn build'
     environment:
         - NODE_ENV=production
+  search_api:
+    ports:
+      - 5005:5000
 
