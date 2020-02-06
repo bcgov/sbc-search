@@ -74,4 +74,12 @@ export default {
   text-decoration: underline
   color: #2a7cd4
   cursor: pointer
+
+.result-table tbody tr td:nth-of-type(4),
+.result-table tbody tr td:nth-of-type(5)
+  width: 120px
+  white-space: nowrap
+
+.result-table
+  white-space: nowrap
 </style>
