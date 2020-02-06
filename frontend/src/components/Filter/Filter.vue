@@ -7,7 +7,12 @@
       {{ getText(operator, "operator") }}
     </div>
     <div class="d-inline-block filter-input-cell mr-2">{{ value }}</div>
-    <SbcButton :variant="2" :width="120" title="Remove"></SbcButton>
+    <SbcButton
+      :variant="2"
+      :width="120"
+      title="Remove"
+      @click.native="handleRemove"
+    ></SbcButton>
   </div>
 </template>
 
@@ -35,6 +40,15 @@ export default {
     SbcButton
   },
   methods: {
+    handleRemove() {
+      console.log("Handle Remove");
+      const filter = {
+        field: this.field,
+        operator: this.operator,
+        value: this.value
+      };
+      return this.$store.commit("removeFilter", filter);
+    },
     getText(data, type) {
       if (type === "field") {
         return getTextFromValues(FIELD_VALUES, data);
