@@ -2,7 +2,8 @@
   <div class="d-flex">
     <div class="mr-2">
       <v-select
-        :items="one"
+        v-model="field"
+        :items="fields"
         placeholder="Any Name"
         filled
         dense
@@ -12,7 +13,8 @@
     </div>
     <div class="mr-2">
       <v-select
-        :items="two"
+        v-model="operator"
+        :items="operators"
         placeholder="Contains"
         filled
         dense
@@ -22,6 +24,7 @@
     </div>
     <div class="mr-2">
       <v-text-field
+        v-model="value"
         filled
         dense
         height="59"
@@ -35,6 +38,7 @@
         :width="120"
         title="Add Filter"
         :variant="2"
+        @click.native="handleClick"
       ></SbcButton>
       <SbcButton title="Clear" :variant="2"></SbcButton>
     </div>
@@ -43,6 +47,8 @@
 
 <script>
 import SbcButton from "@/components/SbcButton.vue";
+import { FIELD_VALUES, OPERATOR_VALUES } from "@/plugins/config.js";
+
 export default {
   components: {
     SbcButton
@@ -50,9 +56,23 @@ export default {
 
   data() {
     return {
-      one: ["Any Name", "First Name", "Middle Name", "Last Name", "Address"],
-      two: ["Contains", "Starts With", "Ends With", "Exact Match"]
+      field: null,
+      operator: null,
+      value: null,
+      fields: FIELD_VALUES,
+      operators: OPERATOR_VALUES
     };
+  },
+
+  methods: {
+    handleClick() {
+      const filter = {
+        field: this.field,
+        operator: this.operator,
+        value: this.value
+      };
+      this.$store.commit("addFilter", filter);
+    }
   }
 };
 </script>

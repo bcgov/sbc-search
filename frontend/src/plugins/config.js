@@ -1,3 +1,18 @@
+export const FIELD_VALUES = [
+  { text: "Any Name", value: "ANY_NME" },
+  { text: "First Name", value: "FIRST_NME" },
+  { text: "Middle Name", value: "MIDDLE_NME" },
+  { text: "Last Name", value: "LAST_NME" },
+  { text: "Address", value: "ADDR_LINE_1" }
+];
+
+export const OPERATOR_VALUES = [
+  { text: "Contains", value: "contains" },
+  { text: "Starts With", value: "startswith" },
+  { text: "Ends With", value: "endswith" },
+  { text: "Exact Match", value: "exactmatch" }
+];
+
 export const RESULT_HEADERS = [
   {
     text: "Surname",
