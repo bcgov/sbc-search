@@ -6,7 +6,7 @@
         :key="key"
         class="d-flex w-100 detail-list-item"
       >
-        <span class="font-weight-bold mb-1 detail-key">{{ key }}</span>
+        <span class="font-weight-bold mb-1 detail-key">{{ getText(key) }}</span>
         <span class="detail-value">{{ val }}</span>
       </li>
     </ul>
@@ -14,22 +14,17 @@
 </template>
 
 <script>
+import { getTextFromValues } from "@/plugins/utils.js";
+import { RESULT_HEADERS } from "@/plugins/config.js";
 export default {
+  methods: {
+    getText(data) {
+      return getTextFromValues(RESULT_HEADERS, data);
+    }
+  },
   data() {
     return {
-      detail: {
-        Type: "BC",
-        Number: "0638995",
-        "Company Name": "Dennis Black Consuling Ltd.",
-        Status: "Historical",
-        Surname: "Black",
-        "First Name": "Barbara",
-        "Middle Name": "Mary",
-        Appointed: "2018-06-7",
-        Ceased: "-",
-        Address:
-          "Site 227, Comp 40, R.R #2 6299 Cherry Creek Road Port Alberni, B.C. V9Y7L6"
-      }
+      detail: this.$route.query
     };
   }
 };

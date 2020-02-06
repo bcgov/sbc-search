@@ -2,10 +2,10 @@
   <div>
     <v-data-table
       :headers="headers"
-      :items="searchResults"
+      :items="results"
       :items-per-page="10"
       class="elevation-1 result-table"
-      @click.native="handleTableClick"
+      @click:row="handleRowClick"
     >
     </v-data-table>
   </div>
@@ -13,6 +13,8 @@
 
 <script>
 import { RESULT_HEADERS } from "@/plugins/config.js";
+import dayjs from "dayjs";
+
 export default {
   props: {
     searchResults: {
@@ -22,11 +24,26 @@ export default {
       type: Array
     }
   },
+  computed: {
+    results() {
+      return this.searchResults.map(r => {
+        r["APPOINTMENT_DT"] = dayjs(r["APPOINTMENT_DT"]).format("YYYY-MM-DD");
+        r["CESSATION_DT"] = dayjs(r["APPOINTMENT_DT"]).format("YYYY-MM-DD");
+        return r;
+      });
+    }
+  },
   methods: {
-    handleTableClick(e) {
+    handleRowClick(data) {
+      return this.$router.push({
+        name: "details",
+        query: data
+      });
+    },
+    handleTableClick() {}
+    /*
       // Column 0 => Last Name
       // Column 6 => Org Number
-      console.log(e);
       const column = e.target.cellIndex;
       if (column === 0) {
         return this.$router.push({
@@ -40,6 +57,8 @@ export default {
         });
       }
     }
+    
+    */
   },
   data() {
     return {
