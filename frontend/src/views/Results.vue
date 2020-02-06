@@ -37,14 +37,18 @@ export default {
         page: query.page,
         query: query.searchQuery
       };
-      searchApi(searchParams).then(result => {
-        this.searchResults = result.data.results;
-      });
+      searchApi(searchParams)
+        .then(result => {
+          this.searchResults = result.data.results;
+        })
+        .catch(e => console.error(e));
     } else {
       const queryString = query.queryString;
-      advancedSearchApi(queryString).then(result => {
-        this.searchResults = result.data.results;
-      });
+      advancedSearchApi(queryString)
+        .then(result => {
+          this.searchResults = result.data.results;
+        })
+        .catch(e => console.error(e));
     }
   }
 };

@@ -1,5 +1,5 @@
 <template>
-  <v-form class="d-flex" @submit.prevent="handleSubmit">
+  <v-form class="d-flex">
     <div>
       <v-text-field
         v-model="searchQuery"
@@ -13,9 +13,10 @@
     </div>
     <div>
       <SbcButton
+        type="submit"
         class="ml-2"
         title="Search"
-        @click.native="handleSubmit"
+        @click.prevent.native="handleSubmit"
         :disabled="disabled"
       ></SbcButton>
       <SbcButton
