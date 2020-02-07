@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from sqlalchemy import desc
+
 from models import Corporation, CorpParty, CorpName, Address, app
 CORS(app)
 from functools import reduce
@@ -99,6 +101,7 @@ def corpparty_search():
     operators = args.getlist('operator')
     values = args.getlist('value')
     mode = args.get('mode')
+    sort_type = args.get('sort_type')
 
     if query and len(fields) > 0:
         raise Exception("use simple query or advanced. don't mix")
@@ -154,6 +157,13 @@ def corpparty_search():
             )
         results = results.filter(filter_grp)
 
+    # Sorting
+    if sort_type is None:
+        results = results.order_by(CorpParty.LAST_NME)
+    else:
+        if sort_type == 'desc':
+            results = results.order_by(desc(CorpParty.LAST_NME))
+    
     # Pagination
     results = results.paginate(int(page), 20, False)
 
