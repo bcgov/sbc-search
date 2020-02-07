@@ -163,6 +163,8 @@ def corpparty_search():
     else:
         if sort_type == 'desc':
             results = results.order_by(desc(CorpParty.LAST_NME))
+        else:
+            results = results.order_by(CorpParty.LAST_NME)
     
     # Pagination
     results = results.paginate(int(page), 20, False)
