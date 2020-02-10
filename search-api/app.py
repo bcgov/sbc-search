@@ -83,6 +83,8 @@ def corpparty_search():
     field=ANY_NME|FIRST_NME|LAST_NME|<any column name>
     &operator=exact|contains|startswith|endswith
     &value=<string>
+    &sort_type=asc|desc
+    &sort_value=ANY_NME|FIRST_NME|LAST_NME|<any column name>
 
     For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
     curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=LAST_NME&operator=exact&value=Little&mode=ALL"
