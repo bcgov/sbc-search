@@ -12,17 +12,20 @@
         Search Results
       </h2>
       <Results :searchResults="searchResults"></Results>
+      <ServerSideResults class="mt-5"></ServerSideResults>
     </section>
   </div>
 </template>
 
 <script>
 import Results from "@/components/Search/Results.vue";
+import ServerSideResults from "@/components/Search/ServerSideTable.vue";
 import { searchApi, advancedSearchApi } from "@/plugins/SearchApi.js";
 
 export default {
   components: {
-    Results
+    Results,
+    ServerSideResults
   },
   data() {
     return {
