@@ -3,7 +3,7 @@ version: '3'
 services:
 
   frontend:
-    image: node
+    build: ./frontend
     volumes:
       - ./frontend:/code
     ports:

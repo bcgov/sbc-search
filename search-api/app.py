@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from sqlalchemy import desc
+
 from models import Corporation, CorpParty, CorpName, Address, app
 CORS(app)
 from functools import reduce
@@ -81,6 +83,8 @@ def corpparty_search():
     field=ANY_NME|FIRST_NME|LAST_NME|<any column name>
     &operator=exact|contains|startswith|endswith
     &value=<string>
+    &sort_type=asc|desc
+    &sort_value=ANY_NME|FIRST_NME|LAST_NME|<any column name>
 
     For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
     curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=LAST_NME&operator=exact&value=Little&mode=ALL"
@@ -99,6 +103,7 @@ def corpparty_search():
     operators = args.getlist('operator')
     values = args.getlist('value')
     mode = args.get('mode')
+    sort_type = args.get('sort_type')
 
     if query and len(fields) > 0:
         raise Exception("use simple query or advanced. don't mix")
@@ -154,6 +159,15 @@ def corpparty_search():
             )
         results = results.filter(filter_grp)
 
+    # Sorting
+    if sort_type is None:
+        results = results.order_by(CorpParty.LAST_NME)
+    else:
+        if sort_type == 'desc':
+            results = results.order_by(desc(CorpParty.LAST_NME))
+        else:
+            results = results.order_by(CorpParty.LAST_NME)
+    
     # Pagination
     results = results.paginate(int(page), 20, False)
 
