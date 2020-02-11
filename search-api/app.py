@@ -83,6 +83,8 @@ def corpparty_search():
     field=ANY_NME|FIRST_NME|LAST_NME|<any column name>
     &operator=exact|contains|startswith|endswith
     &value=<string>
+    &sort_type=asc|desc
+    &sort_value=ANY_NME|FIRST_NME|LAST_NME|<any column name>
 
     For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
     curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=LAST_NME&operator=exact&value=Little&mode=ALL"
@@ -166,6 +168,8 @@ def corpparty_search():
         else:
             results = results.order_by(CorpParty.LAST_NME)
     
+    total_results = results.count()
+
     # Pagination
     results = results.paginate(int(page), 20, False)
 
@@ -173,7 +177,7 @@ def corpparty_search():
     for row in results.items:
         result_dict = {}
 
-        # TDOO: switch to marshmallow.
+        # TODO: switch to marshmallow.
         result_dict['CORP_PARTY_ID'] = row[1]
         result_dict['FIRST_NME'] = row[2]
         result_dict['MIDDLE_NME'] = row[3]
@@ -187,7 +191,7 @@ def corpparty_search():
         corp_parties.append(result_dict)
 
     
-    return jsonify({'results': corp_parties})
+    return jsonify({'results': corp_parties, 'total': total_results })
 
 
 @app.route('/person/<id>')
