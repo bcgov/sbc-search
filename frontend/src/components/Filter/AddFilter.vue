@@ -61,8 +61,8 @@ export default {
 
   data() {
     return {
-      field: null,
-      operator: null,
+      field: "ANY_NME",
+      operator: "contains",
       value: null,
       fields: FIELD_VALUES,
       operators: OPERATOR_VALUES
@@ -76,6 +76,7 @@ export default {
       this.value = "";
     },
     handleClick() {
+      console.log(this.field, this.operator);
       const filter = {
         field: this.field,
         operator: this.operator,
