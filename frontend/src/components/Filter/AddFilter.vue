@@ -76,7 +76,6 @@ export default {
       this.value = "";
     },
     handleClick() {
-      console.log(this.field, this.operator);
       const filter = {
         field: this.field,
         operator: this.operator,
