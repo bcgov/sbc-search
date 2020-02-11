@@ -9,6 +9,16 @@
     ></SearchFilter>
     <AddFilter></AddFilter>
     <div>
+      <v-select
+        v-if="modeActive"
+        v-model="mode"
+        :items="modes"
+        placeholder="Any Name"
+        filled
+        dense
+        height="59"
+        class="filter-input d-inline-block mr-5 mode-input"
+      ></v-select>
       <SbcButton title="Search" @click.native="handleClick"></SbcButton>
     </div>
   </div>
@@ -21,12 +31,21 @@ import SbcButton from "@/components/SbcButton.vue";
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState(["filters"])
+    ...mapState(["filters"]),
+    modeActive() {
+      return this.filters.length > 1;
+    }
   },
   components: {
     AddFilter,
     SearchFilter,
     SbcButton
+  },
+  data() {
+    return {
+      mode: "Any",
+      modes: ["Any", "And"]
+    };
   },
   methods: {
     handleClick() {
@@ -42,6 +61,12 @@ export default {
         counter++;
       });
 
+      if (this.mode === "And") {
+        queryString += "&mode=ALL";
+      } else if (this.mode === "Any") {
+        queryString += "&mode=ANY";
+      }
+
       this.$router.push({
         name: "results",
         query: {
@@ -54,4 +79,7 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="sass">
+.mode-input
+  max-width: 125px
+</style>
