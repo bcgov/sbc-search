@@ -104,6 +104,7 @@ def corpparty_search():
     values = args.getlist('value')
     mode = args.get('mode')
     sort_type = args.get('sort_type')
+    sort_value = args.get('sort_value')
 
     if query and len(fields) > 0:
         raise Exception("use simple query or advanced. don't mix")
@@ -134,6 +135,9 @@ def corpparty_search():
                 Corporation.CORP_NUM,
                 CorpName.CORP_NME,
                 Address.ADDR_LINE_1,
+                Address.POSTAL_CD,
+                Address.CITY,
+                Address.PROVINCE,
             )
     
     # Simple mode - return reasonable results for a single search string:
@@ -164,9 +168,39 @@ def corpparty_search():
         results = results.order_by(CorpParty.LAST_NME)
     else:
         if sort_type == 'desc':
-            results = results.order_by(desc(CorpParty.LAST_NME))
+            if sort_value == 'FIRST_NME':
+                results = results.order_by(desc(CorpParty.FIRST_NME))
+            elif sort_value == 'LAST_NME':
+                results = results.order_by(desc(CorpParty.LAST_NME))
+            elif sort_value == 'MIDDLE_NME':
+                results = results.order_by(desc(CorpParty.MIDDLE_NME))
+            elif sort_value == 'APPOINTMENT_DT':
+                results = results.order_by(desc(CorpParty.APPOINTMENT_DT))
+            elif sort_value == 'CESSATION_DT':
+                results = results.order_by(desc(CorpParty.CESSATION_DT))
+            elif sort_value == 'CORP_NUM':
+                results = results.order_by(desc(Corporation.CORP_NUM))
+            elif sort_value == 'CORP_NME':
+                results = results.order_by(desc(CorpName.CORP_NME))
+            elif sort_value == 'ADDR_LINE_1':
+                results = results.order_by(desc(Address.ADDR_LINE_1))
         else:
-            results = results.order_by(CorpParty.LAST_NME)
+            if sort_value == 'FIRST_NME':
+                results = results.order_by(CorpParty.FIRST_NME)
+            elif sort_value == 'LAST_NME':
+                results = results.order_by(CorpParty.LAST_NME)
+            elif sort_value == 'MIDDLE_NME':
+                results = results.order_by(CorpParty.MIDDLE_NME)
+            elif sort_value == 'APPOINTMENT_DT':
+                results = results.order_by(CorpParty.APPOINTMENT_DT)
+            elif sort_value == 'CESSATION_DT':
+                results = results.order_by(CorpParty.CESSATION_DT)
+            elif sort_value == 'CORP_NUM':
+                results = results.order_by(Corporation.CORP_NUM)
+            elif sort_value == 'CORP_NME':
+                results = results.order_by(CorpName.CORP_NME)
+            elif sort_value == 'ADDR_LINE_1':
+                results = results.order_by(Address.ADDR_LINE_1)
     
     total_results = results.count()
 
@@ -187,6 +221,9 @@ def corpparty_search():
         result_dict['CORP_NUM'] = row[7]
         result_dict['CORP_NME'] = row[8]
         result_dict['ADDR_LINE_1'] = row[9]
+        result_dict['POSTAL_CD'] = row[10]
+        result_dict['CITY'] = row[11]
+        result_dict['PROVINCE'] = row[12]
 
         corp_parties.append(result_dict)
 
