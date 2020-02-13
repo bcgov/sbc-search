@@ -2,7 +2,7 @@
   <div>
     <ul>
       <li
-        v-for="(val, key) in detail"
+        v-for="(val, key) in filteredDetail"
         :key="key"
         class="d-flex w-100 detail-list-item"
       >
@@ -16,8 +16,22 @@
 <script>
 import { getTextFromValues } from "@/plugins/utils.js";
 import { RESULT_HEADERS } from "@/plugins/config.js";
+import { omit } from "lodash-es";
 import { corpPartySearch } from "@/plugins/SearchApi.js";
 export default {
+  computed: {
+    filteredDetail() {
+      const filtered = omit(this.detail, [
+        "POSTAL_CD",
+        "PROVINCE",
+        "CORP_PARTY_ID"
+      ]);
+      filtered[
+        "ADDR_LINE_1"
+      ] = `${filtered["ADDR_LINE_1"]}, ${this.detail["POSTAL_CD"]}, ${this.detail["PROVINCE"]}`;
+      return filtered;
+    }
+  },
   methods: {
     getText(data) {
       return getTextFromValues(RESULT_HEADERS, data);
@@ -29,7 +43,7 @@ export default {
     };
   },
   mounted() {
-    const CORP_PARTY_ID = this.$route.query.CORP_PARTY_ID;
+    const CORP_PARTY_ID = this.$route.query["CORP_PARTY_ID"];
     if (CORP_PARTY_ID) {
       corpPartySearch(CORP_PARTY_ID).then(result => {
         this.detail = result.data;
