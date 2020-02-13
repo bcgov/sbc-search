@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 from models import Corporation, CorpParty, CorpName, Address, app
 CORS(app)
@@ -28,17 +28,29 @@ def _get_filter(field, operator, value):
             | _get_filter('MIDDLE_NME', operator, value)
             | _get_filter('LAST_NME', operator, value))
 
-    Field = getattr(CorpParty, field)
-    if operator == 'contains':
-        return Field.contains(value)
-    elif operator == 'exact':
-        return Field == value
-    elif operator == 'endswith':
-        return Field.endswith(value)
-    elif operator == 'startswith':
-        return Field.startswith(value)
+    model = None
+    
+    if field in ['FIRST_NME','MIDDLE_NME','LAST_NME']: # CorpParty fields
+        model = eval('CorpParty')
+    elif field in ['ADDR_LINE_1','POSTAL_CD','CITY','PROVINCE']: # Address fields
+        model = eval('Address')
+    
+    value = value.lower()
+    if model:
+        Field = func.lower(getattr(model, field))
+        if operator == 'contains':
+            return Field.contains(value)
+        elif operator == 'exact':
+            return Field == value
+        elif operator == 'endswith':
+            return Field.endswith(value)
+        elif operator == 'startswith':
+            return Field.startswith(value)
+        else:
+            raise Exception('invalid operator: {}'.format(operator))
     else:
-        raise Exception('invalid operator: {}'.format(operator))
+        raise Exception('invalid field: {}'.format(field))
+
 
 @app.route('/corporation/search/')
 def corporation_search():
