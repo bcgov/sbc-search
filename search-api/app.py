@@ -21,6 +21,20 @@ def hello():
     return "Welcome to the director search API.s"
 
 
+def _get_model_by_field(field_name):
+
+    if field_name in ['FIRST_NME','MIDDLE_NME','LAST_NME','APPOINTMENT_DT','CESSATION_DT']: # CorpParty fields
+        return eval('CorpParty')
+    elif field_name in ['CORP_NUM']: # Corporation fields
+        return eval('Corporation')
+    elif field_name in ['CORP_NME']: # CorpName fields
+        return eval('CorpName')
+    elif field_name in ['ADDR_LINE_1','POSTAL_CD','CITY','PROVINCE']: # Address fields
+        return eval('Address')
+    
+    return None
+
+
 def _get_filter(field, operator, value):
     
     if field == 'ANY_NME':
@@ -28,12 +42,7 @@ def _get_filter(field, operator, value):
             | _get_filter('MIDDLE_NME', operator, value)
             | _get_filter('LAST_NME', operator, value))
 
-    model = None
-    
-    if field in ['FIRST_NME','MIDDLE_NME','LAST_NME']: # CorpParty fields
-        model = eval('CorpParty')
-    elif field in ['ADDR_LINE_1','POSTAL_CD','CITY','PROVINCE']: # Address fields
-        model = eval('Address')
+    model = _get_model_by_field(field)
     
     value = value.lower()
     if model:
@@ -54,19 +63,11 @@ def _get_filter(field, operator, value):
 
 def _get_sort_field(field_name):
 
-    model = None    
-    if field_name in ['FIRST_NME','MIDDLE_NME','LAST_NME','APPOINTMENT_DT','CESSATION_DT']: # CorpParty fields
-        model = eval('CorpParty')
-    elif field_name in ['CORP_NUM']: # Corporation fields
-        model = eval('Corporation')
-    elif field_name in ['CORP_NME']: # CorpName fields
-        model = eval('CorpName')
-    elif field_name in ['ADDR_LINE_1']: # Address fields
-        model = eval('Address')
+    model = _get_model_by_field(field_name)
+    if model:
+        return getattr(model, field_name)
     else:
         raise Exception('invalid sort field: {}'.format(field_name))
-
-    return getattr(model, field_name)
 
 
 @app.route('/corporation/search/')
@@ -202,7 +203,7 @@ def corpparty_search():
     total_results = results.count()
 
     # Pagination
-    results = results.paginate(int(page), 20, False)
+    results = results.paginate(int(page), 5, False)
 
     corp_parties = []
     for row in results.items:
