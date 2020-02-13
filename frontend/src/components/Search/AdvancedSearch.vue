@@ -67,8 +67,6 @@ export default {
         queryString += "&mode=ANY";
       }
 
-      queryString += "&page=1";
-
       this.$router.push({
         name: "results",
         query: {
