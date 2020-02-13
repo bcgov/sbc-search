@@ -1,5 +1,5 @@
 <template>
-  <v-form class="d-flex">
+  <v-form class="d-flex" ref="filterForm" lazy-validation v-model="valid">
     <div class="mr-2">
       <v-select
         v-model="field"
@@ -25,6 +25,7 @@
     <div class="mr-2">
       <v-text-field
         v-model="value"
+        :rules="valueRules"
         filled
         dense
         height="59"
@@ -38,8 +39,8 @@
         :width="120"
         title="Add Filter"
         :variant="2"
-        @click.native.prevent="handleClick"
         type="submit"
+        @click.native.prevent="handleClick"
       ></SbcButton>
       <SbcButton
         title="Clear"
@@ -61,21 +62,26 @@ export default {
 
   data() {
     return {
+      valid: true,
       field: "ANY_NME",
       operator: "contains",
       value: null,
       fields: FIELD_VALUES,
-      operators: OPERATOR_VALUES
+      operators: OPERATOR_VALUES,
+      valueRules: [n => (n && n.length > 0) || "Text cannot be empty"]
     };
   },
 
   methods: {
     handleClear() {
-      this.field = "Any Name";
-      this.operator = "Contains";
+      this.field = "ANY_NME";
+      this.operator = "contains";
       this.value = "";
     },
     handleClick() {
+      if (!this.$refs.filterForm.validate()) {
+        return false;
+      }
       const filter = {
         field: this.field,
         operator: this.operator,
