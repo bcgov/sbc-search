@@ -230,9 +230,44 @@ def corpparty_search():
 
 @app.route('/person/<id>')
 def person(id):
-    results = CorpParty.query.filter_by(CORP_PARTY_ID=int(id))
+    results = CorpParty.query\
+            .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
+            .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
+            .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
+            .add_columns(\
+                CorpParty.CORP_PARTY_ID, 
+                CorpParty.FIRST_NME, 
+                CorpParty.MIDDLE_NME,
+                CorpParty.LAST_NME,
+                CorpParty.APPOINTMENT_DT,
+                CorpParty.CESSATION_DT,
+                Corporation.CORP_NUM,
+                CorpName.CORP_NME,
+                Address.ADDR_LINE_1,
+                Address.POSTAL_CD,
+                Address.CITY,
+                Address.PROVINCE,
+            ).filter(CorpParty.CORP_PARTY_ID==int(id))
+    
     if results.count() > 0:
-        return jsonify(results[0].as_dict())
+        result_dict = {}
+
+        # TODO: switch to marshmallow.
+        result_dict['CORP_PARTY_ID'] = results[0][1]
+        result_dict['FIRST_NME'] = results[0][2]
+        result_dict['MIDDLE_NME'] = results[0][3]
+        result_dict['LAST_NME'] = results[0][4]
+        result_dict['APPOINTMENT_DT'] = results[0][5]
+        result_dict['CESSATION_DT'] = results[0][6]
+        result_dict['CORP_NUM'] = results[0][7]
+        result_dict['CORP_NME'] = results[0][8]
+        result_dict['ADDR_LINE_1'] = results[0][9]
+        result_dict['POSTAL_CD'] = results[0][10]
+        result_dict['CITY'] = results[0][11]
+        result_dict['PROVINCE'] = results[0][12]
+
+        return jsonify(result_dict)
+
     return {}
 
 
