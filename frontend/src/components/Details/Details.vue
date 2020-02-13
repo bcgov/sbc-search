@@ -16,6 +16,7 @@
 <script>
 import { getTextFromValues } from "@/plugins/utils.js";
 import { RESULT_HEADERS } from "@/plugins/config.js";
+import { corpPartySearch } from "@/plugins/SearchApi.js";
 export default {
   methods: {
     getText(data) {
@@ -24,8 +25,16 @@ export default {
   },
   data() {
     return {
-      detail: this.$route.query
+      detail: {}
     };
+  },
+  mounted() {
+    const CORP_PARTY_ID = this.$route.query.CORP_PARTY_ID;
+    if (CORP_PARTY_ID) {
+      corpPartySearch(CORP_PARTY_ID).then(result => {
+        this.detail = result.data;
+      });
+    }
   }
 };
 </script>

@@ -63,8 +63,26 @@ export const RESULT_HEADERS = [
     align: "left"
   },
   {
-    text: "Company Address",
+    text: "Filing Address",
     value: "ADDR_LINE_1",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Province",
+    value: "PROVINCE",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Postal Code",
+    value: "POSTAL_CD",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Corporation Party ID",
+    value: "CORP_PARTY_ID",
     sortable: true,
     align: "left"
   }
