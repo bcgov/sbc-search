@@ -52,6 +52,23 @@ def _get_filter(field, operator, value):
         raise Exception('invalid field: {}'.format(field))
 
 
+def _get_sort_field(field_name):
+
+    model = None    
+    if field_name in ['FIRST_NME','MIDDLE_NME','LAST_NME','APPOINTMENT_DT','CESSATION_DT']: # CorpParty fields
+        model = eval('CorpParty')
+    elif field_name in ['CORP_NUM']: # Corporation fields
+        model = eval('Corporation')
+    elif field_name in ['CORP_NME']: # CorpName fields
+        model = eval('CorpName')
+    elif field_name in ['ADDR_LINE_1']: # Address fields
+        model = eval('Address')
+    else:
+        raise Exception('invalid sort field: {}'.format(field_name))
+
+    return getattr(model, field_name)
+
+
 @app.route('/corporation/search/')
 def corporation_search():
 
@@ -104,10 +121,7 @@ def corpparty_search():
 
     args = request.args
 
-    page = 1
-    if "page" in args:
-        page = int(args.get("page"))
-
+    page = int(args.get("page")) if "page" in args else 1
 
     query = args.get("query")
 
@@ -132,7 +146,6 @@ def corpparty_search():
     clauses = list(zip(fields, operators, values))
 
     # TODO: move queries to model class.
-
     results = CorpParty.query\
             .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
             .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
@@ -179,40 +192,12 @@ def corpparty_search():
     if sort_type is None:
         results = results.order_by(CorpParty.LAST_NME)
     else:
+        field = _get_sort_field(sort_value)
+
         if sort_type == 'desc':
-            if sort_value == 'FIRST_NME':
-                results = results.order_by(desc(CorpParty.FIRST_NME))
-            elif sort_value == 'LAST_NME':
-                results = results.order_by(desc(CorpParty.LAST_NME))
-            elif sort_value == 'MIDDLE_NME':
-                results = results.order_by(desc(CorpParty.MIDDLE_NME))
-            elif sort_value == 'APPOINTMENT_DT':
-                results = results.order_by(desc(CorpParty.APPOINTMENT_DT))
-            elif sort_value == 'CESSATION_DT':
-                results = results.order_by(desc(CorpParty.CESSATION_DT))
-            elif sort_value == 'CORP_NUM':
-                results = results.order_by(desc(Corporation.CORP_NUM))
-            elif sort_value == 'CORP_NME':
-                results = results.order_by(desc(CorpName.CORP_NME))
-            elif sort_value == 'ADDR_LINE_1':
-                results = results.order_by(desc(Address.ADDR_LINE_1))
+            results = results.order_by(desc(field))
         else:
-            if sort_value == 'FIRST_NME':
-                results = results.order_by(CorpParty.FIRST_NME)
-            elif sort_value == 'LAST_NME':
-                results = results.order_by(CorpParty.LAST_NME)
-            elif sort_value == 'MIDDLE_NME':
-                results = results.order_by(CorpParty.MIDDLE_NME)
-            elif sort_value == 'APPOINTMENT_DT':
-                results = results.order_by(CorpParty.APPOINTMENT_DT)
-            elif sort_value == 'CESSATION_DT':
-                results = results.order_by(CorpParty.CESSATION_DT)
-            elif sort_value == 'CORP_NUM':
-                results = results.order_by(Corporation.CORP_NUM)
-            elif sort_value == 'CORP_NME':
-                results = results.order_by(CorpName.CORP_NME)
-            elif sort_value == 'ADDR_LINE_1':
-                results = results.order_by(Address.ADDR_LINE_1)
+            results = results.order_by(field)
     
     total_results = results.count()
 
@@ -238,7 +223,6 @@ def corpparty_search():
         result_dict['PROVINCE'] = row[12]
 
         corp_parties.append(result_dict)
-
     
     return jsonify({'results': corp_parties, 'total': total_results })
 
