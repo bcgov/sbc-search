@@ -7,8 +7,6 @@
       :options.sync="options"
       :server-items-length="totalItems"
       :loading="loading"
-      @update:items-per-page="fetchData"
-      @click.native="handleTableClick"
       @update:page="fetchData"
       :footer-props="{
         'items-per-page-options': [20]
@@ -82,11 +80,9 @@ export default {
       }
 
       let q = query.queryString + `&page=${page}`;
-      console.log(q);
 
       searchApiV2(q, { type }).then(result => {
         this.items = result.data.results;
-
         this.totalItems = result.data.total;
         this.loading = false;
       });

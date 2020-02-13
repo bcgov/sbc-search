@@ -29,11 +29,20 @@
 import Search from "@/components/Search/Search.vue";
 import SearchToggle from "@/components/Search/Toggle.vue";
 import AdvancedSearch from "@/components/Search/AdvancedSearch.vue";
+import { mapState } from "vuex";
 export default {
   components: {
     Search,
     SearchToggle,
     AdvancedSearch
+  },
+  computed: {
+    ...mapState(["filters"])
+  },
+  mounted() {
+    if (this.filters.length > 0) {
+      this.advancedSearchActive = true;
+    }
   },
   data() {
     return {

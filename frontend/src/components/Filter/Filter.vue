@@ -1,18 +1,29 @@
 <template>
   <div>
-    <div class="d-inline-block filter-input-cell mr-2">
-      {{ getText(field, "field") }}
+    <div v-if="mode === 'filter'">
+      <div class="d-inline-block filter-input-cell mr-2">
+        {{ getText(field, "field") }}
+      </div>
+      <div class="d-inline-block filter-input-cell mr-2">
+        {{ getText(operator, "operator") }}
+      </div>
+      <div class="d-inline-block filter-input-cell mr-2">{{ value }}</div>
+      <SbcButton
+        :variant="2"
+        :width="120"
+        title="Remove"
+        @click.native="handleRemove"
+      ></SbcButton>
     </div>
-    <div class="d-inline-block filter-input-cell mr-2">
-      {{ getText(operator, "operator") }}
+    <div v-else>
+      <div class="d-inline-block mr-2">
+        {{ getText(field, "field") }}
+      </div>
+      <div class="d-inline-block mr-2">
+        {{ getText(operator, "operator") }}
+      </div>
+      <div class="d-inline-block mr-2">{{ value }}</div>
     </div>
-    <div class="d-inline-block filter-input-cell mr-2">{{ value }}</div>
-    <SbcButton
-      :variant="2"
-      :width="120"
-      title="Remove"
-      @click.native="handleRemove"
-    ></SbcButton>
   </div>
 </template>
 
@@ -33,6 +44,10 @@ export default {
     },
     value: {
       default: "N/A",
+      type: String
+    },
+    mode: {
+      default: "filter",
       type: String
     }
   },
