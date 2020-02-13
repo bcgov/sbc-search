@@ -13,7 +13,6 @@ export function advancedSearchApi(query) {
 }
 
 export function searchApiV2(params, { type }) {
-  console.log("Type", type);
   if (type === "basic") {
     return searchApi(params);
   } else if (type === "advanced") {

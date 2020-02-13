@@ -41,24 +41,6 @@ export default {
       });
     },
     handleTableClick() {}
-    /*
-      // Column 0 => Last Name
-      // Column 6 => Org Number
-      const column = e.target.cellIndex;
-      if (column === 0) {
-        return this.$router.push({
-          name: "details"
-        });
-      }
-
-      if (column === 6) {
-        return this.$router.push({
-          name: "details"
-        });
-      }
-    }
-    
-    */
   },
   data() {
     return {

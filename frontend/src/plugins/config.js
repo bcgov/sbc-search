@@ -29,43 +29,43 @@ export const RESULT_HEADERS = [
   {
     text: "First Name",
     value: "FIRST_NME",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Appointed",
     value: "APPOINTMENT_DT",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Ceased",
     value: "CESSATION_DT",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Act/Hist",
     value: "acchistory",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Inc/Org #",
     value: "CORP_NUM",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Company Name",
     value: "CORP_NME",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Company Address",
     value: "ADDR_LINE_1",
-    sortable: false,
+    sortable: true,
     align: "left"
   }
 ];
