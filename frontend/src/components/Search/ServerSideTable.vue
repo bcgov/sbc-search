@@ -8,6 +8,8 @@
       :server-items-length="totalItems"
       :loading="loading"
       @update:page="fetchData"
+      @update:sort-by="fetchData"
+      @update:sort-desc="fetchData"
       :footer-props="{
         'items-per-page-options': [20]
       }"
@@ -72,14 +74,18 @@ export default {
     fetchData() {
       this.loading = true;
       const query = this.$route.query;
-      const { page } = this.options;
+      const { page, sortBy, sortDesc } = this.options;
 
       let type = "basic";
       if (query.advanced) {
         type = "advanced";
       }
 
-      let q = query.queryString + `&page=${page}`;
+      const sortOrder = sortDesc[0] ? "desc" : "asc";
+
+      let q =
+        query.queryString +
+        `&page=${page}&sort_type=${sortOrder}&sort_value=${sortBy}`;
 
       searchApiV2(q, { type }).then(result => {
         this.items = result.data.results;
