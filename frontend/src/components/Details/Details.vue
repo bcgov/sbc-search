@@ -18,6 +18,7 @@ import { getTextFromValues } from "@/plugins/utils.js";
 import { RESULT_HEADERS } from "@/plugins/config.js";
 import { omit } from "lodash-es";
 import { corpPartySearch } from "@/plugins/SearchApi.js";
+import dayjs from "dayjs";
 export default {
   computed: {
     filteredDetail() {
@@ -26,6 +27,12 @@ export default {
         "PROVINCE",
         "CORP_PARTY_ID"
       ]);
+      filtered["APPOINTMENT_DT"] = dayjs(filtered["APPOINTMENT_DT"]).format(
+        "YYYY-MM-DD"
+      );
+      filtered["CESSATION_DT"] = dayjs(filtered["CESSATION_DT"]).format(
+        "YYYY-MM-DD"
+      );
       filtered[
         "ADDR_LINE_1"
       ] = `${filtered["ADDR_LINE_1"]}, ${this.detail["POSTAL_CD"]}, ${this.detail["PROVINCE"]}`;

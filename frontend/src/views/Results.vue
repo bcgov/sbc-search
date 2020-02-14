@@ -20,7 +20,7 @@
           Applied Filters
         </h4>
         <SearchFilter
-          v-for="(f, index) in filters"
+          v-for="(f, index) in queryFilters"
           :key="index"
           :field="f.field"
           :operator="f.operator"
@@ -58,9 +58,30 @@ export default {
   async mounted() {
     const query = this.$route.query;
 
-    const queryString = qs.parse(query.queryString);
-    this.queryFilters = omit(queryString, "mode");
-    this.queryMode = pick(queryString, "mode");
+    if (query.advanced) {
+      const queryString = qs.parse(query.queryString);
+      const queryFilters = omit(queryString, "mode");
+
+      if (typeof queryFilters.field === "string") {
+        this.queryFilters.push(queryFilters);
+        return;
+      }
+
+      if (Array.isArray(queryFilters.field)) {
+        const length = queryFilters.field.length;
+
+        for (let i = 0; i < length; i++) {
+          this.queryFilters.push({
+            field: queryFilters.field[i],
+            operator: queryFilters.operator[i],
+            value: queryFilters.value[i]
+          });
+        }
+      }
+
+      this.queryMode = pick(queryString, "mode");
+      console.log("Query Filters", this.queryFilters);
+    }
   }
 };
 </script>

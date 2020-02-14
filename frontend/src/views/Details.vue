@@ -4,9 +4,6 @@
       <h1 class="display-1 mb-6 font-weight-bold">
         CorpParty Details
       </h1>
-      <h5 class="subtitle-1">
-        Lorem ipsum
-      </h5>
     </section>
     <section class="sbc-section bg-lavender pt-12">
       <h2 class="headline text-center mb-10">
