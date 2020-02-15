@@ -147,7 +147,7 @@ def corpparty_search():
     clauses = list(zip(fields, operators, values))
 
     # TODO: move queries to model class.
-    results = CorpParty.query\
+    results = CorpParty.query.filter(CorpName.END_EVENT_ID == None)\
             .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
             .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
             .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
@@ -203,7 +203,7 @@ def corpparty_search():
     total_results = results.count()
 
     # Pagination
-    results = results.paginate(int(page), 5, False)
+    results = results.paginate(int(page), 20, False)
 
     corp_parties = []
     for row in results.items:
