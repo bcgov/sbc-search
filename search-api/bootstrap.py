@@ -6,6 +6,8 @@ from models import (
     CorpParty, 
     CorpName, 
     Address, 
+    Office, 
+    OfficeType, 
     OfficerType, 
     OfficesHeld, 
     db,
@@ -16,6 +18,8 @@ db.session.query(Corporation).delete(synchronize_session=False)
 db.session.query(CorpParty).delete(synchronize_session=False)
 db.session.query(CorpName).delete(synchronize_session=False)
 db.session.query(Address).delete(synchronize_session=False)
+db.session.query(OfficeType).delete(synchronize_session=False)
+db.session.query(Office).delete(synchronize_session=False)
 db.session.query(OfficerType).delete(synchronize_session=False)
 db.session.query(OfficesHeld).delete(synchronize_session=False)
 db.session.commit()
