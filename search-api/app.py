@@ -147,7 +147,10 @@ def corpparty_search():
     clauses = list(zip(fields, operators, values))
 
     # TODO: move queries to model class.
-    results = CorpParty.query.filter(CorpName.END_EVENT_ID == None)\
+    results = CorpParty.query\
+            .filter(CorpParty.END_EVENT_ID == None)\
+            .filter(CorpParty.PARTY_TYP_CD.in_(['FIO', 'DIR','OFF']))\
+            .filter(CorpName.END_EVENT_ID == None)\
             .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
             .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
             .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
