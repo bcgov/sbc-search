@@ -10,6 +10,8 @@ from models import (
     CorpParty, 
     CorpName, 
     Address, 
+    Office,
+    OfficeType,
     OfficesHeld, 
     OfficerType, 
     app,
@@ -75,9 +77,7 @@ def corporation_search():
 
     args = request.args
 
-    page = 1
-    if "page" in args:
-        page = int(args.get("page"))
+    page = int(args.get("page")) if "page" in args else 1
 
     if "query" not in args:
         return "No search query was received", 400
@@ -87,20 +87,57 @@ def corporation_search():
     # TODO: move queries to model class.
     results = Corporation.query\
         .join(CorpParty, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
-        .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)
+        .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
+        .join(Office, Office.CORP_NUM == Corporation.CORP_NUM)\
+        .join(Address, Office.MAILING_ADDR_ID == Address.ADDR_ID)\
+        .add_columns(\
+            Corporation.CORP_NUM,
+            CorpName.CORP_NME,
+            Corporation.TRANSITION_DT,
+            Address.ADDR_LINE_1,
+            Address.POSTAL_CD,
+            Address.CITY,
+            Address.PROVINCE,
+        )\
+        .filter(Office.END_EVENT_ID == None)\
+        .filter(CorpName.END_EVENT_ID == None)
     
     results = results.filter(
-        (Corporation.CORP_NUM == query) |
-        (CorpName.CORP_NME.contains(query)) |
-        (CorpParty.FIRST_NME.contains(query)) |
-        (CorpParty.LAST_NME.contains(query)))
+            (Corporation.CORP_NUM == query) |
+            (CorpName.CORP_NME.contains(query)) |
+            (CorpParty.FIRST_NME.contains(query)) |
+            (CorpParty.LAST_NME.contains(query)))
     
+    total_results = results.count()
+
+    # Pagination
     results = results.paginate(int(page), 20, False)
+
+    corporations = []
+    for row in results.items:
+        result_dict = {}
+
+        # TODO: switch to marshmallow.
+        result_dict['CORP_NUM'] = row[1]
+        result_dict['CORP_NME'] = row[2]
+        result_dict['TRANSITION_DT'] = row[3]
+        result_dict['ADDR_LINE_1'] = row[4]
+        result_dict['POSTAL_CD'] = row[5]
+        result_dict['CITY'] = row[6]
+        result_dict['PROVINCE'] = row[7]
+
+        corporations.append(result_dict)
     
     # TODO: include corpname and corpparties in serialized child using Marshmallow
-    return jsonify({
-        'results': [row.as_dict() for row in results.items]
-    })
+    return jsonify({'results': corporations, 'total': total_results })
+
+
+@app.route('/corporation/<id>')
+def corporation(id):
+    results = Corporation.query.filter_by(CORP_NUM=id)
+    if results.count() > 0:
+        return jsonify(results[0].as_dict())
+    return {}
 
 
 @app.route('/person/search/')
@@ -302,14 +339,6 @@ def officesheld(corppartyid):
         offices.append(result_dict)
     
     return jsonify({'results': offices})
-
-
-@app.route('/corporation/<id>')
-def corporation(id):
-    results = Corporation.query.filter_by(CORP_NUM=id)
-    if results.count() > 0:
-        return jsonify(results[0].as_dict())
-    return {}
 
 
 if __name__ == '__main__':
