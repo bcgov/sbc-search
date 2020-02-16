@@ -134,9 +134,41 @@ def corporation_search():
 
 @app.route('/corporation/<id>')
 def corporation(id):
-    results = Corporation.query.filter_by(CORP_NUM=id)
+
+    # TODO: move queries to model class.
+    results = Corporation.query\
+        .join(Office, Office.CORP_NUM == Corporation.CORP_NUM)\
+        .join(Address, Office.MAILING_ADDR_ID == Address.ADDR_ID)\
+        .add_columns(\
+            Corporation.CORP_NUM,
+            Corporation.TRANSITION_DT,
+            Address.ADDR_LINE_1,
+            Address.POSTAL_CD,
+            Address.CITY,
+            Address.PROVINCE,
+            Office.OFFICE_TYP_CD,
+        )\
+        .filter(Office.END_EVENT_ID == None)\
+        .filter(Corporation.CORP_NUM == id)
+    
     if results.count() > 0:
-        return jsonify(results[0].as_dict())
+
+        names = CorpName.query.filter_by(CORP_NUM = id).order_by(desc(CorpName.END_EVENT_ID))
+
+        result_dict = {}
+
+        # TODO: switch to marshmallow.
+        result_dict['CORP_NUM'] = results[0][1]
+        result_dict['TRANSITION_DT'] = results[0][2]
+        result_dict['ADDR_LINE_1'] = results[0][3]
+        result_dict['POSTAL_CD'] = results[0][4]
+        result_dict['CITY'] = results[0][5]
+        result_dict['PROVINCE'] = results[0][6]
+        result_dict['OFFICE_TYP_CD'] = results[0][7]
+        result_dict['NAMES'] = [row.as_dict() for row in names]
+
+        return jsonify(result_dict)
+
     return {}
 
 
