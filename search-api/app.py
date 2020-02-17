@@ -72,12 +72,9 @@ def _get_sort_field(field_name):
         raise Exception('invalid sort field: {}'.format(field_name))
 
 
-@app.route('/corporation/search/')
-def corporation_search():
+def _get_corporation_search_results(args):
 
     args = request.args
-
-    page = int(args.get("page")) if "page" in args else 1
 
     if "query" not in args:
         return "No search query was received", 400
@@ -108,9 +105,23 @@ def corporation_search():
             (CorpParty.FIRST_NME.contains(query)) |
             (CorpParty.LAST_NME.contains(query)))
     
+    return results
+
+
+@app.route('/corporation/search/')
+def corporation_search():
+
+    # Query string arguments
+    args = request.args
+
+    # Fetching results
+    results = _get_corporation_search_results(args)
+    
+    # Total number of results
     total_results = results.count()
 
     # Pagination
+    page = int(args.get("page")) if "page" in args else 1
     results = results.paginate(int(page), 20, False)
 
     corporations = []
