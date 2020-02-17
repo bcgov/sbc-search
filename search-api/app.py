@@ -10,6 +10,8 @@ CORS(app)
 from functools import reduce
 from models import (
     Corporation, 
+    CorpOpState,
+    CorpState,
     CorpParty, 
     CorpName, 
     Address, 
@@ -205,6 +207,8 @@ def corporation(id):
 
     # TODO: move queries to model class.
     results = Corporation.query\
+        .join(CorpState, CorpState.CORP_NUM == Corporation.CORP_NUM)\
+        .join(CorpOpState, CorpOpState.STATE_TYP_CD == CorpState.STATE_TYP_CD)\
         .join(Office, Office.CORP_NUM == Corporation.CORP_NUM)\
         .join(Address, Office.MAILING_ADDR_ID == Address.ADDR_ID)\
         .add_columns(\
@@ -215,8 +219,11 @@ def corporation(id):
             Address.CITY,
             Address.PROVINCE,
             Office.OFFICE_TYP_CD,
+            CorpOpState.STATE_TYP_CD,
+            CorpOpState.FULL_DESC
         )\
         .filter(Office.END_EVENT_ID == None)\
+        .filter(CorpState.END_EVENT_ID == None)\
         .filter(Corporation.CORP_NUM == id)
     
     if results.count() > 0:
@@ -233,6 +240,8 @@ def corporation(id):
         result_dict['CITY'] = results[0][5]
         result_dict['PROVINCE'] = results[0][6]
         result_dict['OFFICE_TYP_CD'] = results[0][7]
+        result_dict['STATE_TYP_CD'] = results[0][8]
+        result_dict['FULL_DESC'] = results[0][9]
         result_dict['NAMES'] = [row.as_dict() for row in names]
 
         return jsonify(result_dict)
