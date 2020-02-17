@@ -293,6 +293,8 @@ def _get_corpparty_search_results(args):
             .filter(CorpParty.PARTY_TYP_CD.in_(['FIO', 'DIR','OFF']))\
             .filter(CorpName.END_EVENT_ID == None)\
             .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
+            .join(CorpState, CorpState.CORP_NUM == Corporation.CORP_NUM)\
+            .join(CorpOpState, CorpOpState.STATE_TYP_CD == CorpState.STATE_TYP_CD)\
             .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
             .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
             .add_columns(\
@@ -308,6 +310,8 @@ def _get_corpparty_search_results(args):
                 Address.POSTAL_CD,
                 Address.CITY,
                 Address.PROVINCE,
+                CorpOpState.STATE_TYP_CD,
+                CorpOpState.FULL_DESC,
             )
     
     # Simple mode - return reasonable results for a single search string:
@@ -380,6 +384,8 @@ def corpparty_search():
         result_dict['POSTAL_CD'] = row[10]
         result_dict['CITY'] = row[11]
         result_dict['PROVINCE'] = row[12]
+        result_dict['STATE_TYP_CD'] = row[13]
+        result_dict['FULL_DESC'] = row[14]
 
         corp_parties.append(result_dict)
     
@@ -409,12 +415,13 @@ def corpparty_search_export():
         _ = sheet.cell(column=4, row=1, value="Last Name")
         _ = sheet.cell(column=5, row=1, value="Appointment Date")
         _ = sheet.cell(column=6, row=1, value="Cessation Date")
-        _ = sheet.cell(column=7, row=1, value="Corporation Id")
-        _ = sheet.cell(column=8, row=1, value="Corp Name")
-        _ = sheet.cell(column=9, row=1, value="Address")
-        _ = sheet.cell(column=10, row=1, value="Postal Code")
-        _ = sheet.cell(column=11, row=1, value="City")
-        _ = sheet.cell(column=12, row=1, value="Province")
+        _ = sheet.cell(column=7, row=1, value="Act/Hist")
+        _ = sheet.cell(column=8, row=1, value="Corporation Id")
+        _ = sheet.cell(column=9, row=1, value="Corp Name")
+        _ = sheet.cell(column=10, row=1, value="Address")
+        _ = sheet.cell(column=11, row=1, value="Postal Code")
+        _ = sheet.cell(column=12, row=1, value="City")
+        _ = sheet.cell(column=13, row=1, value="Province")
         
         index = 2
         for row in results:
@@ -431,18 +438,20 @@ def corpparty_search_export():
             _ = sheet.cell(column=5, row=index, value=row[5])
             # CorpParty.CESSATION_DT
             _ = sheet.cell(column=6, row=index, value=row[6])
+            # CorOpState.FULL_DESC
+            _ = sheet.cell(column=7, row=index, value=row[14])
             # Corporation.CORP_NUM
-            _ = sheet.cell(column=7, row=index, value=row[7])
+            _ = sheet.cell(column=8, row=index, value=row[7])
             # CorpName.CORP_NME
-            _ = sheet.cell(column=8, row=index, value=row[8])
+            _ = sheet.cell(column=9, row=index, value=row[8])
             # Address.ADDR_LINE_1
-            _ = sheet.cell(column=9, row=index, value=row[9])
+            _ = sheet.cell(column=10, row=index, value=row[9])
             # Address.POSTAL_CD
-            _ = sheet.cell(column=10, row=index, value=row[10])
+            _ = sheet.cell(column=11, row=index, value=row[10])
             # Address.CITY
-            _ = sheet.cell(column=11, row=index, value=row[11])
+            _ = sheet.cell(column=12, row=index, value=row[11])
             # Address.PROVINCE
-            _ = sheet.cell(column=12, row=index, value=row[12])
+            _ = sheet.cell(column=13, row=index, value=row[12])
             
             index += 1
 
@@ -459,6 +468,8 @@ def corpparty_search_export():
 def person(id):
     results = CorpParty.query\
             .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
+            .join(CorpState, CorpState.CORP_NUM == Corporation.CORP_NUM)\
+            .join(CorpOpState, CorpOpState.STATE_TYP_CD == CorpState.STATE_TYP_CD)\
             .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
             .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
             .add_columns(\
@@ -474,6 +485,8 @@ def person(id):
                 Address.POSTAL_CD,
                 Address.CITY,
                 Address.PROVINCE,
+                CorpOpState.STATE_TYP_CD,
+                CorpOpState.FULL_DESC,
             ).filter(CorpParty.CORP_PARTY_ID==int(id))
     
     if results.count() > 0:
@@ -492,6 +505,8 @@ def person(id):
         result_dict['POSTAL_CD'] = results[0][10]
         result_dict['CITY'] = results[0][11]
         result_dict['PROVINCE'] = results[0][12]
+        result_dict['STATE_TYP_CD'] = results[0][13]
+        result_dict['FULL_DESC'] = results[0][14]
 
         return jsonify(result_dict)
 
