@@ -3,9 +3,8 @@ USER root
 
 
 # Create working directory
-RUN mkdir /opt/app && chmod 755 /opt/app
+RUN mkdir /opt/app && chmod 755 /opt/app && mkdir /opt/app/tmp && chmod 755 /opt/app/tmp
 WORKDIR /opt/app
-
 
 # Install the requirements
 COPY ./requirements/repo-libraries.txt .

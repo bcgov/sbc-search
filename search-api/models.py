@@ -76,6 +76,38 @@ class Address(BaseModel):
     PROVINCE_STATE_NAME = db.Column(db.String(30))
 
 
+class CorpOpState(BaseModel):
+    __tablename__ = 'CORP_OP_STATE'
+    """
+    CORP_OP_STATE                  STATE_TYP_CD                   CHAR                           3                              31
+    CORP_OP_STATE                  OP_STATE_TYP_CD                CHAR                           3                              31
+    CORP_OP_STATE                  SHORT_DESC                     VARCHAR2                       15                             31
+    CORP_OP_STATE                  FULL_DESC                      VARCHAR2                       40                             31
+    """
+
+    STATE_TYP_CD = db.Column(db.String(3), primary_key=True)
+    OP_STATE_TYP_CD = db.Column(db.String(3))
+    SHORT_DESC = db.Column(db.String(15))
+    FULL_DESC = db.Column(db.String(40))
+
+
+class CorpState(BaseModel):
+    __tablename__ = 'CORP_STATE'
+    """
+    CORP_STATE                     CORP_NUM                       VARCHAR2                       10                             4137221
+    CORP_STATE                     START_EVENT_ID                 NUMBER                         22                             4137221
+    CORP_STATE                     END_EVENT_ID                   NUMBER                         22                             1930459
+    CORP_STATE                     STATE_TYP_CD                   CHAR                           3                              4137221
+    CORP_STATE                     DD_CORP_NUM                    VARCHAR2                       10                             11443
+    """
+
+    CORP_NUM = db.Column(db.String(10), primary_key=True)
+    START_EVENT_ID = db.Column(db.Integer, primary_key=True)
+    END_EVENT_ID = db.Column(db.Integer)
+    STATE_TYP_CD = db.Column(db.String(3))
+    DD_CORP_NUM = db.Column(db.String(10))
+
+
 class Corporation(BaseModel):
     __tablename__ = 'CORPORATION'
     """

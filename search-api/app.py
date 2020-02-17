@@ -1,4 +1,7 @@
-from flask import Flask, request, jsonify
+from openpyxl import Workbook
+from tempfile import NamedTemporaryFile
+
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from sqlalchemy import desc, func
 
@@ -172,8 +175,7 @@ def corporation(id):
     return {}
 
 
-@app.route('/person/search/')
-def corpparty_search():
+def _get_corpparty_search_results(args):
     """
     Querystring parameters as follows:
 
@@ -188,8 +190,6 @@ def corpparty_search():
     For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
     curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=LAST_NME&operator=exact&value=Little&mode=ALL"
     """
-
-    args = request.args
 
     page = int(args.get("page")) if "page" in args else 1
 
@@ -272,9 +272,23 @@ def corpparty_search():
         else:
             results = results.order_by(field)
     
+    return results
+
+
+@app.route('/person/search/')
+def corpparty_search():
+
+    # Query string arguments
+    args = request.args
+
+    # Fetching results
+    results = _get_corpparty_search_results(args)
+    
+    # Total number of results
     total_results = results.count()
 
     # Pagination
+    page = int(args.get("page")) if "page" in args else 1
     results = results.paginate(int(page), 20, False)
 
     corp_parties = []
@@ -298,6 +312,75 @@ def corpparty_search():
         corp_parties.append(result_dict)
     
     return jsonify({'results': corp_parties, 'total': total_results })
+
+
+@app.route('/person/search/export/')
+def corpparty_search_export():
+
+    # Query string arguments
+    args = request.args
+
+    # Fetching results
+    results = _get_corpparty_search_results(args)
+
+    # Exporting to Excel
+    wb = Workbook()
+
+    with NamedTemporaryFile(mode='w+b', dir='tmp', delete=True) as tmp:
+
+        sheet = wb.active
+
+        # Sheet headers (first row)
+        _ = sheet.cell(column=1, row=1, value="Person Id")
+        _ = sheet.cell(column=2, row=1, value="First Name")
+        _ = sheet.cell(column=3, row=1, value="Middle Name")
+        _ = sheet.cell(column=4, row=1, value="Last Name")
+        _ = sheet.cell(column=5, row=1, value="Appointment Date")
+        _ = sheet.cell(column=6, row=1, value="Cessation Date")
+        _ = sheet.cell(column=7, row=1, value="Corporation Id")
+        _ = sheet.cell(column=8, row=1, value="Corp Name")
+        _ = sheet.cell(column=9, row=1, value="Address")
+        _ = sheet.cell(column=10, row=1, value="Postal Code")
+        _ = sheet.cell(column=11, row=1, value="City")
+        _ = sheet.cell(column=12, row=1, value="Province")
+        
+        index = 2
+        for row in results:
+            
+            # CorpParty.CORP_PARTY_ID
+            _ = sheet.cell(column=1, row=index, value=row[1])
+            # CorpParty.FIRST_NME
+            _ = sheet.cell(column=2, row=index, value=row[2])
+            # CorpParty.MIDDLE_NME
+            _ = sheet.cell(column=3, row=index, value=row[3])
+            # CorpParty.LAST_NME
+            _ = sheet.cell(column=4, row=index, value=row[4])
+            # CorpParty.APPOINTMENT_DT
+            _ = sheet.cell(column=5, row=index, value=row[5])
+            # CorpParty.CESSATION_DT
+            _ = sheet.cell(column=6, row=index, value=row[6])
+            # Corporation.CORP_NUM
+            _ = sheet.cell(column=7, row=index, value=row[7])
+            # CorpName.CORP_NME
+            _ = sheet.cell(column=8, row=index, value=row[8])
+            # Address.ADDR_LINE_1
+            _ = sheet.cell(column=9, row=index, value=row[9])
+            # Address.POSTAL_CD
+            _ = sheet.cell(column=10, row=index, value=row[10])
+            # Address.CITY
+            _ = sheet.cell(column=11, row=index, value=row[11])
+            # Address.PROVINCE
+            _ = sheet.cell(column=12, row=index, value=row[12])
+            
+            index += 1
+
+        filename = "{}.{}".format(tmp.name,"xlsx")
+        wb.save(filename=filename)
+
+        # file name without the path
+        simple_name = filename.split('/')[len(filename.split('/'))-1]        
+
+        return send_from_directory('tmp',simple_name,as_attachment=True)
 
 
 @app.route('/person/<id>')
