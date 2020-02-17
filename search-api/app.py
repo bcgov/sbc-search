@@ -146,6 +146,60 @@ def corporation_search():
     return jsonify({'results': corporations, 'total': total_results })
 
 
+@app.route('/corporation/search/export/')
+def corporation_search_export():
+
+    # Query string arguments
+    args = request.args
+
+    # Fetching results
+    results = _get_corporation_search_results(args)
+
+    # Exporting to Excel
+    wb = Workbook()
+
+    with NamedTemporaryFile(mode='w+b', dir='tmp', delete=True) as tmp:
+
+        sheet = wb.active
+
+        # Sheet headers (first row)
+        _ = sheet.cell(column=1, row=1, value="Corporation Id")
+        _ = sheet.cell(column=2, row=1, value="Corp Name")
+        _ = sheet.cell(column=3, row=1, value="Transition Date")
+        _ = sheet.cell(column=4, row=1, value="Address")
+        _ = sheet.cell(column=5, row=1, value="Postal Code")
+        _ = sheet.cell(column=6, row=1, value="City")
+        _ = sheet.cell(column=7, row=1, value="Province")
+        
+        index = 2
+        for row in results:
+            
+            # Corporation.CORP_NUM
+            _ = sheet.cell(column=1, row=index, value=row[1])
+            # CorpName.CORP_NME
+            _ = sheet.cell(column=2, row=index, value=row[2])
+            # Corporation.TRANSITION_DT
+            _ = sheet.cell(column=3, row=index, value=row[3])
+            # Address.ADDR_LINE_1
+            _ = sheet.cell(column=4, row=index, value=row[4])
+            # Address.POSTAL_CD
+            _ = sheet.cell(column=5, row=index, value=row[5])
+            # Address.CITY
+            _ = sheet.cell(column=6, row=index, value=row[6])
+            # Address.PROVINCE
+            _ = sheet.cell(column=7, row=index, value=row[7])
+            
+            index += 1
+
+        filename = "{}.{}".format(tmp.name,"xlsx")
+        wb.save(filename=filename)
+
+        # file name without the path
+        simple_name = filename.split('/')[len(filename.split('/'))-1]        
+
+        return send_from_directory('tmp',simple_name,as_attachment=True)
+
+
 @app.route('/corporation/<id>')
 def corporation(id):
 
@@ -201,8 +255,6 @@ def _get_corpparty_search_results(args):
     For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
     curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=LAST_NME&operator=exact&value=Little&mode=ALL"
     """
-
-    page = int(args.get("page")) if "page" in args else 1
 
     query = args.get("query")
 
