@@ -73,6 +73,106 @@ def _get_sort_field(field_name):
         raise Exception('invalid sort field: {}'.format(field_name))
 
 
+def _get_corpparty_search_results(args):
+    """
+    Querystring parameters as follows:
+
+    You may provide query=<string> for a simple search, OR any number of querystring triples such as
+
+    field=ANY_NME|FIRST_NME|LAST_NME|<any column name>
+    &operator=exact|contains|startswith|endswith
+    &value=<string>
+    &sort_type=asc|desc
+    &sort_value=ANY_NME|FIRST_NME|LAST_NME|<any column name>
+
+    For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
+    curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=LAST_NME&operator=exact&value=Little&mode=ALL"
+    """
+
+    page = int(args.get("page")) if "page" in args else 1
+
+    query = args.get("query")
+
+    fields = args.getlist('field')
+    operators = args.getlist('operator')
+    values = args.getlist('value')
+    mode = args.get('mode')
+    sort_type = args.get('sort_type')
+    sort_value = args.get('sort_value')
+
+    if query and len(fields) > 0:
+        raise Exception("use simple query or advanced. don't mix")
+    
+    # Only triples of clauses are allowed. So, the same number of fields, ops and values.
+    if len(fields) != len(operators) or len(operators) != len(values):
+        raise Exception("mismatched query param lengths: fields:{} operators:{} values:{}".format(
+            len(fields),
+            len(operators),
+            len(values)))
+
+    # Zip the lists, so ('LAST_NME', 'FIRST_NME') , ('contains', 'exact'), ('Sky', 'Apple') => (('LAST_NME', 'contains', 'Sky'), ('FIRST_NME', 'exact', 'Apple'))
+    clauses = list(zip(fields, operators, values))
+
+    # TODO: move queries to model class.
+    results = CorpParty.query\
+            .filter(CorpParty.END_EVENT_ID == None)\
+            .filter(CorpParty.PARTY_TYP_CD.in_(['FIO', 'DIR','OFF']))\
+            .filter(CorpName.END_EVENT_ID == None)\
+            .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
+            .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
+            .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
+            .add_columns(\
+                CorpParty.CORP_PARTY_ID, 
+                CorpParty.FIRST_NME, 
+                CorpParty.MIDDLE_NME,
+                CorpParty.LAST_NME,
+                CorpParty.APPOINTMENT_DT,
+                CorpParty.CESSATION_DT,
+                Corporation.CORP_NUM,
+                CorpName.CORP_NME,
+                Address.ADDR_LINE_1,
+                Address.POSTAL_CD,
+                Address.CITY,
+                Address.PROVINCE,
+            )
+    
+    # Simple mode - return reasonable results for a single search string:
+    if query:
+        results = results.filter((Corporation.CORP_NUM == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query)))
+    # Advanced mode - return precise results for a set of clauses.
+    elif clauses:
+
+        # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
+        if mode == 'ALL':
+            def fn(accumulator, s):
+                return accumulator & _get_filter(*s)
+        else:
+            def fn(accumulator, s):
+                return accumulator | _get_filter(*s)
+        
+        # We use reduce here to join all the items in clauses with the & operator or the | operator.
+        # Similar to if we did "|".join(clause), but calling the boolean operator instead.
+        filter_grp = reduce(
+            fn,
+            clauses[1:],
+            _get_filter(*clauses[0])
+            )
+        results = results.filter(filter_grp)
+
+    # Sorting
+    if sort_type is None:
+        results = results.order_by(CorpParty.LAST_NME)
+    else:
+        field = _get_sort_field(sort_value)
+
+        if sort_type == 'desc':
+            results = results.order_by(desc(field))
+        else:
+            results = results.order_by(field)
+    
+    return results
+
+
 @app.route('/corporation/search/')
 def corporation_search():
 
@@ -108,107 +208,18 @@ def corporation_search():
 
 @app.route('/person/search/')
 def corpparty_search():
-    """
-    Querystring parameters as follows:
 
-    You may provide query=<string> for a simple search, OR any number of querystring triples such as
-
-    field=ANY_NME|FIRST_NME|LAST_NME|<any column name>
-    &operator=exact|contains|startswith|endswith
-    &value=<string>
-    &sort_type=asc|desc
-    &sort_value=ANY_NME|FIRST_NME|LAST_NME|<any column name>
-
-    For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
-    curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=LAST_NME&operator=exact&value=Little&mode=ALL"
-    """
-
+    # Query string arguments
     args = request.args
 
-    page = int(args.get("page")) if "page" in args else 1
-
-    query = args.get("query")
-
-    fields = args.getlist('field')
-    operators = args.getlist('operator')
-    values = args.getlist('value')
-    mode = args.get('mode')
-    sort_type = args.get('sort_type')
-    sort_value = args.get('sort_value')
-
-    if query and len(fields) > 0:
-        raise Exception("use simple query or advanced. don't mix")
+    # Fetching results
+    results = _get_corpparty_search_results(args)
     
-    # Only triples of clauses are allowed. So, the same number of fields, ops and values.
-    if len(fields) != len(operators) or len(operators) != len(values):
-        raise Exception("mismatched query param lengths: fields:{} operators:{} values:{}".format(
-            len(fields),
-            len(operators),
-            len(values)))
-
-    # Zip the lists, so ('LAST_NME', 'FIRST_NME') , ('contains', 'exact'), ('Sky', 'Apple') => (('LAST_NME', 'contains', 'Sky'), ('FIRST_NME', 'exact', 'Apple'))
-    clauses = list(zip(fields, operators, values))
-
-    # TODO: move queries to model class.
-    results = CorpParty.query\
-            .filter(CorpParty.END_EVENT_ID == None)\
-            .filter(CorpParty.PARTY_TYP_CD.in_(['FIO', 'DIR','OFF']))\
-            .filter(CorpName.END_EVENT_ID == None)\
-            .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
-            .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
-            .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
-            .add_columns(\
-                CorpParty.CORP_PARTY_ID, 
-                CorpParty.FIRST_NME, 
-                CorpParty.MIDDLE_NME,
-                CorpParty.LAST_NME,
-                CorpParty.APPOINTMENT_DT,
-                CorpParty.CESSATION_DT,
-                Corporation.CORP_NUM,
-                CorpName.CORP_NME,
-                Address.ADDR_LINE_1,
-                Address.POSTAL_CD,
-                Address.CITY,
-                Address.PROVINCE,
-            )
-    
-    # Simple mode - return reasonable results for a single search string:
-    if query:
-        results = results.filter((Corporation.CORP_NUM == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query)))
-    # Advanced mode - return precise results for a set of clauses.
-    elif clauses:
-
-        # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
-        if mode == 'ALL':
-            def fn(accumulator, s):
-                return accumulator & _get_filter(*s)
-        else:
-            def fn(accumulator, s):
-                return accumulator | _get_filter(*s)
-        
-        # We use reduce here to join all the items in clauses with the & operator or the | operator.
-        # Similar to if we did "|".join(clause), but calling the boolean operator instead.
-        filter_grp = reduce(
-            fn,
-            clauses[1:],
-            _get_filter(*clauses[0])
-            )
-        results = results.filter(filter_grp)
-
-    # Sorting
-    if sort_type is None:
-        results = results.order_by(CorpParty.LAST_NME)
-    else:
-        field = _get_sort_field(sort_value)
-
-        if sort_type == 'desc':
-            results = results.order_by(desc(field))
-        else:
-            results = results.order_by(field)
-    
+    # Total number of results
     total_results = results.count()
 
     # Pagination
+    page = int(args.get("page")) if "page" in args else 1
     results = results.paginate(int(page), 20, False)
 
     corp_parties = []
@@ -237,88 +248,11 @@ def corpparty_search():
 @app.route('/person/search/export/')
 def corpparty_search_export():
 
+    # Query string arguments
     args = request.args
 
-    page = int(args.get("page")) if "page" in args else 1
-
-    query = args.get("query")
-
-    fields = args.getlist('field')
-    operators = args.getlist('operator')
-    values = args.getlist('value')
-    mode = args.get('mode')
-    sort_type = args.get('sort_type')
-    sort_value = args.get('sort_value')
-
-    if query and len(fields) > 0:
-        raise Exception("use simple query or advanced. don't mix")
-    
-    # Only triples of clauses are allowed. So, the same number of fields, ops and values.
-    if len(fields) != len(operators) or len(operators) != len(values):
-        raise Exception("mismatched query param lengths: fields:{} operators:{} values:{}".format(
-            len(fields),
-            len(operators),
-            len(values)))
-
-    # Zip the lists, so ('LAST_NME', 'FIRST_NME') , ('contains', 'exact'), ('Sky', 'Apple') => (('LAST_NME', 'contains', 'Sky'), ('FIRST_NME', 'exact', 'Apple'))
-    clauses = list(zip(fields, operators, values))
-
-    # TODO: move queries to model class.
-    results = CorpParty.query\
-            .filter(CorpParty.END_EVENT_ID == None)\
-            .filter(CorpParty.PARTY_TYP_CD.in_(['FIO', 'DIR','OFF']))\
-            .filter(CorpName.END_EVENT_ID == None)\
-            .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
-            .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
-            .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
-            .add_columns(\
-                CorpParty.CORP_PARTY_ID, 
-                CorpParty.FIRST_NME, 
-                CorpParty.MIDDLE_NME,
-                CorpParty.LAST_NME,
-                CorpParty.APPOINTMENT_DT,
-                CorpParty.CESSATION_DT,
-                Corporation.CORP_NUM,
-                CorpName.CORP_NME,
-                Address.ADDR_LINE_1,
-                Address.POSTAL_CD,
-                Address.CITY,
-                Address.PROVINCE,
-            )
-    
-    # Simple mode - return reasonable results for a single search string:
-    if query:
-        results = results.filter((Corporation.CORP_NUM == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query)))
-    # Advanced mode - return precise results for a set of clauses.
-    elif clauses:
-
-        # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
-        if mode == 'ALL':
-            def fn(accumulator, s):
-                return accumulator & _get_filter(*s)
-        else:
-            def fn(accumulator, s):
-                return accumulator | _get_filter(*s)
-        
-        # We use reduce here to join all the items in clauses with the & operator or the | operator.
-        # Similar to if we did "|".join(clause), but calling the boolean operator instead.
-        filter_grp = reduce(
-            fn,
-            clauses[1:],
-            _get_filter(*clauses[0])
-            )
-        results = results.filter(filter_grp)
-
-    # Sorting
-    if sort_type is None:
-        results = results.order_by(CorpParty.LAST_NME)
-    else:
-        field = _get_sort_field(sort_value)
-
-        if sort_type == 'desc':
-            results = results.order_by(desc(field))
-        else:
-            results = results.order_by(field)
+    # Fetching results
+    results = _get_corpparty_search_results(args)
 
     # Exporting to Excel
     wb = Workbook()
