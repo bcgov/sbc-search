@@ -3,6 +3,8 @@ from dateutil.relativedelta import *
 from datetime import date
 from models import (
     Corporation, 
+    CorpOpState,
+    CorpState,
     CorpParty, 
     CorpName, 
     Address, 
@@ -17,6 +19,8 @@ from models import (
 db.session.query(Corporation).delete(synchronize_session=False)
 db.session.query(CorpParty).delete(synchronize_session=False)
 db.session.query(CorpName).delete(synchronize_session=False)
+db.session.query(CorpOpState).delete(synchronize_session=False)
+db.session.query(CorpState).delete(synchronize_session=False)
 db.session.query(Address).delete(synchronize_session=False)
 db.session.query(OfficeType).delete(synchronize_session=False)
 db.session.query(Office).delete(synchronize_session=False)
@@ -212,6 +216,25 @@ db.session.add(officer_type3)
 
 officer_types = ['SEC','DIR','INC']
 
+#CorpOpState
+corp_op_state1 = CorpOpState(
+    STATE_TYP_CD = 'AAA',
+    OP_STATE_TYP_CD = 'ACT',
+    SHORT_DESC = 'Act',
+    FULL_DESC = 'Active',
+)
+db.session.add(corp_op_state1)
+
+corp_op_state2 = CorpOpState(
+    STATE_TYP_CD = 'HHH',
+    OP_STATE_TYP_CD = 'H',
+    SHORT_DESC = 'Hist',
+    FULL_DESC = 'Historical',
+)
+db.session.add(corp_op_state2)
+
+corp_op_states = ['AAA','HHH']
+
 index = 0
 while index < len(CORP_NUMS):
 
@@ -236,11 +259,28 @@ while index < len(CORP_NUMS):
     db.session.add(corporation)
     
     # CORPNAME
-    corp_name = CorpName(
+    # corp_name1 = CorpName(
+    #     CORP_NUM = CORP_NUMS[index],
+    #     CORP_NAME_SEQ_NUM = 1,
+    #     CORP_NME = "OLD " + CORP_NAMES[index],
+    #     END_EVENT_ID = index+1,
+    # )
+    # db.session.add(corp_name1)
+
+    corp_name2 = CorpName(
         CORP_NUM = CORP_NUMS[index],
+        CORP_NAME_SEQ_NUM = 2,
         CORP_NME = CORP_NAMES[index],
     )
-    db.session.add(corp_name)
+    db.session.add(corp_name2)
+
+    #CORPSTATE
+    corp_state = CorpState(
+        CORP_NUM = CORP_NUMS[index],
+        STATE_TYP_CD = corp_op_states[index%2],
+        START_EVENT_ID = 1,
+    )
+    db.session.add(corp_state)
 
     # OFFICE
     office = Office(
