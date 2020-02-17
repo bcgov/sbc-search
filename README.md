@@ -24,6 +24,27 @@ flask db upgrade (to run existing migrations and update de db)
 python bootstrap.py to create mock data
 ```
 
+## connecting openshift
+
+Download openshift from https://www.okd.io/download.html
+
+unzip the oc binary, and run
+
+```
+oc port-forward bc-reg-fdw-indy-cat-6-ct8z5 5432:5432
+```
+
+```
+apt-get install nmap
+ncat -l 0.0.0.0 15432 --keep-open --sh-exec "ncat localhost 5432"
+```
+
+Install openshift CLI
+
+```
+
+```
+
 ## Migrations
 
 This project uses

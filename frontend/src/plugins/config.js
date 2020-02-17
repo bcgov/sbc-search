@@ -1,9 +1,9 @@
 export const FIELD_VALUES = [
   { text: "Any Name", value: "ANY_NME" },
-  { text: "First Name", value: "FIRST_NME" },
-  { text: "Middle Name", value: "MIDDLE_NME" },
-  { text: "Last Name", value: "LAST_NME" },
-  { text: "Address", value: "ADDR_LINE_1" }
+  { text: "First Name", value: "first_nme" },
+  { text: "Middle Name", value: "middle_nme" },
+  { text: "Last Name", value: "last_nme" },
+  { text: "Address", value: "addr_line_1" }
 ];
 
 export const OPERATOR_VALUES = [
@@ -16,31 +16,31 @@ export const OPERATOR_VALUES = [
 export const RESULT_HEADERS = [
   {
     text: "Surname",
-    value: "LAST_NME",
+    value: "last_nme",
     sortable: true,
     align: "left"
   },
   {
     text: "Middle Name",
-    value: "MIDDLE_NME",
+    value: "middle_nme",
     sortable: true,
     align: "left"
   },
   {
     text: "First Name",
-    value: "FIRST_NME",
+    value: "first_nme",
     sortable: true,
     align: "left"
   },
   {
     text: "Appointed",
-    value: "APPOINTMENT_DT",
+    value: "appointment_dt",
     sortable: true,
     align: "left"
   },
   {
     text: "Ceased",
-    value: "CESSATION_DT",
+    value: "cessation_dt",
     sortable: true,
     align: "left"
   },
@@ -52,37 +52,37 @@ export const RESULT_HEADERS = [
   },
   {
     text: "Inc/Org #",
-    value: "CORP_NUM",
+    value: "corp_num",
     sortable: true,
     align: "left"
   },
   {
     text: "Company Name",
-    value: "CORP_NME",
+    value: "corp_nme",
     sortable: true,
     align: "left"
   },
   {
     text: "Filing Address",
-    value: "ADDR_LINE_1",
+    value: "addr_line_1",
     sortable: true,
     align: "left"
   },
   {
     text: "Province",
-    value: "PROVINCE",
+    value: "province",
     sortable: true,
     align: "left"
   },
   {
     text: "Postal Code",
-    value: "POSTAL_CD",
+    value: "postal_cd",
     sortable: true,
     align: "left"
   },
   {
     text: "Corporation Party ID",
-    value: "CORP_PARTY_ID",
+    value: "corp_party_id",
     sortable: true,
     align: "left"
   }

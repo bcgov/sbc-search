@@ -27,8 +27,8 @@ export default {
   computed: {
     results() {
       return this.searchResults.map(r => {
-        r["APPOINTMENT_DT"] = dayjs(r["APPOINTMENT_DT"]).format("YYYY-MM-DD");
-        r["CESSATION_DT"] = dayjs(r["APPOINTMENT_DT"]).format("YYYY-MM-DD");
+        r["appointment_dt"] = dayjs(r["appointment_dt"]).format("YYYY-MM-DD");
+        r["cessation_dt"] = dayjs(r["appointment_dt"]).format("YYYY-MM-DD");
         return r;
       });
     }

@@ -23,19 +23,19 @@ export default {
   computed: {
     filteredDetail() {
       const filtered = omit(this.detail, [
-        "POSTAL_CD",
-        "PROVINCE",
-        "CORP_PARTY_ID"
+        "postal_cd",
+        "province",
+        "corp_party_id"
       ]);
-      filtered["APPOINTMENT_DT"] = dayjs(filtered["APPOINTMENT_DT"]).format(
+      filtered["appointment_dt"] = dayjs(filtered["appointment_dt"]).format(
         "YYYY-MM-DD"
       );
-      filtered["CESSATION_DT"] = dayjs(filtered["CESSATION_DT"]).format(
+      filtered["cessation_dt"] = dayjs(filtered["cessation_dt"]).format(
         "YYYY-MM-DD"
       );
       filtered[
-        "ADDR_LINE_1"
-      ] = `${filtered["ADDR_LINE_1"]}, ${this.detail["POSTAL_CD"]}, ${this.detail["PROVINCE"]}`;
+        "addr_line_1"
+      ] = `${filtered["addr_line_1"]}, ${this.detail["postal_cd"]}, ${this.detail["province"]}`;
       return filtered;
     }
   },
@@ -50,9 +50,9 @@ export default {
     };
   },
   mounted() {
-    const CORP_PARTY_ID = this.$route.query["CORP_PARTY_ID"];
-    if (CORP_PARTY_ID) {
-      corpPartySearch(CORP_PARTY_ID).then(result => {
+    const corp_party_id = this.$route.query["corp_party_id"];
+    if (corp_party_id) {
+      corpPartySearch(corp_party_id).then(result => {
         this.detail = result.data;
       });
     }

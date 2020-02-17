@@ -21,24 +21,24 @@
               :to="{
                 name: 'details',
                 query: {
-                  CORP_PARTY_ID: item['CORP_PARTY_ID']
+                  corp_party_id: item['corp_party_id']
                 }
               }"
-              >{{ item["LAST_NME"] }}</router-link
+              >{{ item["last_nme"] }}</router-link
             >
           </td>
-          <td>{{ item["MIDDLE_NME"] }}</td>
-          <td>{{ item["FIRST_NME"] }}</td>
-          <td>{{ item["APPOINTMENT_DT"] }}</td>
-          <td>{{ item["CESSATION_DT"] }}</td>
+          <td>{{ item["middle_nme"] }}</td>
+          <td>{{ item["first_nme"] }}</td>
+          <td>{{ item["appointment_dt"] }}</td>
+          <td>{{ item["cessation_dt"] }}</td>
           <td></td>
           <td>
             <router-link :to="{ name: 'details', query: item }">{{
-              item["CORP_NUM"]
+              item["corp_num"]
             }}</router-link>
           </td>
-          <td>{{ item["CORP_NME"] }}</td>
-          <td>{{ item["ADDR_LINE_1"] }}</td>
+          <td>{{ item["corp_nme"] }}</td>
+          <td>{{ item["addr_line_1"] }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -54,8 +54,8 @@ export default {
   computed: {
     results() {
       return this.items.map(r => {
-        r["APPOINTMENT_DT"] = dayjs(r["APPOINTMENT_DT"]).format("YYYY-MM-DD");
-        r["CESSATION_DT"] = dayjs(r["APPOINTMENT_DT"]).format("YYYY-MM-DD");
+        r["appointment_dt"] = dayjs(r["appointment_dt"]).format("YYYY-MM-DD");
+        r["cessation_dt"] = dayjs(r["appointment_dt"]).format("YYYY-MM-DD");
         return r;
       });
     }
@@ -77,9 +77,9 @@ export default {
       return headers.filter(h => {
         const val = h.value;
         if (
-          val === "CORP_PARTY_ID" ||
-          val === "POSTAL_CD" ||
-          val === "PROVINCE"
+          val === "corp_party_id" ||
+          val === "postal_cd" ||
+          val === "province"
         ) {
           return false;
         }
