@@ -29,43 +29,61 @@ export const RESULT_HEADERS = [
   {
     text: "First Name",
     value: "FIRST_NME",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Appointed",
     value: "APPOINTMENT_DT",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Ceased",
     value: "CESSATION_DT",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Act/Hist",
     value: "acchistory",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Inc/Org #",
     value: "CORP_NUM",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
     text: "Company Name",
     value: "CORP_NME",
-    sortable: false,
+    sortable: true,
     align: "left"
   },
   {
-    text: "Company Address",
+    text: "Filing Address",
     value: "ADDR_LINE_1",
-    sortable: false,
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Province",
+    value: "PROVINCE",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Postal Code",
+    value: "POSTAL_CD",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Corporation Party ID",
+    value: "CORP_PARTY_ID",
+    sortable: true,
     align: "left"
   }
 ];

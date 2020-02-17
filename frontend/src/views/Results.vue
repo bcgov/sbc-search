@@ -15,36 +15,33 @@
         <h4 class="d-inline-block mr-1">Search Term:</h4>
         <span>{{ $route.query.searchQuery }}</span>
       </div>
-      <div v-if="filters.length > 0 && $route.query.advanced">
+      <div v-if="$route.query.advanced">
         <h4>
           Applied Filters
         </h4>
         <SearchFilter
-          v-for="(filter, index) in filters"
+          v-for="(f, index) in queryFilters"
           :key="index"
-          :field="filter.field"
-          :operator="filter.operator"
-          :value="filter.value"
+          :field="f.field"
+          :operator="f.operator"
+          :value="f.value"
           :mode="'display'"
         ></SearchFilter>
       </div>
-      <Results class="mt-10" :searchResults="searchResults"></Results>
       <ServerSideResults class="mt-5"></ServerSideResults>
     </section>
   </div>
 </template>
 
 <script>
-import Results from "@/components/Search/Results.vue";
 import SearchFilter from "@/components/Filter/Filter.vue";
-
 import ServerSideResults from "@/components/Search/ServerSideTable.vue";
-import { searchApi, advancedSearchApi } from "@/plugins/SearchApi.js";
 import { mapState } from "vuex";
+import { omit, pick } from "lodash-es";
+const qs = require("qs");
 
 export default {
   components: {
-    Results,
     ServerSideResults,
     SearchFilter
   },
@@ -53,25 +50,37 @@ export default {
   },
   data() {
     return {
-      searchResults: []
+      searchResults: [],
+      queryFilters: [],
+      queryMode: null
     };
   },
   async mounted() {
     const query = this.$route.query;
 
-    if (!query.advanced) {
-      const searchParams = {
-        page: query.page,
-        query: query.searchQuery
-      };
-      searchApi(searchParams).then(result => {
-        this.searchResults = result.data.results;
-      });
-    } else {
-      const queryString = query.queryString;
-      advancedSearchApi(queryString).then(result => {
-        this.searchResults = result.data.results;
-      });
+    if (query.advanced) {
+      const queryString = qs.parse(query.queryString);
+      const queryFilters = omit(queryString, "mode");
+
+      if (typeof queryFilters.field === "string") {
+        this.queryFilters.push(queryFilters);
+        return;
+      }
+
+      if (Array.isArray(queryFilters.field)) {
+        const length = queryFilters.field.length;
+
+        for (let i = 0; i < length; i++) {
+          this.queryFilters.push({
+            field: queryFilters.field[i],
+            operator: queryFilters.operator[i],
+            value: queryFilters.value[i]
+          });
+        }
+      }
+
+      this.queryMode = pick(queryString, "mode");
+      console.log("Query Filters", this.queryFilters);
     }
   }
 };

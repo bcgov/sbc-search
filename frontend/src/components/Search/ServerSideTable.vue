@@ -11,15 +11,21 @@
       @update:sort-by="fetchData"
       @update:sort-desc="fetchData"
       :footer-props="{
-        'items-per-page-options': [20]
+        'items-per-page-options': [5]
       }"
     >
       <template v-slot:item="{ item }">
         <tr>
           <td>
-            <router-link :to="{ name: 'details', query: item }">{{
-              item["LAST_NME"]
-            }}</router-link>
+            <router-link
+              :to="{
+                name: 'details',
+                query: {
+                  CORP_PARTY_ID: item['CORP_PARTY_ID']
+                }
+              }"
+              >{{ item["LAST_NME"] }}</router-link
+            >
           </td>
           <td>{{ item["MIDDLE_NME"] }}</td>
           <td>{{ item["FIRST_NME"] }}</td>
@@ -36,7 +42,6 @@
         </tr>
       </template>
     </v-data-table>
-    {{ options }}
   </div>
 </template>
 
@@ -57,7 +62,7 @@ export default {
   },
   data() {
     return {
-      headers: RESULT_HEADERS,
+      headers: this.filterHeaders(RESULT_HEADERS),
       items: [],
       options: {},
       loading: true,
@@ -68,6 +73,19 @@ export default {
     this.fetchData();
   },
   methods: {
+    filterHeaders(headers) {
+      return headers.filter(h => {
+        const val = h.value;
+        if (
+          val === "CORP_PARTY_ID" ||
+          val === "POSTAL_CD" ||
+          val === "PROVINCE"
+        ) {
+          return false;
+        }
+        return true;
+      });
+    },
     sliceByPage(items, page, itemsPerPage) {
       return items.slice((page - 1) * itemsPerPage, page * itemsPerPage);
     },
@@ -81,11 +99,14 @@ export default {
         type = "advanced";
       }
 
-      const sortOrder = sortDesc[0] ? "desc" : "asc";
-
-      let q =
-        query.queryString +
-        `&page=${page}&sort_type=${sortOrder}&sort_value=${sortBy}`;
+      let q = query.queryString + `&page=${page}`;
+      if (sortDesc.length > 0) {
+        const sortOrder = sortDesc[0] ? "desc" : "asc";
+        q += `&sort_type=${sortOrder}`;
+      }
+      if (sortBy.length > 0) {
+        q += `&sort_value=${sortBy}`;
+      }
 
       searchApiV2(q, { type }).then(result => {
         this.items = result.data.results;
