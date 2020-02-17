@@ -180,9 +180,9 @@ class CorpName(BaseModel):
     """
 
     CORP_NUM = db.Column(db.String(10), primary_key=True)
+    CORP_NAME_SEQ_NUM = db.Column(db.Integer)
     CORP_NAME_TYP_CD = db.Column(db.String(2))
     START_EVENT_ID = db.Column(db.Integer)
-    CORP_NAME_SEQ_NUM = db.Column(db.Integer)
     END_EVENT_ID = db.Column(db.Integer)
     SRCH_NME = db.Column(db.String(35))
     CORP_NME = db.Column(db.String(150))
