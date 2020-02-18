@@ -46,11 +46,11 @@ class Address:  # pylint: disable=too-many-instance-attributes; need all these f
         try:
             cursor = DB.connection.cursor()
             cursor.execute("""
-                select ADDR_ID, ADDR_LINE_1, ADDR_LINE_2, ADDR_LINE_3, CITY, PROVINCE, COUNTRY_TYPE.FULL_DESC,
-                POSTAL_CD, DELIVERY_INSTRUCTIONS
+                select addr_id, addr_line_1, addr_line_2, addr_line_3, city, province, COUNTRY_TYPE.full_desc,
+                postal_cd, delivery_instructions
                 from ADDRESS
-                join COUNTRY_TYPE on ADDRESS.COUNTRY_TYP_CD = COUNTRY_TYPE.COUNTRY_TYP_CD
-                where ADDR_ID=:address_id
+                join COUNTRY_TYPE on ADDRESS.country_typ_cd = COUNTRY_TYPE.country_typ_cd
+                where addr_id=:address_id
                 """,
                            address_id=address_id
                            )
@@ -80,9 +80,9 @@ Suggested:
 
 class Address(db.Model):
     __tablename__ = "ADDRESS"
-    ADDR_ID = db.Column(db.Integer, primary_key=True)
-    PROVINCE = db.Column(db.String(2))
-    COUNTRY_TYP_CD = db.Column(db.String(2))
+    addr_id = db.Column(db.Integer, primary_key=True)
+    province = db.Column(db.String(2))
+    country_typ_cd = db.Column(db.String(2))
     COUNTRY = relationship("Country", backref="addresses")
     ...
 
