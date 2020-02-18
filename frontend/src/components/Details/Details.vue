@@ -25,7 +25,7 @@ export default {
       const filtered = omit(this.detail, [
         "POSTAL_CD",
         "PROVINCE",
-        "CORP_PARTY_ID"
+        "corp_party_id"
       ]);
       filtered["APPOINTMENT_DT"] = dayjs(filtered["APPOINTMENT_DT"]).format(
         "YYYY-MM-DD"
@@ -50,9 +50,9 @@ export default {
     };
   },
   mounted() {
-    const CORP_PARTY_ID = this.$route.query["CORP_PARTY_ID"];
-    if (CORP_PARTY_ID) {
-      corpPartySearch(CORP_PARTY_ID).then(result => {
+    const corp_party_id = this.$route.query["corp_party_id"];
+    if (corp_party_id) {
+      corpPartySearch(corp_party_id).then(result => {
         this.detail = result.data;
       });
     }

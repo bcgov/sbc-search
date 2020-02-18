@@ -26,12 +26,12 @@ def upgrade():
     sa.PrimaryKeyConstraint('STATE_TYP_CD')
     )
     op.create_table('CORP_STATE',
-    sa.Column('CORP_NUM', sa.String(length=10), nullable=False),
+    sa.Column('corp_num', sa.String(length=10), nullable=False),
     sa.Column('START_EVENT_ID', sa.Integer(), nullable=False),
     sa.Column('END_EVENT_ID', sa.Integer(), nullable=True),
     sa.Column('STATE_TYP_CD', sa.String(length=3), nullable=True),
     sa.Column('DD_CORP_NUM', sa.String(length=10), nullable=True),
-    sa.PrimaryKeyConstraint('CORP_NUM', 'START_EVENT_ID')
+    sa.PrimaryKeyConstraint('corp_num', 'START_EVENT_ID')
     )
     # ### end Alembic commands ###
 

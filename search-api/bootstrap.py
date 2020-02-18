@@ -253,14 +253,14 @@ while index < len(CORP_NUMS):
     
     # CORPORATION
     corporation = Corporation(
-        CORP_NUM = CORP_NUMS[index],
+        corp_num = CORP_NUMS[index],
         TRANSITION_DT = default_date,
     )
     db.session.add(corporation)
     
     # CORPNAME
     # corp_name1 = CorpName(
-    #     CORP_NUM = CORP_NUMS[index],
+    #     corp_num = CORP_NUMS[index],
     #     CORP_NAME_SEQ_NUM = 1,
     #     CORP_NME = "OLD " + CORP_NAMES[index],
     #     END_EVENT_ID = index+1,
@@ -268,7 +268,7 @@ while index < len(CORP_NUMS):
     # db.session.add(corp_name1)
 
     corp_name2 = CorpName(
-        CORP_NUM = CORP_NUMS[index],
+        corp_num = CORP_NUMS[index],
         CORP_NAME_SEQ_NUM = 2,
         CORP_NME = CORP_NAMES[index],
     )
@@ -276,7 +276,7 @@ while index < len(CORP_NUMS):
 
     #CORPSTATE
     corp_state = CorpState(
-        CORP_NUM = CORP_NUMS[index],
+        corp_num = CORP_NUMS[index],
         STATE_TYP_CD = corp_op_states[index%2],
         START_EVENT_ID = 1,
     )
@@ -284,7 +284,7 @@ while index < len(CORP_NUMS):
 
     # OFFICE
     office = Office(
-        CORP_NUM = CORP_NUMS[index],
+        corp_num = CORP_NUMS[index],
         OFFICE_TYP_CD = office_types[0],
         START_EVENT_ID = index,
         MAILING_ADDR_ID=index,
@@ -299,9 +299,9 @@ while index < len(CORP_NUMS):
     party_types = ['FIO','DIR','OFF']
     
     corp_party = CorpParty(
-        CORP_PARTY_ID = (index),
+        corp_party_id = (index),
         PARTY_TYP_CD = (party_types[index%3]),
-        CORP_NUM = CORP_NUMS[index],
+        corp_num = CORP_NUMS[index],
         FIRST_NME = corp_party_name[0],
         MIDDLE_NME = corp_party_name[1] if len(corp_party_name) == 3 else None,
         LAST_NME = corp_party_name[2] if len(corp_party_name) == 3 else corp_party_name[1],
@@ -325,13 +325,13 @@ while index < len(CORP_NUMS):
     
     # OFFICES_HELD
     offices_held1 = OfficesHeld(
-        CORP_PARTY_ID = index,
+        corp_party_id = index,
         OFFICER_TYP_CD = officer_type_base1,
     )
     db.session.add(offices_held1)
 
     offices_held2 = OfficesHeld(
-        CORP_PARTY_ID = index,
+        corp_party_id = index,
         OFFICER_TYP_CD = officer_type_base2,
     )
     db.session.add(offices_held2)

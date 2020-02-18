@@ -4,7 +4,8 @@ from flask_migrate import Migrate, MigrateCommand
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@db/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://User_OxpgHxo0:T4QDb1YNVesbqOEfxYp3@172.19.0.1:15432/BC_REGISTRIES'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@db/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # https://stackoverflow.com/questions/33738467/how-do-i-know-if-i-can-disable-sqlalchemy-track-modifications/33790196#33790196
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -12,13 +13,13 @@ migrate = Migrate(app, db)
 
 class BaseModel(db.Model):
     __abstract__ = True
-
+    __table_args__ = {'quote':False, 'schema': 'bc_registries'} 
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Address(BaseModel):
-    __tablename__ = "ADDRESS"
+    __tablename__ = "address"
     """
     ADDRESS                        ADDR_ID                        NUMBER                         22                             20233825
     ADDRESS                        PROVINCE                       CHAR                           2                              18872463
@@ -77,7 +78,7 @@ class Address(BaseModel):
 
 
 class CorpOpState(BaseModel):
-    __tablename__ = 'CORP_OP_STATE'
+    __tablename__ = 'corp_op_state'
     """
     CORP_OP_STATE                  STATE_TYP_CD                   CHAR                           3                              31
     CORP_OP_STATE                  OP_STATE_TYP_CD                CHAR                           3                              31
@@ -92,16 +93,16 @@ class CorpOpState(BaseModel):
 
 
 class CorpState(BaseModel):
-    __tablename__ = 'CORP_STATE'
+    __tablename__ = 'corp_state'
     """
-    CORP_STATE                     CORP_NUM                       VARCHAR2                       10                             4137221
+    CORP_STATE                     corp_num                       VARCHAR2                       10                             4137221
     CORP_STATE                     START_EVENT_ID                 NUMBER                         22                             4137221
     CORP_STATE                     END_EVENT_ID                   NUMBER                         22                             1930459
     CORP_STATE                     STATE_TYP_CD                   CHAR                           3                              4137221
     CORP_STATE                     DD_CORP_NUM                    VARCHAR2                       10                             11443
     """
 
-    CORP_NUM = db.Column(db.String(10), primary_key=True)
+    corp_num = db.Column(db.String(10), primary_key=True)
     START_EVENT_ID = db.Column(db.Integer, primary_key=True)
     END_EVENT_ID = db.Column(db.Integer)
     STATE_TYP_CD = db.Column(db.String(3))
@@ -109,9 +110,9 @@ class CorpState(BaseModel):
 
 
 class Corporation(BaseModel):
-    __tablename__ = 'CORPORATION'
+    __tablename__ = 'corporation'
     """
-    CORPORATION                    CORP_NUM                       VARCHAR2                       10                             2206759
+    CORPORATION                    corp_num                       VARCHAR2                       10                             2206759
     CORPORATION                    CORP_FROZEN_TYP_CD             CHAR                           1                              819
     CORPORATION                    CORP_TYP_CD                    VARCHAR2                       3                              2206759
     CORPORATION                    RECOGNITION_DTS                DATE                           7                              2111082
@@ -137,7 +138,7 @@ class Corporation(BaseModel):
     CORPORATION                    TEMP_PASSWORD_EXPIRY_DATE      DATE                           7                              3582
     """
 
-    CORP_NUM = db.Column(db.String(10), primary_key=True, unique=True)
+    corp_num = db.Column(db.String(10), primary_key=True, unique=True)
     CORP_FROZEN_TYP_CD = db.Column(db.String(1))
     CORP_TYP_CD = db.Column(db.String(3))
     RECOGNITION_DTS = db.Column(db.Date)
@@ -163,13 +164,13 @@ class Corporation(BaseModel):
     # TEMP_PASSWORD_EXPIRY_DATE = db.Column(db.Date)
 
     def __repr__(self):
-        return 'corp num: {}'.format(self.CORP_NUM)
+        return 'corp num: {}'.format(self.corp_num)
 
 
 class CorpName(BaseModel):
-    __tablename__ = 'CORP_NAME'
+    __tablename__ = 'corp_name'
     """
-    CORP_NAME                      CORP_NUM                       VARCHAR2                       10                             2484908
+    CORP_NAME                      corp_num                       VARCHAR2                       10                             2484908
     CORP_NAME                      CORP_NAME_TYP_CD               CHAR                           2                              2484908
     CORP_NAME                      START_EVENT_ID                 NUMBER                         22                             2484908
     CORP_NAME                      CORP_NAME_SEQ_NUM              NUMBER                         22                             2484908
@@ -179,7 +180,7 @@ class CorpName(BaseModel):
     CORP_NAME                      DD_CORP_NUM                    VARCHAR2                       10                             11929
     """
 
-    CORP_NUM = db.Column(db.String(10), primary_key=True)
+    corp_num = db.Column(db.String(10), primary_key=True)
     CORP_NAME_SEQ_NUM = db.Column(db.Integer)
     CORP_NAME_TYP_CD = db.Column(db.String(2))
     START_EVENT_ID = db.Column(db.Integer)
@@ -189,13 +190,13 @@ class CorpName(BaseModel):
     DD_CORP_NUM = db.Column(db.String(10))
 
     def __repr__(self):
-        return 'corp num: {}'.format(self.CORP_NUM)
+        return 'corp num: {}'.format(self.corp_num)
 
 
 class Office(BaseModel):
-    __tablename__ = "OFFICE"
+    __tablename__ = "office"
     """
-    OFFICE                         CORP_NUM                       VARCHAR2                       10                             4544141
+    OFFICE                         corp_num                       VARCHAR2                       10                             4544141
     OFFICE                         OFFICE_TYP_CD                  CHAR                           2                              4544141
     OFFICE                         START_EVENT_ID                 NUMBER                         22                             4544141
     OFFICE                         END_EVENT_ID                   NUMBER                         22                             1578071
@@ -205,7 +206,7 @@ class Office(BaseModel):
     OFFICE                         EMAIL_ADDRESS                  VARCHAR2                       75                             14906
     """
 
-    CORP_NUM = db.Column(db.String(10), primary_key=True)
+    corp_num = db.Column(db.String(10), primary_key=True)
     OFFICE_TYP_CD = db.Column(db.String(2), primary_key=True)
     START_EVENT_ID = db.Column(db.Integer, primary_key=True)
     END_EVENT_ID = db.Column(db.Integer)
@@ -216,7 +217,7 @@ class Office(BaseModel):
 
 
 class OfficeType(BaseModel):
-    __tablename__ = "OFFICE_TYPE"
+    __tablename__ = "office_type"
     """
     OFFICE_TYPE                    OFFICE_TYP_CD                  CHAR                           2                              9
     OFFICE_TYPE                    SHORT_DESC                     VARCHAR2                       15                             9
@@ -229,12 +230,13 @@ class OfficeType(BaseModel):
 
 
 class CorpParty(BaseModel):
-    __tablename__ = 'CORP_PARTY'
+    __tablename__ = 'corp_party'
+
     """
-    CORP_PARTY                     CORP_PARTY_ID                  db.Integer                         22                             11748880
+    CORP_PARTY                     corp_party_id                  db.Integer                         22                             11748880
     CORP_PARTY                     MAILING_ADDR_ID                db.Integer                         22                             8369745
     CORP_PARTY                     DELIVERY_ADDR_ID               db.Integer                         22                             7636885
-    CORP_PARTY                     CORP_NUM                       VARCHAR2                       10                             11748884
+    CORP_PARTY                     corp_num                       VARCHAR2                       10                             11748884
     CORP_PARTY                     PARTY_TYP_CD                   CHAR                           3                              11748884
     CORP_PARTY                     START_EVENT_ID                 db.Integer                         22                             11748884
     CORP_PARTY                     END_EVENT_ID                   db.Integer                         22                             6194691
@@ -254,10 +256,10 @@ class CorpParty(BaseModel):
     CORP_PARTY                     PHONE                          VARCHAR2                       30                             4306
     CORP_PARTY                     REASON_TYP_CD                  VARCHAR2                       3                              0
     """
-    CORP_PARTY_ID = db.Column(db.Integer, primary_key=True)
+    corp_party_id = db.Column(db.Integer, primary_key=True)
     MAILING_ADDR_ID = db.Column(db.Integer)
     DELIVERY_ADDR_ID = db.Column(db.Integer)
-    CORP_NUM = db.Column(db.String(10))
+    corp_num = db.Column(db.String(10))
     PARTY_TYP_CD = db.Column(db.String(3))
     START_EVENT_ID = db.Column(db.Integer)
     END_EVENT_ID = db.Column(db.Integer)
@@ -278,11 +280,11 @@ class CorpParty(BaseModel):
     REASON_TYP_CD = db.Column(db.String(3))
 
     def __repr__(self):
-        return 'corp num: {}'.format(self.CORP_PARTY_ID)
+        return 'corp num: {}'.format(self.corp_party_id)
 
 
 class OfficerType(BaseModel):
-    __tablename__ = "OFFICER_TYPE"
+    __tablename__ = "officer_type"
     """
     OFFICER_TYPE                   OFFICER_TYP_CD                 CHAR                           3                              9
     OFFICER_TYPE                   SHORT_DESC                     VARCHAR2                       75                             9
@@ -295,13 +297,13 @@ class OfficerType(BaseModel):
 
 
 class OfficesHeld(BaseModel):
-    __tablename__ = "OFFICES_HELD"
+    __tablename__ = "offices_held"
     """
-    OFFICES_HELD                   CORP_PARTY_ID                  NUMBER                         22                             3694791
+    OFFICES_HELD                   corp_party_id                  NUMBER                         22                             3694791
     OFFICES_HELD                   OFFICER_TYP_CD                 CHAR                           3                              3694794
-    OFFICES_HELD                   DD_CORP_PARTY_ID               NUMBER                         22                             7
+    OFFICES_HELD                   DD_corp_party_id               NUMBER                         22                             7
     """
 
-    CORP_PARTY_ID = db.Column(db.Integer, primary_key=True)
+    corp_party_id = db.Column(db.Integer, primary_key=True)
     OFFICER_TYP_CD = db.Column(db.String(3), primary_key=True)
-    DD_CORP_PARTY_ID = db.Column(db.Integer)
+    DD_corp_party_id = db.Column(db.Integer)

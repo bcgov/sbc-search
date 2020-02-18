@@ -52,7 +52,7 @@ export const RESULT_HEADERS = [
   },
   {
     text: "Inc/Org #",
-    value: "CORP_NUM",
+    value: "corp_num",
     sortable: true,
     align: "left"
   },
@@ -82,7 +82,7 @@ export const RESULT_HEADERS = [
   },
   {
     text: "Corporation Party ID",
-    value: "CORP_PARTY_ID",
+    value: "corp_party_id",
     sortable: true,
     align: "left"
   }

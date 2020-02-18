@@ -18,13 +18,14 @@ from search_api.models import (
     OfficeType,
     OfficesHeld,
     OfficerType,
+    app, db #TODO, move this out of models.py
 )
 
 
 
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     """Return a configured Flask App using the Factory method."""
-    app = Flask(__name__)
+    #app = Flask(__name__)
     # TODO: uncomment all the comments in this block.
     #app.config.from_object(config.CONFIGURATION[run_mode])
     CORS(app)
@@ -75,7 +76,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict = {}
 
             # TODO: switch to marshmallow.
-            result_dict['CORP_NUM'] = row[1]
+            result_dict['corp_num'] = row[1]
             result_dict['CORP_NME'] = row[2]
             result_dict['TRANSITION_DT'] = row[3]
             result_dict['ADDR_LINE_1'] = row[4]
@@ -117,7 +118,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             index = 2
             for row in results:
 
-                # Corporation.CORP_NUM
+                # Corporation.corp_num
                 _ = sheet.cell(column=1, row=index, value=row[1])
                 # CorpName.CORP_NME
                 _ = sheet.cell(column=2, row=index, value=row[2])
@@ -148,12 +149,12 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         # TODO: move queries to model class.
         results = Corporation.query\
-            .join(CorpState, CorpState.CORP_NUM == Corporation.CORP_NUM)\
+            .join(CorpState, CorpState.corp_num == Corporation.corp_num)\
             .join(CorpOpState, CorpOpState.STATE_TYP_CD == CorpState.STATE_TYP_CD)\
-            .join(Office, Office.CORP_NUM == Corporation.CORP_NUM)\
+            .join(Office, Office.corp_num == Corporation.corp_num)\
             .join(Address, Office.MAILING_ADDR_ID == Address.ADDR_ID)\
             .add_columns(\
-                Corporation.CORP_NUM,
+                Corporation.corp_num,
                 Corporation.TRANSITION_DT,
                 Address.ADDR_LINE_1,
                 Address.POSTAL_CD,
@@ -165,16 +166,16 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             )\
             .filter(Office.END_EVENT_ID == None)\
             .filter(CorpState.END_EVENT_ID == None)\
-            .filter(Corporation.CORP_NUM == id)
+            .filter(Corporation.corp_num == id)
 
         if results.count() > 0:
 
-            names = CorpName.query.filter_by(CORP_NUM = id).order_by(desc(CorpName.END_EVENT_ID))
+            names = CorpName.query.filter_by(corp_num = id).order_by(desc(CorpName.END_EVENT_ID))
 
             result_dict = {}
 
             # TODO: switch to marshmallow.
-            result_dict['CORP_NUM'] = results[0][1]
+            result_dict['corp_num'] = results[0][1]
             result_dict['TRANSITION_DT'] = results[0][2]
             result_dict['ADDR_LINE_1'] = results[0][3]
             result_dict['POSTAL_CD'] = results[0][4]
@@ -210,13 +211,13 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict = {}
 
             # TODO: switch to marshmallow.
-            result_dict['CORP_PARTY_ID'] = row[1]
+            result_dict['corp_party_id'] = row[1]
             result_dict['FIRST_NME'] = row[2]
             result_dict['MIDDLE_NME'] = row[3]
             result_dict['LAST_NME'] = row[4]
             result_dict['APPOINTMENT_DT'] = row[5]
             result_dict['CESSATION_DT'] = row[6]
-            result_dict['CORP_NUM'] = row[7]
+            result_dict['corp_num'] = row[7]
             result_dict['CORP_NME'] = row[8]
             result_dict['ADDR_LINE_1'] = row[9]
             result_dict['POSTAL_CD'] = row[10]
@@ -264,7 +265,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             index = 2
             for row in results:
 
-                # CorpParty.CORP_PARTY_ID
+                # CorpParty.corp_party_id
                 _ = sheet.cell(column=1, row=index, value=row[1])
                 # CorpParty.FIRST_NME
                 _ = sheet.cell(column=2, row=index, value=row[2])
@@ -278,7 +279,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 _ = sheet.cell(column=6, row=index, value=row[6])
                 # CorOpState.FULL_DESC
                 _ = sheet.cell(column=7, row=index, value=row[14])
-                # Corporation.CORP_NUM
+                # Corporation.corp_num
                 _ = sheet.cell(column=8, row=index, value=row[7])
                 # CorpName.CORP_NME
                 _ = sheet.cell(column=9, row=index, value=row[8])
@@ -305,19 +306,19 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     @app.route('/person/<id>')
     def person(id):
         results = CorpParty.query\
-                .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
-                .join(CorpState, CorpState.CORP_NUM == Corporation.CORP_NUM)\
+                .join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
+                .join(CorpState, CorpState.corp_num == Corporation.corp_num)\
                 .join(CorpOpState, CorpOpState.STATE_TYP_CD == CorpState.STATE_TYP_CD)\
-                .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
+                .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
                 .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
                 .add_columns(\
-                    CorpParty.CORP_PARTY_ID,
+                    CorpParty.corp_party_id,
                     CorpParty.FIRST_NME,
                     CorpParty.MIDDLE_NME,
                     CorpParty.LAST_NME,
                     CorpParty.APPOINTMENT_DT,
                     CorpParty.CESSATION_DT,
-                    Corporation.CORP_NUM,
+                    Corporation.corp_num,
                     CorpName.CORP_NME,
                     Address.ADDR_LINE_1,
                     Address.POSTAL_CD,
@@ -325,19 +326,19 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                     Address.PROVINCE,
                     CorpOpState.STATE_TYP_CD,
                     CorpOpState.FULL_DESC,
-                ).filter(CorpParty.CORP_PARTY_ID==int(id))
+                ).filter(CorpParty.corp_party_id==int(id))
 
         if results.count() > 0:
             result_dict = {}
 
             # TODO: switch to marshmallow.
-            result_dict['CORP_PARTY_ID'] = results[0][1]
+            result_dict['corp_party_id'] = results[0][1]
             result_dict['FIRST_NME'] = results[0][2]
             result_dict['MIDDLE_NME'] = results[0][3]
             result_dict['LAST_NME'] = results[0][4]
             result_dict['APPOINTMENT_DT'] = results[0][5]
             result_dict['CESSATION_DT'] = results[0][6]
-            result_dict['CORP_NUM'] = results[0][7]
+            result_dict['corp_num'] = results[0][7]
             result_dict['CORP_NME'] = results[0][8]
             result_dict['ADDR_LINE_1'] = results[0][9]
             result_dict['POSTAL_CD'] = results[0][10]
@@ -355,22 +356,22 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     def officesheld(corppartyid):
         results = OfficerType.query\
                 .join(OfficesHeld, OfficerType.OFFICER_TYP_CD==OfficesHeld.OFFICER_TYP_CD)\
-                .join(CorpParty, OfficesHeld.CORP_PARTY_ID == CorpParty.CORP_PARTY_ID)\
+                .join(CorpParty, OfficesHeld.corp_party_id == CorpParty.corp_party_id)\
                 .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
                 .add_columns(\
-                    CorpParty.CORP_PARTY_ID,
+                    CorpParty.corp_party_id,
                     OfficerType.OFFICER_TYP_CD,
                     OfficerType.SHORT_DESC,
                     CorpParty.APPOINTMENT_DT,
                     Address.ADDR_LINE_1,
                 )\
-                .filter(CorpParty.CORP_PARTY_ID==int(corppartyid))
+                .filter(CorpParty.corp_party_id==int(corppartyid))
 
         offices = []
         for row in results:
             result_dict = {}
 
-            result_dict['CORP_PARTY_ID'] = row[1]
+            result_dict['corp_party_id'] = row[1]
             result_dict['OFFICER_TYP_CD'] = row[2]
             result_dict['SHORT_DESC'] = row[3]
             result_dict['APPOINTMENT_DT'] = row[4]
@@ -391,7 +392,7 @@ def _get_model_by_field(field_name):
 
     if field_name in ['FIRST_NME','MIDDLE_NME','LAST_NME','APPOINTMENT_DT','CESSATION_DT']: # CorpParty fields
         return eval('CorpParty')
-    elif field_name in ['CORP_NUM']: # Corporation fields
+    elif field_name in ['corp_num']: # Corporation fields
         return eval('Corporation')
     elif field_name in ['CORP_NME']: # CorpName fields
         return eval('CorpName')
@@ -447,12 +448,12 @@ def _get_corporation_search_results(args):
 
     # TODO: move queries to model class.
     results = Corporation.query\
-        .join(CorpParty, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
-        .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
-        .join(Office, Office.CORP_NUM == Corporation.CORP_NUM)\
+        .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)\
+        .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
+        .join(Office, Office.corp_num == Corporation.corp_num)\
         .join(Address, Office.MAILING_ADDR_ID == Address.ADDR_ID)\
         .add_columns(\
-            Corporation.CORP_NUM,
+            Corporation.corp_num,
             CorpName.CORP_NME,
             Corporation.TRANSITION_DT,
             Address.ADDR_LINE_1,
@@ -464,7 +465,7 @@ def _get_corporation_search_results(args):
         .filter(CorpName.END_EVENT_ID == None)
 
     results = results.filter(
-            (Corporation.CORP_NUM == query) |
+            (Corporation.corp_num == query) |
             (CorpName.CORP_NME.contains(query)) |
             (CorpParty.FIRST_NME.contains(query)) |
             (CorpParty.LAST_NME.contains(query)))
@@ -511,23 +512,33 @@ def _get_corpparty_search_results(args):
     clauses = list(zip(fields, operators, values))
 
     # TODO: move queries to model class.
+            # TODO: we no longer need this as we want to show all types.
+            #.filter(CorpParty.PARTY_TYP_CD.in_(['FIO', 'DIR','OFF']))\
+    
+    #result = db.engine.execute('select bus_company_num from BC_REGISTRIES.CORP_PARTY limit 1;')
+    result = CorpParty.query.join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
+            .with_entities(\
+                CorpParty.corp_party_id,
+                Corporation.corp_num,
+                ).limit(5).all()
+
+    raise Exception(result)
     results = CorpParty.query\
             .filter(CorpParty.END_EVENT_ID == None)\
-            .filter(CorpParty.PARTY_TYP_CD.in_(['FIO', 'DIR','OFF']))\
             .filter(CorpName.END_EVENT_ID == None)\
-            .join(Corporation, Corporation.CORP_NUM == CorpParty.CORP_NUM)\
-            .join(CorpState, CorpState.CORP_NUM == Corporation.CORP_NUM)\
+            .join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
+            .join(CorpState, CorpState.corp_num == Corporation.corp_num)\
             .join(CorpOpState, CorpOpState.STATE_TYP_CD == CorpState.STATE_TYP_CD)\
-            .join(CorpName, Corporation.CORP_NUM == CorpName.CORP_NUM)\
+            .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
             .join(Address, CorpParty.MAILING_ADDR_ID == Address.ADDR_ID)\
             .add_columns(\
-                CorpParty.CORP_PARTY_ID,
+                CorpParty.corp_party_id,
                 CorpParty.FIRST_NME,
                 CorpParty.MIDDLE_NME,
                 CorpParty.LAST_NME,
                 CorpParty.APPOINTMENT_DT,
                 CorpParty.CESSATION_DT,
-                Corporation.CORP_NUM,
+                Corporation.corp_num,
                 CorpName.CORP_NME,
                 Address.ADDR_LINE_1,
                 Address.POSTAL_CD,
@@ -539,7 +550,7 @@ def _get_corpparty_search_results(args):
 
     # Simple mode - return reasonable results for a single search string:
     if query:
-        results = results.filter((Corporation.CORP_NUM == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query)))
+        results = results.filter((Corporation.corp_num == query) | (CorpParty.FIRST_NME.contains(query)) | (CorpParty.LAST_NME.contains(query)))
     # Advanced mode - return precise results for a set of clauses.
     elif clauses:
 

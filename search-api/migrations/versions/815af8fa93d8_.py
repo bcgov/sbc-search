@@ -25,10 +25,10 @@ def upgrade():
     sa.PrimaryKeyConstraint('OFFICER_TYP_CD')
     )
     op.create_table('OFFICES_HELD',
-    sa.Column('CORP_PARTY_ID', sa.Integer(), nullable=False),
+    sa.Column('corp_party_id', sa.Integer(), nullable=False),
     sa.Column('OFFICER_TYP_CD', sa.String(length=3), nullable=False),
-    sa.Column('DD_CORP_PARTY_ID', sa.Integer(), nullable=True),
-    sa.PrimaryKeyConstraint('CORP_PARTY_ID', 'OFFICER_TYP_CD')
+    sa.Column('DD_corp_party_id', sa.Integer(), nullable=True),
+    sa.PrimaryKeyConstraint('corp_party_id', 'OFFICER_TYP_CD')
     )
     # ### end Alembic commands ###
 

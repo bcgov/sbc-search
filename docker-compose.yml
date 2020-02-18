@@ -10,14 +10,14 @@ services:
       - 8080:8080
     working_dir: /code/
 
-  db:
-    image: postgres:11
-    networks:
-      - bcros
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - bcros
+  # db:
+  #   image: postgres:9.6
+  #   networks:
+  #     - bcros
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - bcros
 
   search_api:
     image: search_api
