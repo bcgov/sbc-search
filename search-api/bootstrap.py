@@ -300,7 +300,7 @@ while index < len(CORP_NUMS):
     
     corp_party = CorpParty(
         corp_party_id = (index),
-        party_type_cd = (party_types[index%3]),
+        party_typ_cd = (party_types[index%3]),
         corp_num = CORP_NUMS[index],
         first_nme = corp_party_name[0],
         middle_nme = corp_party_name[1] if len(corp_party_name) == 3 else None,

@@ -4,6 +4,21 @@ from flask_migrate import Migrate, MigrateCommand
 
 
 app = Flask(__name__)
+
+
+import decimal
+import flask.json
+
+class MyJSONEncoder(flask.json.JSONEncoder):
+
+    def default(self, obj):
+        if isinstance(obj, decimal.Decimal):
+            # Convert decimal instances to strings.
+            return str(obj)
+        return super(MyJSONEncoder, self).default(obj)
+
+flask.json_encoder = MyJSONEncoder
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://User_OxpgHxo0:T4QDb1YNVesbqOEfxYp3@172.19.0.1:15432/BC_REGISTRIES'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@db/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # https://stackoverflow.com/questions/33738467/how-do-i-know-if-i-can-disable-sqlalchemy-track-modifications/33790196#33790196
@@ -78,6 +93,7 @@ class Address(BaseModel):
 
 
 class CorpOpState(BaseModel):
+    # A lookup table of states a corporation can be in.
     __tablename__ = 'corp_op_state'
     """
     CORP_OP_STATE                  state_typ_cd                   CHAR                           3                              31
@@ -237,7 +253,7 @@ class CorpParty(BaseModel):
     CORP_PARTY                     mailing_addr_id                db.Integer                         22                             8369745
     CORP_PARTY                     delivery_addr_id               db.Integer                         22                             7636885
     CORP_PARTY                     corp_num                       VARCHAR2                       10                             11748884
-    CORP_PARTY                     party_type_cd                   CHAR                           3                              11748884
+    CORP_PARTY                     party_typ_cd                   CHAR                           3                              11748884
     CORP_PARTY                     start_event_id                 db.Integer                         22                             11748884
     CORP_PARTY                     end_event_id                   db.Integer                         22                             6194691
     CORP_PARTY                     prev_party_id                  db.Integer                         22                             3623071
@@ -260,7 +276,7 @@ class CorpParty(BaseModel):
     mailing_addr_id = db.Column(db.Integer)
     delivery_addr_id = db.Column(db.Integer)
     corp_num = db.Column(db.String(10))
-    party_type_cd = db.Column(db.String(3))
+    party_typ_cd = db.Column(db.String(3))
     start_event_id = db.Column(db.Integer)
     end_event_id = db.Column(db.Integer)
     prev_party_id = db.Column(db.Integer)

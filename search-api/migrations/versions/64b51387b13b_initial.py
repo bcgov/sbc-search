@@ -51,7 +51,7 @@ def upgrade():
     sa.Column('mailing_addr_id', sa.Integer(), nullable=True),
     sa.Column('delivery_addr_id', sa.Integer(), nullable=True),
     sa.Column('corp_num', sa.String(length=10), nullable=True),
-    sa.Column('party_type_cd', sa.String(length=3), nullable=True),
+    sa.Column('party_typ_cd', sa.String(length=3), nullable=True),
     sa.Column('start_event_id', sa.Integer(), nullable=True),
     sa.Column('end_event_id', sa.Integer(), nullable=True),
     sa.Column('prev_party_id', sa.Integer(), nullable=True),
