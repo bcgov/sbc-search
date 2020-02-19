@@ -1,7 +1,7 @@
 import datetime
 from dateutil.relativedelta import *
 from datetime import date
-from models import (
+from search_api.models import (
     Corporation, 
     CorpOpState,
     CorpState,

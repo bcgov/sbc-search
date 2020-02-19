@@ -19,7 +19,7 @@ class MyJSONEncoder(flask.json.JSONEncoder):
 
 flask.json_encoder = MyJSONEncoder
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@db/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # https://stackoverflow.com/questions/33738467/how-do-i-know-if-i-can-disable-sqlalchemy-track-modifications/33790196#33790196
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
