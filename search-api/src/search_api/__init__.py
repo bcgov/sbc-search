@@ -313,6 +313,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     @app.route('/person/<id>')
     def person(id):
         #try:
+
         result = (CorpParty.query
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
             .add_columns(\
@@ -326,27 +327,33 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 CorpParty.delivery_addr_id,
                 # CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc,
-            ).filter(CorpParty.corp_party_id==int(id))).one()[0]
+            ).filter(CorpParty.corp_party_id==int(id))).one()
+
+        person = result[0]
         result_dict = {}
-        #raise Exception(CorpName.query.filter(CorpName.corp_num == '1234567890').add_columns(CorpName.corp_nme).statement.compile())
-        name = CorpName.query.filter(CorpName.corp_num ==  '1234567890').add_columns(CorpName.corp_nme).one()[0]
-        addr = _normalize_addr(result.delivery_addr_id)
+        name = CorpName.query.filter(CorpName.corp_num ==  result.corp_num).add_columns(CorpName.corp_nme).one()[0]
+
+        office = Office.query.filter(Office.corp_num == person.corp_num).all()[0]
+        addr = _normalize_addr(person.delivery_addr_id)
+        corp_addr = _normalize_addr(office.delivery_addr_id)
+
+        offices_held = []
         # except NoResultFound:
         #     abort(404)
         # For debugging statement, uncomment this.
         #return str(results.statement.compile())
 
-
         # TODO: switch to marshmallow.
-        result_dict['corp_party_id'] = result.corp_num
-        result_dict['first_nme'] = result.first_nme
-        result_dict['middle_nme'] = result.middle_nme
-        result_dict['last_nme'] = result.last_nme
-        result_dict['appointment_dt'] = result.appointment_dt
-        result_dict['cessation_dt'] = result.cessation_dt
-        result_dict['corp_num'] = result.corp_num
-        result_dict['business_nme'] = name.corp_nme
+        result_dict['corp_party_id'] = person.corp_num
+        result_dict['first_nme'] = person.first_nme
+        result_dict['middle_nme'] = person.middle_nme
+        result_dict['last_nme'] = person.last_nme
+        result_dict['appointment_dt'] = person.appointment_dt
+        result_dict['cessation_dt'] = person.cessation_dt
+        result_dict['corp_num'] = person.corp_num
+        result_dict['corp_nme'] = name.corp_nme
         result_dict['addr'] = addr
+        result_dict['corp_addr'] = corp_addr
         # result_dict['state_typ_cd'] = results[0][13]
         # result_dict['full_desc'] = results[0][14]
 
@@ -578,7 +585,7 @@ def _get_corpparty_search_results(args):
     # Simple mode - return reasonable results for a single search string:
     if query:
         #results = results.filter((Corporation.corp_num == query) | (CorpParty.first_nme.contains(query)) | (CorpParty.last_nme.contains(query)))
-        results = results.filter(CorpParty.first_nme == query)
+        results = results.filter((CorpParty.first_nme == query) | (CorpParty.last_nme == query) | (CorpParty.middle_nme == query))
         # Advanced mode - return precise results for a set of clauses.
     elif clauses:
 
