@@ -115,9 +115,9 @@ export default {
           this.loading = false;
         })
         .catch(e => {
-          this.loading = false;
           this.items = [];
           this.totalItems = 0;
+          this.loading = false;
           console.error(e);
         });
     }
