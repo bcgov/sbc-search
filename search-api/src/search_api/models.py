@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
-
+import os
 
 app = Flask(__name__)
 
@@ -19,7 +19,7 @@ class MyJSONEncoder(flask.json.JSONEncoder):
 
 flask.json_encoder = MyJSONEncoder
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:password@db/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # https://stackoverflow.com/questions/33738467/how-do-i-know-if-i-can-disable-sqlalchemy-track-modifications/33790196#33790196
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -27,7 +27,7 @@ migrate = Migrate(app, db)
 
 class BaseModel(db.Model):
     __abstract__ = True
-    __table_args__ = {'quote':False, 'schema': 'bc_registries'} 
+    __table_args__ = {'quote':False, 'schema': 'bc_registries'}
     def as_dict(self):
        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
@@ -35,6 +35,7 @@ class BaseModel(db.Model):
 class Address(BaseModel):
     __tablename__ = "address"
     """
+    Original Schema from Oracle DB
     ADDRESS                        addr_id                        NUMBER                         22                             20233825
     ADDRESS                        province                       CHAR                           2                              18872463
     ADDRESS                        country_typ_cd                 CHAR                           2                              19016927

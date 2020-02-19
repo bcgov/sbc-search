@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from sqlalchemy import desc, func
 from functools import reduce
+from dotenv import load_dotenv
 
 from search_api.models import (
     Corporation,
@@ -21,6 +22,7 @@ from search_api.models import (
     app, db #TODO, move this out of models.py
 )
 
+load_dotenv(verbose=True)
 
 
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
@@ -179,7 +181,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 'addr':_normalize_addr(office.delivery_addr_id), #TODO: get full address.
                 'office_typ_cd': office.office_typ_cd
             })
-        
+
         output['state_typ_cd'] = result[3]
         output['full_desc'] = result[4]
 
@@ -322,15 +324,15 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 # CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc,
             ).filter(CorpParty.corp_party_id==int(id))).one()[0]
-        
+
         # For debugging statement, uncomment this.
         #return str(results.statement.compile())
-    
+
         result_dict = {}
 
         name = CorpName.query.filter(CorpName.corp_num == result.corp_num).add_columns(CorpName.corp_nme).one()[0]
         addr = _normalize_addr(result.delivery_addr_id)
-        
+
         # TODO: switch to marshmallow.
         result_dict['corp_party_id'] = result.corp_num
         result_dict['first_nme'] = result.first_nme
@@ -418,7 +420,7 @@ def _get_model_by_field(field_name):
 
 def _get_filter(field, operator, value):
 
-    if field == 'ANY_NME':
+    if field == 'any_nme':
         return (_get_filter('first_nme', operator, value)
             | _get_filter('middle_nme', operator, value)
             | _get_filter('last_nme', operator, value))
@@ -528,7 +530,7 @@ def _get_corpparty_search_results(args):
     # TODO: move queries to model class.
             # TODO: we no longer need this as we want to show all types.
             #.filter(CorpParty.party_typ_cd.in_(['FIO', 'DIR','OFF']))\
-    
+
     #result = db.engine.execute('select bus_company_num from BC_REGISTRIES.CORP_PARTY limit 1;')
     # result = CorpParty.query.join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
     #         .with_entities(\
