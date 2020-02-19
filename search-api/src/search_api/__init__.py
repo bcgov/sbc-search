@@ -2,11 +2,12 @@ from tempfile import NamedTemporaryFile
 import os
 
 from openpyxl import Workbook
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, abort
 from flask_cors import CORS
 from sqlalchemy import desc, func
 from functools import reduce
 from dotenv import load_dotenv
+from sqlalchemy.orm.exc import NoResultFound
 
 from search_api.models import (
     Corporation,
@@ -223,7 +224,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict['last_nme'] = row[4]
             result_dict['appointment_dt'] = row[5]
             result_dict['cessation_dt'] = row[6]
-            # result_dict['corp_num'] = row[7]
+            result_dict['corp_num'] = row[7]
             # result_dict['corp_nme'] = row[8]
             # result_dict['addr_line_1'] = row[9]
             # result_dict['postal_cd'] = row[10]
@@ -311,6 +312,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
     @app.route('/person/<id>')
     def person(id):
+        #try:
         result = (CorpParty.query
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
             .add_columns(\
@@ -325,14 +327,15 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 # CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc,
             ).filter(CorpParty.corp_party_id==int(id))).one()[0]
-
+        result_dict = {}
+        #raise Exception(CorpName.query.filter(CorpName.corp_num == '1234567890').add_columns(CorpName.corp_nme).statement.compile())
+        name = CorpName.query.filter(CorpName.corp_num ==  '1234567890').add_columns(CorpName.corp_nme).one()[0]
+        addr = _normalize_addr(result.delivery_addr_id)
+        # except NoResultFound:
+        #     abort(404)
         # For debugging statement, uncomment this.
         #return str(results.statement.compile())
 
-        result_dict = {}
-
-        name = CorpName.query.filter(CorpName.corp_num == result.corp_num).add_columns(CorpName.corp_nme).one()[0]
-        addr = _normalize_addr(result.delivery_addr_id)
 
         # TODO: switch to marshmallow.
         result_dict['corp_party_id'] = result.corp_num
@@ -561,6 +564,7 @@ def _get_corpparty_search_results(args):
                 CorpParty.last_nme,
                 CorpParty.appointment_dt,
                 CorpParty.cessation_dt,
+                CorpParty.corp_num
                 # Corporation.corp_num,
                 # CorpName.corp_nme,
                 # Address.addr_line_1,

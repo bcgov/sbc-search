@@ -2,16 +2,16 @@ import datetime
 from dateutil.relativedelta import *
 from datetime import date
 from search_api.models import (
-    Corporation, 
+    Corporation,
     CorpOpState,
     CorpState,
-    CorpParty, 
-    CorpName, 
-    Address, 
-    Office, 
-    OfficeType, 
-    OfficerType, 
-    OfficesHeld, 
+    CorpParty,
+    CorpName,
+    Address,
+    Office,
+    OfficeType,
+    OfficerType,
+    OfficesHeld,
     db,
 )
 
@@ -237,9 +237,9 @@ corp_op_states = ['AAA','HHH']
 
 index = 0
 while index < len(CORP_NUMS):
-
+    print(index)
     default_date = datetime.datetime.now() + datetime.timedelta(weeks=-(1+index))
-    
+
     # ADDRESS
     address_array = ADDRESSES[index].split(",")
     address = Address(
@@ -250,14 +250,14 @@ while index < len(CORP_NUMS):
         city = address_array[1].strip(),
     )
     db.session.add(address)
-    
+
     # CORPORATION
     corporation = Corporation(
         corp_num = CORP_NUMS[index],
         transition_dt = default_date,
     )
     db.session.add(corporation)
-    
+
     # CORPNAME
     # corp_name1 = CorpName(
     #     corp_num = CORP_NUMS[index],
@@ -297,7 +297,7 @@ while index < len(CORP_NUMS):
     cessation_date = default_date
 
     party_types = ['FIO','DIR','OFF']
-    
+
     corp_party = CorpParty(
         corp_party_id = (index),
         party_typ_cd = (party_types[index%3]),
@@ -308,9 +308,10 @@ while index < len(CORP_NUMS):
         appointment_dt = appointment_date,
         cessation_dt = cessation_date,
         mailing_addr_id = index,
+        delivery_addr_id = index,
     )
     db.session.add(corp_party)
-    
+
     officer_type_base1 = officer_types[0]
     officer_type_base2 = officer_types[0]
     if index % 3 == 0:
@@ -322,7 +323,7 @@ while index < len(CORP_NUMS):
     elif  index % 3 == 2:
         officer_type_base1= officer_types[1]
         officer_type_base2= officer_types[2]
-    
+
     # OFFICES_HELD
     offices_held1 = OfficesHeld(
         corp_party_id = index,
@@ -340,3 +341,4 @@ while index < len(CORP_NUMS):
 
 db.session.commit()
 
+print("done")
