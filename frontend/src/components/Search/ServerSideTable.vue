@@ -108,11 +108,18 @@ export default {
         q += `&sort_value=${sortBy}`;
       }
 
-      searchApiV2(q, { type }).then(result => {
-        this.items = result.data.results;
-        this.totalItems = result.data.total;
-        this.loading = false;
-      });
+      searchApiV2(q, { type })
+        .then(result => {
+          this.items = result.data.results;
+          this.totalItems = result.data.total;
+          this.loading = false;
+        })
+        .catch(e => {
+          this.loading = false;
+          this.items = [];
+          this.totalItems = 0;
+          console.error(e);
+        });
     }
   }
 };
