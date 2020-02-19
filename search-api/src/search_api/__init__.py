@@ -180,7 +180,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         output['offices'] = []
         for office in offices:
             output['offices'].append({
-                'addr':_normalize_addr(office.delivery_addr_id), #TODO: get full address.
+                'addr':_normalize_addr(office.mailing_addr_id), #TODO: change to delivery addr.
                 'office_typ_cd': office.office_typ_cd
             })
 
@@ -337,7 +337,12 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         addr = _normalize_addr(person.delivery_addr_id)
         corp_addr = _normalize_addr(office.delivery_addr_id)
 
-        offices_held = []
+        offices_held = OfficesHeld.query.filter(
+            (OfficesHeld.corp_party_id == int(id)) |
+            (OfficesHeld.dd_corp_party_id == int(id))
+        ).all()
+
+        raise Exception(offices_held)
         # except NoResultFound:
         #     abort(404)
         # For debugging statement, uncomment this.

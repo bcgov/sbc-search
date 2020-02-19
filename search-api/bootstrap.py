@@ -288,6 +288,7 @@ while index < len(CORP_NUMS):
         office_typ_cd = office_types[0],
         start_event_id = index,
         mailing_addr_id=index,
+        delivery_addr_id=index,
     )
     db.session.add(office)
 
