@@ -63,6 +63,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         # Fetching results
         results = _get_corporation_search_results(args)
+        # raise Exception(results.statement.compile())
 
         # Total number of results
         # This is waaay to expensive.
@@ -77,13 +78,13 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict = {}
 
             # TODO: switch to marshmallow.
-            result_dict['corp_num'] = row[1]
-            result_dict['corp_nme'] = row[2]
-            result_dict['transition_dt'] = row[3]
-            result_dict['addr_line_1'] = row[4]
-            result_dict['postal_cd'] = row[5]
-            result_dict['city'] = row[6]
-            result_dict['province'] = row[7]
+            result_dict['corp_num'] = row[0].corp_num
+            result_dict['corp_nme'] = row[0].corp_nme
+            # result_dict['transition_dt'] = row[3]
+            # result_dict['addr_line_1'] = row[4]
+            # result_dict['postal_cd'] = row[5]
+            # result_dict['city'] = row[6]
+            # result_dict['province'] = row[7]
 
             corporations.append(result_dict)
 
@@ -461,29 +462,35 @@ def _get_corporation_search_results(args):
     query = args["query"]
 
     # TODO: move queries to model class.
-    results = Corporation.query\
-        .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)\
-        .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
-        .join(Office, Office.corp_num == Corporation.corp_num)\
-        .join(Address, Office.mailing_addr_id == Address.addr_id)\
-        .add_columns(\
-            Corporation.corp_num,
+    results = (
+        Corporation.query
+        .join(CorpName, Corporation.corp_num == CorpName.corp_num)
+        # .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
+        # .join(Office, Office.corp_num == Corporation.corp_num)
+        # .join(Address, Office.mailing_addr_id == Address.addr_id)
+        .with_entities(
             CorpName.corp_nme,
-            Corporation.transition_dt,
-            Address.addr_line_1,
-            Address.postal_cd,
-            Address.city,
-            Address.province,
-        )\
-        .filter(Office.end_event_id == None)\
-        .filter(CorpName.end_event_id == None)
+            Corporation.corp_num,
+            # CorpName.corp_nme,
+            # Corporation.transition_dt,
+            # Address.addr_line_1,
+            # Address.postal_cd,
+            # Address.city,
+            # Address.province,
+        )
+        # .filter(Office.end_event_id == None)
+        # .filter(CorpName.end_event_id == None)
+    )
+
 
     results = results.filter(
             (Corporation.corp_num == query) |
-            (CorpName.corp_nme.contains(query)) |
-            (CorpParty.first_nme.contains(query)) |
-            (CorpParty.last_nme.contains(query)))
+            (CorpName.corp_nme == query))
+            # (CorpParty.first_nme.contains(query)) |
+            # (CorpParty.last_nme.contains(query)))
+    # results = (CorpName.query.filter(CorpName.corp_nme.startswith(query))).all()
 
+    # raise Exception(results)
     return results
 
 
