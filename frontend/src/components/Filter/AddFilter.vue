@@ -75,7 +75,7 @@ export default {
     return {
       valid: true,
       field: "ANY_NME",
-      operator: "contains",
+      operator: "exact",
       value: null,
       fields: FIELD_VALUES,
       operators: OPERATOR_VALUES,

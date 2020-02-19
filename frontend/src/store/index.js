@@ -18,6 +18,9 @@ export default new Vuex.Store({
         return state.filters.splice(result, 1);
       }
       return;
+    },
+    setFilter(state, filters) {
+      state.filters = filters;
     }
   },
   actions: {},

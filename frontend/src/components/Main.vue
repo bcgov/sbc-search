@@ -19,7 +19,10 @@
           :active.sync="advancedSearchActive"
           class="mb-3"
         ></SearchToggle>
-        <AdvancedSearch v-if="advancedSearchActive"></AdvancedSearch>
+        <AdvancedSearch
+          :imode="queryMode"
+          v-if="advancedSearchActive"
+        ></AdvancedSearch>
       </section>
     </section>
     <section class="sbc-results-section bg-lavender">
@@ -34,7 +37,8 @@ import Search from "@/components/Search/Search.vue";
 import SearchToggle from "@/components/Search/Toggle.vue";
 import AdvancedSearch from "@/components/Search/AdvancedSearch.vue";
 import ServerSideResults from "@/components/Search/ServerSideTable.vue";
-
+import { omit, pick } from "lodash-es";
+const qs = require("qs");
 import { mapState } from "vuex";
 export default {
   components: {
@@ -47,13 +51,41 @@ export default {
     ...mapState(["filters"])
   },
   mounted() {
+    const query = this.$route.query;
+    if (query.advanced) {
+      const queryString = qs.parse(query.queryString);
+      const queryFilters = omit(queryString, "mode");
+
+      if (typeof queryFilters.field === "string") {
+        this.queryFilters.push(queryFilters);
+        return;
+      }
+
+      if (Array.isArray(queryFilters.field)) {
+        const length = queryFilters.field.length;
+
+        for (let i = 0; i < length; i++) {
+          this.queryFilters.push({
+            field: queryFilters.field[i],
+            operator: queryFilters.operator[i],
+            value: queryFilters.value[i]
+          });
+        }
+      }
+
+      this.queryMode = pick(queryString, "mode").mode;
+      this.$store.commit("setFilter", this.queryFilters);
+    }
+
     if (this.filters.length > 0) {
       this.advancedSearchActive = true;
     }
   },
   data() {
     return {
-      advancedSearchActive: false
+      advancedSearchActive: false,
+      queryFilters: [],
+      queryMode: "Any"
     };
   }
 };

@@ -13,7 +13,7 @@
         v-if="modeActive"
         v-model="mode"
         :items="modes"
-        placeholder="Any Name"
+        :placeholder="imode"
         filled
         dense
         height="59"
@@ -30,6 +30,12 @@ import SearchFilter from "@/components/Filter/Filter.vue";
 import SbcButton from "@/components/SbcButton.vue";
 import { mapState } from "vuex";
 export default {
+  props: {
+    imode: {
+      default: "Any",
+      type: String
+    }
+  },
   computed: {
     ...mapState(["filters"]),
     modeActive() {
@@ -43,7 +49,7 @@ export default {
   },
   data() {
     return {
-      mode: "Any",
+      mode: this.imode,
       modes: ["Any", "And"]
     };
   },
@@ -62,9 +68,9 @@ export default {
       });
 
       if (this.mode === "And") {
-        queryString += "&mode=ALL";
+        queryString += "&mode=All";
       } else if (this.mode === "Any") {
-        queryString += "&mode=ANY";
+        queryString += "&mode=Any";
       }
 
       this.$router.push({
