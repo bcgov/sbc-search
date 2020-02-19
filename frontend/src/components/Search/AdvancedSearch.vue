@@ -68,7 +68,6 @@ export default {
       }
 
       this.$router.push({
-        name: "results",
         query: {
           advanced: true,
           queryString: queryString

@@ -51,7 +51,6 @@ export default {
     handleSubmit() {
       if (this.disabled) return;
       this.$router.push({
-        name: "results",
         query: {
           page: 1,
           searchQuery: this.searchQuery

@@ -11,7 +11,7 @@
       @update:sort-by="fetchData"
       @update:sort-desc="fetchData"
       :footer-props="{
-        'items-per-page-options': [5]
+        'items-per-page-options': [20]
       }"
     >
       <template v-slot:item="{ item }">
@@ -51,6 +51,12 @@ import { searchApiV2 } from "@/plugins/SearchApi.js";
 import dayjs from "dayjs";
 
 export default {
+  props: {
+    query: {
+      default: null,
+      type: Object
+    }
+  },
   computed: {
     results() {
       return this.items.map(r => {
@@ -71,6 +77,12 @@ export default {
   },
   async mounted() {
     this.fetchData();
+  },
+  watch: {
+    "$route.query"() {
+      console.log("Query Change, fetch table");
+      this.fetchData();
+    }
   },
   methods: {
     filterHeaders(headers) {

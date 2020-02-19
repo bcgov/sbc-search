@@ -12,7 +12,7 @@
       <h2 class="headline text-center mb-10">
         Search for a CorpParty affilated with a company
       </h2>
-      <section class="sbc-section">
+      <section class="sbc-search-section">
         <Search :disabled="advancedSearchActive" />
         <SearchToggle
           title="Advanced Search"
@@ -22,6 +22,10 @@
         <AdvancedSearch v-if="advancedSearchActive"></AdvancedSearch>
       </section>
     </section>
+    <section class="sbc-results-section bg-lavender">
+      <h3 class="text-center">Search Results</h3>
+      <ServerSideResults class="mt-5"></ServerSideResults>
+    </section>
   </div>
 </template>
 
@@ -29,12 +33,15 @@
 import Search from "@/components/Search/Search.vue";
 import SearchToggle from "@/components/Search/Toggle.vue";
 import AdvancedSearch from "@/components/Search/AdvancedSearch.vue";
+import ServerSideResults from "@/components/Search/ServerSideTable.vue";
+
 import { mapState } from "vuex";
 export default {
   components: {
     Search,
     SearchToggle,
-    AdvancedSearch
+    AdvancedSearch,
+    ServerSideResults
   },
   computed: {
     ...mapState(["filters"])
@@ -52,4 +59,11 @@ export default {
 };
 </script>
 
-<style lang="sass"></style>
+<style lang="sass">
+.sbc-search-section
+  padding:  5em
+  background-color: white
+
+.sbc-results-section
+  padding: 0em 5em 1em 5em
+</style>
