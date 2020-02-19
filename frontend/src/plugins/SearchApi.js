@@ -4,7 +4,6 @@ const PERSON_SEARCH_URL = "/person/search";
 const COPRPARTY_SEARCH_URL = "/person";
 
 export function searchApi(params) {
-  console.log("Params", params);
   return ApiService.get(PERSON_SEARCH_URL, {
     params: params
   });
