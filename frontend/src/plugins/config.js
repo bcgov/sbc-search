@@ -1,5 +1,5 @@
 export const FIELD_VALUES = [
-  { text: "Any Name", value: "ANY_NME" },
+  { text: "Any Name", value: "any_nme" },
   { text: "First Name", value: "first_nme" },
   { text: "Middle Name", value: "middle_nme" },
   { text: "Last Name", value: "last_nme" },

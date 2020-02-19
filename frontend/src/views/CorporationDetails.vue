@@ -5,23 +5,21 @@
         CorpParty Details
       </h1>
       <h5 class="font-weight-regular body-1">
-        Details for an office held during a specific period of time
+        Details for a BC Corporation.
       </h5>
     </section>
     <section class="sbc-section bg-lavender pt-12">
       <h2 class="headline text-center mb-10">
-        Details for Filing #1234567
+        Corporation Details for Inc. #0638995
       </h2>
       <section class="sbc-section">
         <v-container>
           <v-row>
             <v-col cols="6">
-              <Details></Details>
+              Details
             </v-col>
             <v-col cols="6">
-              <OfficeTable
-                title="All Offices held at Dennis Black Consulting Ltd."
-              ></OfficeTable>
+              Table
             </v-col>
           </v-row>
         </v-container>
@@ -31,14 +29,7 @@
 </template>
 
 <script>
-import Details from "@/components/Details/Details.vue";
-import OfficeTable from "@/components/Details/OfficeTable.vue";
-export default {
-  components: {
-    Details,
-    OfficeTable
-  }
-};
+export default {};
 </script>
 
 <style></style>

@@ -91,7 +91,8 @@ export default {
         if (
           val === "corp_party_id" ||
           val === "postal_cd" ||
-          val === "province"
+          val === "province" ||
+          val === "corp_nme"
         ) {
           return false;
         }

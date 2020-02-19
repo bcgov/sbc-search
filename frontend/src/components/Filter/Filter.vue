@@ -7,7 +7,9 @@
       <div class="d-inline-block filter-input-cell mr-2">
         {{ getText(operator, "operator") }}
       </div>
-      <div class="d-inline-block filter-input-cell mr-2">{{ value }}</div>
+      <div class="d-inline-block filter-input-cell mr-2 font-weight-bold">
+        {{ value }}
+      </div>
       <SbcButton
         :variant="2"
         :width="120"
