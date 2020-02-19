@@ -411,7 +411,25 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
             offices.append(result_dict)
 
-        return jsonify({'results': offices})
+        person = CorpParty.query.filter(CorpParty.corp_party_id==int(corppartyid)).one()
+
+        same_addr = CorpParty.query.filter(
+            (CorpParty.delivery_addr_id == person.delivery_addr_id) |
+            (CorpParty.mailing_addr_id == person.mailing_addr_id)
+        ).all()
+
+        same_name_and_company = CorpParty.query.filter(
+            CorpParty.first_nme == person.first_nme,
+            CorpParty.last_nme == person.last_nme,
+            CorpParty.middle_nme == person.middle_nme,
+            CorpParty.corp_num == person.corp_num,
+        )
+
+        return jsonify({
+            'offices': offices,
+            'same_addr': [s.as_dict() for s in same_addr if s.corp_party_id != int(corppartyid)],
+            'same_name_and_company': [s.as_dict() for s in same_name_and_company if s.corp_party_id != int(corppartyid)],
+        })
 
 
 

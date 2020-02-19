@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 import os
+from decimal import Decimal
 
 app = Flask(__name__)
 
@@ -29,7 +30,12 @@ class BaseModel(db.Model):
     __abstract__ = True
     __table_args__ = {'quote':False, 'schema': 'bc_registries'}
     def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        d = {}
+        for c in self.__table__.columns:
+            d[c.name] = getattr(self, c.name)
+            if type(d[c.name]) is Decimal:
+                d[c.name] = int(d[c.name])
+        return d
 
 
 class Address(BaseModel):
