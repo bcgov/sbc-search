@@ -23,7 +23,6 @@
         class="ml-2"
         title="Clear"
         :variant="2"
-        @click.native="searchQuery = ''"
         :disabled="disabled"
       ></SbcButton>
     </div>

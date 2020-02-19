@@ -108,17 +108,19 @@ export default {
       const { page, sortBy, sortDesc } = this.options;
 
       let type = "basic";
+      let q;
       if (query.advanced) {
         type = "advanced";
-      }
-
-      let q = query.queryString + `&page=${page}`;
-      if (sortDesc.length > 0) {
-        const sortOrder = sortDesc[0] ? "desc" : "asc";
-        q += `&sort_type=${sortOrder}`;
-      }
-      if (sortBy.length > 0) {
-        q += `&sort_value=${sortBy}`;
+        q = query.queryString + `&page=${page}`;
+        if (sortDesc.length > 0) {
+          const sortOrder = sortDesc[0] ? "desc" : "asc";
+          q += `&sort_type=${sortOrder}`;
+        }
+        if (sortBy.length > 0) {
+          q += `&sort_value=${sortBy}`;
+        }
+      } else {
+        q = query;
       }
 
       searchApiV2(q, { type })
