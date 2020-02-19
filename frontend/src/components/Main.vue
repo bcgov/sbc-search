@@ -25,7 +25,10 @@
         ></AdvancedSearch>
       </section>
     </section>
-    <section class="sbc-results-section bg-lavender">
+    <section
+      v-if="Object.keys($route.query).length > 0"
+      class="sbc-results-section bg-lavender"
+    >
       <h3 class="text-center">Search Results</h3>
       <ServerSideResults class="mt-5"></ServerSideResults>
     </section>
