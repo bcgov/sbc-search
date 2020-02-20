@@ -20,6 +20,7 @@ from search_api.models import (
     OfficeType,
     OfficesHeld,
     OfficerType,
+    Event,
     app, db #TODO, move this out of models.py
 )
 
@@ -334,6 +335,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         name = CorpName.query.filter(CorpName.corp_num ==  result.corp_num).add_columns(CorpName.corp_nme).one()[0]
 
         office = Office.query.filter(Office.corp_num == person.corp_num).all()[0]
+
         addr = _normalize_addr(person.delivery_addr_id)
         corp_addr = _normalize_addr(office.delivery_addr_id)
 
@@ -366,6 +368,9 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
 
     def _normalize_addr(id):
+        if not id:
+            return ''
+
         address = Address.query.filter(Address.addr_id == id).add_columns(
             Address.addr_line_1,
             Address.addr_line_2,
@@ -386,18 +391,21 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
     @app.route('/person/officesheld/<corppartyid>')
     def officesheld(corppartyid):
-        results = OfficerType.query\
-                .join(OfficesHeld, OfficerType.officer_typ_cd==OfficesHeld.officer_typ_cd)\
-                .join(CorpParty, OfficesHeld.corp_party_id == CorpParty.corp_party_id)\
-                .join(Address, CorpParty.mailing_addr_id == Address.addr_id)\
-                .add_columns(\
+        results = (OfficerType.query
+                .join(OfficesHeld, OfficerType.officer_typ_cd==OfficesHeld.officer_typ_cd)
+                .join(CorpParty, OfficesHeld.corp_party_id == CorpParty.corp_party_id)
+                .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+                #.join(Event, Event.event_id == CorpParty.start_event_id)
+                .add_columns(
                     CorpParty.corp_party_id,
                     OfficerType.officer_typ_cd,
                     OfficerType.short_desc,
                     CorpParty.appointment_dt,
                     Address.addr_line_1,
-                )\
+                    Event.event_timestmp
+                )
                 .filter(CorpParty.corp_party_id==int(corppartyid))
+            )
 
         offices = []
         for row in results:
@@ -408,6 +416,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict['short_desc'] = row[3]
             result_dict['appointment_dt'] = row[4]
             result_dict['addr_line_1'] = row[5]
+            #result_dict['year'] = row[6].year
 
             offices.append(result_dict)
 
@@ -418,17 +427,19 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             (CorpParty.mailing_addr_id == person.mailing_addr_id)
         ).all()
 
-        same_name_and_company = CorpParty.query.filter(
+        same_name_and_company = CorpParty.query.add_columns(
+            Event.event_timestmp
+        ).filter(
             CorpParty.first_nme == person.first_nme,
             CorpParty.last_nme == person.last_nme,
             CorpParty.middle_nme == person.middle_nme,
             CorpParty.corp_num == person.corp_num,
-        )
+        ).join(Event, Event.event_id == CorpParty.start_event_id)
 
         return jsonify({
             'offices': offices,
             'same_addr': [s.as_dict() for s in same_addr if s.corp_party_id != int(corppartyid)],
-            'same_name_and_company': [s.as_dict() for s in same_name_and_company if s.corp_party_id != int(corppartyid)],
+            'same_name_and_company': [{**s[0].as_dict(), **{'year':s[1].year}} for s in same_name_and_company if s[0].corp_party_id != int(corppartyid)],
         })
 
 
