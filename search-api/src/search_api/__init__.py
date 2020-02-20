@@ -226,7 +226,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict['appointment_dt'] = row[5]
             result_dict['cessation_dt'] = row[6]
             result_dict['corp_num'] = row[7]
-            result_dict['party_typ_id'] = row[7]
+            result_dict['party_typ_id'] = row[8]
             # result_dict['corp_nme'] = row[8]
             # result_dict['addr_line_1'] = row[9]
             # result_dict['postal_cd'] = row[10]
@@ -357,7 +357,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         #return str(results.statement.compile())
 
         # TODO: switch to marshmallow.
-        result_dict['corp_party_id'] = person.corp_num
+        result_dict['corp_party_id'] = int(person.corp_party_id)
         result_dict['first_nme'] = person.first_nme
         result_dict['middle_nme'] = person.middle_nme
         result_dict['last_nme'] = person.last_nme
