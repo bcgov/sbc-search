@@ -32,7 +32,7 @@ import { mapState } from "vuex";
 export default {
   props: {
     imode: {
-      default: "Any",
+      default: "ANY",
       type: String
     }
   },
@@ -50,7 +50,7 @@ export default {
   data() {
     return {
       mode: this.imode,
-      modes: ["Any", "And"]
+      modes: ["ANY", "AND"]
     };
   },
   methods: {
@@ -67,10 +67,10 @@ export default {
         counter++;
       });
 
-      if (this.mode === "And") {
-        queryString += "&mode=All";
-      } else if (this.mode === "Any") {
-        queryString += "&mode=Any";
+      if (this.mode === "AND") {
+        queryString += "&mode=ALL";
+      } else if (this.mode === "ANY") {
+        queryString += "&mode=ANY";
       }
 
       this.$router.push({
