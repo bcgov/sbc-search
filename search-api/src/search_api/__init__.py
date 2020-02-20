@@ -327,6 +327,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 CorpParty.cessation_dt,
                 CorpParty.corp_num,
                 CorpParty.delivery_addr_id,
+                CorpParty.party_typ_cd
                 # CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc,
             ).filter(CorpParty.corp_party_id==int(id))).one()
@@ -345,16 +346,6 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         else:
             corp_addr = ''
 
-        # offices_held = OfficesHeld.query.filter(
-        #     (OfficesHeld.corp_party_id == int(id)) |
-        #     (OfficesHeld.dd_corp_party_id == int(id))
-        # ).all()
-
-        # raise Exception(offices_held)
-        # except NoResultFound:
-        #     abort(404)
-        # For debugging statement, uncomment this.
-        #return str(results.statement.compile())
 
         # TODO: switch to marshmallow.
         result_dict['corp_party_id'] = int(person.corp_party_id)
@@ -365,6 +356,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result_dict['cessation_dt'] = person.cessation_dt
         result_dict['corp_num'] = person.corp_num
         result_dict['corp_nme'] = name.corp_nme
+        result_dict['party_typ_cd'] = person.party_typ_cd
         result_dict['addr'] = addr
         result_dict['corp_addr'] = corp_addr
         # result_dict['state_typ_cd'] = results[0][13]
