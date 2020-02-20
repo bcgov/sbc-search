@@ -388,9 +388,9 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         def fn(accumulator, s):
             if s:
-                return accumulator + ', ' + s
+                return (accumulator or '') + ', ' + (s or '')
             else:
-                return accumulator
+                return accumulator or ''
 
         return reduce(fn, [address.addr_line_1, address.addr_line_2, address.addr_line_3, address.city, address.province, address.country_typ_cd])
 
