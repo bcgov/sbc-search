@@ -44,13 +44,22 @@ export default {
         "province",
         "corp_party_id"
       ]);
-      filtered["appointment_dt"] = dayjs(filtered["appointment_dt"]).format(
-        "YYYY-MM-DD"
-      );
-      filtered["cessation_dt"] = dayjs(filtered["cessation_dt"]).format(
-        "YYYY-MM-DD"
-      );
 
+      if (filtered["appointment_dt"]) {
+        filtered["appointment_dt"] = dayjs(filtered["appointment_dt"]).format(
+          "YYYY-MM-DD"
+        );
+      } else {
+        filtered["appointment_dt"] = "-";
+      }
+
+      if (filtered["cessation_dt"]) {
+        filtered["cessation_dt"] = dayjs(filtered["cessation_dt"]).format(
+          "YYYY-MM-DD"
+        );
+      } else {
+        filtered["cessation_dt"] = "-";
+      }
       return pick(filtered, [
         "last_nme",
         "first_nme",

@@ -6,5 +6,9 @@ module.exports = {
         prependData: `@import "~@/assets/sass/variables.sass"`
       }
     }
+  },
+  devServer: {
+    hot: false,
+    liveReload: false
   }
 };

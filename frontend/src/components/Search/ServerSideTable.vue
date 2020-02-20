@@ -60,8 +60,18 @@ export default {
   computed: {
     results() {
       return this.items.map(r => {
-        r["appointment_dt"] = dayjs(r["appointment_dt"]).format("YYYY-MM-DD");
-        r["cessation_dt"] = dayjs(r["cessation_dt"]).format("YYYY-MM-DD");
+        if (r["appointment_dt"]) {
+          r["appointment_dt"] = dayjs(r["appointment_dt"]).format("YYYY-MM-DD");
+        } else {
+          r["appointment_dt"] = "-";
+        }
+
+        if (r["cessation_dt"]) {
+          r["cessation_dt"] = dayjs(r["cessation_dt"]).format("YYYY-MM-DD");
+        } else {
+          r["cessation_dt"] = "-";
+        }
+
         return r;
       });
     }
@@ -126,7 +136,7 @@ export default {
       searchApiV2(q, { type })
         .then(result => {
           this.items = result.data.results;
-          this.totalItems = result.data.total;
+          this.totalItems = 21;
           this.loading = false;
         })
         .catch(e => {

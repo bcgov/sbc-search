@@ -1,27 +1,29 @@
 <template>
   <div>
-    <v-simple-table class="office-table">
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th>Office Held</th>
-            <th>Year</th>
-            <th>Address</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(o, index) in offices" :key="index">
-            <td>
-              {{ o.short_desc }}
-            </td>
-            <td>
-              {{ o["year"] }}
-            </td>
-            <td>{{ o["addr_line_1"] }}</td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table>
+    <div v-if="offices && offices.length > 0">
+      <v-simple-table class="office-table">
+        <template v-slot:default>
+          <thead>
+            <tr>
+              <th>Office Held</th>
+              <th>Year</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(o, index) in offices" :key="index">
+              <td>
+                {{ o.short_desc }}
+              </td>
+              <td>
+                {{ o["year"] }}
+              </td>
+              <td>{{ o["addr_line_1"] }}</td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+    </div>
   </div>
 </template>
 
