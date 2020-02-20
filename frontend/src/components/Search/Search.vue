@@ -7,7 +7,7 @@
         type="text"
         filled
         :height="59"
-        placeholder="Text...."
+        :placeholder="iquery || 'Search by name...'"
         :disabled="disabled"
       ></v-text-field>
     </div>
@@ -34,6 +34,10 @@
 import SbcButton from "@/components/SbcButton.vue";
 export default {
   props: {
+    iquery: {
+      default: null,
+      type: String
+    },
     disabled: {
       default: false,
       type: Boolean
@@ -41,7 +45,7 @@ export default {
   },
   data() {
     return {
-      searchQuery: null
+      searchQuery: this.iquery
     };
   },
   components: {

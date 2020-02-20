@@ -95,13 +95,11 @@ export default {
   },
   watch: {
     "$route.query"() {
-      console.log("Query Change, fetch table");
       this.fetchData();
     }
   },
   methods: {
     filterHeaders(headers) {
-      console.log("Headers", headers);
       return headers.filter(h => {
         const val = h.value;
         if (

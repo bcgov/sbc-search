@@ -16,7 +16,6 @@ export function advancedSearchApi(query) {
 
 export function searchApiV2(params, { type }) {
   if (type === "basic") {
-    console.log("Basic");
     return searchApi(params);
   } else if (type === "advanced") {
     return advancedSearchApi(params);

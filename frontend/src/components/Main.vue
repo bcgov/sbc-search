@@ -10,7 +10,7 @@
     </section>
     <section class="sbc-section bg-lavender pt-12">
       <section class="sbc-search-section">
-        <Search :disabled="advancedSearchActive" />
+        <Search :iquery="iquery" :disabled="advancedSearchActive" />
         <SearchToggle
           title="Advanced Search"
           :active.sync="advancedSearchActive"
@@ -75,9 +75,10 @@ export default {
           });
         }
       }
-      console.log("Query gtring", this.queryFilters);
       this.queryMode = pick(queryString, "mode").mode;
       this.$store.commit("setFilter", this.queryFilters);
+    } else if (query.query) {
+      this.iquery = query.query;
     }
     if (this.filters.length > 0) {
       this.advancedSearchActive = true;
@@ -87,7 +88,8 @@ export default {
     return {
       advancedSearchActive: false,
       queryFilters: [],
-      queryMode: "ANY"
+      queryMode: "ANY",
+      iquery: null
     };
   }
 };
