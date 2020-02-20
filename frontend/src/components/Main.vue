@@ -9,7 +9,6 @@
       </h5>
     </section>
     <section class="sbc-section bg-lavender pt-12">
-
       <section class="sbc-search-section">
         <Search :disabled="advancedSearchActive" />
         <SearchToggle
@@ -27,8 +26,7 @@
       v-if="Object.keys($route.query).length > 0"
       class="sbc-results-section bg-lavender"
     >
-      <h3 class="text-center">Search Results</h3>
-      <ServerSideResults class="mt-5"></ServerSideResults>
+      <ServerSideResults></ServerSideResults>
     </section>
   </div>
 </template>

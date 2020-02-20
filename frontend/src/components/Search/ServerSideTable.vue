@@ -99,7 +99,6 @@ export default {
       return headers.filter(h => {
         const val = h.value;
         if (
-          val === "corp_party_id" ||
           val === "postal_cd" ||
           val === "province" ||
           val === "corp_nme" ||
