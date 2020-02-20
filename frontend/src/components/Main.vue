@@ -58,6 +58,10 @@ export default {
 
       if (typeof queryFilters.field === "string") {
         this.queryFilters.push(queryFilters);
+        this.$store.commit("addFilter", queryFilters);
+        if (this.filters.length > 0) {
+          this.advancedSearchActive = true;
+        }
         return;
       }
 
@@ -72,11 +76,10 @@ export default {
           });
         }
       }
-
+      console.log("Query gtring", this.queryFilters);
       this.queryMode = pick(queryString, "mode").mode;
       this.$store.commit("setFilter", this.queryFilters);
     }
-
     if (this.filters.length > 0) {
       this.advancedSearchActive = true;
     }
