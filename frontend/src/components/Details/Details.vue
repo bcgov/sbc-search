@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="headline text-center mb-10">
-      Details for Filing #{{ detail.corp_num }}
+      Details for Filing #{{ detail.corp_party_id }}
     </h2>
     <v-container>
       <v-row>

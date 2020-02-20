@@ -40,12 +40,6 @@ apt-get install nmap
 ncat -l 0.0.0.0 15432 --keep-open --sh-exec "ncat localhost 5432"
 ```
 
-Install openshift CLI
-
-```
-
-```
-
 ## Migrations
 
 This project uses
