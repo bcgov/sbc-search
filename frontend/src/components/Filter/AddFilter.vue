@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       valid: true,
-      field: "ANY_NME",
+      field: "any_nme",
       operator: "exact",
       value: null,
       fields: FIELD_VALUES,
@@ -86,7 +86,7 @@ export default {
 
   methods: {
     handleClear() {
-      this.field = "ANY_NME";
+      this.field = "any_nme";
       this.operator = "contains";
       this.value = "";
     },
