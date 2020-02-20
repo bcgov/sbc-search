@@ -1,28 +1,34 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="6">
-        <ul>
-          <li
-            v-for="(val, key) in filteredDetail"
-            :key="key"
-            class="d-flex w-100 detail-list-item"
-          >
-            <span class="font-weight-bold mb-1 detail-key">{{
-              getText(key)
-            }}</span>
-            <span class="detail-value">{{ val }}</span>
-          </li>
-        </ul>
-      </v-col>
-      <v-col cols="6">
-        <h5 class="font-weight-regular body-1 mb-3">
-          All Offices Held At {{ filteredDetail.corp_nme }}
-        </h5>
-        <OfficeTable class="mt-4" :officesheld="officesheld"></OfficeTable>
-      </v-col>
-    </v-row>
-  </v-container>
+  <div>
+    <h2 class="headline text-center mb-10">
+      Details for Filing #{{ detail.corp_party_id }}
+    </h2>
+    <v-container>
+      <v-row>
+        <v-col cols="6">
+          <ul>
+            <li
+              v-for="(val, key) in filteredDetail"
+              :key="key"
+              class="d-flex w-100 detail-list-item"
+            >
+              <span class="font-weight-bold mb-1 detail-key">{{
+                getText(key)
+              }}</span>
+              <span class="detail-value">{{ val }}</span>
+            </li>
+          </ul>
+        </v-col>
+        <v-col cols="6">
+          <OfficeTable
+            class="mt-4"
+            :details="filteredDetail"
+            :officesheld="officesheld"
+          ></OfficeTable>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>

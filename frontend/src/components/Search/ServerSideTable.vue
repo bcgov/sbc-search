@@ -102,7 +102,8 @@ export default {
           val === "corp_party_id" ||
           val === "postal_cd" ||
           val === "province" ||
-          val === "corp_nme"
+          val === "corp_nme" ||
+          val === "corp_addr"
         ) {
           return false;
         }

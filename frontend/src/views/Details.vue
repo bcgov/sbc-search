@@ -9,9 +9,6 @@
       </h5>
     </section>
     <section class="sbc-section bg-lavender pt-12">
-      <h2 class="headline text-center mb-10">
-        Details for Filing #1234567
-      </h2>
       <section class="sbc-section">
         <Details></Details>
       </section>
