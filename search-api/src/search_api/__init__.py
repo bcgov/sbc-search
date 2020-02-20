@@ -319,22 +319,23 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result = (CorpParty.query
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
             .add_columns(\
-                CorpParty.corp_party_id,
-                CorpParty.first_nme,
-                CorpParty.middle_nme,
-                CorpParty.last_nme,
-                CorpParty.appointment_dt,
-                CorpParty.cessation_dt,
-                CorpParty.corp_num,
-                CorpParty.delivery_addr_id,
-                CorpParty.party_typ_cd
+                # CorpParty.corp_party_id,
+                # CorpParty.first_nme,
+                # CorpParty.middle_nme,
+                # CorpParty.last_nme,
+                # CorpParty.appointment_dt,
+                # CorpParty.cessation_dt,
+                # CorpParty.corp_num,
+                # CorpParty.delivery_addr_id,
+                # CorpParty.party_typ_cd
+                Corporation.corp_typ_cd
                 # CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc,
             ).filter(CorpParty.corp_party_id==int(id))).one()
 
         person = result[0]
         result_dict = {}
-        name = CorpName.query.filter(CorpName.corp_num ==  result.corp_num).add_columns(CorpName.corp_nme).filter()[0] #TODO: handle multiple names
+        name = CorpName.query.filter(CorpName.corp_num ==  person.corp_num).add_columns(CorpName.corp_nme).filter()[0] #TODO: handle multiple names
 
         offices = Office.query.filter(Office.corp_num == person.corp_num).all()
 
@@ -359,6 +360,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result_dict['party_typ_cd'] = person.party_typ_cd
         result_dict['addr'] = addr
         result_dict['corp_addr'] = corp_addr
+        result_dict['corp_typ_cd'] = result[1]
         # result_dict['state_typ_cd'] = results[0][13]
         # result_dict['full_desc'] = results[0][14]
 
