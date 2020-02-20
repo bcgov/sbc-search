@@ -442,10 +442,9 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         same_name_and_company = CorpParty.query.add_columns(
             Event.event_timestmp
         ).filter(
-            CorpParty.first_nme == person.first_nme,
-            CorpParty.last_nme == person.last_nme,
-            CorpParty.middle_nme == person.middle_nme,
-            CorpParty.corp_num == person.corp_num,
+            CorpParty.first_nme.ilike(person.first_nme),
+            CorpParty.last_nme.ilike(person.last_nme),
+            CorpParty.corp_num.ilike(person.corp_num),
         ).join(Event, Event.event_id == CorpParty.start_event_id)
 
 
@@ -490,15 +489,15 @@ def _get_filter(field, operator, value):
 
     value = value.lower()
     if model:
-        Field = func.lower(getattr(model, field))
+        Field = getattr(model, field)
         if operator == 'contains':
-            return Field.contains(value)
+            return Field.ilike('%' + value + '%')
         elif operator == 'exact':
-            return Field == value
+            return Field.ilike(value)
         elif operator == 'endswith':
-            return Field.endswith(value)
+            return Field.ilike('%' + value)
         elif operator == 'startswith':
-            return Field.startswith(value)
+            return Field.ilike(value + '%')
         else:
             raise Exception('invalid operator: {}'.format(operator))
     else:
@@ -533,7 +532,6 @@ def _get_corporation_search_results(args):
         .with_entities(
             CorpName.corp_nme,
             Corporation.corp_num,
-            # CorpName.corp_nme,
             # Corporation.transition_dt,
             # Address.addr_line_1,
             # Address.postal_cd,
@@ -547,12 +545,11 @@ def _get_corporation_search_results(args):
 
     results = results.filter(
             (Corporation.corp_num == query) |
-            (CorpName.corp_nme == query))
+            (CorpName.corp_nme.ilike('%'+query+'%'))
             # (CorpParty.first_nme.contains(query)) |
             # (CorpParty.last_nme.contains(query)))
-    # results = (CorpName.query.filter(CorpName.corp_nme.startswith(query))).all()
-
-    # raise Exception(results)
+    )
+    
     return results
 
 
@@ -598,14 +595,6 @@ def _get_corpparty_search_results(args):
             # TODO: we no longer need this as we want to show all types.
             #.filter(CorpParty.party_typ_cd.in_(['FIO', 'DIR','OFF']))\
 
-    #result = db.engine.execute('select bus_company_num from BC_REGISTRIES.CORP_PARTY limit 1;')
-    # result = CorpParty.query.join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
-    #         .with_entities(\
-    #             CorpParty.corp_party_id,
-    #             Corporation.corp_num,
-    #             ).limit(5).all()
-
-    # raise Exception(result)
     results = (CorpParty.query
             # .filter(CorpParty.end_event_id == None)
             # .filter(CorpName.end_event_id == None)
@@ -636,7 +625,7 @@ def _get_corpparty_search_results(args):
     # Simple mode - return reasonable results for a single search string:
     if query:
         #results = results.filter((Corporation.corp_num == query) | (CorpParty.first_nme.contains(query)) | (CorpParty.last_nme.contains(query)))
-        results = results.filter((CorpParty.first_nme == query) | (CorpParty.last_nme == query) | (CorpParty.middle_nme == query))
+        results = results.filter(CorpParty.first_nme.ilike(query) | CorpParty.last_nme.ilike(query) | CorpParty.middle_nme.ilike(query))
         # Advanced mode - return precise results for a set of clauses.
     elif clauses:
 
