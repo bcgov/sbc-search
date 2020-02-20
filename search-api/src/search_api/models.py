@@ -303,6 +303,22 @@ class CorpParty(BaseModel):
     def __repr__(self):
         return 'corp num: {}'.format(self.corp_party_id)
 
+class Event(BaseModel):
+    __tablename__ = "event"
+    """
+    EVENT_ID                       NUMBER                         22                             17616460
+    CORP_NUM                       VARCHAR2                       10                             17616460
+    EVENT_TYP_CD                   VARCHAR2                       10                             17616460
+    EVENT_TIMESTMP                 DATE                           7                              17616461
+    TRIGGER_DTS                    DATE                           7                              1126833
+    """
+
+    event_id = db.Column(db.Integer, unique=True, primary_key=True)
+    corp_num = db.Column(db.String(10))
+    event_type_cd = db.Column(db.String(10))
+    event_timestmp = db.Column(db.Date)
+    trigger_dts = db.Column(db.Date)
+
 
 class OfficerType(BaseModel):
     __tablename__ = "officer_type"
