@@ -332,7 +332,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         person = result[0]
         result_dict = {}
-        name = CorpName.query.filter(CorpName.corp_num ==  result.corp_num).add_columns(CorpName.corp_nme).one()[0]
+        name = CorpName.query.filter(CorpName.corp_num ==  result.corp_num).add_columns(CorpName.corp_nme).filter()[0] #TODO: handle multiple names
 
         offices = Office.query.filter(Office.corp_num == person.corp_num).all()
 
