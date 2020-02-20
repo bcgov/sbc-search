@@ -125,7 +125,7 @@ class CorpState(BaseModel):
     """
 
     corp_num = db.Column(db.String(10), primary_key=True)
-    start_event_id = db.Column(db.Integer, primary_key=True)
+    start_event_id = db.Column(db.Integer)
     end_event_id = db.Column(db.Integer)
     state_typ_cd = db.Column(db.String(3))
     dd_corp_num = db.Column(db.String(10))

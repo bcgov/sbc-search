@@ -328,7 +328,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 # CorpParty.corp_num,
                 # CorpParty.delivery_addr_id,
                 # CorpParty.party_typ_cd
-                Corporation.corp_typ_cd
+                Corporation.corp_typ_cd,
                 # CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc,
             ).filter(CorpParty.corp_party_id==int(id))).one()
@@ -336,10 +336,11 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         person = result[0]
         result_dict = {}
         name = CorpName.query.filter(CorpName.corp_num ==  person.corp_num).add_columns(CorpName.corp_nme).filter()[0] #TODO: handle multiple names
-
         offices = Office.query.filter(Office.corp_num == person.corp_num).all()
-
         addr = _normalize_addr(person.delivery_addr_id)
+        states = CorpState.query.filter(
+            CorpState.corp_num == person.corp_num,
+            CorpState.end_event_id == None).all()
 
         if offices:
             # TODO : list all, or just the one from the correct time.
@@ -361,7 +362,8 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result_dict['addr'] = addr
         result_dict['corp_addr'] = corp_addr
         result_dict['corp_typ_cd'] = result[1]
-        # result_dict['state_typ_cd'] = results[0][13]
+
+        result_dict['states'] = [s.as_dict() for s in states]
         # result_dict['full_desc'] = results[0][14]
 
         return jsonify(result_dict)
