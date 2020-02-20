@@ -400,14 +400,13 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 .join(OfficesHeld, OfficerType.officer_typ_cd==OfficesHeld.officer_typ_cd)
                 .join(CorpParty, OfficesHeld.corp_party_id == CorpParty.corp_party_id)
                 #.join(Address, CorpParty.mailing_addr_id == Address.addr_id)
-                #.join(Event, Event.event_id == CorpParty.start_event_id)
+                .join(Event, Event.event_id == CorpParty.start_event_id)
                 .add_columns(
                     CorpParty.corp_party_id,
                     OfficerType.officer_typ_cd,
                     OfficerType.short_desc,
                     CorpParty.appointment_dt,
-                    #Address.addr_line_1,
-                    #Event.event_timestmp
+                    Event.event_timestmp
                 )
                 .filter(CorpParty.corp_party_id==int(corppartyid))
             )
@@ -420,8 +419,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict['officer_typ_cd'] = row[2]
             result_dict['short_desc'] = row[3]
             result_dict['appointment_dt'] = row[4]
-            #result_dict['addr_line_1'] = row[5]
-            #result_dict['year'] = row[6].year
+            result_dict['year'] = row[5].year
 
             offices.append(result_dict)
 
