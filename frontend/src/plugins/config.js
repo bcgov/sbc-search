@@ -97,5 +97,11 @@ export const RESULT_HEADERS = [
     value: "party_typ_cd",
     sortable: true,
     align: "left"
+  },
+  {
+    text: "Type",
+    value: "corp_typ_cd",
+    sortable: true,
+    align: "left"
   }
 ];

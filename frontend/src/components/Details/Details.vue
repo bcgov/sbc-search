@@ -76,6 +76,7 @@ export default {
         "cessation_dt",
         "corp_nme",
         "corp_num",
+        "corp_typ_cd",
         "corp_addr"
       ]);
     }
