@@ -1,25 +1,42 @@
 <template>
-  <div>
-    <ul>
-      <li
-        v-for="(val, key) in filteredDetail"
-        :key="key"
-        class="d-flex w-100 detail-list-item"
-      >
-        <span class="font-weight-bold mb-1 detail-key">{{ getText(key) }}</span>
-        <span class="detail-value">{{ val }}</span>
-      </li>
-    </ul>
-  </div>
+  <v-container>
+    <v-row>
+      <v-col cols="6">
+        <ul>
+          <li
+            v-for="(val, key) in filteredDetail"
+            :key="key"
+            class="d-flex w-100 detail-list-item"
+          >
+            <span class="font-weight-bold mb-1 detail-key">{{
+              getText(key)
+            }}</span>
+            <span class="detail-value">{{ val }}</span>
+          </li>
+        </ul>
+      </v-col>
+      <v-col cols="6">
+        <h5 class="font-weight-regular body-1 mb-3">
+          All Offices Held At {{ filteredDetail.corp_nme }}
+        </h5>
+        <OfficeTable class="mt-4" :officesheld="officesheld"></OfficeTable>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import { getTextFromValues } from "@/plugins/utils.js";
 import { RESULT_HEADERS } from "@/plugins/config.js";
-import { omit } from "lodash-es";
-import { corpPartySearch } from "@/plugins/SearchApi.js";
+import { omit, pick } from "lodash-es";
+import { corpPartySearch, corpPartyOfficeSearch } from "@/plugins/SearchApi.js";
 import dayjs from "dayjs";
+import OfficeTable from "@/components/Details/OfficeTable.vue";
+
 export default {
+  components: {
+    OfficeTable
+  },
   computed: {
     filteredDetail() {
       const filtered = omit(this.detail, [
@@ -33,10 +50,18 @@ export default {
       filtered["cessation_dt"] = dayjs(filtered["cessation_dt"]).format(
         "YYYY-MM-DD"
       );
-      filtered[
-        "addr_line_1"
-      ] = `${filtered["addr_line_1"]}, ${this.detail["postal_cd"]}, ${this.detail["province"]}`;
-      return filtered;
+
+      return pick(filtered, [
+        "last_nme",
+        "first_nme",
+        "middle_nme",
+        "addr",
+        "appointment_dt",
+        "cessation_dt",
+        "corp_nme",
+        "corp_party_id",
+        "corp_addr"
+      ]);
     }
   },
   methods: {
@@ -46,7 +71,8 @@ export default {
   },
   data() {
     return {
-      detail: {}
+      detail: {},
+      officesheld: {}
     };
   },
   mounted() {
@@ -55,6 +81,14 @@ export default {
       corpPartySearch(corp_party_id).then(result => {
         this.detail = result.data;
       });
+
+      corpPartyOfficeSearch(corp_party_id)
+        .then(result => {
+          this.officesheld = result.data;
+        })
+        .catch(() => {
+          this.officesheld = {};
+        });
     }
   }
 };

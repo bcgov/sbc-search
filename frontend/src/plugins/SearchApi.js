@@ -2,6 +2,7 @@ import ApiService from "@/plugins/ApiService.js";
 
 const PERSON_SEARCH_URL = "/person/search";
 const COPRPARTY_SEARCH_URL = "/person";
+const CORPPARTY_OFFICE_URL = "/person/officesheld";
 
 export function searchApi(params) {
   return ApiService.get(PERSON_SEARCH_URL, {
@@ -24,4 +25,8 @@ export function searchApiV2(params, { type }) {
 
 export function corpPartySearch(id) {
   return ApiService.get(`${COPRPARTY_SEARCH_URL}/${id}`);
+}
+
+export function corpPartyOfficeSearch(id) {
+  return ApiService.get(`${CORPPARTY_OFFICE_URL}/${id}`);
 }
