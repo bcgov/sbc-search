@@ -399,15 +399,15 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         results = (OfficerType.query
                 .join(OfficesHeld, OfficerType.officer_typ_cd==OfficesHeld.officer_typ_cd)
                 .join(CorpParty, OfficesHeld.corp_party_id == CorpParty.corp_party_id)
-                .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+                #.join(Address, CorpParty.mailing_addr_id == Address.addr_id)
                 #.join(Event, Event.event_id == CorpParty.start_event_id)
                 .add_columns(
                     CorpParty.corp_party_id,
                     OfficerType.officer_typ_cd,
                     OfficerType.short_desc,
                     CorpParty.appointment_dt,
-                    Address.addr_line_1,
-                    Event.event_timestmp
+                    #Address.addr_line_1,
+                    #Event.event_timestmp
                 )
                 .filter(CorpParty.corp_party_id==int(corppartyid))
             )
@@ -425,12 +425,22 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
             offices.append(result_dict)
 
+
         person = CorpParty.query.filter(CorpParty.corp_party_id==int(corppartyid)).one()
 
-        same_addr = CorpParty.query.filter(
-            (CorpParty.delivery_addr_id == person.delivery_addr_id) |
-            (CorpParty.mailing_addr_id == person.mailing_addr_id)
-        ).all()
+        # one or both addr may be null, handle each case.
+        if person.delivery_addr_id or person.mailing_addr_id:
+            if person.delivery_addr_id and person.mailing_addr_id:
+                expr = (CorpParty.delivery_addr_id == person.delivery_addr_id) | \
+                    (CorpParty.mailing_addr_id == person.mailing_addr_id)
+            elif person.delivery_addr_id:
+                expr = (CorpParty.delivery_addr_id == person.delivery_addr_id)
+            elif person.mailing_addr_id:
+                expr = (CorpParty.mailing_addr_id == person.mailing_addr_id)
+
+            same_addr = CorpParty.query.filter(expr).all()
+        else:
+            same_addr = []
 
         same_name_and_company = CorpParty.query.add_columns(
             Event.event_timestmp
