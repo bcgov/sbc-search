@@ -91,5 +91,11 @@ export const RESULT_HEADERS = [
     value: "corp_party_id",
     sortable: true,
     align: "left"
+  },
+  {
+    text: "Office Held",
+    value: "party_typ_cd",
+    sortable: true,
+    align: "left"
   }
 ];

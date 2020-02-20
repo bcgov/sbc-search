@@ -71,10 +71,11 @@ export default {
         "first_nme",
         "middle_nme",
         "addr",
+        "party_typ_cd",
         "appointment_dt",
         "cessation_dt",
         "corp_nme",
-        "corp_party_id",
+        "corp_num",
         "corp_addr"
       ]);
     }
