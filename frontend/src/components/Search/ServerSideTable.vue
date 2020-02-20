@@ -34,7 +34,7 @@
             }}</router-link>
           </td>
           <td>{{ item["corp_nme"] }}</td>
-          <td>{{ item["addr_line_1"] }}</td>
+          <td>{{ item["corp_party_id"] }}</td>
         </tr>
       </template>
     </v-data-table>
