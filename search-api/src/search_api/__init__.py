@@ -416,11 +416,11 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         for row in results:
             result_dict = {}
 
-            result_dict['corp_party_id'] = row[1]
+            result_dict['corp_party_id'] = int(row[1])
             result_dict['officer_typ_cd'] = row[2]
             result_dict['short_desc'] = row[3]
             result_dict['appointment_dt'] = row[4]
-            result_dict['addr_line_1'] = row[5]
+            #result_dict['addr_line_1'] = row[5]
             #result_dict['year'] = row[6].year
 
             offices.append(result_dict)
@@ -454,7 +454,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         return jsonify({
             'offices': offices,
             'same_addr': [s.as_dict() for s in same_addr if s.corp_party_id != int(corppartyid)],
-            'same_name_and_company': [{**s[0].as_dict(), **{'year':s[1].year}} for s in same_name_and_company if s[0].corp_party_id != int(corppartyid)],
+            'same_name_and_company': [{**s[0].as_dict(), **{'year':int(s[1].year)}} for s in same_name_and_company if s[0].corp_party_id != int(corppartyid)],
         })
 
 
