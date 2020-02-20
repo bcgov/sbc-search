@@ -340,7 +340,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         if offices:
             # TODO : list all, or just the one from the correct time.
-            corp_addr = _normalize_addr(office.delivery_addr_id)
+            corp_addr = _normalize_addr(offices[0].delivery_addr_id)
         else:
             corp_addr = ''
 
