@@ -334,10 +334,15 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result_dict = {}
         name = CorpName.query.filter(CorpName.corp_num ==  result.corp_num).add_columns(CorpName.corp_nme).one()[0]
 
-        office = Office.query.filter(Office.corp_num == person.corp_num).all()[0]
+        offices = Office.query.filter(Office.corp_num == person.corp_num).all()
 
         addr = _normalize_addr(person.delivery_addr_id)
-        corp_addr = _normalize_addr(office.delivery_addr_id)
+
+        if offices:
+            # TODO : list all, or just the one from the correct time.
+            corp_addr = _normalize_addr(office.delivery_addr_id)
+        else:
+            corp_addr = ''
 
         # offices_held = OfficesHeld.query.filter(
         #     (OfficesHeld.corp_party_id == int(id)) |
