@@ -17,14 +17,10 @@
       <template v-slot:item="{ item }">
         <tr>
           <td>
-            <router-link
-              :to="{
-                name: 'details',
-                query: {
-                  corp_party_id: item['corp_party_id']
-                }
-              }"
-              >{{ item["last_nme"] }}</router-link
+            <a
+              :href="`#/details?corp_party_id=${item['corp_party_id']}`"
+              target="_blank"
+              >{{ item["last_nme"] }}</a
             >
           </td>
           <td>{{ item["middle_nme"] }}</td>
@@ -33,12 +29,21 @@
           <td>{{ item["cessation_dt"] }}</td>
           <td></td>
           <td>
-            <router-link :to="{ name: 'details', query: item }">{{
-              item["corp_num"]
-            }}</router-link>
+            <a
+              :href="`#/details?corp_party_id=${item['corp_party_id']}`"
+              target="_blank"
+              >{{ item["corp_num"] }}</a
+            >
           </td>
           <td>{{ item["corp_nme"] }}</td>
-          <td>{{ item["addr_line_1"] }}</td>
+
+          <td>
+            <a
+              :href="`#/details?corp_party_id=${item['corp_party_id']}`"
+              target="_blank"
+              >{{ item["corp_party_id"] }}</a
+            >
+          </td>
         </tr>
       </template>
     </v-data-table>
@@ -96,6 +101,7 @@ export default {
   },
   methods: {
     filterHeaders(headers) {
+      console.log("Headers", headers);
       return headers.filter(h => {
         const val = h.value;
         if (
@@ -103,7 +109,8 @@ export default {
           val === "province" ||
           val === "corp_nme" ||
           val === "corp_addr" ||
-          val === "party_typ_cd"
+          val === "party_typ_cd" ||
+          val === "corp_typ_cd"
         ) {
           return false;
         }
