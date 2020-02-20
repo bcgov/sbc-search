@@ -1,7 +1,7 @@
 <template>
   <div>
     <h5 class="font-weight-regular body-1 mb-3">
-      All Offices Held At {{ details.corp_nme }}
+      <i>Other offices held at</i> {{ details.corp_nme }}
     </h5>
     <div v-if="offices && offices.length > 0">
       <v-simple-table class="office-table">
@@ -9,7 +9,7 @@
           <thead>
             <tr>
               <th>Office Held</th>
-              <th>Corp Party ID</th>
+              <th>Filing #</th>
               <th>Year</th>
             </tr>
           </thead>
@@ -37,16 +37,16 @@
       <h5>No offices found</h5>
     </div>
     <h5 class="font-weight-regular body-1 mb-3 mt-6">
-      Other {{ details.last_nme }}, {{ details.first_nme }}
-      {{ details.middle_nme }} at {{ details.corp_nme }}
+      <i>Other</i> {{ details.last_nme }}, {{ details.first_nme }}
+      {{ details.middle_nme }} <i>at company</i> {{ details.corp_nme }}
     </h5>
-    <div v-if="offices && offices.length > 0">
+    <div v-if="officesheld.same_addr && officesheld.same_addr.length > 0">
       <v-simple-table class="office-table">
         <template v-slot:default>
           <thead>
             <tr>
               <th>Office Held</th>
-              <th>Corp Party ID</th>
+              <th>Filing #</th>
               <th>Year</th>
             </tr>
           </thead>
@@ -75,16 +75,16 @@
     </div>
 
     <h5 class="font-weight-regular body-1 mb-3 mt-6">
-      Other {{ details.last_nme }}, {{ details.first_nme }}
-      {{ details.middle_nme }} at {{ details.addr }}
+      <i>Other</i> {{ details.last_nme }}, {{ details.first_nme }}
+      {{ details.middle_nme }} <i>at address</i> {{ details.addr }}
     </h5>
-    <div v-if="offices && offices.length > 0">
+    <div v-if="officesheld.same_name_and_company && officesheld.same_name_and_company.length > 0">
       <v-simple-table class="office-table">
         <template v-slot:default>
           <thead>
             <tr>
               <th>Office Held</th>
-              <th>Corp Party ID</th>
+              <th>Filing #</th>
               <th>Year</th>
             </tr>
           </thead>

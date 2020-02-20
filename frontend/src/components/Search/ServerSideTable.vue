@@ -27,7 +27,6 @@
           <td>{{ item["first_nme"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
-          <td></td>
           <td>
             <a
               :href="`#/details?corp_party_id=${item['corp_party_id']}`"

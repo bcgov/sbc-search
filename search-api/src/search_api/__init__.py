@@ -464,16 +464,19 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
 def _get_model_by_field(field_name):
 
-    if field_name in ['first_nme','middle_nme','last_nme','appointment_dt','cessation_dt']: # CorpParty fields
-        return eval('CorpParty')
-    elif field_name in ['corp_num']: # Corporation fields
-        return eval('Corporation')
-    elif field_name in ['corp_nme']: # CorpName fields
-        return eval('CorpName')
-    elif field_name in ['addr_line_1','postal_cd','city','province']: # Address fields
-        return eval('Address')
+    return CorpParty
+    # [cvo] for performance we only query this one above table for now.
 
-    return None
+    # if field_name in ['first_nme','middle_nme','last_nme','appointment_dt','cessation_dt']: # CorpParty fields
+    #     return eval('CorpParty')
+    # elif field_name in ['corp_num']: # Corporation fields
+    #     return eval('Corporation')
+    # elif field_name in ['corp_nme']: # CorpName fields
+    #     return eval('CorpName')
+    # elif field_name in ['addr_line_1','postal_cd','city','province']: # Address fields
+    #     return eval('Address')
+
+    #return None
 
 
 def _get_filter(field, operator, value):
@@ -656,7 +659,7 @@ def _get_corpparty_search_results(args):
 
     # Sorting
     if sort_type is None:
-        results = results.order_by(CorpParty.last_nme)
+        results = results.order_by(CorpParty.last_nme, CorpParty.corp_num)
     else:
         field = _get_sort_field(sort_value)
 
