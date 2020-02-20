@@ -6,6 +6,7 @@ BC Registries and Online Services search services
 Development
 ```
 cp dc.dev.yml docker-compose.override.yml
+cp frontend/example.env frontend/.env
 docker-compose up
 ```
 Browse to `localhost:8080`
