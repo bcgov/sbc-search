@@ -9,9 +9,7 @@
       </h5>
     </section>
     <section class="sbc-section bg-lavender pt-12">
-      <h2 class="headline text-center mb-10">
-        Search for a CorpParty affilated with a company
-      </h2>
+
       <section class="sbc-search-section">
         <Search :disabled="advancedSearchActive" />
         <SearchToggle

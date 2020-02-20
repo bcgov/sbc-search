@@ -226,6 +226,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict['appointment_dt'] = row[5]
             result_dict['cessation_dt'] = row[6]
             result_dict['corp_num'] = row[7]
+            result_dict['party_typ_id'] = row[7]
             # result_dict['corp_nme'] = row[8]
             # result_dict['addr_line_1'] = row[9]
             # result_dict['postal_cd'] = row[10]
@@ -621,7 +622,8 @@ def _get_corpparty_search_results(args):
                 CorpParty.last_nme,
                 CorpParty.appointment_dt,
                 CorpParty.cessation_dt,
-                CorpParty.corp_num
+                CorpParty.corp_num,
+                CorpParty.party_typ_cd
                 # Corporation.corp_num,
                 # CorpName.corp_nme,
                 # Address.addr_line_1,
