@@ -88,7 +88,7 @@ export default {
     return {
       advancedSearchActive: false,
       queryFilters: [],
-      queryMode: "Any"
+      queryMode: "ANY"
     };
   }
 };
