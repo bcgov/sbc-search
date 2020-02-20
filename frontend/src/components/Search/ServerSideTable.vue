@@ -61,7 +61,7 @@ export default {
     results() {
       return this.items.map(r => {
         r["appointment_dt"] = dayjs(r["appointment_dt"]).format("YYYY-MM-DD");
-        r["cessation_dt"] = dayjs(r["appointment_dt"]).format("YYYY-MM-DD");
+        r["cessation_dt"] = dayjs(r["cessation_dt"]).format("YYYY-MM-DD");
         return r;
       });
     }

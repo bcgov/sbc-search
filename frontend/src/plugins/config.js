@@ -64,7 +64,13 @@ export const RESULT_HEADERS = [
   },
   {
     text: "Filing Address",
-    value: "addr_line_1",
+    value: "addr",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Company Address",
+    value: "corp_addr",
     sortable: true,
     align: "left"
   },

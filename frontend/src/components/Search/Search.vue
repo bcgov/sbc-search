@@ -24,7 +24,7 @@
         title="Clear"
         :variant="2"
         :disabled="disabled"
-        @click.prevent.native="this.searchQuery = ''"
+        @click.prevent.native="searchQuery = ''"
       ></SbcButton>
     </div>
   </v-form>

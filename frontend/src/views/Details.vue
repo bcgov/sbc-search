@@ -13,18 +13,7 @@
         Details for Filing #1234567
       </h2>
       <section class="sbc-section">
-        <v-container>
-          <v-row>
-            <v-col cols="6">
-              <Details></Details>
-            </v-col>
-            <v-col cols="6">
-              <OfficeTable
-                title="All Offices held at Dennis Black Consulting Ltd."
-              ></OfficeTable>
-            </v-col>
-          </v-row>
-        </v-container>
+        <Details></Details>
       </section>
     </section>
   </div>
@@ -32,11 +21,9 @@
 
 <script>
 import Details from "@/components/Details/Details.vue";
-import OfficeTable from "@/components/Details/OfficeTable.vue";
 export default {
   components: {
-    Details,
-    OfficeTable
+    Details
   }
 };
 </script>

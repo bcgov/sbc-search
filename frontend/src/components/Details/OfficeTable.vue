@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h5 class="font-weight-regular body-1 mb-3">{{ title }}</h5>
     <v-simple-table class="office-table">
       <template v-slot:default>
         <thead>
@@ -11,15 +10,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Secretary</td>
-            <td>2018</td>
-            <td>Site 227, Comp 40, R.R. #2...</td>
-          </tr>
-          <tr>
-            <td>Secretary</td>
-            <td>2018</td>
-            <td>Site 227, Comp 40, R.R. #2...</td>
+          <tr v-for="(o, index) in offices" :key="index">
+            <td>
+              {{ o.short_desc }}
+            </td>
+            <td>
+              {{ o["year"] }}
+            </td>
+            <td>{{ o["addr_line_1"] }}</td>
           </tr>
         </tbody>
       </template>
@@ -28,11 +26,25 @@
 </template>
 
 <script>
+import dayjs from "dayjs";
+
 export default {
   props: {
-    title: {
-      default: "",
-      type: String
+    officesheld: {
+      default: null,
+      type: Object
+    }
+  },
+  computed: {
+    offices() {
+      if (this.officesheld && this.officesheld.offices) {
+        return this.officesheld.offices.map(o => {
+          o.year = dayjs(o["appointment_dt"]).format("YYYY");
+          return o;
+        });
+      } else {
+        return null;
+      }
     }
   }
 };
