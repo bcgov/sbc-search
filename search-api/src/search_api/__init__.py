@@ -436,7 +436,9 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             elif person.mailing_addr_id:
                 expr = (CorpParty.mailing_addr_id == person.mailing_addr_id)
 
-            same_addr = CorpParty.query.filter(expr).all()
+            same_addr = CorpParty.query.add_columns(
+                Event.event_timestmp
+            ).filter(expr).join(Event, Event.event_id == CorpParty.start_event_id)
         else:
             same_addr = []
 
@@ -449,9 +451,10 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             CorpParty.corp_num == person.corp_num,
         ).join(Event, Event.event_id == CorpParty.start_event_id)
 
+
         return jsonify({
             'offices': offices,
-            'same_addr': [s.as_dict() for s in same_addr if s.corp_party_id != int(corppartyid)],
+            'same_addr': [{**s[0].as_dict(), **{'year':int(s[1].year)}} for s in same_addr if s[0].corp_party_id != int(corppartyid)],
             'same_name_and_company': [{**s[0].as_dict(), **{'year':int(s[1].year)}} for s in same_name_and_company if s[0].corp_party_id != int(corppartyid)],
         })
 
