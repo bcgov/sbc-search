@@ -5,4 +5,9 @@ services:
     command: 'yarn serve'
     environment:
         - NODE_ENV=development
+    ports:
+        - 8080:8080
+  search_api:
+    ports:
+        - 80:5000
 
