@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-select :items="items" label="Standard"></v-select>
+    <v-select :label="selectLabel" :height="height" v-model="select" :items="items"></v-select>
   </div>
 </template>
 
@@ -10,7 +10,28 @@ export default {
     items: {
       default: null,
       type: Array
+    },
+    label: {
+      default: null,
+      type: String
+    },
+    initValue: {
+      default: null,
+      type: String
+    },
+    height: {
+      default: 40,
+      type: Number
+    },
+    selectLabel: {
+      default: "Standard",
+      type: String
     }
+  },
+  data() {
+    return {
+      select: this.initValue
+    };
   }
 };
 </script>
