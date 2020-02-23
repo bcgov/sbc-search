@@ -26,6 +26,14 @@ export default {
     selectLabel: {
       default: "Standard",
       type: String
+    },
+    uid: {
+      default: null,
+      type: Number
+    },
+    type: {
+      default: "field",
+      type: String
     }
   },
   data() {

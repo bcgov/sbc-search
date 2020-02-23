@@ -32,8 +32,7 @@ export default {
   computed: {
     searchQuery: {
       get() {
-        const filter = this.filters.find(f => f.uid === this.uid);
-        return filter && filter.query;
+        return this.getFilterQuery(this.uid);
       },
       set(value) {
         this.$store.commit("filters/setSearchQuery", {
@@ -43,7 +42,7 @@ export default {
       }
     },
     ...mapGetters({
-      filters: "filters/getFilters"
+      getFilterQuery: "filters/getFilterQuery"
     })
   },
   data() {

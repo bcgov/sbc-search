@@ -26,10 +26,12 @@ export default {
     getFilters(state) {
       return state.filters;
     },
-    getFilter(state, uid) {
-      return function(uid) {
-        state.filters.find(f => f.uid === uid);
-      };
+    getFilter: state => uid => {
+      return state.filters.find(f => f.uid === uid);
+    },
+    getFilterQuery: state => uid => {
+      const filter = state.filters.find(f => f.uid === uid);
+      return filter && filter.query;
     },
     getNumFilters(state) {
       return state.filters.length;
