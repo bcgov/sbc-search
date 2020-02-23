@@ -1,13 +1,15 @@
 <template>
-  <v-btn color="primary">{{ title }}</v-btn>
+  <div>
+    <v-select :items="items" label="Standard"></v-select>
+  </div>
 </template>
 
 <script>
 export default {
   props: {
-    title: {
+    items: {
       default: null,
-      type: String
+      type: Array
     }
   }
 };
