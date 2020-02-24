@@ -32,17 +32,17 @@ export default {
   computed: {
     searchQuery: {
       get() {
-        return this.getFilterQuery(this.uid);
+        return this.getFilterValue(this.uid);
       },
       set(value) {
-        this.$store.commit("filters/setSearchQuery", {
+        this.$store.commit("filters/setSearchValue", {
           uid: this.uid,
-          query: value
+          value: value
         });
       }
     },
     ...mapGetters({
-      getFilterQuery: "filters/getFilterQuery"
+      getFilterValue: "filters/getFilterValue"
     })
   },
   data() {

@@ -1,11 +1,14 @@
 export default {
   namespaced: true,
   state: {
-    filters: [{ uid: 0, field: "first_nme", operator: "exact", query: "" }]
+    filters: [{ uid: 0, field: "first_nme", operator: "exact", value: "" }]
   },
   mutations: {
     addFilter(state, filter) {
       state.filters.push(filter);
+    },
+    setFilters(state, filters) {
+      state.filters = filters;
     },
     removeFilter(state, uid) {
       const result = state.filters.findIndex(f => f.uid === uid);
@@ -14,10 +17,10 @@ export default {
       }
       return;
     },
-    setSearchQuery(state, { uid, query }) {
+    setSearchValue(state, { uid, value }) {
       const filter = state.filters.find(f => f.uid === uid);
       if (filter) {
-        filter.query = query;
+        filter.value = value;
       }
     }
   },
@@ -29,9 +32,9 @@ export default {
     getFilter: state => uid => {
       return state.filters.find(f => f.uid === uid);
     },
-    getFilterQuery: state => uid => {
+    getFilterValue: state => uid => {
       const filter = state.filters.find(f => f.uid === uid);
-      return filter && filter.query;
+      return filter && filter.value;
     },
     getNumFilters(state) {
       return state.filters.length;
