@@ -21,7 +21,7 @@
         <SbcButton
           type="submit"
           title="Search"
-          @click.native="handleSearch"
+          @click.native.prevent="handleSearch"
         ></SbcButton>
       </div>
     </v-form>
@@ -36,6 +36,7 @@ import SearchCriteria from "@/components/Search/SearchCriteria.vue";
 import { mapGetters } from "vuex";
 import { omit, isEmpty } from "lodash-es";
 const qs = require("qs");
+import { searchApi } from "@/api/SearchApi";
 export default {
   components: {
     SbcButton,
@@ -90,12 +91,21 @@ export default {
     },
     handleSearch() {
       const queryString = this.buildQueryString(this.filters);
+      searchApi(queryString)
+        .then(result => {
+          console.log(result);
+        })
+        .catch(e => {
+          console.error(e);
+        });
     },
     buildQueryString(filters) {
       let queryString = "";
       filters.map(f => {
         let temp = omit(f, "uid");
-        queryString += qs.stringify(temp);
+        queryString === ""
+          ? (queryString += qs.stringify(temp))
+          : (queryString += "&" + qs.stringify(temp));
       });
       return queryString;
     }

@@ -1,10 +1,16 @@
 <template>
   <div>
-    <v-select :label="selectLabel" :height="height" v-model="select" :items="items"></v-select>
+    <v-select
+      :label="selectLabel"
+      :height="height"
+      v-model="select"
+      :items="items"
+    ></v-select>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   props: {
     items: {
@@ -34,12 +40,28 @@ export default {
     type: {
       default: "field",
       type: String
+    },
+    property: {
+      default: null,
+      type: String
     }
   },
-  data() {
-    return {
-      select: this.initValue
-    };
+  computed: {
+    select: {
+      get() {
+        return this.getFilterProperty(this.uid, this.property);
+      },
+      set(value) {
+        this.$store.commit("filters/setSearchPropValue", {
+          uid: this.uid,
+          property: this.property,
+          value: value
+        });
+      }
+    },
+    ...mapGetters({
+      getFilterProperty: "filters/getProperty"
+    })
   }
 };
 </script>

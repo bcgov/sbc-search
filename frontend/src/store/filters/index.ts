@@ -22,6 +22,13 @@ export default {
       if (filter) {
         filter.value = value;
       }
+    },
+    setSearchPropValue(state, { uid, property, value }) {
+      console.log("UID", uid, "Prop", property, "Value", value);
+      const filter = state.filters.find(f => f.uid === uid);
+      if (filter) {
+        filter[property] = value;
+      }
     }
   },
   actions: {},
@@ -31,6 +38,10 @@ export default {
     },
     getFilter: state => uid => {
       return state.filters.find(f => f.uid === uid);
+    },
+    getProperty: state => (uid, prop) => {
+      const filter = state.filters.find(f => f.uid === uid);
+      return filter && filter[prop];
     },
     getFilterValue: state => uid => {
       const filter = state.filters.find(f => f.uid === uid);
