@@ -15,7 +15,6 @@
       <AddFilterButton title="Add Filter" @click.native.prevent="addFilter"></AddFilterButton>
       <SbcButton title="Search"></SbcButton>
     </div>
-    {{ filters }}
   </div>
 </template>
 
