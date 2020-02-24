@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-data-table
+      v-if="show"
       class="elevation-1"
       :headers="headers"
       :items="results"
@@ -50,9 +51,12 @@
 </template>
 
 <script>
-import { RESULT_HEADERS } from "@/plugins/config.js";
-import { searchApiV2 } from "@/plugins/SearchApi.js";
+import { RESULT_HEADERS } from "@/config/index.js";
+import { searchApi } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
+import { mapGetters } from "vuex";
+import { buildQueryString } from "@/util/index.ts";
+import { isEmpty } from "lodash-es";
 
 export default {
   props: {
@@ -78,7 +82,11 @@ export default {
 
         return r;
       });
-    }
+    },
+    ...mapGetters({
+      filters: "filters/getFilters",
+      numFilters: "filters/getNumFilters"
+    })
   },
   data() {
     return {
@@ -86,14 +94,16 @@ export default {
       items: [],
       options: {},
       loading: true,
-      totalItems: 0
+      totalItems: 0,
+      show: false
     };
   },
-  async mounted() {
-    this.fetchData();
-  },
   watch: {
-    "$route.query"() {
+    "$route.query"(q) {
+      if (isEmpty(q)) {
+        return (this.show = false);
+      }
+      this.show = true;
       this.fetchData();
     }
   },
@@ -114,34 +124,16 @@ export default {
         return true;
       });
     },
-    sliceByPage(items, page, itemsPerPage) {
-      return items.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-    },
     fetchData() {
       this.loading = true;
-      const query = this.$route.query;
       const { page, sortBy, sortDesc } = this.options;
 
-      let type = "basic";
-      let q;
-      if (query.advanced) {
-        type = "advanced";
-        q = query.queryString + `&page=${page}`;
-        if (sortDesc.length > 0) {
-          const sortOrder = sortDesc[0] ? "desc" : "asc";
-          q += `&sort_type=${sortOrder}`;
-        }
-        if (sortBy.length > 0) {
-          q += `&sort_value=${sortBy}`;
-        }
-      } else {
-        q = query;
-      }
+      const queryString = buildQueryString(this.filters);
 
-      searchApiV2(q, { type })
+      searchApi(queryString)
         .then(result => {
           this.items = result.data.results;
-          this.totalItems = 21;
+          this.totalItems = this.items.length;
           this.loading = false;
         })
         .catch(e => {

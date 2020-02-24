@@ -24,7 +24,6 @@ export default {
       }
     },
     setSearchPropValue(state, { uid, property, value }) {
-      console.log("UID", uid, "Prop", property, "Value", value);
       const filter = state.filters.find(f => f.uid === uid);
       if (filter) {
         filter[property] = value;

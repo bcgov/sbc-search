@@ -25,7 +25,9 @@
         ></SbcButton>
       </div>
     </v-form>
-    {{ filters }}
+    <div class="mt-10">
+      <ServerSideTable></ServerSideTable>
+    </div>
   </div>
 </template>
 
@@ -37,11 +39,14 @@ import { mapGetters } from "vuex";
 import { omit, isEmpty } from "lodash-es";
 const qs = require("qs");
 import { searchApi } from "@/api/SearchApi";
+import ServerSideTable from "@/components/Search/ServerSideTable.vue";
+import { buildQueryString } from "@/util/index.ts";
 export default {
   components: {
     SbcButton,
     SearchCriteria,
-    AddFilterButton
+    AddFilterButton,
+    ServerSideTable
   },
   computed: {
     ...mapGetters({
@@ -90,24 +95,10 @@ export default {
       });
     },
     handleSearch() {
-      const queryString = this.buildQueryString(this.filters);
-      searchApi(queryString)
-        .then(result => {
-          console.log(result);
-        })
-        .catch(e => {
-          console.error(e);
-        });
-    },
-    buildQueryString(filters) {
-      let queryString = "";
-      filters.map(f => {
-        let temp = omit(f, "uid");
-        queryString === ""
-          ? (queryString += qs.stringify(temp))
-          : (queryString += "&" + qs.stringify(temp));
+      const queryString = buildQueryString(this.filters);
+      this.$router.push({
+        query: qs.parse(queryString)
       });
-      return queryString;
     }
   }
 };
