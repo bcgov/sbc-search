@@ -45,13 +45,16 @@ You should get a response like:
 bc-reg-fdw-indy-cat-6-ct8z5                1/1       Running   0          7d
 ```
 
-To port-forward, run the following command and replace the pod name with the string from above:
+To port-forward, run the following commands and replace the pod name with the string from above:
 ```
+oc project devex-von-bc-registries-agent-dev
 oc port-forward bc-reg-fdw-indy-cat-6-ct8z5 5432:5432
 ```
 
+Install `ncat` to enable port-forwarding. (Note: depending on your version of `nmap` you may need to install both `nmap` and `ncat`, or just `nmap`.)
+
 ```
-apt-get install nmap
+apt-get install nmap ncat
 ncat -l 0.0.0.0 15432 --keep-open --sh-exec "ncat localhost 5432"
 ```
 
