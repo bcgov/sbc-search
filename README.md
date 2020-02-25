@@ -27,10 +27,25 @@ python bootstrap.py to create mock data
 
 ## connecting openshift
 
-Download openshift from https://www.okd.io/download.html
+Download openshift from https://www.okd.io/download.html and unzip the oc binary.
 
-unzip the oc binary, and run
+Log in to OpenShift, to "Application Console", and click "Copy Login Command" and run that command.
 
+```
+oc login [...]
+```
+
+To get the name of the pod, run:
+```
+oc -n devex-von-bc-registries-agent-dev get pods | grep bc-reg-fdw-indy-cat
+```
+
+You should get a response like:
+```
+bc-reg-fdw-indy-cat-6-ct8z5                1/1       Running   0          7d
+```
+
+To port-forward, run the following command and replace the pod name with the string from above:
 ```
 oc port-forward bc-reg-fdw-indy-cat-6-ct8z5 5432:5432
 ```
