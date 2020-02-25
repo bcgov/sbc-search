@@ -60,9 +60,9 @@ import { isEmpty } from "lodash-es";
 
 export default {
   props: {
-    query: {
+    qs: {
       default: null,
-      type: Object
+      type: String
     }
   },
   computed: {
@@ -98,15 +98,6 @@ export default {
       show: false
     };
   },
-  watch: {
-    "$route.query"(q) {
-      if (isEmpty(q)) {
-        return (this.show = false);
-      }
-      this.show = true;
-      this.fetchData();
-    }
-  },
   methods: {
     filterHeaders(headers) {
       return headers.filter(h => {
@@ -128,9 +119,7 @@ export default {
       this.loading = true;
       const { page, sortBy, sortDesc } = this.options;
 
-      const queryString = buildQueryString(this.filters);
-
-      searchApi(queryString)
+      searchApi(this.qs)
         .then(result => {
           this.items = result.data.results;
           this.totalItems = this.items.length;
@@ -142,6 +131,12 @@ export default {
           this.loading = false;
           console.error(e);
         });
+    }
+  },
+  watch: {
+    qs(nq) {
+      this.show = true;
+      this.fetchData();
     }
   }
 };

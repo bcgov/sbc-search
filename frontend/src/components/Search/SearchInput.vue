@@ -1,9 +1,11 @@
 <template>
   <v-text-field
+    class="search-input"
     label="Search Term"
     :height="height"
     v-model="searchQuery"
     placeholder="eg. John Smith"
+    filled
   >
     <template v-slot:append>
       <v-icon>{{ searchIcon }}</v-icon>
@@ -21,7 +23,7 @@ export default {
       type: String
     },
     height: {
-      default: 40.5,
+      default: 40.8,
       type: Number
     },
     uid: {
@@ -53,4 +55,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.search-input {
+  width: 268px;
+}
+</style>

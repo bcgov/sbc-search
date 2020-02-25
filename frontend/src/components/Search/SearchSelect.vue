@@ -1,10 +1,12 @@
 <template>
   <div>
     <v-select
+      class="search-select"
       :label="selectLabel"
       :height="height"
       v-model="select"
       :items="items"
+      filled
     ></v-select>
   </div>
 </template>
@@ -66,4 +68,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.search-select {
+  width: 225px;
+}
+</style>

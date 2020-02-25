@@ -19,4 +19,8 @@ export default Vue.extend({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.layout-wrapper {
+  background-color: #f1f3f6;
+}
+</style>

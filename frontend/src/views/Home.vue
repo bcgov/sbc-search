@@ -13,6 +13,7 @@
           <SearchCriteria :uid="criteria.uid"></SearchCriteria>
         </div>
       </div>
+      <SearchLogic v-if="filters.length > 1" :logic.sync="logic"></SearchLogic>
       <div class="d-flex justify-space-between">
         <AddFilterButton
           title="Add Filter"
@@ -26,7 +27,7 @@
       </div>
     </v-form>
     <div class="mt-10">
-      <ServerSideTable></ServerSideTable>
+      <ServerSideTable :qs="qs"></ServerSideTable>
     </div>
   </div>
 </template>
@@ -41,12 +42,14 @@ const qs = require("qs");
 import { searchApi } from "@/api/SearchApi";
 import ServerSideTable from "@/components/Search/ServerSideTable.vue";
 import { buildQueryString } from "@/util/index.ts";
+import SearchLogic from "@/components/Search/SearchLogic.vue";
 export default {
   components: {
     SbcButton,
     SearchCriteria,
     AddFilterButton,
-    ServerSideTable
+    ServerSideTable,
+    SearchLogic
   },
   computed: {
     ...mapGetters({
@@ -57,19 +60,22 @@ export default {
   data() {
     return {
       uid: 0,
-      searchQuery: null
+      searchQuery: null,
+      logic: "ANY",
+      qs: null
     };
   },
   mounted() {
+    const mode = this.$route.query.mode;
+    if (mode) {
+      this.logic = mode;
+    }
     if (!isEmpty(this.$route.query)) {
       const queryFilters = omit(this.$route.query, "mode");
       if (typeof queryFilters.field === "string") {
         queryFilters.uid = this.uid++;
         this.$store.commit("filters/setFilters", [queryFilters]);
-        return;
-      }
-
-      if (Array.isArray(queryFilters.field)) {
+      } else if (Array.isArray(queryFilters.field)) {
         let temp = [];
         const length = queryFilters.field.length;
         for (let i = 0; i < length; i++) {
@@ -82,10 +88,16 @@ export default {
         }
         this.$store.commit("filters/setFilters", temp);
       }
+      this.renderTable();
     }
   },
   methods: {
-    addFilter(field = "first_nme", operator = "exact", value = "") {
+    addFilter(
+      event,
+      field = "first_nme",
+      operator = "contains",
+      value = "Yes"
+    ) {
       this.uid++;
       this.$store.commit("filters/addFilter", {
         uid: this.uid,
@@ -95,10 +107,18 @@ export default {
       });
     },
     handleSearch() {
-      const queryString = buildQueryString(this.filters);
+      const queryString = this.generateQueryString();
       this.$router.push({
         query: qs.parse(queryString)
       });
+      this.renderTable();
+    },
+    renderTable() {
+      const queryString = this.generateQueryString();
+      this.qs = queryString;
+    },
+    generateQueryString() {
+      return buildQueryString(this.filters) + `&mode=${this.logic}`;
     }
   }
 };
