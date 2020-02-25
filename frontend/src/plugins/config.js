@@ -3,7 +3,7 @@ export const FIELD_VALUES = [
   { text: 'First Name', value: 'first_nme' },
   { text: 'Middle Name', value: 'middle_nme' },
   { text: 'Last Name', value: 'last_nme' },
-  { text: 'Address', value: 'addr_line_1' }
+  { text: 'Address', value: 'addr' }
 ]
 
 export const OPERATOR_VALUES = [

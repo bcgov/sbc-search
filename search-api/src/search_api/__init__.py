@@ -228,8 +228,10 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict['corp_num'] = row[7]
             result_dict['party_typ_id'] = row[8]
             # result_dict['corp_nme'] = row[8]
-            # result_dict['addr_line_1'] = row[9]
-            # result_dict['postal_cd'] = row[10]
+            result_dict['addr_line_1'] = row[9]
+            result_dict['addr_line_2'] = row[10]
+            result_dict['addr_line_3'] = row[11]
+            result_dict['postal_cd'] = row[12]
             # result_dict['city'] = row[11]
             # result_dict['province'] = row[12]
             # result_dict['state_typ_cd'] = row[13]
@@ -463,17 +465,17 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
 def _get_model_by_field(field_name):
 
-    return CorpParty
+    # return CorpParty
     # [cvo] for performance we only query this one above table for now.
 
-    # if field_name in ['first_nme','middle_nme','last_nme','appointment_dt','cessation_dt']: # CorpParty fields
-    #     return eval('CorpParty')
+    if field_name in ['first_nme','middle_nme','last_nme','appointment_dt','cessation_dt']: # CorpParty fields
+        return eval('CorpParty')
     # elif field_name in ['corp_num']: # Corporation fields
     #     return eval('Corporation')
     # elif field_name in ['corp_nme']: # CorpName fields
     #     return eval('CorpName')
-    # elif field_name in ['addr_line_1','postal_cd','city','province']: # Address fields
-    #     return eval('Address')
+    elif field_name in ['addr_line_1','addr_line_2','addr_line_3','postal_cd','city','province']: # Address fields
+        return eval('Address')
 
     #return None
 
@@ -484,6 +486,12 @@ def _get_filter(field, operator, value):
         return (_get_filter('first_nme', operator, value)
             | _get_filter('middle_nme', operator, value)
             | _get_filter('last_nme', operator, value))
+
+    if field == 'addr':
+        # return _get_filter('first_nme', operator, value)
+        return (_get_filter('addr_line_1', operator, value)
+            | _get_filter('addr_line_2', operator, value)
+            | _get_filter('addr_line_3', operator, value))
 
     model = _get_model_by_field(field)
 
@@ -528,13 +536,15 @@ def _get_corporation_search_results(args):
         .join(CorpName, Corporation.corp_num == CorpName.corp_num)
         # .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
         # .join(Office, Office.corp_num == Corporation.corp_num)
-        # .join(Address, Office.mailing_addr_id == Address.addr_id)
+        .join(Address, Office.mailing_addr_id == Address.addr_id)
         .with_entities(
             CorpName.corp_nme,
             Corporation.corp_num,
             # Corporation.transition_dt,
-            # Address.addr_line_1,
-            # Address.postal_cd,
+            Address.addr_line_1,
+            Address.addr_line_2,
+            Address.addr_line_3,
+            Address.postal_cd,
             # Address.city,
             # Address.province,
         )
@@ -542,14 +552,13 @@ def _get_corporation_search_results(args):
         # .filter(CorpName.end_event_id == None)
     )
 
-
     results = results.filter(
             (Corporation.corp_num == query) |
             (CorpName.corp_nme.ilike('%'+query+'%'))
             # (CorpParty.first_nme.contains(query)) |
             # (CorpParty.last_nme.contains(query)))
     )
-    
+
     return results
 
 
@@ -602,7 +611,7 @@ def _get_corpparty_search_results(args):
             #.join(CorpState, CorpState.corp_num == Corporation.corp_num)\
             #.join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
             #.join(CorpName, Corporation.corp_num == CorpName.corp_num)\
-            #.join(Address, CorpParty.mailing_addr_id == Address.addr_id)\
+            .join(Address, CorpParty.mailing_addr_id == Address.addr_id)\
             .add_columns(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
@@ -611,11 +620,13 @@ def _get_corpparty_search_results(args):
                 CorpParty.appointment_dt,
                 CorpParty.cessation_dt,
                 CorpParty.corp_num,
-                CorpParty.party_typ_cd
+                CorpParty.party_typ_cd,
                 # Corporation.corp_num,
                 # CorpName.corp_nme,
-                # Address.addr_line_1,
-                # Address.postal_cd,
+                Address.addr_line_1,
+                Address.addr_line_2,
+                Address.addr_line_3,
+                Address.postal_cd,
                 # Address.city,
                 # Address.province,
                 # CorpOpState.state_typ_cd,
@@ -643,7 +654,7 @@ def _get_corpparty_search_results(args):
             fn,
             clauses[1:],
             _get_filter(*clauses[0])
-            )
+        )
         results = results.filter(filter_grp)
 
     # Sorting
