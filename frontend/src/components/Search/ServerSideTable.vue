@@ -34,7 +34,7 @@
               >{{ item["corp_num"] }}</a
             >
           </td>
-          <td>{{ item["corp_nme"] }}</td>
+          <td>{{ item["addr"] }}</td>
 
           <td>
             <a

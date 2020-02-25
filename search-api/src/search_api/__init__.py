@@ -228,9 +228,12 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict['corp_num'] = row[7]
             result_dict['party_typ_id'] = row[8]
             # result_dict['corp_nme'] = row[8]
-            result_dict['addr_line_1'] = row[9]
-            result_dict['addr_line_2'] = row[10]
-            result_dict['addr_line_3'] = row[11]
+
+            result_dict['addr'] = row[9]
+            if row[10]:
+                result_dict['addr'] += ", " + row[10]
+            if row[11]:
+                result_dict['addr'] += ", " + row[11]
             result_dict['postal_cd'] = row[12]
             # result_dict['city'] = row[11]
             # result_dict['province'] = row[12]
@@ -611,7 +614,7 @@ def _get_corpparty_search_results(args):
             #.join(CorpState, CorpState.corp_num == Corporation.corp_num)\
             #.join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
             #.join(CorpName, Corporation.corp_num == CorpName.corp_num)\
-            .join(Address, CorpParty.mailing_addr_id == Address.addr_id)\
+            .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
             .add_columns(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
