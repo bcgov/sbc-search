@@ -6,8 +6,6 @@ services:
     build: ./frontend
     volumes:
       - ./frontend:/code
-    ports:
-      - 8080:8080
     working_dir: /code/
 
   db:
@@ -25,8 +23,6 @@ services:
     image: search_api
     build:
       context: search-api
-    ports:
-      - 80:5000
     volumes:
       - ./search-api:/opt/app
     environment:
