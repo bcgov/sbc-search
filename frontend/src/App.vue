@@ -20,7 +20,16 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+* {
+  font-family: "BCSans", "Verdana", "Arial", "sans-serif" !important;
+}
 .layout-wrapper {
   background-color: #f1f3f6;
+}
+.app-body {
+  margin-top: 0 !important;
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

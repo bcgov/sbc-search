@@ -97,5 +97,11 @@ export const RESULT_HEADERS = [
     value: "corp_typ_cd",
     sortable: true,
     align: "left"
+  },
+  {
+    text: "Status",
+    value: "state_typ_cd",
+    sortable: true,
+    align: "left"
   }
 ];

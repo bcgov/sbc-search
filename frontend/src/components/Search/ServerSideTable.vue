@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-data-table
-      v-if="show"
+      v-if="qs"
       class="elevation-1"
       :headers="headers"
       :items="results"
@@ -103,19 +103,25 @@ export default {
       return headers.filter(h => {
         const val = h.value;
         if (
-          val === "postal_cd" ||
-          val === "province" ||
-          val === "corp_nme" ||
-          val === "corp_addr" ||
-          val === "party_typ_cd" ||
-          val === "corp_typ_cd"
+          val === "last_nme" ||
+          val === "middle_nme" ||
+          val === "first_nme" ||
+          val === "appointment_dt" ||
+          val === "cessation_dt" ||
+          val === "corp_num" ||
+          val === "addr" ||
+          val === "corp_party_id"
         ) {
-          return false;
+          return true;
         }
-        return true;
+        return false;
       });
     },
     fetchData() {
+      if (!this.qs) {
+        return;
+      }
+
       this.loading = true;
       const { page, sortBy, sortDesc } = this.options;
 

@@ -1,5 +1,7 @@
 <template>
-  <v-btn :type="type" color="primary">{{ title }}</v-btn>
+  <v-btn :type="type" color="primary outline" height="50" class="sbc-button">{{
+    title
+  }}</v-btn>
 </template>
 
 <script>
@@ -17,4 +19,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.sbc-button {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  width: 125px !important;
+}
+</style>

@@ -4,6 +4,7 @@
     <h4 class="mt-3 body-1 mb-10">
       Search for offices held at active and historical BC companies
     </h4>
+    <SearchTips></SearchTips>
     <v-form>
       <div v-for="(criteria, index) in filters" :key="index">
         <div v-if="index > 0">
@@ -43,13 +44,15 @@ import { searchApi } from "@/api/SearchApi";
 import ServerSideTable from "@/components/Search/ServerSideTable.vue";
 import { buildQueryString } from "@/util/index.ts";
 import SearchLogic from "@/components/Search/SearchLogic.vue";
+import SearchTips from "@/components/Search/SearchTips.vue";
 export default {
   components: {
     SbcButton,
     SearchCriteria,
     AddFilterButton,
     ServerSideTable,
-    SearchLogic
+    SearchLogic,
+    SearchTips
   },
   computed: {
     ...mapGetters({
@@ -66,29 +69,11 @@ export default {
     };
   },
   mounted() {
-    const mode = this.$route.query.mode;
-    if (mode) {
-      this.logic = mode;
-    }
-    if (!isEmpty(this.$route.query)) {
-      const queryFilters = omit(this.$route.query, "mode");
-      if (typeof queryFilters.field === "string") {
-        queryFilters.uid = this.uid++;
-        this.$store.commit("filters/setFilters", [queryFilters]);
-      } else if (Array.isArray(queryFilters.field)) {
-        let temp = [];
-        const length = queryFilters.field.length;
-        for (let i = 0; i < length; i++) {
-          temp.push({
-            uid: this.uid++,
-            field: queryFilters.field[i],
-            operator: queryFilters.operator[i],
-            value: queryFilters.value[i]
-          });
-        }
-        this.$store.commit("filters/setFilters", temp);
-      }
-      this.renderTable();
+    this.init();
+  },
+  watch: {
+    "$route.query"() {
+      this.init();
     }
   },
   methods: {
@@ -119,6 +104,35 @@ export default {
     },
     generateQueryString() {
       return buildQueryString(this.filters) + `&mode=${this.logic}`;
+    },
+    init() {
+      const mode = this.$route.query.mode;
+      if (mode) {
+        this.logic = mode;
+      }
+
+      if (isEmpty(this.$route.query)) {
+        this.qs = null;
+      } else {
+        const queryFilters = omit(this.$route.query, "mode");
+        if (typeof queryFilters.field === "string") {
+          queryFilters.uid = this.uid++;
+          this.$store.commit("filters/setFilters", [queryFilters]);
+        } else if (Array.isArray(queryFilters.field)) {
+          let temp = [];
+          const length = queryFilters.field.length;
+          for (let i = 0; i < length; i++) {
+            temp.push({
+              uid: this.uid++,
+              field: queryFilters.field[i],
+              operator: queryFilters.operator[i],
+              value: queryFilters.value[i]
+            });
+          }
+          this.$store.commit("filters/setFilters", temp);
+        }
+        this.renderTable();
+      }
     }
   }
 };
