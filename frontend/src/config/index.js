@@ -3,8 +3,7 @@ export const FIELD_VALUES = [
   { text: "First Name", value: "first_nme" },
   { text: "Middle Name", value: "middle_nme" },
   { text: "Last Name", value: "last_nme" },
-  { text: "Address", value: "addr" },
-  { text: "Postal Code", value: "postal_cd" }
+  { text: "Address", value: "addr_line_1" }
 ];
 
 export const OPERATOR_VALUES = [
@@ -13,7 +12,6 @@ export const OPERATOR_VALUES = [
   { text: "Ends With", value: "endswith" },
   { text: "Exact Match", value: "exact" }
 ];
-
 export const COMPANY_HEADERS = [
   { text: "Number", value: "corp_num" },
   { text: "Status", value: "state_typ_cd" }
@@ -101,6 +99,12 @@ export const RESULT_HEADERS = [
   {
     text: "Type",
     value: "corp_typ_cd",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Status",
+    value: "state_typ_cd",
     sortable: true,
     align: "left"
   }

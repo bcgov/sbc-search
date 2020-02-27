@@ -1,25 +1,12 @@
-import ApiService from "@/plugins/ApiService.js";
+import ApiService from "./ApiService.js";
 
 const PERSON_SEARCH_URL = "/person/search";
 const COPRPARTY_SEARCH_URL = "/person";
 const CORPPARTY_OFFICE_URL = "/person/officesheld";
+const CORPORATION_SEARCH_URL = "/corporation";
 
-export function searchApi(params) {
-  return ApiService.get(PERSON_SEARCH_URL, {
-    params: params
-  });
-}
-
-export function advancedSearchApi(query) {
+export function searchApi(query) {
   return ApiService.get(`${PERSON_SEARCH_URL}/?${query}`);
-}
-
-export function searchApiV2(params, { type }) {
-  if (type === "basic") {
-    return searchApi(params);
-  } else if (type === "advanced") {
-    return advancedSearchApi(params);
-  }
 }
 
 export function corpPartySearch(id) {
@@ -28,4 +15,8 @@ export function corpPartySearch(id) {
 
 export function corpPartyOfficeSearch(id) {
   return ApiService.get(`${CORPPARTY_OFFICE_URL}/${id}`);
+}
+
+export function companySearch(id) {
+  return ApiService.get(`${CORPORATION_SEARCH_URL}/${id}`);
 }

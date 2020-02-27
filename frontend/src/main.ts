@@ -4,11 +4,6 @@ import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
-import "@babel/polyfill";
-import "roboto-fontface/css/roboto/roboto-fontface.css";
-import "@mdi/font/css/materialdesignicons.css";
-import "@/assets/sass/BCSans.sass";
-import "@/assets/sass/globals.sass";
 
 Vue.config.productionTip = false;
 

@@ -40,7 +40,12 @@
       <i>Other</i> {{ details.last_nme }}, {{ details.first_nme }}
       {{ details.middle_nme }} <i>at company</i> {{ details.corp_nme }}
     </h5>
-    <div v-if="officesheld.same_name_and_company && officesheld.same_name_and_company.length > 0">
+    <div
+      v-if="
+        officesheld.same_name_and_company &&
+          officesheld.same_name_and_company.length > 0
+      "
+    >
       <v-simple-table class="office-table">
         <template v-slot:default>
           <thead>
@@ -51,7 +56,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(o, index) in officesheld.same_name_and_company" :key="index">
+            <tr
+              v-for="(o, index) in officesheld.same_name_and_company"
+              :key="index"
+            >
               <td>
                 {{ o.party_typ_cd }}
               </td>
@@ -89,10 +97,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="(o, index) in officesheld.same_addr"
-              :key="index"
-            >
+            <tr v-for="(o, index) in officesheld.same_addr" :key="index">
               <td>
                 {{ o.party_typ_cd }}
               </td>
@@ -154,8 +159,9 @@ export default {
 };
 </script>
 
-<style lang="sass">
-.office-table
-    border: 1px solid $COLOR_GREY
-    color: $COLOR_GREY
+<style lang="scss">
+.office-table {
+  border: 1px solid $COLOR_GREY;
+  color: $COLOR_GREY;
+}
 </style>

@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-data-table
+      v-if="qs"
       class="elevation-1"
       :headers="headers"
       :items="results"
@@ -20,19 +21,14 @@
             <a
               :href="`#/details?corp_party_id=${item['corp_party_id']}`"
               target="_blank"
-              >{{ item["last_nme"] }}</a
-            >
+            >{{ item["last_nme"] }}</a>
           </td>
           <td>{{ item["middle_nme"] }}</td>
           <td>{{ item["first_nme"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
           <td>
-            <a
-              :href="`#/details?corp_party_id=${item['corp_party_id']}`"
-              target="_blank"
-              >{{ item["corp_num"] }}</a
-            >
+            <a :href="`#/company/${item['corp_num']}`" target="_blank">{{ item["corp_num"] }}</a>
           </td>
           <td>{{ item["addr"] }}</td>
 
@@ -40,8 +36,7 @@
             <a
               :href="`#/details?corp_party_id=${item['corp_party_id']}`"
               target="_blank"
-              >{{ item["corp_party_id"] }}</a
-            >
+            >{{ item["corp_party_id"] }}</a>
           </td>
         </tr>
       </template>
@@ -50,15 +45,18 @@
 </template>
 
 <script>
-import { RESULT_HEADERS } from "@/plugins/config.js";
-import { searchApiV2 } from "@/plugins/SearchApi.js";
+import { RESULT_HEADERS } from "@/config/index.js";
+import { searchApi } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
+import { mapGetters } from "vuex";
+import { buildQueryString } from "@/util/index.ts";
+import { isEmpty } from "lodash-es";
 
 export default {
   props: {
-    query: {
+    qs: {
       default: null,
-      type: Object
+      type: String
     }
   },
   computed: {
@@ -78,7 +76,11 @@ export default {
 
         return r;
       });
-    }
+    },
+    ...mapGetters({
+      filters: "filters/getFilters",
+      numFilters: "filters/getNumFilters"
+    })
   },
   data() {
     return {
@@ -86,62 +88,41 @@ export default {
       items: [],
       options: {},
       loading: true,
-      totalItems: 0
+      totalItems: 0,
+      show: false
     };
-  },
-  async mounted() {
-    this.fetchData();
-  },
-  watch: {
-    "$route.query"() {
-      this.fetchData();
-    }
   },
   methods: {
     filterHeaders(headers) {
       return headers.filter(h => {
         const val = h.value;
         if (
-          val === "postal_cd" ||
-          val === "province" ||
-          val === "corp_nme" ||
-          val === "corp_addr" ||
-          val === "party_typ_cd" ||
-          val === "corp_typ_cd"
+          val === "last_nme" ||
+          val === "middle_nme" ||
+          val === "first_nme" ||
+          val === "appointment_dt" ||
+          val === "cessation_dt" ||
+          val === "corp_num" ||
+          val === "addr" ||
+          val === "corp_party_id"
         ) {
-          return false;
+          return true;
         }
-        return true;
+        return false;
       });
     },
-    sliceByPage(items, page, itemsPerPage) {
-      return items.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-    },
     fetchData() {
-      this.loading = true;
-      const query = this.$route.query;
-      const { page, sortBy, sortDesc } = this.options;
-
-      let type = "basic";
-      let q;
-      if (query.advanced) {
-        type = "advanced";
-        q = query.queryString + `&page=${page}`;
-        if (sortDesc.length > 0) {
-          const sortOrder = sortDesc[0] ? "desc" : "asc";
-          q += `&sort_type=${sortOrder}`;
-        }
-        if (sortBy.length > 0) {
-          q += `&sort_value=${sortBy}`;
-        }
-      } else {
-        q = query;
+      if (!this.qs) {
+        return;
       }
 
-      searchApiV2(q, { type })
+      this.loading = true;
+      const { page, sortBy, sortDesc } = this.options;
+
+      searchApi(this.qs)
         .then(result => {
           this.items = result.data.results;
-          this.totalItems = 21;
+          this.totalItems = this.items.length;
           this.loading = false;
         })
         .catch(e => {
@@ -150,6 +131,12 @@ export default {
           this.loading = false;
           console.error(e);
         });
+    }
+  },
+  watch: {
+    qs(nq) {
+      this.show = true;
+      this.fetchData();
     }
   }
 };

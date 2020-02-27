@@ -1,0 +1,50 @@
+<template>
+  <div>
+    <h1>Director Search - Details</h1>
+    <h4 class="mt-3 body-1 mb-10">
+      Details for an office held at a BC Company during a specific period of
+      time.
+    </h4>
+    <section class="detail-section">
+      <Details :detail="detail" :officesheld="officesheld"></Details>
+    </section>
+  </div>
+</template>
+
+<script>
+import Details from "@/components/Details/Details.vue";
+import { corpPartySearch, corpPartyOfficeSearch } from "@/api/SearchApi.js";
+export default {
+  components: {
+    Details
+  },
+  data() {
+    return {
+      detail: {},
+      officesheld: {}
+    };
+  },
+  mounted() {
+    const corp_party_id = this.$route.query["corp_party_id"];
+    if (corp_party_id) {
+      corpPartySearch(corp_party_id).then(result => {
+        this.detail = result.data;
+      });
+      corpPartyOfficeSearch(corp_party_id)
+        .then(result => {
+          this.officesheld = result.data;
+        })
+        .catch(() => {
+          this.officesheld = {};
+        });
+    }
+  }
+};
+</script>
+
+<style lang="scss">
+.detail-section {
+  padding: 2em 4em;
+  background-color: white;
+}
+</style>

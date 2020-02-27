@@ -1,27 +1,44 @@
 <template>
   <div>
-    <h2 class="headline text-center mb-10">
-      Details for Filing #{{ detail.corp_party_id }}
-    </h2>
     <v-container>
       <v-row>
+        <v-col
+          cols="12"
+          class="d-flex justify-space-between align-center mb-12"
+        >
+          <h2 class="display-1">
+            Details for Filing #{{ detail.corp_party_id }}
+          </h2>
+          <v-icon
+            color="#2076d2"
+            large
+            class="cursor-pointer"
+            @click="handlePrint"
+            >{{ printerIcon }}</v-icon
+          >
+        </v-col>
+      </v-row>
+      <v-row justify="space-between">
         <v-col cols="6">
-          <ul>
+          <ul class="pa-0 ma-0">
             <li
               v-for="(val, key) in filteredDetail"
               :key="key"
               class="d-flex w-100 detail-list-item"
             >
-              <span class="font-weight-bold mb-1 detail-key">{{
-                getText(key)
-              }}</span>
+              <span
+                class="font-weight-bold mb-1 detail-key"
+                :class="{
+                  'detail-big-margins': key === 'cessation_dt' || key === 'addr'
+                }"
+                >{{ getText(key) }}</span
+              >
               <span class="detail-value">{{ val }}</span>
             </li>
           </ul>
         </v-col>
         <v-col cols="6">
           <OfficeTable
-            class="mt-4"
             :details="filteredDetail"
             :officesheld="officesheld"
           ></OfficeTable>
@@ -32,16 +49,31 @@
 </template>
 
 <script>
-import { getTextFromValues } from "@/plugins/utils.js";
-import { RESULT_HEADERS } from "@/plugins/config.js";
+import { getTextFromValues } from "@/util/index.ts";
+import { RESULT_HEADERS } from "@/config/index.js";
 import { omit, pick } from "lodash-es";
-import { corpPartySearch, corpPartyOfficeSearch } from "@/plugins/SearchApi.js";
+import { corpPartySearch, corpPartyOfficeSearch } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
 import OfficeTable from "@/components/Details/OfficeTable.vue";
-
+import { mdiPrinter } from "@mdi/js";
 export default {
   components: {
     OfficeTable
+  },
+  props: {
+    detail: {
+      default: null,
+      type: Object
+    },
+    officesheld: {
+      default: null,
+      type: Object
+    }
+  },
+  data() {
+    return {
+      printerIcon: mdiPrinter
+    };
   },
   computed: {
     filteredDetail() {
@@ -50,7 +82,6 @@ export default {
         "province",
         "corp_party_id"
       ]);
-
       if (filtered["appointment_dt"]) {
         filtered["appointment_dt"] = dayjs(filtered["appointment_dt"]).format(
           "YYYY-MM-DD"
@@ -58,7 +89,6 @@ export default {
       } else {
         filtered["appointment_dt"] = "-";
       }
-
       if (filtered["cessation_dt"]) {
         filtered["cessation_dt"] = dayjs(filtered["cessation_dt"]).format(
           "YYYY-MM-DD"
@@ -66,6 +96,10 @@ export default {
       } else {
         filtered["cessation_dt"] = "-";
       }
+
+      filtered["state_typ_cd"] =
+        filtered["states"] && filtered["states"][0]["state_typ_cd"];
+
       return pick(filtered, [
         "last_nme",
         "first_nme",
@@ -77,46 +111,31 @@ export default {
         "corp_nme",
         "corp_num",
         "corp_typ_cd",
-        "corp_addr"
+        "corp_addr",
+        "state_typ_cd"
       ]);
     }
   },
   methods: {
     getText(data) {
       return getTextFromValues(RESULT_HEADERS, data);
-    }
-  },
-  data() {
-    return {
-      detail: {},
-      officesheld: {}
-    };
-  },
-  mounted() {
-    const corp_party_id = this.$route.query["corp_party_id"];
-    if (corp_party_id) {
-      corpPartySearch(corp_party_id).then(result => {
-        this.detail = result.data;
-      });
-
-      corpPartyOfficeSearch(corp_party_id)
-        .then(result => {
-          this.officesheld = result.data;
-        })
-        .catch(() => {
-          this.officesheld = {};
-        });
+    },
+    handlePrint() {
+      window && window.print();
     }
   }
 };
 </script>
 
-<style lang="sass">
-.detail-list-item span
-    flex: 1 1 0
+<style lang="scss">
+.detail-list-item span {
+  flex: 1 1 0;
+}
+.detail-value {
+  color: $COLOR_SECONDARY;
+}
 
-.detail-value
-    color: $COLOR_SECONDARY
-.detail-list-item span::first-of-type
-    border-right: 1px solid black
+.v-application .detail-big-margins {
+  margin-bottom: 4em !important;
+}
 </style>
