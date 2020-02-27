@@ -52,7 +52,9 @@
             </li>
           </ul>
         </v-col>
-        <v-col cols="6"></v-col>
+        <v-col cols="6">
+          <CompanyFilings></CompanyFilings>
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -62,7 +64,11 @@
 import { getTextFromValues } from "@/util/index.ts";
 import { COMPANY_HEADERS } from "@/config/index.js";
 import { pick } from "lodash-es";
+import CompanyFilings from "@/components/Details/CompanyFilings.vue";
 export default {
+  components: {
+    CompanyFilings
+  },
   props: {
     details: {
       default: null,
