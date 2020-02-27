@@ -22,9 +22,7 @@ export default {
         .then(result => {
           this.details = result.data;
         })
-        .catch(e => {
-          console.error(e);
-        });
+        .catch(e => {});
     }
   },
   data() {

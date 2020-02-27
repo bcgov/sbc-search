@@ -21,14 +21,17 @@
             <a
               :href="`#/details?corp_party_id=${item['corp_party_id']}`"
               target="_blank"
-            >{{ item["last_nme"] }}</a>
+              >{{ item["last_nme"] }}</a
+            >
           </td>
           <td>{{ item["middle_nme"] }}</td>
           <td>{{ item["first_nme"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
           <td>
-            <a :href="`#/company/${item['corp_num']}`" target="_blank">{{ item["corp_num"] }}</a>
+            <a :href="`#/company/${item['corp_num']}`" target="_blank">{{
+              item["corp_num"]
+            }}</a>
           </td>
           <td>{{ item["addr"] }}</td>
 
@@ -36,7 +39,8 @@
             <a
               :href="`#/details?corp_party_id=${item['corp_party_id']}`"
               target="_blank"
-            >{{ item["corp_party_id"] }}</a>
+              >{{ item["corp_party_id"] }}</a
+            >
           </td>
         </tr>
       </template>
@@ -129,7 +133,6 @@ export default {
           this.items = [];
           this.totalItems = 0;
           this.loading = false;
-          console.error(e);
         });
     }
   },
