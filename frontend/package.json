@@ -25,7 +25,9 @@
     "vue-router": "^3.1.5",
     "vuetify": "^2.2.11",
     "vuex": "^3.1.2",
-    "vuex-module-decorators": "^0.16.1",
+    "vuex-module-decorators": "^0.16.1"
+  },
+  "devDependencies": {
     "@mdi/js": "^4.9.95",
     "@types/jest": "^24.0.19",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
@@ -53,6 +55,5 @@
     "typescript": "~3.7.5",
     "vue-cli-plugin-vuetify": "^2.0.5",
     "vue-template-compiler": "^2.6.11"
-  },
-  "devDependencies": {}
+  }
 }
