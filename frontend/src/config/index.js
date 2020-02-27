@@ -12,6 +12,10 @@ export const OPERATOR_VALUES = [
   { text: "Ends With", value: "endswith" },
   { text: "Exact Match", value: "exact" }
 ];
+export const COMPANY_HEADERS = [
+  { text: "Number", value: "corp_num" },
+  { text: "Status", value: "state_typ_cd" }
+];
 
 export const RESULT_HEADERS = [
   {
