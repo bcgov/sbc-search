@@ -149,12 +149,12 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
             return send_from_directory('tmp',simple_name,as_attachment=True)
 
-
     @app.route('/corporation/<id>')
     def corporation(id):
 
         # TODO: move queries to model class.
-        result = (Corporation.query
+        result = (
+            Corporation.query
             .join(CorpState, CorpState.corp_num == Corporation.corp_num)
             .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
             # .join(Office, Office.corp_num == Corporation.corp_num)
@@ -171,8 +171,8 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             .filter(Corporation.corp_num == id).one())
 
         corp = result[0]
-        offices = Office.query.filter_by(corp_num = id)
-        names = CorpName.query.filter_by(corp_num = id).order_by(desc(CorpName.end_event_id))
+        offices = Office.query.filter_by(corp_num=id, end_event_id=None)
+        names = CorpName.query.filter_by(corp_num=id).order_by(desc(CorpName.end_event_id))
 
         output = {}
         # TODO: switch to marshmallow.
@@ -181,7 +181,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         output['offices'] = []
         for office in offices:
             output['offices'].append({
-                'addr':_normalize_addr(office.delivery_addr_id), #TODO: get full address.
+                'addr': normalize_addr(office.delivery_addr_id),  # TODO: get full address.
                 'office_typ_cd': office.office_typ_cd
             })
 
