@@ -1,9 +1,11 @@
 export const FIELD_VALUES = [
-  { text: "Any Name", value: "any_nme" },
   { text: "First Name", value: "first_nme" },
-  { text: "Middle Name", value: "middle_nme" },
   { text: "Last Name", value: "last_nme" },
-  { text: "Address", value: "addr_line_1" }
+  { text: "Middle Name", value: "middle_nme" },
+  { text: "Any Name", value: "any_nme" },
+  { text: "Street Address", value: "addr_line_1" },
+  { text: "Postal Code", value: "postal_code" },
+  { text: "City", value: "city" }
 ];
 
 export const OPERATOR_VALUES = [

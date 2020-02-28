@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-btn color="primary" class="add-filter-button sbc-button" height="50">
+    <v-btn class="add-filter-button sbc-button" height="50">
       <v-icon left>{{ plusIcon }}</v-icon>
-      {{ title }}</v-btn
-    >
+      {{ title }}
+    </v-btn>
   </div>
 </template>
 

@@ -12,10 +12,15 @@
           <CorpPartySearch :uid="criteria.uid"></CorpPartySearch>
         </div>
       </div>
-      <SearchLogic v-if="filters.length > 1" :logic.sync="logic"></SearchLogic>
-      <div class="d-flex justify-space-between">
-        <AddFilterButton title="Add Filter" @click.native.prevent="addFilter"></AddFilterButton>
-        <SbcButton type="submit" title="Search" @click.native.prevent="handleSearch"></SbcButton>
+      <AddFilterButton title="Add Filter" @click.native.prevent="addFilter"></AddFilterButton>
+      <div class="mt-6">
+        <SearchLogic class="d-inline-block mr-3" v-if="filters.length > 1" :logic.sync="logic"></SearchLogic>
+        <SbcButton
+          class="d-inline-block"
+          type="submit"
+          title="Search"
+          @click.native.prevent="handleSearch"
+        ></SbcButton>
       </div>
     </v-form>
     <div class="mt-10">
@@ -68,12 +73,7 @@ export default {
     }
   },
   methods: {
-    addFilter(
-      event,
-      field = "first_nme",
-      operator = "contains",
-      value = "Yes"
-    ) {
+    addFilter(event, field = "first_nme", operator = "contains", value = "") {
       this.uid++;
       this.$store.commit("filters/addFilter", {
         uid: this.uid,
