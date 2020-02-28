@@ -50,7 +50,7 @@
 
 <script>
 import { getTextFromValues } from "@/util/index.ts";
-import { RESULT_HEADERS } from "@/config/index.js";
+import { RESULT_HEADERS } from "@/config/index.ts";
 import { omit, pick } from "lodash-es";
 import { corpPartySearch, corpPartyOfficeSearch } from "@/api/SearchApi.js";
 import dayjs from "dayjs";

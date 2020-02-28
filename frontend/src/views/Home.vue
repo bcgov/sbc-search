@@ -1,34 +1,25 @@
 <template>
   <div class="home">
     <h1>Welcome to Director Search</h1>
-    <h4 class="mt-3 body-1 mb-10">
-      Search for offices held at active and historical BC companies
-    </h4>
+    <h4 class="mt-3 body-1 mb-10">Search for offices held at active and historical BC companies</h4>
     <SearchTips></SearchTips>
     <v-form>
       <div v-for="(criteria, index) in filters" :key="index">
         <div v-if="index > 0">
-          <SearchCriteria :uid="criteria.uid" :remove="true"></SearchCriteria>
+          <CorpPartySearch :uid="criteria.uid" :remove="true"></CorpPartySearch>
         </div>
         <div v-else>
-          <SearchCriteria :uid="criteria.uid"></SearchCriteria>
+          <CorpPartySearch :uid="criteria.uid"></CorpPartySearch>
         </div>
       </div>
       <SearchLogic v-if="filters.length > 1" :logic.sync="logic"></SearchLogic>
       <div class="d-flex justify-space-between">
-        <AddFilterButton
-          title="Add Filter"
-          @click.native.prevent="addFilter"
-        ></AddFilterButton>
-        <SbcButton
-          type="submit"
-          title="Search"
-          @click.native.prevent="handleSearch"
-        ></SbcButton>
+        <AddFilterButton title="Add Filter" @click.native.prevent="addFilter"></AddFilterButton>
+        <SbcButton type="submit" title="Search" @click.native.prevent="handleSearch"></SbcButton>
       </div>
     </v-form>
     <div class="mt-10">
-      <ServerSideTable :qs="qs"></ServerSideTable>
+      <CorpPartyTable :qs="qs"></CorpPartyTable>
     </div>
   </div>
 </template>
@@ -36,21 +27,21 @@
 <script>
 import SbcButton from "@/components/SbcButton.vue";
 import AddFilterButton from "@/components/Filter/AddFilterButton.vue";
-import SearchCriteria from "@/components/Search/SearchCriteria.vue";
+import CorpPartySearch from "@/components/Search/CorpPartySearch.vue";
 import { mapGetters } from "vuex";
 import { omit, isEmpty } from "lodash-es";
 const qs = require("qs");
 import { searchApi } from "@/api/SearchApi";
-import ServerSideTable from "@/components/Search/ServerSideTable.vue";
+import CorpPartyTable from "@/components/Search/CorpPartyTable.vue";
 import { buildQueryString } from "@/util/index.ts";
 import SearchLogic from "@/components/Search/SearchLogic.vue";
 import SearchTips from "@/components/Search/SearchTips.vue";
 export default {
   components: {
     SbcButton,
-    SearchCriteria,
+    CorpPartySearch,
     AddFilterButton,
-    ServerSideTable,
+    CorpPartyTable,
     SearchLogic,
     SearchTips
   },

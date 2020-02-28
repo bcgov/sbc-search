@@ -17,6 +17,6 @@ export function corpPartyOfficeSearch(id) {
   return ApiService.get(`${CORPPARTY_OFFICE_URL}/${id}`);
 }
 
-export function companySearch(id) {
+export function corporationSearch(id) {
   return ApiService.get(`${CORPORATION_SEARCH_URL}/${id}`);
 }

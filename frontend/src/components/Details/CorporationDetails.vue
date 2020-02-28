@@ -3,9 +3,7 @@
     <v-container>
       <v-row>
         <v-col cols="12">
-          <h2 class="display-1 mb-10">
-            Corporation Details for Inc. #{{ details.corp_num }}
-          </h2>
+          <h2 class="display-1 mb-10">Corporation Details for Inc. #{{ details.corp_num }}</h2>
         </v-col>
       </v-row>
       <v-row justify="space-between">
@@ -17,8 +15,7 @@
                 <span
                   v-for="(name, index) in details.NAMES"
                   :key="'company' + index"
-                  >{{ index + 1 }}. {{ name.name }}</span
-                >
+                >{{ index + 1 }}. {{ name.name }}</span>
               </div>
             </li>
             <li
@@ -26,20 +23,18 @@
               v-for="(val, key) in filteredDetail"
               :key="key + val"
             >
-              <span class="detail-key font-weight-bold">{{
+              <span class="detail-key font-weight-bold">
+                {{
                 getText(key)
-              }}</span>
+                }}
+              </span>
               <span class="detail-value">{{ val }}</span>
             </li>
             <li class="mb-10"></li>
             <li class="d-flex w-100 detail-list-item mb-5">
               <span class="detail-key font-weight-bold">Office(s)</span>
             </li>
-            <li
-              class="mb-5"
-              v-for="(office, index) in details.offices"
-              :key="'office' + index"
-            >
+            <li class="mb-5" v-for="(office, index) in details.offices" :key="'office' + index">
               <div class="d-flex w-100 detail-list-item">
                 <span class="detail-key font-weight-bold">Address</span>
                 <span class="detail-value">{{ office.addr }}</span>
@@ -53,7 +48,7 @@
           </ul>
         </v-col>
         <v-col cols="6">
-          <CompanyFilings></CompanyFilings>
+          <CorporationFilings></CorporationFilings>
         </v-col>
       </v-row>
     </v-container>
@@ -62,12 +57,12 @@
 
 <script>
 import { getTextFromValues } from "@/util/index.ts";
-import { COMPANY_HEADERS } from "@/config/index.js";
+import { COMPANY_HEADERS } from "@/config/index.ts";
 import { pick } from "lodash-es";
-import CompanyFilings from "@/components/Details/CompanyFilings.vue";
+import CorporationFilings from "@/components/Details/CorporationFilings.vue";
 export default {
   components: {
-    CompanyFilings
+    CorporationFilings
   },
   props: {
     details: {

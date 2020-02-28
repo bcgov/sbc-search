@@ -25,7 +25,7 @@ export default {
     };
   },
   mounted() {
-    const corp_party_id = this.$route.query["corp_party_id"];
+    const corp_party_id = this.$route.params["id"];
     if (corp_party_id) {
       corpPartySearch(corp_party_id).then(result => {
         this.detail = result.data;

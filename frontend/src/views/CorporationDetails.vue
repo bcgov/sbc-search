@@ -3,22 +3,22 @@
     <h1>Corporation Details</h1>
     <h4 class="mt-3 body-1 mb-10">Details for a BC Corporation.</h4>
     <section class="detail-section" v-if="details">
-      <CompanyDetails :details="details"></CompanyDetails>
+      <CorporationDetails :details="details"></CorporationDetails>
     </section>
   </div>
 </template>
 
 <script>
-import { companySearch } from "@/api/SearchApi.js";
-import CompanyDetails from "@/components/Details/CompanyDetails.vue";
+import { corporationSearch } from "@/api/SearchApi.js";
+import CorporationDetails from "@/components/Details/CorporationDetails.vue";
 export default {
   components: {
-    CompanyDetails
+    CorporationDetails
   },
   mounted() {
     const corporation_id = this.$route.params.id;
     if (corporation_id || corporation_id === 0) {
-      companySearch(corporation_id)
+      corporationSearch(corporation_id)
         .then(result => {
           this.details = result.data;
         })

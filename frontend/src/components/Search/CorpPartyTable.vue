@@ -18,20 +18,18 @@
       <template v-slot:item="{ item }">
         <tr>
           <td>
-            <a
-              :href="`#/details?corp_party_id=${item['corp_party_id']}`"
-              target="_blank"
-              >{{ item["last_nme"] }}</a
-            >
+            <a :href="`#/corpparty/${item['corp_party_id']}`" target="_blank">{{ item["last_nme"] }}</a>
           </td>
           <td>{{ item["middle_nme"] }}</td>
           <td>{{ item["first_nme"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
           <td>
-            <a :href="`#/company/${item['corp_num']}`" target="_blank">{{
+            <a :href="`#/corporation/${item['corp_num']}`" target="_blank">
+              {{
               item["corp_num"]
-            }}</a>
+              }}
+            </a>
           </td>
           <td>{{ item["addr"] }}</td>
 
@@ -39,8 +37,7 @@
             <a
               :href="`#/details?corp_party_id=${item['corp_party_id']}`"
               target="_blank"
-              >{{ item["corp_party_id"] }}</a
-            >
+            >{{ item["corp_party_id"] }}</a>
           </td>
         </tr>
       </template>
@@ -49,7 +46,7 @@
 </template>
 
 <script>
-import { RESULT_HEADERS } from "@/config/index.js";
+import { RESULT_HEADERS } from "@/config/index.ts";
 import { searchApi } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
 import { mapGetters } from "vuex";
