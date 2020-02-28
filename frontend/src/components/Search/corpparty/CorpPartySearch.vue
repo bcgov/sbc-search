@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import SearchSelect from "@/components/Search/SearchSelect.vue";
-import SearchInput from "@/components/Search/SearchInput.vue";
+import SearchSelect from "@/components/Search/corpparty/SearchSelect.vue";
+import SearchInput from "@/components/Search/corpparty/SearchInput.vue";
 import { FIELD_VALUES, OPERATOR_VALUES } from "@/config/index.ts";
 import { mapState } from "vuex";
 

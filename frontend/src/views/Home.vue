@@ -27,15 +27,15 @@
 <script>
 import SbcButton from "@/components/SbcButton.vue";
 import AddFilterButton from "@/components/Filter/AddFilterButton.vue";
-import CorpPartySearch from "@/components/Search/CorpPartySearch.vue";
+import CorpPartySearch from "@/components/Search/corpparty/CorpPartySearch.vue";
 import { mapGetters } from "vuex";
 import { omit, isEmpty } from "lodash-es";
 const qs = require("qs");
 import { searchApi } from "@/api/SearchApi";
-import CorpPartyTable from "@/components/Search/CorpPartyTable.vue";
+import CorpPartyTable from "@/components/Search/corpparty/CorpPartyTable.vue";
 import { buildQueryString } from "@/util/index.ts";
-import SearchLogic from "@/components/Search/SearchLogic.vue";
-import SearchTips from "@/components/Search/SearchTips.vue";
+import SearchLogic from "@/components/Search/corpparty/SearchLogic.vue";
+import SearchTips from "@/components/Search/corpparty/SearchTips.vue";
 export default {
   components: {
     SbcButton,
