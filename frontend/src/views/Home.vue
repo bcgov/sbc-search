@@ -55,7 +55,7 @@ export default {
     return {
       uid: 0,
       searchQuery: null,
-      logic: "ANY",
+      logic: "ALL",
       qs: null
     };
   },
