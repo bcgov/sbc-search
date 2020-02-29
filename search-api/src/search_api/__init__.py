@@ -181,8 +181,8 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         output['offices'] = []
         for office in offices:
             output['offices'].append({
-                'addr': normalize_addr(office.delivery_addr_id),  # TODO: get full address.
-                'office_typ_cd': office.office_typ_cd
+                'addr': _normalize_addr(office.delivery_addr_id),  # TODO: get full address.
+                'office_typ_cd': _format_office_typ_cd(office.office_typ_cd)
             })
 
         output['state_typ_cd'] = result[3]
@@ -195,7 +195,6 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             })
 
         return jsonify(output)
-
 
     @app.route('/person/search/')
     def corpparty_search():
@@ -373,7 +372,6 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         return jsonify(result_dict)
 
-
     def _normalize_addr(id):
         if not id:
             return ''
@@ -395,6 +393,12 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 return accumulator or ''
 
         return reduce(fn, [address.addr_line_1, address.addr_line_2, address.addr_line_3, address.city, address.province, address.country_typ_cd])
+
+    def _format_office_typ_cd(office_typ_cd):
+        if office_typ_cd == "RG":
+            return "Registered"
+        elif office_typ_cd == "RC":
+            return "Records"
 
     @app.route('/person/officesheld/<corppartyid>')
     def officesheld(corppartyid):
