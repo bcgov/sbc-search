@@ -4,34 +4,40 @@
     <h4 class="mt-3 body-1 mb-10">
       Search for offices held at active and historical BC companies.
     </h4>
-    <SearchTips></SearchTips>
-    <v-form>
-      <div v-for="(criteria, index) in filters" :key="index">
-        <div v-if="index > 0">
-          <CorpPartySearch :uid="criteria.uid" :remove="true"></CorpPartySearch>
+
+    <div class="pa-10 search-form-container">
+      <SearchTips></SearchTips>
+      <v-form>
+        <div v-for="(criteria, index) in filters" :key="index">
+          <div v-if="index > 0">
+            <CorpPartySearch
+              :uid="criteria.uid"
+              :remove="true"
+            ></CorpPartySearch>
+          </div>
+          <div v-else>
+            <CorpPartySearch :uid="criteria.uid"></CorpPartySearch>
+          </div>
         </div>
-        <div v-else>
-          <CorpPartySearch :uid="criteria.uid"></CorpPartySearch>
+        <AddFilterButton
+          title="Add Filter"
+          @click.native.prevent="addFilter"
+        ></AddFilterButton>
+        <div class="mt-6">
+          <SearchLogic
+            class="d-inline-block mr-3"
+            v-if="filters.length > 1"
+            :logic.sync="logic"
+          ></SearchLogic>
+          <SbcButton
+            class="d-inline-block"
+            type="submit"
+            title="Search"
+            @click.native.prevent="handleSearch"
+          ></SbcButton>
         </div>
-      </div>
-      <AddFilterButton
-        title="Add Filter"
-        @click.native.prevent="addFilter"
-      ></AddFilterButton>
-      <div class="mt-6">
-        <SearchLogic
-          class="d-inline-block mr-3"
-          v-if="filters.length > 1"
-          :logic.sync="logic"
-        ></SearchLogic>
-        <SbcButton
-          class="d-inline-block"
-          type="submit"
-          title="Search"
-          @click.native.prevent="handleSearch"
-        ></SbcButton>
-      </div>
-    </v-form>
+      </v-form>
+    </div>
     <div class="mt-10">
       <CorpPartyTable :qs="qs"></CorpPartyTable>
     </div>
@@ -137,3 +143,9 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.search-form-container {
+  background-color: white;
+}
+</style>
