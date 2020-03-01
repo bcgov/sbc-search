@@ -4,8 +4,9 @@
     <h4 class="mt-3 body-1 mb-10">
       Search for active and historical BC companies.
     </h4>
-
-    <CorporationSearch></CorporationSearch>
+    <div class="pa-10 pb-4 mb-10 corp-search-container">
+      <CorporationSearch></CorporationSearch>
+    </div>
     <CorporationTable :corporations="corporations"></CorporationTable>
   </div>
 </template>
@@ -40,4 +41,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.corp-search-container {
+  background-color: white;
+}
+</style>
