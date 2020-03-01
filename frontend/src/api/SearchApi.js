@@ -5,11 +5,11 @@ const COPRPARTY_SEARCH_URL = "/person";
 const CORPPARTY_OFFICE_URL = "/person/officesheld";
 const CORPORATION_SEARCH_URL = "/corporation";
 
-export function searchApi(query) {
+export function corpPartySearch(query) {
   return ApiService.get(`${PERSON_SEARCH_URL}/?${query}`);
 }
 
-export function corpPartySearch(id) {
+export function corpPartySearchDetail(id) {
   return ApiService.get(`${COPRPARTY_SEARCH_URL}/${id}`);
 }
 

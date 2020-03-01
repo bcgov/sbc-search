@@ -13,7 +13,10 @@
 
 <script>
 import Details from "@/components/Details/Details.vue";
-import { corpPartySearch, corpPartyOfficeSearch } from "@/api/SearchApi.js";
+import {
+  corpPartySearchDetail,
+  corpPartyOfficeSearch
+} from "@/api/SearchApi.js";
 export default {
   components: {
     Details
@@ -27,7 +30,7 @@ export default {
   mounted() {
     const corp_party_id = this.$route.params["id"];
     if (corp_party_id) {
-      corpPartySearch(corp_party_id).then(result => {
+      corpPartySearchDetail(corp_party_id).then(result => {
         this.detail = result.data;
       });
       corpPartyOfficeSearch(corp_party_id)

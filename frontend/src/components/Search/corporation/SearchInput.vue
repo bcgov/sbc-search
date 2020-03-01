@@ -12,7 +12,14 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    height: {
+      default: 40.8,
+      type: Number
+    }
+  }
+};
 </script>
 
 <style lang="scss">

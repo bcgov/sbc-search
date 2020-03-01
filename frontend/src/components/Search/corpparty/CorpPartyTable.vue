@@ -48,7 +48,7 @@
 
 <script>
 import { RESULT_HEADERS } from "@/config/index.ts";
-import { searchApi } from "@/api/SearchApi.js";
+import { corpPartySearch } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
 import { mapGetters } from "vuex";
 import { buildQueryString } from "@/util/index.ts";
@@ -121,7 +121,7 @@ export default {
       this.loading = true;
       const { page, sortBy, sortDesc } = this.options;
 
-      searchApi(this.qs)
+      corpPartySearch(this.qs)
         .then(result => {
           this.items = result.data.results;
           this.totalItems = this.items.length;
