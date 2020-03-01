@@ -17,6 +17,22 @@ export default {
     height: {
       default: 40.8,
       type: Number
+    },
+    props: {
+      query: {
+        default: null,
+        type: String
+      }
+    }
+  },
+  data() {
+    return {
+      searchQuery: this.query
+    };
+  },
+  watch: {
+    searchQuery(nq) {
+      this.$emit("update:query", nq);
     }
   }
 };
