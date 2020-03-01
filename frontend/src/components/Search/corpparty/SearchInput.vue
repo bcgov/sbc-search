@@ -37,14 +37,14 @@ export default {
         return this.getFilterValue(this.uid);
       },
       set(value) {
-        this.$store.commit("filters/setSearchValue", {
+        this.$store.commit("corpParty/filters/setSearchValue", {
           uid: this.uid,
           value: value
         });
       }
     },
     ...mapGetters({
-      getFilterValue: "filters/getFilterValue"
+      getFilterValue: "corpParty/filters/getFilterValue"
     })
   },
   data() {

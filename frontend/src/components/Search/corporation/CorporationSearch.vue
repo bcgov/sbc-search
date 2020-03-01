@@ -1,10 +1,16 @@
 <template>
-  <div>Corporation Search</div>
+  <div>
+    <SearchInput></SearchInput>
+  </div>
 </template>
 
 <script>
-export default {};
+import SearchInput from "@/components/Search/corporation/SearchInput.vue";
+export default {
+  components: {
+    SearchInput
+  }
+};
 </script>
 
-<style>
-</style>
+<style lang="scss"></style>

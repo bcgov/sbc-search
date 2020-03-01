@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import filters from "./filters";
+import corpParty from "./corpparty";
+import corporation from "./corporation";
 
 Vue.use(Vuex);
 
@@ -9,6 +10,7 @@ export default new Vuex.Store({
   mutations: {},
   actions: {},
   modules: {
-    filters
+    corpParty,
+    corporation
   }
 });

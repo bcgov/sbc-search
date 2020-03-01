@@ -54,7 +54,7 @@ export default {
         return this.getFilterProperty(this.uid, this.property);
       },
       set(value) {
-        this.$store.commit("filters/setSearchPropValue", {
+        this.$store.commit("corpParty/filters/setSearchPropValue", {
           uid: this.uid,
           property: this.property,
           value: value
@@ -62,7 +62,7 @@ export default {
       }
     },
     ...mapGetters({
-      getFilterProperty: "filters/getProperty"
+      getFilterProperty: "corpParty/filters/getProperty"
     })
   }
 };

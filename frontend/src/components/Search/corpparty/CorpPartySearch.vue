@@ -16,8 +16,14 @@
       :uid="uid"
       property="operator"
     ></SearchSelect>
-    <SearchInput :uid="uid" :query="initQuery" class="d-inline-block mt-2"></SearchInput>
-    <v-btn v-if="remove" class="ml-5" outlined small @click="handleRemove">Remove</v-btn>
+    <SearchInput
+      :uid="uid"
+      :query="initQuery"
+      class="d-inline-block mt-2"
+    ></SearchInput>
+    <v-btn v-if="remove" class="ml-5" outlined small @click="handleRemove"
+      >Remove</v-btn
+    >
   </div>
 </template>
 
@@ -25,7 +31,6 @@
 import SearchSelect from "@/components/Search/corpparty/SearchSelect.vue";
 import SearchInput from "@/components/Search/corpparty/SearchInput.vue";
 import { FIELD_VALUES, OPERATOR_VALUES } from "@/config/index.ts";
-import { mapState } from "vuex";
 
 export default {
   props: {
@@ -62,7 +67,7 @@ export default {
   },
   methods: {
     handleRemove() {
-      this.$store.commit("filters/removeFilter", this.uid);
+      this.$store.commit("corpParty/filters/removeFilter", this.uid);
     }
   }
 };

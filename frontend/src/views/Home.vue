@@ -1,7 +1,9 @@
 <template>
   <div class="home">
     <h1>Welcome to Director Search</h1>
-    <h4 class="mt-3 body-1 mb-10">Search for offices held at active and historical BC companies</h4>
+    <h4 class="mt-3 body-1 mb-10">
+      Search for offices held at active and historical BC companies
+    </h4>
     <SearchTips></SearchTips>
     <v-form>
       <div v-for="(criteria, index) in filters" :key="index">
@@ -12,9 +14,16 @@
           <CorpPartySearch :uid="criteria.uid"></CorpPartySearch>
         </div>
       </div>
-      <AddFilterButton title="Add Filter" @click.native.prevent="addFilter"></AddFilterButton>
+      <AddFilterButton
+        title="Add Filter"
+        @click.native.prevent="addFilter"
+      ></AddFilterButton>
       <div class="mt-6">
-        <SearchLogic class="d-inline-block mr-3" v-if="filters.length > 1" :logic.sync="logic"></SearchLogic>
+        <SearchLogic
+          class="d-inline-block mr-3"
+          v-if="filters.length > 1"
+          :logic.sync="logic"
+        ></SearchLogic>
         <SbcButton
           class="d-inline-block"
           type="submit"
@@ -52,8 +61,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      filters: "filters/getFilters",
-      numFilters: "filters/getNumFilters"
+      filters: "corpParty/filters/getFilters",
+      numFilters: "corpParty/filters/getNumFilters"
     })
   },
   data() {
@@ -75,7 +84,7 @@ export default {
   methods: {
     addFilter(event, field = "first_nme", operator = "contains", value = "") {
       this.uid++;
-      this.$store.commit("filters/addFilter", {
+      this.$store.commit("corpParty/filters/addFilter", {
         uid: this.uid,
         field,
         operator,
@@ -108,7 +117,7 @@ export default {
         const queryFilters = omit(this.$route.query, "mode");
         if (typeof queryFilters.field === "string") {
           queryFilters.uid = this.uid++;
-          this.$store.commit("filters/setFilters", [queryFilters]);
+          this.$store.commit("corpParty/filters/setFilters", [queryFilters]);
         } else if (Array.isArray(queryFilters.field)) {
           let temp = [];
           const length = queryFilters.field.length;
@@ -120,7 +129,7 @@ export default {
               value: queryFilters.value[i]
             });
           }
-          this.$store.commit("filters/setFilters", temp);
+          this.$store.commit("corpParty/filters/setFilters", temp);
         }
         this.renderTable();
       }
