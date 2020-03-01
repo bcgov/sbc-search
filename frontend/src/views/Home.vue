@@ -1,8 +1,8 @@
 <template>
   <div class="home">
-    <h1>Welcome to Director Search</h1>
+    <h1>Welcome to Director Search.</h1>
     <h4 class="mt-3 body-1 mb-10">
-      Search for offices held at active and historical BC companies
+      Search for offices held at active and historical BC companies.
     </h4>
     <SearchTips></SearchTips>
     <v-form>

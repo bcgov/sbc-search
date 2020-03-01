@@ -90,7 +90,7 @@ export const CORPPARTY_HEADERS = [
     align: "left"
   },
   {
-    text: "Filing Address",
+    text: "Address",
     value: "addr",
     sortable: true,
     align: "left"
