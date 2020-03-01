@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     handleSearch() {
-      console.log("Handle Search");
+      const query = this.searchQuery;
     }
   },
   data() {

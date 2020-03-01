@@ -19,7 +19,34 @@ export const COMPANY_HEADERS = [
   { text: "Status", value: "state_typ_cd" }
 ];
 
-export const RESULT_HEADERS = [
+export const CORPORATION_HEADERS = [
+  {
+    text: "Inc/Org#",
+    value: "inc",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Company Name",
+    value: "corp_nme",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Incorporated",
+    value: "inc_date",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Company Address",
+    value: "addr",
+    sortable: true,
+    align: "left"
+  }
+];
+
+export const CORPPARTY_HEADERS = [
   {
     text: "Surname",
     value: "last_nme",

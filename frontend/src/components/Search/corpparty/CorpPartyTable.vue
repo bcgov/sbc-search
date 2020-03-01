@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { RESULT_HEADERS } from "@/config/index.ts";
+import { CORPPARTY_HEADERS } from "@/config/index.ts";
 import { corpPartySearch } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
 import { mapGetters } from "vuex";
@@ -86,7 +86,7 @@ export default {
   },
   data() {
     return {
-      headers: this.filterHeaders(RESULT_HEADERS),
+      headers: this.filterHeaders(CORPPARTY_HEADERS),
       items: [],
       options: {},
       loading: true,
