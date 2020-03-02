@@ -24,6 +24,7 @@ from search_api.models import (
     Event,
     app, db #TODO, move this out of models.py
 )
+from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 
 load_dotenv(verbose=True)
 
@@ -211,7 +212,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         # Total number of results
         # This is waaay to expensive on a large db.
-        #total_results = results.count()
+        # total_results = results.count()
 
         # Pagination
         page = int(args.get("page")) if "page" in args else 1
@@ -219,30 +220,18 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         corp_parties = []
         for row in results.items:
-            result_dict = {}
+            result_fields = [
+                'corp_party_id', 'first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt',
+                'corp_num', 'party_typ_cd']
 
-            # TODO: switch to marshmallow.
-            result_dict['corp_party_id'] = int(row[1])
-            result_dict['first_nme'] = row[2]
-            result_dict['middle_nme'] = row[3]
-            result_dict['last_nme'] = row[4]
-            result_dict['appointment_dt'] = row[5]
-            result_dict['cessation_dt'] = row[6]
-            result_dict['corp_num'] = row[7]
-            result_dict['party_typ_id'] = row[8]
-            # result_dict['corp_nme'] = row[8]
+            result_dict = {key: getattr(row, key) for key in result_fields}
+            result_dict['corp_party_id'] = int(result_dict['corp_party_id'])
 
-            result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
-            result_dict['postal_cd'] = row[12]
-            # result_dict['city'] = row[11]
-            # result_dict['province'] = row[12]
-            # result_dict['state_typ_cd'] = row[13]
-            # result_dict['full_desc'] = row[14]
+            _add_additional_cols_to_search_results(args, row, result_dict)
 
             corp_parties.append(result_dict)
 
-        return jsonify({'results': corp_parties })
-
+        return jsonify({'results': corp_parties})
 
     @app.route('/person/search/export/')
     def corpparty_search_export():
@@ -454,12 +443,44 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
 
 def _merge_corpparty_search_addr_fields(row):
-    address = row[9]
-    if row[10]:
-        address += ", " + row[10]
-    if row[11]:
-        address += ", " + row[11]
+    address = row.addr_line_1
+    if row.addr_line_2:
+        address += ", " + row.addr_line_2
+    if row.addr_line_3:
+        address += ", " + row.addr_line_3
     return address
+
+
+def _is_addr_search(fields):
+    return "addr_line_1" in fields or "postal_cd" in fields
+
+
+def _add_additional_cols_to_search_results(args, row, result_dict):
+    fields = args.getlist('field')
+    additional_cols = args.get('additional_cols')
+    if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+        result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
+        result_dict['postal_cd'] = row.postal_cd
+    elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+        result_dict['state_typ_cd'] = row.state_typ_cd
+
+
+def _add_additional_cols_to_search_query(args, query):
+    fields = args.getlist('field')
+    additional_cols = args.get('additional_cols')
+    if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+        query = query.join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+        query = query.add_columns(
+            Address.addr_line_1,
+            Address.addr_line_2,
+            Address.addr_line_3,
+            Address.postal_cd)
+    elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+        query = query.join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
+            .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+        query = query.add_columns(CorpOpState.state_typ_cd)
+
+    return query
 
 
 def _get_model_by_field(field_name):
@@ -572,6 +593,7 @@ def _get_corpparty_search_results(args):
     &value=<string>
     &sort_type=asc|desc
     &sort_value=ANY_NME|first_nme|last_nme|<any column name>
+    &additional_cols=address|active|none
 
     For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
     curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"
@@ -609,8 +631,8 @@ def _get_corpparty_search_results(args):
             # .join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
             # .join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
             # .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
-            #.join(CorpName, Corporation.corp_num == CorpName.corp_num)\
-            .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+            # .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
+            # .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
             .add_columns(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
@@ -622,15 +644,17 @@ def _get_corpparty_search_results(args):
                 CorpParty.party_typ_cd,
                 # Corporation.corp_num,
                 # CorpName.corp_nme,
-                Address.addr_line_1,
-                Address.addr_line_2,
-                Address.addr_line_3,
-                Address.postal_cd,
+                # Address.addr_line_1,
+                # Address.addr_line_2,
+                # Address.addr_line_3,
+                # Address.postal_cd,
                 # Address.city,
                 # Address.province,
                 # CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc,
             ))
+
+    results = _add_additional_cols_to_search_query(args, results)
 
     # Simple mode - return reasonable results for a single search string:
     if query:
