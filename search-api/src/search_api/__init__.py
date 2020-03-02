@@ -1,5 +1,6 @@
-from tempfile import NamedTemporaryFile
+import datetime
 import os
+from tempfile import NamedTemporaryFile
 
 from openpyxl import Workbook
 from flask import Flask, request, jsonify, send_from_directory, abort
@@ -231,11 +232,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             result_dict['party_typ_id'] = row[8]
             # result_dict['corp_nme'] = row[8]
 
-            result_dict['addr'] = row[9]
-            if row[10]:
-                result_dict['addr'] += ", " + row[10]
-            if row[11]:
-                result_dict['addr'] += ", " + row[11]
+            result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
             result_dict['postal_cd'] = row[12]
             # result_dict['city'] = row[11]
             # result_dict['province'] = row[12]
@@ -259,7 +256,8 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         # Exporting to Excel
         wb = Workbook()
 
-        with NamedTemporaryFile(mode='w+b', dir='tmp', delete=True) as tmp:
+        export_dir = "/tmp"
+        with NamedTemporaryFile(mode='w+b', dir=export_dir, delete=True) as f:
 
             sheet = wb.active
 
@@ -270,13 +268,8 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             _ = sheet.cell(column=4, row=1, value="Last Name")
             _ = sheet.cell(column=5, row=1, value="Appointment Date")
             _ = sheet.cell(column=6, row=1, value="Cessation Date")
-            _ = sheet.cell(column=7, row=1, value="Act/Hist")
-            _ = sheet.cell(column=8, row=1, value="Corporation Id")
-            _ = sheet.cell(column=9, row=1, value="Corp Name")
-            _ = sheet.cell(column=10, row=1, value="Address")
-            _ = sheet.cell(column=11, row=1, value="Postal Code")
-            _ = sheet.cell(column=12, row=1, value="City")
-            _ = sheet.cell(column=13, row=1, value="Province")
+            _ = sheet.cell(column=7, row=1, value="Corporation Id")
+            _ = sheet.cell(column=8, row=1, value="Address")
 
             index = 2
             for row in results:
@@ -293,31 +286,19 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 _ = sheet.cell(column=5, row=index, value=row[5])
                 # CorpParty.cessation_dt
                 _ = sheet.cell(column=6, row=index, value=row[6])
-                # CorOpState.full_desc
-                _ = sheet.cell(column=7, row=index, value=row[14])
                 # Corporation.corp_num
-                _ = sheet.cell(column=8, row=index, value=row[7])
-                # CorpName.corp_nme
-                _ = sheet.cell(column=9, row=index, value=row[8])
-                # Address.addr_line_1
-                _ = sheet.cell(column=10, row=index, value=row[9])
-                # Address.postal_cd
-                _ = sheet.cell(column=11, row=index, value=row[10])
-                # Address.city
-                _ = sheet.cell(column=12, row=index, value=row[11])
-                # Address.province
-                _ = sheet.cell(column=13, row=index, value=row[12])
+                _ = sheet.cell(column=7, row=index, value=row[7])
+                # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
+                _ = sheet.cell(column=8, row=index, value=_merge_corpparty_search_addr_fields(row))
 
                 index += 1
 
-            filename = "{}.{}".format(tmp.name,"xlsx")
-            wb.save(filename=filename)
+            current_date = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
+            filename = "CorpParty Search Results {date}.xlsx".format(date=current_date)
+            full_filename_path = "{dir}/{filename}".format(dir=export_dir, filename=filename)
+            wb.save(filename=full_filename_path)
 
-            # file name without the path
-            simple_name = filename.split('/')[len(filename.split('/'))-1]
-
-            return send_from_directory('tmp',simple_name,as_attachment=True)
-
+            return send_from_directory(export_dir, filename, as_attachment=True)
 
     @app.route('/person/<id>')
     def person(id):
@@ -469,11 +450,16 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             'same_name_and_company': [{**s[0].as_dict(), **{'year':int(s[1].year)}} for s in same_name_and_company if s[0].corp_party_id != int(corppartyid)],
         })
 
-
-
     return app
 
 
+def _merge_corpparty_search_addr_fields(row):
+    address = row[9]
+    if row[10]:
+        address += ", " + row[10]
+    if row[11]:
+        address += ", " + row[11]
+    return address
 
 
 def _get_model_by_field(field_name):
