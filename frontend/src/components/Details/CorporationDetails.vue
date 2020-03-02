@@ -44,6 +44,11 @@
                 <span class="detail-key font-weight-bold">Type</span>
                 <span class="detail-value">{{ office.office_typ_cd }}</span>
               </div>
+
+              <div class="d-flex w-100 detail-list-item">
+                <span class="detail-key font-weight-bold">Email</span>
+                <span class="detail-value">{{ office.email_address }}</span>
+              </div>
             </li>
           </ul>
         </v-col>
@@ -72,7 +77,7 @@ export default {
   },
   computed: {
     filteredDetail() {
-      return pick(this.details, ["corp_num", "state_typ_cd"]);
+      return pick(this.details, ["corp_num", "state_typ_cd", "admin_email"]);
     }
   },
   methods: {

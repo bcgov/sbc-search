@@ -161,6 +161,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             .add_columns(
                 Corporation.corp_num,
                 Corporation.transition_dt,
+                Corporation.admin_email,
                 # Office.mailing_addr_id,
                 # Office.office_typ_cd,
                 CorpOpState.state_typ_cd,
@@ -182,11 +183,13 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         for office in offices:
             output['offices'].append({
                 'addr': _normalize_addr(office.delivery_addr_id),  # TODO: get full address.
-                'office_typ_cd': _format_office_typ_cd(office.office_typ_cd)
+                'office_typ_cd': _format_office_typ_cd(office.office_typ_cd),
+                'email_address': office.email_address
             })
 
-        output['state_typ_cd'] = result[3]
-        output['full_desc'] = result[4]
+        output['admin_email'] = result[3]
+        output['state_typ_cd'] = result[4]
+        output['full_desc'] = result[5]
 
         output['NAMES'] = []
         for row in names:
@@ -333,13 +336,14 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 # CorpParty.delivery_addr_id,
                 # CorpParty.party_typ_cd
                 Corporation.corp_typ_cd,
+                Corporation.admin_email,
                 # CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc,
             ).filter(CorpParty.corp_party_id==int(id))).one()
 
         person = result[0]
         result_dict = {}
-        name = CorpName.query.filter(CorpName.corp_num ==  person.corp_num).add_columns(CorpName.corp_nme).filter()[0] #TODO: handle multiple names
+        name = CorpName.query.filter(CorpName.corp_num == person.corp_num).add_columns(CorpName.corp_nme).filter()[0] #TODO: handle multiple names
         offices = Office.query.filter(Office.corp_num == person.corp_num).all()
         addr = _normalize_addr(person.delivery_addr_id)
         states = CorpState.query.filter(
@@ -363,9 +367,11 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result_dict['corp_num'] = person.corp_num
         result_dict['corp_nme'] = name.corp_nme
         result_dict['party_typ_cd'] = person.party_typ_cd
+        result_dict['corp_party_email'] = person.email_address
         result_dict['addr'] = addr
         result_dict['corp_addr'] = corp_addr
         result_dict['corp_typ_cd'] = result[1]
+        result_dict['corp_admin_email'] = result[2]
 
         result_dict['states'] = [s.as_dict() for s in states]
         # result_dict['full_desc'] = results[0][14]
@@ -614,9 +620,9 @@ def _get_corpparty_search_results(args):
     results = (CorpParty.query
             # .filter(CorpParty.end_event_id == None)
             # .filter(CorpName.end_event_id == None)
-            #.join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
-            #.join(CorpState, CorpState.corp_num == Corporation.corp_num)\
-            #.join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
+            # .join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
+            # .join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
+            # .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
             #.join(CorpName, Corporation.corp_num == CorpName.corp_num)\
             .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
             .add_columns(

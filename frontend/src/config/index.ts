@@ -16,7 +16,8 @@ export const OPERATOR_VALUES = [
 ];
 export const COMPANY_HEADERS = [
   { text: "Number", value: "corp_num" },
-  { text: "Status", value: "state_typ_cd" }
+  { text: "Status", value: "state_typ_cd" },
+  { text: "Admin Email", value: "admin_email" }
 ];
 
 export const RESULT_HEADERS = [
@@ -69,8 +70,20 @@ export const RESULT_HEADERS = [
     align: "left"
   },
   {
+    text: "Email",
+    value: "corp_party_email",
+    sortable: true,
+    align: "left"
+  },
+  {
     text: "Company Address",
     value: "corp_addr",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Company Admin Email",
+    value: "corp_admin_email",
     sortable: true,
     align: "left"
   },

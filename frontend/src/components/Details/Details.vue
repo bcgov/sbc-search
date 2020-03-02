@@ -105,6 +105,7 @@ export default {
         "first_nme",
         "middle_nme",
         "addr",
+        "corp_party_email",
         "party_typ_cd",
         "appointment_dt",
         "cessation_dt",
@@ -112,6 +113,7 @@ export default {
         "corp_num",
         "corp_typ_cd",
         "corp_addr",
+        "corp_admin_email",
         "state_typ_cd"
       ]);
     }
