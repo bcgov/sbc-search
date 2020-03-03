@@ -23,8 +23,8 @@
           <td>{{ item["first_nme"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
-          <td @click.prevent.stop="handleCorpClick">
-            <span class="anchor-text">{{ item["corp_num"] }}</span>
+          <td @click.prevent.stop="handleCorpClick(item['corp_num'])">
+            <span class="anchor-text cursor-pointer">{{ item["corp_num"] }}</span>
           </td>
           <td>{{ item["addr"] }}</td>
         </tr>
