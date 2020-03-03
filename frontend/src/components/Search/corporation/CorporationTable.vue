@@ -12,6 +12,7 @@
           <td>{{ item["inc"] }}</td>
           <td>{{ item["corp_nme"] }}</td>
           <td>{{ item["inc_date"] }}</td>
+          <td>{{ item["status"] }}</td>
           <td>{{ item["addr"] }}</td>
         </tr>
       </template>

@@ -40,6 +40,12 @@ export const CORPORATION_HEADERS = [
     align: "left"
   },
   {
+    text: "Act/His",
+    value: "status",
+    sortable: true,
+    align: "left"
+  },
+  {
     text: "Company Address",
     value: "addr",
     sortable: true,

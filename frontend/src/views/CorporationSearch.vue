@@ -30,12 +30,14 @@ export default {
           inc: 32131231,
           corp_nme: "The King",
           inc_date: "2019-30-31",
+          status: "Act",
           addr: "#123 Sesame Street Vanocuver"
         },
         {
           inc: 32131231,
           corp_nme: "The King",
           inc_date: "2019-30-31",
+          status: "Act",
           addr: "#123 Sesame Street Vanocuver"
         }
       ]
