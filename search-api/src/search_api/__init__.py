@@ -53,27 +53,20 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     #     response.headers['API'] = f'search_api/{version}'
     #     return response
 
-    #register_shellcontext(app)
-
+    # register_shellcontext(app)
 
     @app.route('/')
     def hello():
         return "Welcome to the director search API."
 
-
     @app.route('/corporation/search/')
     def corporation_search():
-
-        # Query string arguments
         args = request.args
-
-        # Fetching results
         results = _get_corporation_search_results(args)
-        # raise Exception(results.statement.compile())
 
         # Total number of results
         # This is waaay to expensive.
-        #total_results = results.count()
+        # total_results = results.count()
 
         # Pagination
         page = int(args.get("page")) if "page" in args else 1
@@ -83,20 +76,13 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         for row in results.items:
             result_dict = {}
 
-            # TODO: switch to marshmallow.
-            result_dict['corp_num'] = row[0].corp_num
-            result_dict['corp_nme'] = row[0].corp_nme
-            # result_dict['transition_dt'] = row[3]
-            # result_dict['addr_line_1'] = row[4]
-            # result_dict['postal_cd'] = row[5]
-            # result_dict['city'] = row[6]
-            # result_dict['province'] = row[7]
+            result_fields = ['corp_num', 'corp_nme']
+
+            result_dict = {key: getattr(row, key) for key in result_fields}
 
             corporations.append(result_dict)
 
-        # TODO: include corpname and corpparties in serialized child using Marshmallow
-        return jsonify({'results': corporations })
-
+        return jsonify({'results': corporations})
 
     @app.route('/corporation/search/export/')
     def corporation_search_export():
@@ -203,11 +189,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
     @app.route('/person/search/')
     def corpparty_search():
-
-        # Query string arguments
         args = request.args
-
-        # Fetching results
         results = _get_corpparty_search_results(args)
 
         # Total number of results
@@ -542,13 +524,10 @@ def _get_sort_field(field_name):
 
 
 def _get_corporation_search_results(args):
+    query = args.get("query")
 
-    args = request.args
-
-    if "query" not in args:
+    if not query:
         return "No search query was received", 400
-
-    query = args["query"]
 
     # TODO: move queries to model class.
     results = (
@@ -556,15 +535,15 @@ def _get_corporation_search_results(args):
         .join(CorpName, Corporation.corp_num == CorpName.corp_num)
         # .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
         # .join(Office, Office.corp_num == Corporation.corp_num)
-        .join(Address, Office.mailing_addr_id == Address.addr_id)
+        # .join(Address, Office.mailing_addr_id == Address.addr_id)
         .with_entities(
             CorpName.corp_nme,
             Corporation.corp_num,
             # Corporation.transition_dt,
-            Address.addr_line_1,
-            Address.addr_line_2,
-            Address.addr_line_3,
-            Address.postal_cd,
+            # Address.addr_line_1,
+            # Address.addr_line_2,
+            # Address.addr_line_3,
+            # Address.postal_cd,
             # Address.city,
             # Address.province,
         )
@@ -573,10 +552,10 @@ def _get_corporation_search_results(args):
     )
 
     results = results.filter(
-            (Corporation.corp_num == query) |
-            (CorpName.corp_nme.ilike('%'+query+'%'))
-            # (CorpParty.first_nme.contains(query)) |
-            # (CorpParty.last_nme.contains(query)))
+        (Corporation.corp_num == query) |
+        (CorpName.corp_nme.ilike('%' + query + '%'))
+        # (CorpParty.first_nme.contains(query)) |
+        # (CorpParty.last_nme.contains(query)))
     )
 
     return results
