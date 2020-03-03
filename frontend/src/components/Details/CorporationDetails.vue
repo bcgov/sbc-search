@@ -3,7 +3,10 @@
     <v-container>
       <v-row>
         <v-col cols="12">
-          <h2 class="display-1 mb-10">Corporation Details for Inc. #{{ details.corp_num }}</h2>
+          <div class="mb-10 d-flex justify-space-between align-center">
+            <h2 class="display-1">Corporation Details for Inc. #{{ details.corp_num }}</h2>
+            <PrintButton></PrintButton>
+          </div>
         </v-col>
       </v-row>
       <v-row justify="space-between">
@@ -61,13 +64,15 @@
 </template>
 
 <script>
+import PrintButton from "@/components/PrintButton.vue";
 import { getTextFromValues } from "@/util/index.ts";
 import { COMPANY_HEADERS } from "@/config/index.ts";
 import { pick } from "lodash-es";
 import CorporationFilings from "@/components/Details/CorporationFilings.vue";
 export default {
   components: {
-    CorporationFilings
+    CorporationFilings,
+    PrintButton
   },
   props: {
     details: {

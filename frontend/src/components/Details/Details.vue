@@ -4,12 +4,7 @@
       <v-row>
         <v-col cols="12" class="d-flex justify-space-between align-center mb-12">
           <h2 class="display-1">Details for Filing #{{ detail.corp_party_id }}</h2>
-          <v-icon
-            color="#2076d2"
-            large
-            class="cursor-pointer"
-            @click="handlePrint"
-          >{{ printerIcon }}</v-icon>
+          <PrintButton></PrintButton>
         </v-col>
       </v-row>
       <v-row justify="space-between">
@@ -39,16 +34,17 @@
 </template>
 
 <script>
+import PrintButton from "@/components/PrintButton.vue";
 import { getTextFromValues } from "@/util/index.ts";
 import { CORPPARTY_HEADERS } from "@/config/index.ts";
 import { omit, pick } from "lodash-es";
 import { corpPartySearch, corpPartyOfficeSearch } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
 import OfficeTable from "@/components/Details/OfficeTable.vue";
-import { mdiPrinter } from "@mdi/js";
 export default {
   components: {
-    OfficeTable
+    OfficeTable,
+    PrintButton
   },
   props: {
     detail: {
@@ -59,11 +55,6 @@ export default {
       default: null,
       type: Object
     }
-  },
-  data() {
-    return {
-      printerIcon: mdiPrinter
-    };
   },
   computed: {
     filteredDetail() {
@@ -111,9 +102,6 @@ export default {
   methods: {
     getText(data) {
       return getTextFromValues(CORPPARTY_HEADERS, data);
-    },
-    handlePrint() {
-      window && window.print();
     }
   }
 };
