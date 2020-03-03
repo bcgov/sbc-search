@@ -2,7 +2,7 @@
   <div>
     <v-data-table
       v-if="qs"
-      class="elevation-1"
+      class="elevation-1 corp-party-table"
       :headers="headers"
       :items="results"
       :options.sync="options"
@@ -16,30 +16,17 @@
       }"
     >
       <template v-slot:item="{ item }">
-        <tr>
-          <td>
-            <a :href="`#/corpparty/${item['corp_party_id']}`" target="_blank">{{
-              item["last_nme"]
-            }}</a>
-          </td>
+        <tr @click="handleCellClick(item['corp_party_id'])">
+          <td class="color-gray">{{ item["corp_party_id"] }}</td>
+          <td>{{ item["last_nme"] }}</td>
           <td>{{ item["middle_nme"] }}</td>
           <td>{{ item["first_nme"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
-          <td>
-            <a :href="`#/corporation/${item['corp_num']}`" target="_blank">
-              {{ item["corp_num"] }}
-            </a>
+          <td @click.prevent.stop="handleCorpClick">
+            <span class="anchor-text">{{ item["corp_num"] }}</span>
           </td>
           <td>{{ item["addr"] }}</td>
-
-          <td>
-            <a
-              :href="`#/details?corp_party_id=${item['corp_party_id']}`"
-              target="_blank"
-              >{{ item["corp_party_id"] }}</a
-            >
-          </td>
         </tr>
       </template>
     </v-data-table>
@@ -95,18 +82,24 @@ export default {
     };
   },
   methods: {
+    handleCorpClick(id) {
+      window.open(`#/corporation/${id}`);
+    },
+    handleCellClick(id) {
+      window.open(`#/corpparty/${id}`);
+    },
     filterHeaders(headers) {
       return headers.filter(h => {
         const val = h.value;
         if (
+          val === "corp_party_id" ||
           val === "last_nme" ||
           val === "middle_nme" ||
           val === "first_nme" ||
           val === "appointment_dt" ||
           val === "cessation_dt" ||
           val === "corp_num" ||
-          val === "addr" ||
-          val === "corp_party_id"
+          val === "addr"
         ) {
           return true;
         }
@@ -143,4 +136,13 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.anchor-text {
+  text-decoration: underline;
+  color: #2076d2;
+}
+.corp-party-table th:first-of-type,
+.corp-party-table td:first-of-type {
+  color: rgba(0, 0, 0, 0.4) !important;
+}
+</style>
