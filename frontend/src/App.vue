@@ -33,4 +33,10 @@ export default Vue.extend({
 .cursor-pointer {
   cursor: pointer;
 }
+
+.export-btn {
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  padding: 0 2em !important;
+}
 </style>

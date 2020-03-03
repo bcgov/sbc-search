@@ -85,7 +85,7 @@ export const CORPPARTY_HEADERS = [
     align: "left"
   },
   {
-    text: "Inc/Org #",
+    text: "Inc/Reg #",
     value: "corp_num",
     sortable: true,
     align: "left"

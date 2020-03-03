@@ -1,11 +1,12 @@
 <template>
   <div>
     <h1>Welcome to Corporation Search.</h1>
-    <h4 class="mt-3 body-1 mb-10">
-      Search for active and historical BC companies.
-    </h4>
+    <h4 class="mt-3 body-1 mb-10">Search for active and historical BC companies.</h4>
     <div class="pa-10 pb-4 mb-10 corp-search-container">
       <CorporationSearch></CorporationSearch>
+    </div>
+    <div class="d-flex justify-end mb-5">
+      <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
     </div>
     <CorporationTable :corporations="corporations"></CorporationTable>
   </div>

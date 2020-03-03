@@ -2,20 +2,14 @@
   <div>
     <v-container>
       <v-row>
-        <v-col
-          cols="12"
-          class="d-flex justify-space-between align-center mb-12"
-        >
-          <h2 class="display-1">
-            Details for Filing #{{ detail.corp_party_id }}
-          </h2>
+        <v-col cols="12" class="d-flex justify-space-between align-center mb-12">
+          <h2 class="display-1">Details for Filing #{{ detail.corp_party_id }}</h2>
           <v-icon
             color="#2076d2"
             large
             class="cursor-pointer"
             @click="handlePrint"
-            >{{ printerIcon }}</v-icon
-          >
+          >{{ printerIcon }}</v-icon>
         </v-col>
       </v-row>
       <v-row justify="space-between">
@@ -31,17 +25,13 @@
                 :class="{
                   'detail-big-margins': key === 'cessation_dt' || key === 'addr'
                 }"
-                >{{ getText(key) }}</span
-              >
+              >{{ getText(key) }}</span>
               <span class="detail-value">{{ val }}</span>
             </li>
           </ul>
         </v-col>
         <v-col cols="6">
-          <OfficeTable
-            :details="filteredDetail"
-            :officesheld="officesheld"
-          ></OfficeTable>
+          <OfficeTable :details="filteredDetail" :officesheld="officesheld"></OfficeTable>
         </v-col>
       </v-row>
     </v-container>
@@ -109,12 +99,12 @@ export default {
         "party_typ_cd",
         "appointment_dt",
         "cessation_dt",
+        "state_typ_cd",
         "corp_nme",
         "corp_num",
         "corp_typ_cd",
         "corp_addr",
-        "corp_admin_email",
-        "state_typ_cd"
+        "corp_admin_email"
       ]);
     }
   },

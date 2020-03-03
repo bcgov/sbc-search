@@ -1,34 +1,22 @@
 <template>
   <div class="home">
     <h1>Welcome to Director Search.</h1>
-    <h4 class="mt-3 body-1 mb-10">
-      Search for offices held at active and historical BC companies.
-    </h4>
+    <h4 class="mt-3 body-1 mb-10">Search for offices held at active and historical BC companies.</h4>
 
     <div class="pa-10 search-form-container">
       <SearchTips></SearchTips>
       <v-form>
         <div v-for="(criteria, index) in filters" :key="index">
           <div v-if="index > 0">
-            <CorpPartySearch
-              :uid="criteria.uid"
-              :remove="true"
-            ></CorpPartySearch>
+            <CorpPartySearch :uid="criteria.uid" :remove="true"></CorpPartySearch>
           </div>
           <div v-else>
             <CorpPartySearch :uid="criteria.uid"></CorpPartySearch>
           </div>
         </div>
-        <AddFilterButton
-          title="Add Filter"
-          @click.native.prevent="addFilter"
-        ></AddFilterButton>
+        <AddFilterButton title="Add Filter" @click.native.prevent="addFilter"></AddFilterButton>
         <div class="mt-6">
-          <SearchLogic
-            class="d-inline-block mr-3"
-            v-if="filters.length > 1"
-            :logic.sync="logic"
-          ></SearchLogic>
+          <SearchLogic class="d-inline-block mr-3" v-if="filters.length > 1" :logic.sync="logic"></SearchLogic>
           <SbcButton
             class="d-inline-block"
             type="submit"
@@ -39,6 +27,9 @@
       </v-form>
     </div>
     <div class="mt-10">
+      <div class="d-flex justify-end mb-5">
+        <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
+      </div>
       <CorpPartyTable :qs="qs"></CorpPartyTable>
     </div>
   </div>
