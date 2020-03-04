@@ -5,44 +5,55 @@
       class="mt-3 body-1 mb-10"
     >Search for active and historical BC companies by Name, Incorporation Number or Address.</h4>
     <div class="pa-10 pb-4 mb-10 corp-search-container">
-      <CorporationSearch></CorporationSearch>
+      <CorporationSearch :initSearch="initSearch"></CorporationSearch>
     </div>
-    <div class="d-flex justify-space-between align-center mb-5">
-      <h4 class="headline">Search Results</h4>
-      <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
+    <div v-if="!isQueryEmpty">
+      <div class="d-flex justify-space-between align-center mb-5">
+        <h4 class="headline">Search Results</h4>
+        <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
+      </div>
+      <CorporationTable :corporations="corporations"></CorporationTable>
     </div>
-    <CorporationTable :corporations="corporations"></CorporationTable>
   </div>
 </template>
 
 <script>
 import CorporationSearch from "@/components/Search/corporation/CorporationSearch.vue";
 import CorporationTable from "@/components/Search/corporation/CorporationTable.vue";
+import { corporationSearch } from "@/api/SearchApi.js";
+import { isEmpty } from "lodash-es";
 
 export default {
   components: {
     CorporationSearch,
     CorporationTable
   },
+  computed: {
+    isQueryEmpty() {
+      return isEmpty(this.$route.query);
+    }
+  },
+  watch: {
+    "$route.query"(nq) {
+      this.search(nq);
+    }
+  },
   data() {
     return {
-      corporations: [
-        {
-          inc: 32131231,
-          corp_nme: "The King",
-          inc_date: "2019-30-31",
-          status: "Act",
-          addr: "#123 Sesame Street Vanocuver"
-        },
-        {
-          inc: 32131231,
-          corp_nme: "The King",
-          inc_date: "2019-30-31",
-          status: "Act",
-          addr: "#123 Sesame Street Vanocuver"
-        }
-      ]
+      corporations: [],
+      initSearch: null
     };
+  },
+  methods: {
+    search(query) {
+      corporationSearch(query)
+        .then(result => {
+          this.corporations = result.data.results;
+        })
+        .catch(e => {
+          this.corporations = [];
+        });
+    }
   }
 };
 </script>

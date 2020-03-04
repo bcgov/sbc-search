@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { corporationSearch } from "@/api/SearchApi.js";
+import { corporationDetailSearch } from "@/api/SearchApi.js";
 import CorporationDetails from "@/components/Details/CorporationDetails.vue";
 export default {
   components: {
@@ -18,7 +18,7 @@ export default {
   mounted() {
     const corporation_id = this.$route.params.id;
     if (corporation_id || corporation_id === 0) {
-      corporationSearch(corporation_id)
+      corporationDetailSearch(corporation_id)
         .then(result => {
           this.details = result.data;
         })

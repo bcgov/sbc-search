@@ -4,12 +4,12 @@
       :headers="headers"
       :items="corporations"
       :footer-props="{
-        'items-per-page-options': [20]
+        'items-per-page-options': [50]
       }"
     >
       <template v-slot:item="{ item }">
-        <tr>
-          <td>{{ item["inc"] }}</td>
+        <tr class="cursor-pointer" @click="handleTableRowClick(item)">
+          <td class="anchor-text">{{ item["corp_num"] }}</td>
           <td>{{ item["corp_nme"] }}</td>
           <td>{{ item["inc_date"] }}</td>
           <td>{{ item["status"] }}</td>
@@ -34,8 +34,12 @@ export default {
     return {
       headers: CORPORATION_HEADERS
     };
+  },
+  methods: {
+    handleTableRowClick(item) {
+      window.open(`#/corporation/${item["corp_num"]}`);
+    }
   }
 };
 </script>
 
-<style></style>
