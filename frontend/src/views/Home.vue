@@ -27,7 +27,8 @@
       </v-form>
     </div>
     <div class="mt-10">
-      <div class="d-flex justify-end mb-5">
+      <div class="d-flex justify-space-between align-center mb-5" v-if="qs">
+        <h4 class="headline">Search Results</h4>
         <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
       </div>
       <CorpPartyTable :qs="qs"></CorpPartyTable>

@@ -4,7 +4,7 @@
     label="Search Term"
     :height="height"
     v-model="searchQuery"
-    placeholder="eg. John Smith"
+    :placeholder="getPlaceHolder()"
     filled
   >
     <template v-slot:append>
@@ -32,6 +32,9 @@ export default {
     }
   },
   computed: {
+    selectField() {
+      return this.getFilterProperty(this.uid, "field");
+    },
     searchQuery: {
       get() {
         return this.getFilterValue(this.uid);
@@ -44,13 +47,38 @@ export default {
       }
     },
     ...mapGetters({
-      getFilterValue: "corpParty/filters/getFilterValue"
+      getFilterValue: "corpParty/filters/getFilterValue",
+      getFilterProperty: "corpParty/filters/getProperty"
     })
   },
   data() {
     return {
-      searchIcon: mdiMagnify
+      searchIcon: mdiMagnify,
+      placeholder: "Enter term here..."
     };
+  },
+  methods: {
+    getPlaceHolder() {
+      switch (this.selectField) {
+        case "any_nme":
+          return "James";
+
+        case "first_nme":
+          return "John";
+
+        case "last_nme":
+          return "Smith";
+
+        case "middle_nme":
+          return "Allan";
+
+        case "addr_line_1":
+          return "45 Sesame";
+
+        case "postal_code":
+          return "A1A 1A1";
+      }
+    }
   }
 };
 </script>

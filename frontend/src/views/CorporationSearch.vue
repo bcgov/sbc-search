@@ -7,7 +7,8 @@
     <div class="pa-10 pb-4 mb-10 corp-search-container">
       <CorporationSearch></CorporationSearch>
     </div>
-    <div class="d-flex justify-end mb-5">
+    <div class="d-flex justify-space-between align-center mb-5">
+      <h4 class="headline">Search Results</h4>
       <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
     </div>
     <CorporationTable :corporations="corporations"></CorporationTable>

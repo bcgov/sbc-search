@@ -16,14 +16,8 @@
       :uid="uid"
       property="operator"
     ></SearchSelect>
-    <SearchInput
-      :uid="uid"
-      :query="initQuery"
-      class="d-inline-block mt-2"
-    ></SearchInput>
-    <v-btn v-if="remove" class="ml-5" outlined small @click="handleRemove"
-      >Remove</v-btn
-    >
+    <SearchInput :uid="uid" :query="initQuery" class="d-inline-block mt-2"></SearchInput>
+    <v-btn v-if="remove" class="ml-5" outlined small @click="handleRemove">Remove</v-btn>
   </div>
 </template>
 
