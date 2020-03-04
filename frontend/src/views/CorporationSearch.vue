@@ -5,7 +5,7 @@
       class="mt-3 body-1 mb-10"
     >Search for active and historical BC companies by Name, Incorporation Number or Address.</h4>
     <div class="pa-10 pb-4 mb-10 corp-search-container">
-      <CorporationSearch :initSearch="initSearch"></CorporationSearch>
+      <CorporationSearch></CorporationSearch>
     </div>
     <div v-if="!isQueryEmpty">
       <div class="d-flex justify-space-between align-center mb-5">
@@ -35,13 +35,13 @@ export default {
   },
   watch: {
     "$route.query"(nq) {
+      this.$root.$emit("setCorpSearchInput", nq.query);
       this.search(nq);
     }
   },
   data() {
     return {
-      corporations: [],
-      initSearch: null
+      corporations: []
     };
   },
   methods: {
@@ -53,6 +53,15 @@ export default {
         .catch(e => {
           this.corporations = [];
         });
+    }
+  },
+  mounted() {
+    if (!this.isQueryEmpty && this.$route.query.query) {
+      const query = this.$route.query.query;
+      this.$root.$emit("setCorpSearchInput", query);
+      this.search({
+        query
+      });
     }
   }
 };

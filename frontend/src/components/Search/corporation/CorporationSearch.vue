@@ -24,6 +24,12 @@ export default {
   components: {
     SearchInput
   },
+  props: {
+    initSearch: {
+      default: null,
+      type: String
+    }
+  },
   methods: {
     handleSearch() {
       const query = this.searchQuery;
