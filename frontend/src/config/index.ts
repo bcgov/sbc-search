@@ -102,8 +102,14 @@ export const CORPPARTY_HEADERS = [
     align: "left"
   },
   {
-    text: "Address",
-    value: "addr",
+    text: "Mailing Address",
+    value: "mailing_addr",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Delivery Address",
+    value: "delivery_addr",
     sortable: true,
     align: "left"
   },
@@ -114,8 +120,14 @@ export const CORPPARTY_HEADERS = [
     align: "left"
   },
   {
-    text: "Company Address",
-    value: "corp_addr",
+    text: "Company Delivery Address",
+    value: "corp_delivery_addr",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Company Mailing Address",
+    value: "corp_mailing_addr",
     sortable: true,
     align: "left"
   },

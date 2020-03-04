@@ -138,7 +138,6 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
     @app.route('/corporation/<id>')
     def corporation(id):
-        raise Exception(id)
 
         # TODO: move queries to model class.
         result = (
@@ -155,11 +154,10 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 # CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc
             )
-            #.filter(Office.end_event_id == None)
+            # .filter(Office.end_event_id == None)
             # .filter(CorpState.end_event_id == None)
             .filter(Corporation.corp_num == id).one())
 
-        raise Exception(result)
         corp = result[0]
         offices = Office.query.filter_by(corp_num=id, end_event_id=None)
         names = CorpName.query.filter_by(corp_num=id).order_by(desc(CorpName.end_event_id))
@@ -171,14 +169,15 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         output['offices'] = []
         for office in offices:
             output['offices'].append({
-                'addr': _normalize_addr(office.delivery_addr_id),  # TODO: get full address.
+                'delivery_addr': _normalize_addr(office.delivery_addr_id),  # TODO: get full address.
+                'mailing_addr': _normalize_addr(office.mailing_addr_id),
                 'office_typ_cd': _format_office_typ_cd(office.office_typ_cd),
                 'email_address': office.email_address
             })
 
         output['admin_email'] = result[3]
-        output['state_typ_cd'] = result[4]
-        output['full_desc'] = result[5]
+        # output['state_typ_cd'] = result[4]
+        # output['full_desc'] = result[5]
 
         output['NAMES'] = []
         for row in names:
@@ -298,17 +297,16 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result_dict = {}
         name = CorpName.query.filter(CorpName.corp_num == person.corp_num).add_columns(CorpName.corp_nme).filter()[0] #TODO: handle multiple names
         offices = Office.query.filter(Office.corp_num == person.corp_num).all()
-        addr = _normalize_addr(person.delivery_addr_id)
+        delivery_addr = _normalize_addr(person.delivery_addr_id)
+        mailing_addr = _normalize_addr(person.mailing_addr_id)
+
         states = CorpState.query.filter(
             CorpState.corp_num == person.corp_num,
             CorpState.end_event_id == None).all()
 
-        if offices:
-            # TODO : list all, or just the one from the correct time.
-            corp_addr = _normalize_addr(offices[0].delivery_addr_id)
-        else:
-            corp_addr = ''
-
+        # TODO : list all, or just the one from the correct time.
+        corp_delivery_addr = _normalize_addr(offices[0].delivery_addr_id) if offices else ''
+        corp_mailing_addr = _normalize_addr(offices[0].mailing_addr_id) if offices else ''
 
         # TODO: switch to marshmallow.
         result_dict['corp_party_id'] = int(person.corp_party_id)
@@ -321,8 +319,10 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result_dict['corp_nme'] = name.corp_nme
         result_dict['party_typ_cd'] = person.party_typ_cd
         result_dict['corp_party_email'] = person.email_address
-        result_dict['addr'] = addr
-        result_dict['corp_addr'] = corp_addr
+        result_dict['delivery_addr'] = delivery_addr
+        result_dict['mailing_addr'] = mailing_addr
+        result_dict['corp_delivery_addr'] = corp_delivery_addr
+        result_dict['corp_mailing_addr'] = corp_mailing_addr
         result_dict['corp_typ_cd'] = result[1]
         result_dict['corp_admin_email'] = result[2]
 

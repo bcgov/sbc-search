@@ -85,7 +85,8 @@ export default {
         "last_nme",
         "first_nme",
         "middle_nme",
-        "addr",
+        "delivery_addr",
+        "mailing_addr",
         "corp_party_email",
         "party_typ_cd",
         "appointment_dt",
@@ -94,7 +95,8 @@ export default {
         "corp_nme",
         "corp_num",
         "corp_typ_cd",
-        "corp_addr",
+        "corp_delivery_addr",
+        "corp_mailing_addr",
         "corp_admin_email"
       ]);
     }
