@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex align-top">
     <SearchSelect
       class="d-inline-block mr-3"
       selectLabel="Field"
@@ -16,8 +16,9 @@
       :uid="uid"
       property="operator"
     ></SearchSelect>
-    <SearchInput :uid="uid" :query="initQuery" class="d-inline-block mt-2"></SearchInput>
-    <v-btn v-if="remove" class="ml-5" outlined small @click="handleRemove">Remove</v-btn>
+    <SearchInput :uid="uid" :query="initQuery" class="d-inline-block"></SearchInput>
+    <v-btn v-if="remove" class="ml-5" height="56" outlined @click="handleRemove">Remove</v-btn>
+    <v-btn v-if="clear" class="ml-5" height="56" outlined @click="handleClear">Clear</v-btn>
   </div>
 </template>
 
@@ -28,6 +29,10 @@ import { FIELD_VALUES, OPERATOR_VALUES } from "@/config/index.ts";
 
 export default {
   props: {
+    clear: {
+      default: true,
+      type: Boolean
+    },
     remove: {
       default: false,
       type: Boolean
@@ -62,6 +67,12 @@ export default {
   methods: {
     handleRemove() {
       this.$store.commit("corpParty/filters/removeFilter", this.uid);
+    },
+    handleClear() {
+      this.$store.commit("corpParty/filters/setSearchValue", {
+        uid: this.uid,
+        value: ""
+      });
     }
   }
 };

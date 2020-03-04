@@ -51,6 +51,7 @@ export default {
   computed: {
     select: {
       get() {
+        console.log(this.uid);
         return this.getFilterProperty(this.uid, this.property);
       },
       set(value) {
@@ -70,6 +71,6 @@ export default {
 
 <style lang="scss">
 .search-select {
-  width: 225px;
+  width: 200px;
 }
 </style>

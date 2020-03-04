@@ -7,12 +7,7 @@
       <SearchTips></SearchTips>
       <v-form>
         <div v-for="(criteria, index) in filters" :key="index">
-          <div v-if="index > 0">
-            <CorpPartySearch :uid="criteria.uid" :remove="true"></CorpPartySearch>
-          </div>
-          <div v-else>
-            <CorpPartySearch :uid="criteria.uid"></CorpPartySearch>
-          </div>
+          <CorpPartySearch :uid="criteria.uid" :remove="enableRemove"></CorpPartySearch>
         </div>
         <AddFilterButton title="Add Filter" @click.native.prevent="addFilter"></AddFilterButton>
         <div class="mt-6">
@@ -58,6 +53,9 @@ export default {
     SearchTips
   },
   computed: {
+    enableRemove() {
+      return !(this.filters && this.filters.length === 1);
+    },
     ...mapGetters({
       filters: "corpParty/filters/getFilters",
       numFilters: "corpParty/filters/getNumFilters"
@@ -65,7 +63,7 @@ export default {
   },
   data() {
     return {
-      uid: 0,
+      uid: 1,
       searchQuery: null,
       logic: "ALL",
       qs: null
