@@ -164,7 +164,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         output = {}
         # TODO: switch to marshmallow.
-        output['corp_num'] = int(corp.corp_num)
+        output['corp_num'] = corp.corp_num
         output['transition_dt'] = corp.transition_dt
         output['offices'] = []
         for office in offices:
