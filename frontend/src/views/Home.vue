@@ -22,8 +22,11 @@
       </v-form>
     </div>
     <div class="mt-10">
-      <div class="d-flex justify-space-between align-center mb-5" v-if="qs">
+      <div class="mb-5" v-if="qs">
         <h4 class="headline">Search Results</h4>
+      </div>
+      <div class="d-flex justify-space-between align-center">
+        <SearchColumn class="mb-10"></SearchColumn>
         <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
       </div>
       <CorpPartyTable :qs="qs"></CorpPartyTable>
@@ -33,6 +36,7 @@
 
 <script>
 import SbcButton from "@/components/SbcButton.vue";
+import SearchColumn from "@/components/Search/corpparty/SearchColumns.vue";
 import AddFilterButton from "@/components/Filter/AddFilterButton.vue";
 import CorpPartySearch from "@/components/Search/corpparty/CorpPartySearch.vue";
 import { mapGetters } from "vuex";
@@ -50,7 +54,8 @@ export default {
     AddFilterButton,
     CorpPartyTable,
     SearchLogic,
-    SearchTips
+    SearchTips,
+    SearchColumn
   },
   computed: {
     enableRemove() {
