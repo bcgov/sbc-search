@@ -96,46 +96,45 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         # Exporting to Excel
         wb = Workbook()
 
-        with NamedTemporaryFile(mode='w+b', dir='tmp', delete=True) as tmp:
+        export_dir = "/tmp"
+        with NamedTemporaryFile(mode='w+b', dir=export_dir, delete=True) as f:
 
             sheet = wb.active
 
             # Sheet headers (first row)
             _ = sheet.cell(column=1, row=1, value="Corporation Id")
             _ = sheet.cell(column=2, row=1, value="Corp Name")
-            _ = sheet.cell(column=3, row=1, value="Transition Date")
-            _ = sheet.cell(column=4, row=1, value="Address")
-            _ = sheet.cell(column=5, row=1, value="Postal Code")
-            _ = sheet.cell(column=6, row=1, value="City")
-            _ = sheet.cell(column=7, row=1, value="Province")
+            # _ = sheet.cell(column=3, row=1, value="Transition Date")
+            # _ = sheet.cell(column=4, row=1, value="Address")
+            # _ = sheet.cell(column=5, row=1, value="Postal Code")
+            # _ = sheet.cell(column=6, row=1, value="City")
+            # _ = sheet.cell(column=7, row=1, value="Province")
 
             index = 2
             for row in results:
-
                 # Corporation.corp_num
-                _ = sheet.cell(column=1, row=index, value=row[1])
+                _ = sheet.cell(column=1, row=index, value=row[0])
                 # CorpName.corp_nme
-                _ = sheet.cell(column=2, row=index, value=row[2])
+                _ = sheet.cell(column=2, row=index, value=row[1])
                 # Corporation.transition_dt
-                _ = sheet.cell(column=3, row=index, value=row[3])
-                # Address.addr_line_1
-                _ = sheet.cell(column=4, row=index, value=row[4])
-                # Address.postal_cd
-                _ = sheet.cell(column=5, row=index, value=row[5])
-                # Address.city
-                _ = sheet.cell(column=6, row=index, value=row[6])
-                # Address.province
-                _ = sheet.cell(column=7, row=index, value=row[7])
+                # _ = sheet.cell(column=3, row=index, value=row[3])
+                # # Address.addr_line_1
+                # _ = sheet.cell(column=4, row=index, value=row[4])
+                # # Address.postal_cd
+                # _ = sheet.cell(column=5, row=index, value=row[5])
+                # # Address.city
+                # _ = sheet.cell(column=6, row=index, value=row[6])
+                # # Address.province
+                # _ = sheet.cell(column=7, row=index, value=row[7])
 
                 index += 1
 
-            filename = "{}.{}".format(tmp.name,"xlsx")
-            wb.save(filename=filename)
+            current_date = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
+            filename = "Corporation Search Results {date}.xlsx".format(date=current_date)
+            full_filename_path = "{dir}/{filename}".format(dir=export_dir, filename=filename)
+            wb.save(filename=full_filename_path)
 
-            # file name without the path
-            simple_name = filename.split('/')[len(filename.split('/'))-1]
-
-            return send_from_directory('tmp',simple_name,as_attachment=True)
+            return send_from_directory(export_dir, filename, as_attachment=True)
 
     @app.route('/corporation/<id>')
     def corporation(id):
@@ -143,8 +142,8 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         # TODO: move queries to model class.
         result = (
             Corporation.query
-            .join(CorpState, CorpState.corp_num == Corporation.corp_num)
-            .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+            # .join(CorpState, CorpState.corp_num == Corporation.corp_num)
+            # .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
             # .join(Office, Office.corp_num == Corporation.corp_num)
             .add_columns(
                 Corporation.corp_num,
@@ -152,11 +151,11 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 Corporation.admin_email,
                 # Office.mailing_addr_id,
                 # Office.office_typ_cd,
-                CorpOpState.state_typ_cd,
-                CorpOpState.full_desc
+                # CorpOpState.state_typ_cd,
+                # CorpOpState.full_desc
             )
-            #.filter(Office.end_event_id == None)
-            .filter(CorpState.end_event_id == None)
+            # .filter(Office.end_event_id == None)
+            # .filter(CorpState.end_event_id == None)
             .filter(Corporation.corp_num == id).one())
 
         corp = result[0]
@@ -170,14 +169,15 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         output['offices'] = []
         for office in offices:
             output['offices'].append({
-                'addr': _normalize_addr(office.delivery_addr_id),  # TODO: get full address.
+                'delivery_addr': _normalize_addr(office.delivery_addr_id),  # TODO: get full address.
+                'mailing_addr': _normalize_addr(office.mailing_addr_id),
                 'office_typ_cd': _format_office_typ_cd(office.office_typ_cd),
                 'email_address': office.email_address
             })
 
         output['admin_email'] = result[3]
-        output['state_typ_cd'] = result[4]
-        output['full_desc'] = result[5]
+        # output['state_typ_cd'] = result[4]
+        # output['full_desc'] = result[5]
 
         output['NAMES'] = []
         for row in names:
@@ -265,7 +265,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 index += 1
 
             current_date = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
-            filename = "CorpParty Search Results {date}.xlsx".format(date=current_date)
+            filename = "Director Search Results {date}.xlsx".format(date=current_date)
             full_filename_path = "{dir}/{filename}".format(dir=export_dir, filename=filename)
             wb.save(filename=full_filename_path)
 
@@ -297,17 +297,16 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result_dict = {}
         name = CorpName.query.filter(CorpName.corp_num == person.corp_num).add_columns(CorpName.corp_nme).filter()[0] #TODO: handle multiple names
         offices = Office.query.filter(Office.corp_num == person.corp_num).all()
-        addr = _normalize_addr(person.delivery_addr_id)
+        delivery_addr = _normalize_addr(person.delivery_addr_id)
+        mailing_addr = _normalize_addr(person.mailing_addr_id)
+
         states = CorpState.query.filter(
             CorpState.corp_num == person.corp_num,
             CorpState.end_event_id == None).all()
 
-        if offices:
-            # TODO : list all, or just the one from the correct time.
-            corp_addr = _normalize_addr(offices[0].delivery_addr_id)
-        else:
-            corp_addr = ''
-
+        # TODO : list all, or just the one from the correct time.
+        corp_delivery_addr = _normalize_addr(offices[0].delivery_addr_id) if offices else ''
+        corp_mailing_addr = _normalize_addr(offices[0].mailing_addr_id) if offices else ''
 
         # TODO: switch to marshmallow.
         result_dict['corp_party_id'] = int(person.corp_party_id)
@@ -320,8 +319,10 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
         result_dict['corp_nme'] = name.corp_nme
         result_dict['party_typ_cd'] = person.party_typ_cd
         result_dict['corp_party_email'] = person.email_address
-        result_dict['addr'] = addr
-        result_dict['corp_addr'] = corp_addr
+        result_dict['delivery_addr'] = delivery_addr
+        result_dict['mailing_addr'] = mailing_addr
+        result_dict['corp_delivery_addr'] = corp_delivery_addr
+        result_dict['corp_mailing_addr'] = corp_mailing_addr
         result_dict['corp_typ_cd'] = result[1]
         result_dict['corp_admin_email'] = result[2]
 

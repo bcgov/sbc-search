@@ -39,8 +39,13 @@
             </li>
             <li class="mb-5" v-for="(office, index) in details.offices" :key="'office' + index">
               <div class="d-flex w-100 detail-list-item">
-                <span class="detail-key font-weight-bold">Address</span>
-                <span class="detail-value">{{ office.addr }}</span>
+                <span class="detail-key font-weight-bold">Delivery Address</span>
+                <span class="detail-value">{{ office.delivery_addr }}</span>
+              </div>
+
+              <div class="d-flex w-100 detail-list-item">
+                <span class="detail-key font-weight-bold">Mailing Address</span>
+                <span class="detail-value">{{ office.mailing_addr }}</span>
               </div>
 
               <div class="d-flex w-100 detail-list-item">
