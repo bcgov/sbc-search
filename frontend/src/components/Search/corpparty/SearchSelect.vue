@@ -51,7 +51,6 @@ export default {
   computed: {
     select: {
       get() {
-        console.log(this.uid);
         return this.getFilterProperty(this.uid, this.property);
       },
       set(value) {

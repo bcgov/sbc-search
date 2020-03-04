@@ -30,6 +30,15 @@ export default {
       searchQuery: this.query
     };
   },
+  mounted() {
+    this.$root.$on("clearCorpSearchInput", () => this.clear());
+    this.$root.$on("setCorpSearchInput", r => (this.searchQuery = r));
+  },
+  methods: {
+    clear() {
+      this.searchQuery = "";
+    }
+  },
   watch: {
     searchQuery(nq) {
       this.$emit("update:query", nq);

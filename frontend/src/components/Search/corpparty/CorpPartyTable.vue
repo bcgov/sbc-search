@@ -12,11 +12,11 @@
       @update:sort-by="fetchData"
       @update:sort-desc="fetchData"
       :footer-props="{
-        'items-per-page-options': [20]
+        'items-per-page-options': [50]
       }"
     >
       <template v-slot:item="{ item }">
-        <tr @click="handleCellClick(item['corp_party_id'])">
+        <tr class="cursor-pointer" @click="handleCellClick(item['corp_party_id'])">
           <td class="color-gray">{{ item["corp_party_id"] }}</td>
           <td>{{ item["last_nme"] }}</td>
           <td>{{ item["middle_nme"] }}</td>
@@ -137,10 +137,6 @@ export default {
 </script>
 
 <style lang="scss">
-.anchor-text {
-  text-decoration: underline;
-  color: #2076d2;
-}
 .corp-party-table th:first-of-type,
 .corp-party-table td:first-of-type {
   color: rgba(0, 0, 0, 0.4) !important;

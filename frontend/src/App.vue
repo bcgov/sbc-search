@@ -39,4 +39,9 @@ export default Vue.extend({
   text-transform: none !important;
   padding: 0 2em !important;
 }
+
+.anchor-text {
+  text-decoration: underline;
+  color: #2076d2;
+}
 </style>

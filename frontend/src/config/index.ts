@@ -22,7 +22,7 @@ export const COMPANY_HEADERS = [
 export const CORPORATION_HEADERS = [
   {
     text: "Inc/Reg #",
-    value: "inc",
+    value: "corp_num",
     sortable: true,
     align: "left"
   },

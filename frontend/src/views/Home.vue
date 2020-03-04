@@ -104,7 +104,10 @@ export default {
       this.qs = queryString;
     },
     generateQueryString() {
-      return buildQueryString(this.filters) + `&mode=${this.logic}`;
+      return (
+        buildQueryString(this.filters) +
+        `&mode=${this.logic}&addtional_cols=none`
+      );
     },
     init() {
       const mode = this.$route.query.mode;
@@ -115,7 +118,8 @@ export default {
       if (isEmpty(this.$route.query)) {
         this.qs = null;
       } else {
-        const queryFilters = omit(this.$route.query, "mode");
+        const queryFilters = omit(this.$route.query, "mode", "additional_cols");
+
         if (typeof queryFilters.field === "string") {
           queryFilters.uid = this.uid++;
           this.$store.commit("corpParty/filters/setFilters", [queryFilters]);
