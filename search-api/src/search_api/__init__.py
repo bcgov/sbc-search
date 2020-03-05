@@ -471,16 +471,15 @@ def _get_model_by_field(field_name):
     # return CorpParty
     # [cvo] for performance we only query this one above table for now.
 
-    if field_name in ['first_nme','middle_nme','last_nme','appointment_dt','cessation_dt']: # CorpParty fields
+    if field_name in ['first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt', 'corp_num',
+                      'corp_party_id']:  # CorpParty fields
         return eval('CorpParty')
     # elif field_name in ['corp_num']: # Corporation fields
     #     return eval('Corporation')
     # elif field_name in ['corp_nme']: # CorpName fields
     #     return eval('CorpName')
-    elif field_name in ['addr_line_1','addr_line_2','addr_line_3','postal_cd','city','province']: # Address fields
+    elif field_name in ['addr_line_1', 'addr_line_2', 'addr_line_3', 'postal_cd', 'city', 'province']:  # Address fields
         return eval('Address')
-
-    #return None
 
 
 def _get_filter(field, operator, value):
