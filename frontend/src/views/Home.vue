@@ -43,7 +43,9 @@
           class="mb-10"
           :initColumn="additional_cols"
         ></SearchColumn>
-        <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
+        <v-btn class="export-btn" height="50" @click="handleExport"
+          >Export to .xlsx</v-btn
+        >
       </div>
       <CorpPartyTable
         :page="page"
@@ -68,6 +70,7 @@ import CorpPartyTable from "@/components/Search/corpparty/CorpPartyTable.vue";
 import { buildQueryString } from "@/util/index.ts";
 import SearchLogic from "@/components/Search/corpparty/SearchLogic.vue";
 import SearchTips from "@/components/Search/corpparty/SearchTips.vue";
+import { BACKEND_URL } from "@/config/index.ts";
 export default {
   components: {
     SbcButton,
@@ -106,6 +109,10 @@ export default {
     }
   },
   methods: {
+    handleExport() {
+      const queryString = this.generateQueryString();
+      window.open(`${BACKEND_URL}/person/search/export/?${queryString}`);
+    },
     handlePageUpdate(page) {
       this.page = page;
       this.handleSearch();

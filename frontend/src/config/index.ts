@@ -1,3 +1,5 @@
+export const BACKEND_URL = process.env.VUE_APP_BACKEND_HOST;
+
 export const FIELD_VALUES = [
   { text: "First Name", value: "first_nme" },
   { text: "Last Name", value: "last_nme" },
