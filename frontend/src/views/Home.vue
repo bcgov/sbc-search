@@ -28,7 +28,7 @@
             class="d-inline-block"
             type="submit"
             title="Search"
-            @click.native.prevent="handleSearch"
+            @click.native.prevent="handleNewSearch"
           ></SbcButton>
         </div>
       </v-form>
@@ -45,7 +45,12 @@
         ></SearchColumn>
         <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
       </div>
-      <CorpPartyTable :qs="qs" :type="additional_cols"></CorpPartyTable>
+      <CorpPartyTable
+        :page="page"
+        @pageUpdate="handlePageUpdate"
+        :qs="qs"
+        :type="additional_cols"
+      ></CorpPartyTable>
     </div>
   </div>
 </template>
@@ -88,7 +93,8 @@ export default {
       searchQuery: null,
       logic: "ALL",
       qs: null,
-      additional_cols: "none"
+      additional_cols: "none",
+      page: "1"
     };
   },
   mounted() {
@@ -100,6 +106,10 @@ export default {
     }
   },
   methods: {
+    handlePageUpdate(page) {
+      this.page = page;
+      this.handleSearch();
+    },
     handleColumnClick(type) {
       const query = Object.assign({}, this.$route.query);
       query.additional_cols = type;
@@ -117,6 +127,13 @@ export default {
         value
       });
     },
+    handleNewSearch() {
+      const queryString = this.generateQueryString(1);
+      this.$router.push({
+        query: qs.parse(queryString)
+      });
+      this.renderTable();
+    },
     handleSearch() {
       const queryString = this.generateQueryString();
       this.$router.push({
@@ -128,15 +145,18 @@ export default {
       const queryString = this.generateQueryString();
       this.qs = queryString;
     },
-    generateQueryString() {
+    generateQueryString(page) {
       return (
         buildQueryString(this.filters) +
-        `&mode=${this.logic}&additional_cols=${this.additional_cols}`
+        `&mode=${this.logic}&additional_cols=${
+          this.additional_cols
+        }&page=${page || this.page}`
       );
     },
     init() {
       const mode = this.$route.query.mode;
       const additional_cols = this.$route.query.additional_cols;
+      const page = this.$route.query.page;
 
       if (mode) {
         this.logic = mode;
@@ -146,10 +166,19 @@ export default {
         this.additional_cols = additional_cols;
       }
 
+      if (page) {
+        this.page = page;
+      }
+
       if (isEmpty(this.$route.query)) {
         this.qs = null;
       } else {
-        const queryFilters = omit(this.$route.query, "mode", "additional_cols");
+        const queryFilters = omit(
+          this.$route.query,
+          "mode",
+          "additional_cols",
+          "page"
+        );
 
         if (typeof queryFilters.field === "string") {
           queryFilters.uid = this.uid++;

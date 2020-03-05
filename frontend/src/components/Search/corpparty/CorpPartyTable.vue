@@ -8,11 +8,11 @@
       :options.sync="options"
       :server-items-length="totalItems"
       :loading="loading"
-      @update:page="fetchData"
+      @update:page="updatePage"
       @update:sort-by="fetchData"
       @update:sort-desc="fetchData"
       :footer-props="{
-        'items-per-page-options': [50]
+        'items-per-page-options': [20]
       }"
     >
       <template v-slot:item="{ item }">
@@ -35,6 +35,25 @@
           </td>
         </tr>
       </template>
+      <template v-slot:footer.page-text="{ pageStart, pageStop }">
+        <div class="custom-footer d-flex align-center">
+          <div>{{ pageStart }} to {{ pageStop }}</div>
+          <div class="d-flex ml-5">
+            <v-btn v-if="page > '1'" class="mr-2" icon @click="pagePrev" small>
+              <v-icon>{{ arrowLeft }}</v-icon>
+            </v-btn>
+            <v-btn v-else disabled class="mr-2" icon small>
+              <v-icon>{{ arrowLeft }}</v-icon>
+            </v-btn>
+            <v-btn icon v-if="results.length > 19" @click="pageNext" small>
+              <v-icon>{{ arrowRight }}</v-icon>
+            </v-btn>
+            <v-btn icon v-else disabled small>
+              <v-icon>{{ arrowRight }}</v-icon>
+            </v-btn>
+          </div>
+        </div>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -46,6 +65,7 @@ import dayjs from "dayjs";
 import { mapGetters } from "vuex";
 import { buildQueryString } from "@/util/index.ts";
 import { isEmpty } from "lodash-es";
+import { mdiArrowLeft, mdiArrowRight } from "@mdi/js";
 
 export default {
   props: {
@@ -55,6 +75,10 @@ export default {
     },
     type: {
       default: "none",
+      type: String
+    },
+    page: {
+      default: "1",
       type: String
     }
   },
@@ -89,10 +113,21 @@ export default {
       items: [],
       options: {},
       loading: true,
-      totalItems: 0
+      totalItems: 0,
+      arrowLeft: mdiArrowLeft,
+      arrowRight: mdiArrowRight
     };
   },
   methods: {
+    pageNext() {
+      this.$emit("pageUpdate", (parseInt(this.page) + 1).toString());
+    },
+    pagePrev() {
+      if (this.page > "1") {
+        this.$emit("pageUpdate", (parseInt(this.page) - 1).toString());
+      }
+    },
+    updatePage() {},
     handleCorpClick(id) {
       window.open(`#/corporation/${id}`);
     },
@@ -158,7 +193,7 @@ export default {
       }
 
       this.loading = true;
-      const { page, sortBy, sortDesc } = this.options;
+      const { sortBy, sortDesc } = this.options;
       let queryString = this.qs;
       if (sortDesc && sortDesc.length > 0) {
         queryString += `&sort_type=${sortDesc[0] === true ? "desc" : "asc"}`;
@@ -166,6 +201,8 @@ export default {
       if (sortBy && sortBy.length > 0) {
         queryString += `&sort_value=${sortBy[0]}`;
       }
+
+      queryString += `&page=${this.page}`;
       corpPartySearch(queryString)
         .then(result => {
           this.items = result.data.results;
@@ -191,5 +228,14 @@ export default {
 .corp-party-table th:first-of-type,
 .corp-party-table td:first-of-type {
   color: rgba(0, 0, 0, 0.4) !important;
+}
+
+.corp-party-table .custom-footer {
+  padding: 1em 0;
+}
+
+.corp-party-table .v-data-footer__icons-after,
+.corp-party-table .v-data-footer__icons-before {
+  display: none;
 }
 </style>
