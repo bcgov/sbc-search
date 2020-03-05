@@ -135,7 +135,6 @@ export default {
       );
     },
     init() {
-      console.log("Got here");
       const mode = this.$route.query.mode;
       const additional_cols = this.$route.query.additional_cols;
 
