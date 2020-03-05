@@ -272,7 +272,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                     _ = sheet.cell(column=8, row=index, value=_merge_corpparty_search_addr_fields(row))
                     _ = sheet.cell(column=9, row=index, value=row.postal_cd)
                 elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-                    _ = sheet.cell(column=8, row=index, value=row.state_typ_cd)
+                    _ = sheet.cell(column=8, row=index, value=_get_state_typ_cd_display_value(row.state_typ_cd))
 
                 index += 1
 
@@ -457,7 +457,7 @@ def _add_additional_cols_to_search_results(args, row, result_dict):
         result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
         result_dict['postal_cd'] = row.postal_cd
     elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-        result_dict['state_typ_cd'] = row.state_typ_cd
+        result_dict['state_typ_cd'] = _get_state_typ_cd_display_value(row.state_typ_cd)
 
 
 def _add_additional_cols_to_search_query(args, query):
@@ -476,6 +476,13 @@ def _add_additional_cols_to_search_query(args, query):
         query = query.add_columns(CorpOpState.state_typ_cd)
 
     return query
+
+
+def _get_state_typ_cd_display_value(state_typ_cd):
+    if state_typ_cd == "ACT":
+        return "ACT"
+    else:
+        return "HIS"
 
 
 def _get_model_by_field(field_name):
