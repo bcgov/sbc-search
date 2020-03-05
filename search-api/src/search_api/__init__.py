@@ -501,6 +501,7 @@ def _get_filter(field, operator, value):
     value = value.lower()
     if model:
         Field = getattr(model, field)
+        # TODO: we should sanitize the values
         if operator == 'contains':
             return Field.ilike('%' + value + '%')
         elif operator == 'exact':
@@ -509,6 +510,8 @@ def _get_filter(field, operator, value):
             return Field.ilike('%' + value)
         elif operator == 'startswith':
             return Field.ilike(value + '%')
+        elif operator == 'wildcard':
+            return Field.ilike(value)
         else:
             raise Exception('invalid operator: {}'.format(operator))
     else:
