@@ -4,7 +4,7 @@
       :headers="headers"
       :items="corporations"
       :footer-props="{
-        'items-per-page-options': [50]
+        'items-per-page-options': [20]
       }"
     >
       <template v-slot:item="{ item }">
@@ -42,4 +42,3 @@ export default {
   }
 };
 </script>
-

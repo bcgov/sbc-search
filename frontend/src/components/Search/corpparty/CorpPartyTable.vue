@@ -35,9 +35,9 @@
           </td>
         </tr>
       </template>
-      <template v-slot:footer.page-text="{ pageStart, pageStop }">
+      <template v-slot:footer.page-text="{ itemsLength }">
         <div class="custom-footer d-flex align-center">
-          <div>{{ pageStart }} to {{ pageStop }}</div>
+          <div>Showing {{ itemsLength }} results</div>
           <div class="d-flex ml-5">
             <v-btn v-if="page > '1'" class="mr-2" icon @click="pagePrev" small>
               <v-icon>{{ arrowLeft }}</v-icon>
