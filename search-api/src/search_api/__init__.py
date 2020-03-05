@@ -220,6 +220,8 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
         # Query string arguments
         args = request.args
+        fields = args.getlist('field')
+        additional_cols = args.get('additional_cols')
 
         # Fetching results
         results = _get_corpparty_search_results(args)
@@ -240,7 +242,12 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
             _ = sheet.cell(column=5, row=1, value="Appointment Date")
             _ = sheet.cell(column=6, row=1, value="Cessation Date")
             _ = sheet.cell(column=7, row=1, value="Corporation Id")
-            _ = sheet.cell(column=8, row=1, value="Address")
+
+            if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+                _ = sheet.cell(column=8, row=1, value="Address")
+                _ = sheet.cell(column=9, row=1, value="Postal Code")
+            elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+                _ = sheet.cell(column=8, row=1, value="Status")
 
             index = 2
             for row in results:
@@ -259,8 +266,13 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
                 _ = sheet.cell(column=6, row=index, value=row[6])
                 # Corporation.corp_num
                 _ = sheet.cell(column=7, row=index, value=row[7])
-                # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
-                _ = sheet.cell(column=8, row=index, value=_merge_corpparty_search_addr_fields(row))
+
+                if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+                    # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
+                    _ = sheet.cell(column=8, row=index, value=_merge_corpparty_search_addr_fields(row))
+                    _ = sheet.cell(column=9, row=index, value=row.postal_cd)
+                elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+                    _ = sheet.cell(column=8, row=index, value=row.state_typ_cd)
 
                 index += 1
 
