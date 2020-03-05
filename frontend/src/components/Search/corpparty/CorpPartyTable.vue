@@ -233,7 +233,7 @@ export default {
 <style lang="scss">
 .corp-party-table th:first-of-type,
 .corp-party-table td:first-of-type {
-  color: rgba(0, 0, 0, 0.4) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
 }
 
 .corp-party-table .custom-footer {
