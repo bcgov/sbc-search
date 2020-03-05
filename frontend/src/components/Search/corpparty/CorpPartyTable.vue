@@ -23,10 +23,11 @@
           <td>{{ item["first_nme"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
+          <td v-if="type === 'active'">{{ item["state_typ_cd"] }}</td>
+          <td v-if="type === 'addr'">{{ item["addr"] }}</td>
           <td @click.prevent.stop="handleCorpClick(item['corp_num'])">
             <span class="anchor-text cursor-pointer">{{ item["corp_num"] }}</span>
           </td>
-          <td>{{ item["addr"] }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -46,9 +47,16 @@ export default {
     qs: {
       default: null,
       type: String
+    },
+    type: {
+      default: "none",
+      type: String
     }
   },
   computed: {
+    headers() {
+      return this.filterHeaders(CORPPARTY_HEADERS, this.type);
+    },
     results() {
       return this.items.map(r => {
         if (r["appointment_dt"]) {
@@ -73,7 +81,6 @@ export default {
   },
   data() {
     return {
-      headers: this.filterHeaders(CORPPARTY_HEADERS),
       items: [],
       options: {},
       loading: true,
@@ -88,23 +95,58 @@ export default {
     handleCellClick(id) {
       window.open(`#/corpparty/${id}`);
     },
-    filterHeaders(headers) {
-      return headers.filter(h => {
-        const val = h.value;
-        if (
-          val === "corp_party_id" ||
-          val === "last_nme" ||
-          val === "middle_nme" ||
-          val === "first_nme" ||
-          val === "appointment_dt" ||
-          val === "cessation_dt" ||
-          val === "corp_num" ||
-          val === "addr"
-        ) {
-          return true;
-        }
-        return false;
-      });
+    filterHeaders(headers, type) {
+      if (type === "none") {
+        return headers.filter(h => {
+          const val = h.value;
+          if (
+            val === "corp_party_id" ||
+            val === "last_nme" ||
+            val === "middle_nme" ||
+            val === "first_nme" ||
+            val === "appointment_dt" ||
+            val === "cessation_dt" ||
+            val === "corp_num"
+          ) {
+            return true;
+          }
+          return false;
+        });
+      } else if (type === "addr") {
+        return headers.filter(h => {
+          const val = h.value;
+          if (
+            val === "corp_party_id" ||
+            val === "last_nme" ||
+            val === "middle_nme" ||
+            val === "first_nme" ||
+            val === "appointment_dt" ||
+            val === "cessation_dt" ||
+            val === "corp_num" ||
+            val === "addr"
+          ) {
+            return true;
+          }
+          return false;
+        });
+      } else if (type === "active") {
+        return headers.filter(h => {
+          const val = h.value;
+          if (
+            val === "corp_party_id" ||
+            val === "last_nme" ||
+            val === "middle_nme" ||
+            val === "first_nme" ||
+            val === "appointment_dt" ||
+            val === "cessation_dt" ||
+            val === "corp_num" ||
+            val === "state_typ_cd"
+          ) {
+            return true;
+          }
+          return false;
+        });
+      }
     },
     fetchData() {
       if (!this.qs) {
@@ -113,7 +155,6 @@ export default {
 
       this.loading = true;
       const { page, sortBy, sortDesc } = this.options;
-
       corpPartySearch(this.qs)
         .then(result => {
           this.items = result.data.results;

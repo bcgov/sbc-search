@@ -90,6 +90,18 @@ export const CORPPARTY_HEADERS = [
     align: "left"
   },
   {
+    text: "Status",
+    value: "state_typ_cd",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Address",
+    value: "addr",
+    sortable: true,
+    align: "left"
+  },
+  {
     text: "Inc/Reg #",
     value: "corp_num",
     sortable: true,
@@ -158,12 +170,6 @@ export const CORPPARTY_HEADERS = [
   {
     text: "Type",
     value: "corp_typ_cd",
-    sortable: true,
-    align: "left"
-  },
-  {
-    text: "Status",
-    value: "state_typ_cd",
     sortable: true,
     align: "left"
   }

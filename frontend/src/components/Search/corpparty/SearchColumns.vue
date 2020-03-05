@@ -5,17 +5,17 @@
       <div
         @click="handleClick('active')"
         class="d-inline-block search-column pl-2 pr-2"
-        :class="{ 'search-column-active': active === 'active'}"
+        :class="{ 'search-column-active': initColumn === 'active'}"
       >Active/Historical</div>
       <div
-        @click="handleClick('address')"
+        @click="handleClick('addr')"
         class="d-inline-block search-column search-column-br pl-2 pr-2"
-        :class="{ 'search-column-active': active === 'address'}"
+        :class="{ 'search-column-active': initColumn === 'addr'}"
       >Address</div>
       <div
         @click="handleClick('none')"
         class="d-inline-block search-column pl-2 pr-2"
-        :class="{ 'search-column-active': active === 'none'}"
+        :class="{ 'search-column-active': initColumn === 'none'}"
       >None</div>
     </div>
     <div class="mb-4 mt-5 ad-info-header" @click="tips = !tips">
@@ -41,9 +41,15 @@
 import { mdiChevronUp, mdiChevronDown } from "@mdi/js";
 
 export default {
+  props: {
+    initColumn: {
+      default: "none",
+      type: String
+    }
+  },
   data() {
     return {
-      active: "active",
+      active: this.initColumn,
       chevronUp: mdiChevronUp,
       chevronDown: mdiChevronDown,
       tips: false
@@ -51,7 +57,7 @@ export default {
   },
   methods: {
     handleClick(type) {
-      this.active = type;
+      this.$emit("click", type);
     }
   }
 };

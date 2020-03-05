@@ -26,10 +26,10 @@
         <h4 class="headline">Search Results</h4>
       </div>
       <div class="d-flex justify-space-between align-center">
-        <SearchColumn class="mb-10"></SearchColumn>
+        <SearchColumn @click="handleColumnClick" class="mb-10" :initColumn="additional_cols"></SearchColumn>
         <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
       </div>
-      <CorpPartyTable :qs="qs"></CorpPartyTable>
+      <CorpPartyTable :qs="qs" :type="additional_cols"></CorpPartyTable>
     </div>
   </div>
 </template>
@@ -71,7 +71,8 @@ export default {
       uid: 1,
       searchQuery: null,
       logic: "ALL",
-      qs: null
+      qs: null,
+      additional_cols: null
     };
   },
   mounted() {
@@ -83,6 +84,14 @@ export default {
     }
   },
   methods: {
+    handleColumnClick(type) {
+      const query = Object.assign({}, this.$route.query);
+      query.additional_cols = type;
+      this.additional_cols = type;
+      this.$router.push({
+        query
+      });
+    },
     addFilter(event, field = "first_nme", operator = "contains", value = "") {
       this.uid++;
       this.$store.commit("corpParty/filters/addFilter", {
@@ -106,13 +115,19 @@ export default {
     generateQueryString() {
       return (
         buildQueryString(this.filters) +
-        `&mode=${this.logic}&addtional_cols=none`
+        `&mode=${this.logic}&additional_cols=${this.additional_cols || "none"}`
       );
     },
     init() {
       const mode = this.$route.query.mode;
+      const additional_cols = this.$route.query.additional_cols;
+
       if (mode) {
         this.logic = mode;
+      }
+
+      if (additional_cols) {
+        this.additional_cols = additional_cols;
       }
 
       if (isEmpty(this.$route.query)) {
