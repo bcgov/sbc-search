@@ -37,14 +37,13 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/CorporationSearch.vue"),
     meta: {
-      title: (route) => `Corporation Search`
+      title: "Corporation Search"
     }
   }
 ];
 
 const router = new VueRouter({
   routes,
-
 });
 
 router.beforeEach((to, from, next) => {
