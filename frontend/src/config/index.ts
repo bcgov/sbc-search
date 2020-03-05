@@ -11,7 +11,8 @@ export const OPERATOR_VALUES = [
   { text: "Contains", value: "contains" },
   { text: "Starts With", value: "startswith" },
   { text: "Ends With", value: "endswith" },
-  { text: "Exact Match", value: "exact" }
+  { text: "Exact Match", value: "exact" },
+  { text: "Wildcard (%)", value: "wildcard" }
 ];
 export const COMPANY_HEADERS = [
   { text: "Number", value: "corp_num" },
