@@ -103,7 +103,7 @@
               </td>
               <td>
                 <a
-                  :href="`#/details?corp_party_id=${o['corp_party_id']}`"
+                  :href="`#/corporation/${o['corp_party_id']}`"
                   target="blank"
                   >{{ o["corp_party_id"] }}</a
                 >
