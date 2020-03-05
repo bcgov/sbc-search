@@ -38,14 +38,21 @@
       <template v-slot:footer.page-text="{ itemsLength }">
         <div class="custom-footer d-flex align-center">
           <div>Showing {{ itemsLength }} results</div>
-          <div class="d-flex ml-5">
+          <div class="d-flex ml-5 align-center">
             <v-btn v-if="page > '1'" class="mr-2" icon @click="pagePrev" small>
               <v-icon>{{ arrowLeft }}</v-icon>
             </v-btn>
-            <v-btn v-else disabled class="mr-2" icon small>
+            <v-btn v-else disabled icon small>
               <v-icon>{{ arrowLeft }}</v-icon>
             </v-btn>
-            <v-btn icon v-if="results.length > 19" @click="pageNext" small>
+            <div class="d-inline-block mr-2">Page {{ page }}</div>
+            <v-btn
+              class="ml-2"
+              icon
+              v-if="results.length > 19"
+              @click="pageNext"
+              small
+            >
               <v-icon>{{ arrowRight }}</v-icon>
             </v-btn>
             <v-btn icon v-else disabled small>
