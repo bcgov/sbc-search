@@ -33,11 +33,11 @@
         </div>
       </v-form>
     </div>
-    <div class="mt-10" v-if="qs">
-      <div class="mb-5">
+    <div class="mt-10">
+      <div v-if="qs" class="mb-5">
         <h4 class="headline">Search Results</h4>
       </div>
-      <div class="d-flex justify-space-between align-center">
+      <div v-if="qs" class="d-flex justify-space-between align-center">
         <SearchColumn
           @click="handleColumnClick"
           class="mb-10"

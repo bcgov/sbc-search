@@ -172,9 +172,6 @@ export default {
         });
     }
   },
-  mounted() {
-    this.fetchData();
-  },
   watch: {
     qs(nq) {
       this.fetchData();
