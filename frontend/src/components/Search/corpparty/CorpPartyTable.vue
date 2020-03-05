@@ -39,17 +39,16 @@
         <div class="custom-footer d-flex align-center">
           <div>Showing {{ itemsLength }} results</div>
           <div class="d-flex ml-5 align-center">
-            <v-btn v-if="page > '1'" class="mr-2" icon @click="pagePrev" small>
+            <v-btn v-if="page > '1' || !loading" icon @click="pagePrev" small>
               <v-icon>{{ arrowLeft }}</v-icon>
             </v-btn>
             <v-btn v-else disabled icon small>
               <v-icon>{{ arrowLeft }}</v-icon>
             </v-btn>
-            <div class="d-inline-block mr-2">Page {{ page }}</div>
+            <div class="d-inline-block mr-3 ml-3">Page {{ page }}</div>
             <v-btn
-              class="ml-2"
               icon
-              v-if="results.length > 19"
+              v-if="results.length > 19 || !loading"
               @click="pageNext"
               small
             >
