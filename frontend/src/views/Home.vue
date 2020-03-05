@@ -21,8 +21,8 @@
         </div>
       </v-form>
     </div>
-    <div class="mt-10">
-      <div class="mb-5" v-if="qs">
+    <div class="mt-10" v-if="qs">
+      <div class="mb-5">
         <h4 class="headline">Search Results</h4>
       </div>
       <div class="d-flex justify-space-between align-center">
