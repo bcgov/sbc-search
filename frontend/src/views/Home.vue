@@ -1,17 +1,29 @@
 <template>
   <div class="home">
     <h1>Welcome to Director Search.</h1>
-    <h4 class="mt-3 body-1 mb-10">Search for offices held at active and historical BC companies.</h4>
+    <h4 class="mt-3 body-1 mb-10">
+      Search for offices held at active and historical BC companies.
+    </h4>
 
     <div class="pa-10 search-form-container">
       <SearchTips></SearchTips>
       <v-form>
         <div v-for="(criteria, index) in filters" :key="index">
-          <CorpPartySearch :uid="criteria.uid" :remove="enableRemove"></CorpPartySearch>
+          <CorpPartySearch
+            :uid="criteria.uid"
+            :remove="enableRemove"
+          ></CorpPartySearch>
         </div>
-        <AddFilterButton title="Add Filter" @click.native.prevent="addFilter"></AddFilterButton>
+        <AddFilterButton
+          title="Add Filter"
+          @click.native.prevent="addFilter"
+        ></AddFilterButton>
         <div class="mt-6">
-          <SearchLogic class="d-inline-block mr-3" v-if="filters.length > 1" :logic.sync="logic"></SearchLogic>
+          <SearchLogic
+            class="d-inline-block mr-3"
+            v-if="filters.length > 1"
+            :logic.sync="logic"
+          ></SearchLogic>
           <SbcButton
             class="d-inline-block"
             type="submit"
@@ -26,7 +38,11 @@
         <h4 class="headline">Search Results</h4>
       </div>
       <div class="d-flex justify-space-between align-center">
-        <SearchColumn @click="handleColumnClick" class="mb-10" :initColumn="additional_cols"></SearchColumn>
+        <SearchColumn
+          @click="handleColumnClick"
+          class="mb-10"
+          :initColumn="additional_cols"
+        ></SearchColumn>
         <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
       </div>
       <CorpPartyTable :qs="qs" :type="additional_cols"></CorpPartyTable>
@@ -72,7 +88,7 @@ export default {
       searchQuery: null,
       logic: "ALL",
       qs: null,
-      additional_cols: null
+      additional_cols: "none"
     };
   },
   mounted() {
@@ -115,10 +131,11 @@ export default {
     generateQueryString() {
       return (
         buildQueryString(this.filters) +
-        `&mode=${this.logic}&additional_cols=${this.additional_cols || "none"}`
+        `&mode=${this.logic}&additional_cols=${this.additional_cols}`
       );
     },
     init() {
+      console.log("Got here");
       const mode = this.$route.query.mode;
       const additional_cols = this.$route.query.additional_cols;
 

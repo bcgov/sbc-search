@@ -16,7 +16,10 @@
       }"
     >
       <template v-slot:item="{ item }">
-        <tr class="cursor-pointer" @click="handleCellClick(item['corp_party_id'])">
+        <tr
+          class="cursor-pointer"
+          @click="handleCellClick(item['corp_party_id'])"
+        >
           <td class="color-gray">{{ item["corp_party_id"] }}</td>
           <td>{{ item["last_nme"] }}</td>
           <td>{{ item["middle_nme"] }}</td>
@@ -26,7 +29,9 @@
           <td v-if="type === 'active'">{{ item["state_typ_cd"] }}</td>
           <td v-if="type === 'addr'">{{ item["addr"] }}</td>
           <td @click.prevent.stop="handleCorpClick(item['corp_num'])">
-            <span class="anchor-text cursor-pointer">{{ item["corp_num"] }}</span>
+            <span class="anchor-text cursor-pointer">{{
+              item["corp_num"]
+            }}</span>
           </td>
         </tr>
       </template>
@@ -84,8 +89,7 @@ export default {
       items: [],
       options: {},
       loading: true,
-      totalItems: 0,
-      show: false
+      totalItems: 0
     };
   },
   methods: {
@@ -168,9 +172,11 @@ export default {
         });
     }
   },
+  mounted() {
+    this.fetchData();
+  },
   watch: {
     qs(nq) {
-      this.show = true;
       this.fetchData();
     }
   }
