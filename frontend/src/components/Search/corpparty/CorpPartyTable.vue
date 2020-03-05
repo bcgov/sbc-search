@@ -159,7 +159,14 @@ export default {
 
       this.loading = true;
       const { page, sortBy, sortDesc } = this.options;
-      corpPartySearch(this.qs)
+      let queryString = this.qs;
+      if (sortDesc && sortDesc.length > 0) {
+        queryString += `&sort_type=${sortDesc[0] === true ? "desc" : "asc"}`;
+      }
+      if (sortBy && sortBy.length > 0) {
+        queryString += `&sort_value=${sortBy[0]}`;
+      }
+      corpPartySearch(queryString)
         .then(result => {
           this.items = result.data.results;
           this.totalItems = this.items.length;
