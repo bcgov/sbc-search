@@ -98,6 +98,17 @@ export default {
         value: ""
       });
     }
+  },
+  watch: {
+    selectedField(nf) {
+      if (nf === "addr_line_1") {
+        this.$store.commit("corpParty/filters/setSearchPropValue", {
+          uid: this.uid,
+          property: "operator",
+          value: "contains"
+        });
+      }
+    }
   }
 };
 </script>
