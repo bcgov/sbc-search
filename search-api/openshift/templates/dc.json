@@ -3,7 +3,7 @@
   "apiVersion": "v1",
   "metadata": {
     "annotations": {
-      "description": "Deployment template for a auth api service.",
+      "description": "Deployment template for a search api service.",
       "tags": "${NAME}-${TAG_NAME}"
     },
     "name": "${NAME}-${TAG_NAME}-deploy"
@@ -270,14 +270,14 @@
       "displayName": "Name",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
       "required": true,
-      "value": "auth-api"
+      "value": "search-api"
     },
     {
       "name": "APP_GROUP",
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": "sbc-auth"
+      "value": "sbc-search"
     },
     {
       "name": "IMAGE_NAMESPACE",

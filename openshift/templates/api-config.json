@@ -74,7 +74,7 @@
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": "sbc-auth"
+      "value": "sbc-search"
     },
     {
       "name": "TAG_NAME",

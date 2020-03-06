@@ -6,8 +6,3 @@ root /var/www/html
 log stdout
 
 errors stdout
-
-rewrite /auth {
-    regexp .*
-    to {path} /cooperatives/auth/
-}
