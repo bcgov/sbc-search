@@ -58,14 +58,14 @@
       "displayName": "Name",
       "description": "The name assigned to all of the resources defined in this template.",
       "required": true,
-      "value": "auth-web"
+      "value": "frontend"
     },
     {
       "name": "APP_GROUP",
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": "sbc-auth"
+      "value": "sbc-search"
     },
     {
       "name": "TAG_NAME",
@@ -79,7 +79,7 @@
       "displayName": "Git Repo URL",
       "description": "The URL to your GIT repo.",
       "required": true,
-      "value": "https://github.com/bcgov/sbc-auth.git"
+      "value": "https://github.com/bcgov/sbc-search.git"
     },
     {
       "name": "GIT_REF",
@@ -93,14 +93,14 @@
       "displayName": "Secret name for the webhook.",
       "description": "The name of the Secret that holds the webhook.",
       "required": true,
-      "value": "github-auth-web-dev"
+      "value": "github-frontend-dev"
     },
     {
       "name": "SOURCE_CONTEXT_DIR",
       "displayName": "Source Context Directory",
       "description": "The source context directory.",
       "required": false,
-      "value": "auth-web"
+      "value": "frontend"
     },
     {
       "name": "JENKINS_FILE",

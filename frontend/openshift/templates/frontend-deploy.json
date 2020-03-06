@@ -237,21 +237,21 @@
       "displayName": "Name",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
       "required": true,
-      "value": "auth-web"
+      "value": "frontend"
     },
     {
       "name": "NAME_RUNTIME",
       "displayName": "Name of Runtime",
       "description": "The name assigned to all of the OpenShift resources associated to the server instance.",
       "required": true,
-      "value": "auth-web-runtime"
+      "value": "frontend-runtime"
     },
     {
       "name": "APP_GROUP",
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": "sbc-auth"
+      "value": "sbc-search"
     },
     {
       "name": "IMAGE_NAMESPACE",
