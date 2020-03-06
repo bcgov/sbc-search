@@ -58,14 +58,14 @@
       "displayName": "Name",
       "description": "The name assigned to all of the resources defined in this template.",
       "required": true,
-      "value": "auth-api"
+      "value": "search-api"
     },
     {
       "name": "APP_GROUP",
       "displayName": "App Group",
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
-      "value": "sbc-auth"
+      "value": "sbc-search"
     },
     {
       "name": "TAG_NAME",
@@ -79,7 +79,7 @@
       "displayName": "Git Repo URL",
       "description": "The URL to your GIT repo.",
       "required": true,
-      "value": "https://github.com/bcgov/sbc-auth.git"
+      "value": "https://github.com/bcgov/sbc-search.git"
     },
     {
       "name": "GIT_REF",
@@ -100,7 +100,7 @@
       "displayName": "Source Context Directory",
       "description": "The source context directory.",
       "required": false,
-      "value": "auth-api"
+      "value": "search-api"
     },
     {
       "name": "JENKINS_FILE",
