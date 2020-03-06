@@ -86,7 +86,7 @@
       "displayName": "Git Reference",
       "description": "The git reference or branch.",
       "required": true,
-      "value": "development"
+      "value": "develop"
     },
     {
       "name": "WEBHOOK",
