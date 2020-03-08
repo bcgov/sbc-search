@@ -21,6 +21,7 @@ from search_api.models import (
     Event,
     _get_corpparty_search_results,
     _add_additional_cols_to_search_results,
+    _normalize_addr,
 )
 from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 
@@ -189,33 +190,7 @@ def person(id):
 
     return jsonify(result_dict)
 
-def _normalize_addr(id):
-    if not id:
-        return ''
 
-    address = Address.query.filter(Address.addr_id == id).add_columns(
-        Address.addr_line_1,
-        Address.addr_line_2,
-        Address.addr_line_3,
-        Address.postal_cd,
-        Address.city,
-        Address.province,
-        Address.country_typ_cd,
-        ).one()[0]
-
-    def fn(accumulator, s):
-        if s:
-            return (accumulator or '') + ', ' + (s or '')
-        else:
-            return accumulator or ''
-
-    return reduce(fn, [address.addr_line_1, address.addr_line_2, address.addr_line_3, address.city, address.province, address.country_typ_cd])
-
-def _format_office_typ_cd(office_typ_cd):
-    if office_typ_cd == "RG":
-        return "Registered"
-    elif office_typ_cd == "RC":
-        return "Records"
 
 @API.route('/person/officesheld/<corppartyid>')
 def officesheld(corppartyid):

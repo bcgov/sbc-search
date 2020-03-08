@@ -18,6 +18,9 @@ from search_api.models import (
     OfficesHeld,
     OfficerType,
     Event,
+    _get_corporation_search_results,
+    _normalize_addr,
+    _format_office_typ_cd
 )
 
 API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
