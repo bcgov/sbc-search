@@ -391,7 +391,8 @@ def _get_model_by_field(field_name):
     # return CorpParty
     # [cvo] for performance we only query this one above table for now.
 
-    if field_name in ['first_nme','middle_nme','last_nme','appointment_dt','cessation_dt']: # CorpParty fields
+    if field_name in ['first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt', 'corp_num',
+                      'corp_party_id']:  # CorpParty fields
         return eval('CorpParty')
     # elif field_name in ['corp_num']: # Corporation fields
     #     return eval('Corporation')
@@ -421,6 +422,7 @@ def _get_filter(field, operator, value):
     value = value.lower()
     if model:
         Field = getattr(model, field)
+        # TODO: we should sanitize the values
         if operator == 'contains':
             return Field.ilike('%' + value + '%')
         elif operator == 'exact':
@@ -429,6 +431,8 @@ def _get_filter(field, operator, value):
             return Field.ilike('%' + value)
         elif operator == 'startswith':
             return Field.ilike(value + '%')
+        elif operator == 'wildcard':
+            return Field.ilike(value)
         else:
             raise Exception('invalid operator: {}'.format(operator))
     else:

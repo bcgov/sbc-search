@@ -1,16 +1,19 @@
 <template>
   <div>
     <h1>Welcome to Corporation Search.</h1>
-    <h4
-      class="mt-3 body-1 mb-10"
-    >Search for active and historical BC companies by Name, Incorporation Number or Address.</h4>
+    <h4 class="mt-3 body-1 mb-10">
+      Search for active and historical BC companies by Name, Incorporation
+      Number or Address.
+    </h4>
     <div class="pa-10 pb-4 mb-10 corp-search-container">
       <CorporationSearch></CorporationSearch>
     </div>
     <div v-if="!isQueryEmpty">
       <div class="d-flex justify-space-between align-center mb-5">
         <h4 class="headline">Search Results</h4>
-        <v-btn class="export-btn" height="50">Export to .xlsx</v-btn>
+        <v-btn class="export-btn" height="50" @click="handleExport"
+          >Export to .xlsx</v-btn
+        >
       </div>
       <CorporationTable :corporations="corporations"></CorporationTable>
     </div>
@@ -22,6 +25,8 @@ import CorporationSearch from "@/components/Search/corporation/CorporationSearch
 import CorporationTable from "@/components/Search/corporation/CorporationTable.vue";
 import { corporationSearch } from "@/api/SearchApi.js";
 import { isEmpty } from "lodash-es";
+import { BACKEND_URL } from "@/config/index.ts";
+const qs = require("qs");
 
 export default {
   components: {
@@ -45,6 +50,13 @@ export default {
     };
   },
   methods: {
+    handleExport() {
+      window.open(
+        `${BACKEND_URL}/corporation/search/export/?${qs.stringify(
+          this.$route.query
+        )}`
+      );
+    },
     search(query) {
       corporationSearch(query)
         .then(result => {

@@ -11,14 +11,22 @@
     <SearchSelect
       selectLabel="Operator"
       class="d-inline-block mr-3"
-      :items="OPERATORS"
+      :items="operatorItems"
       :initValue="initOperator"
       :uid="uid"
       property="operator"
     ></SearchSelect>
-    <SearchInput :uid="uid" :query="initQuery" class="d-inline-block"></SearchInput>
-    <v-btn v-if="remove" class="ml-5" height="56" outlined @click="handleRemove">Remove</v-btn>
-    <v-btn v-if="clear" class="ml-5" height="56" outlined @click="handleClear">Clear</v-btn>
+    <SearchInput
+      :uid="uid"
+      :query="initQuery"
+      class="d-inline-block"
+    ></SearchInput>
+    <v-btn v-if="remove" class="ml-5" height="56" outlined @click="handleRemove"
+      >Remove</v-btn
+    >
+    <v-btn v-if="clear" class="ml-5" height="56" outlined @click="handleClear"
+      >Clear</v-btn
+    >
   </div>
 </template>
 
@@ -26,6 +34,8 @@
 import SearchSelect from "@/components/Search/corpparty/SearchSelect.vue";
 import SearchInput from "@/components/Search/corpparty/SearchInput.vue";
 import { FIELD_VALUES, OPERATOR_VALUES } from "@/config/index.ts";
+import { mapGetters } from "vuex";
+import { filter } from "lodash-es";
 
 export default {
   props: {
@@ -54,6 +64,20 @@ export default {
       type: String
     }
   },
+  computed: {
+    operatorItems() {
+      if (this.selectedField === "addr_line_1") {
+        return filter(this.OPERATORS, i => i.value === "contains");
+      }
+      return this.OPERATORS;
+    },
+    selectedField() {
+      return this.getFilterProperty(this.uid, "field");
+    },
+    ...mapGetters({
+      getFilterProperty: "corpParty/filters/getProperty"
+    })
+  },
   components: {
     SearchInput,
     SearchSelect
@@ -73,6 +97,17 @@ export default {
         uid: this.uid,
         value: ""
       });
+    }
+  },
+  watch: {
+    selectedField(nf) {
+      if (nf === "addr_line_1") {
+        this.$store.commit("corpParty/filters/setSearchPropValue", {
+          uid: this.uid,
+          property: "operator",
+          value: "contains"
+        });
+      }
     }
   }
 };

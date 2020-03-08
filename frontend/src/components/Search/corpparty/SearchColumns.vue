@@ -5,35 +5,38 @@
       <div
         @click="handleClick('active')"
         class="d-inline-block search-column pl-2 pr-2"
-        :class="{ 'search-column-active': initColumn === 'active'}"
-      >Active/Historical</div>
+        :class="{ 'search-column-active': initColumn === 'active' }"
+      >
+        Active/Historical
+      </div>
       <div
         @click="handleClick('addr')"
         class="d-inline-block search-column search-column-br pl-2 pr-2"
-        :class="{ 'search-column-active': initColumn === 'addr'}"
-      >Address</div>
+        :class="{ 'search-column-active': initColumn === 'addr' }"
+      >
+        Address
+      </div>
       <div
         @click="handleClick('none')"
         class="d-inline-block search-column pl-2 pr-2"
-        :class="{ 'search-column-active': initColumn === 'none'}"
-      >None</div>
+        :class="{ 'search-column-active': initColumn === 'none' }"
+      >
+        None
+      </div>
     </div>
-    <div class="mb-4 mt-5 ad-info-header" @click="tips = !tips">
+    <div class="mb-4 mt-5 ad-info-header cursor-pointer" @click="tips = !tips">
       Additional Information
       <v-icon color="#2f7fd4" class="search-tips-icon" v-if="tips">
-        {{
-        chevronUp
-        }}
+        {{ chevronUp }}
       </v-icon>
       <v-icon color="#2f7fd4" class="search-tips-icon" v-else>
-        {{
-        chevronDown
-        }}
+        {{ chevronDown }}
       </v-icon>
     </div>
-    <div
-      v-if="tips"
-    >Table data will load faster if you select only of the above, and fastest if you select "None"</div>
+    <div v-if="tips">
+      Table data will load faster if you select only of the above, and fastest
+      if you select "None"
+    </div>
   </div>
 </template>
 

@@ -61,6 +61,8 @@ def corpparty_search_export():
 
     # Query string arguments
     args = request.args
+    fields = args.getlist('field')
+    additional_cols = args.get('additional_cols')
 
     # Fetching results
     results = _get_corpparty_search_results(args)
@@ -81,7 +83,13 @@ def corpparty_search_export():
         _ = sheet.cell(column=5, row=1, value="Appointment Date")
         _ = sheet.cell(column=6, row=1, value="Cessation Date")
         _ = sheet.cell(column=7, row=1, value="Corporation Id")
-        _ = sheet.cell(column=8, row=1, value="Address")
+
+        if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+            _ = sheet.cell(column=8, row=1, value="Address")
+            _ = sheet.cell(column=9, row=1, value="Postal Code")
+        elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+            _ = sheet.cell(column=8, row=1, value="Status")
+
 
         index = 2
         for row in results:
@@ -101,7 +109,12 @@ def corpparty_search_export():
             # Corporation.corp_num
             _ = sheet.cell(column=7, row=index, value=row[7])
             # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
-            _ = sheet.cell(column=8, row=index, value=_merge_corpparty_search_addr_fields(row))
+            if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+                # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
+                _ = sheet.cell(column=8, row=index, value=_merge_corpparty_search_addr_fields(row))
+                _ = sheet.cell(column=9, row=index, value=row.postal_cd)
+            elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+                _ = sheet.cell(column=8, row=index, value=_get_state_typ_cd_display_value(row.state_typ_cd))
 
             index += 1
 
@@ -262,3 +275,10 @@ def officesheld(corppartyid):
         'same_addr': [{**s[0].as_dict(), **{'year':int(s[1].year)}} for s in same_addr if s[0].corp_party_id != int(corppartyid)],
         'same_name_and_company': [{**s[0].as_dict(), **{'year':int(s[1].year)}} for s in same_name_and_company if s[0].corp_party_id != int(corppartyid)],
     })
+
+
+def _get_state_typ_cd_display_value(state_typ_cd):
+    if state_typ_cd == "ACT":
+        return "ACT"
+    else:
+        return "HIS"
