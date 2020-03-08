@@ -1,10 +1,10 @@
 import ApiService from "./ApiService.js";
 
-const PERSON_SEARCH_URL = "/person/search";
-const COPRPARTY_SEARCH_URL = "/person";
-const CORPPARTY_OFFICE_URL = "/person/officesheld";
-const CORPORATION_SEARCH_URL = "/corporation/search/";
-const CORPORATION_DETAIL_SEARCH_URL = "/corporation";
+const PERSON_SEARCH_URL = "/api/v1/directors/person/search";
+const COPRPARTY_SEARCH_URL = "/api/v1/directors/person";
+const CORPPARTY_OFFICE_URL = "/api/v1/directors/person/officesheld";
+const CORPORATION_SEARCH_URL = "/api/v1/businesses/corporation/search/";
+const CORPORATION_DETAIL_SEARCH_URL = "/api/v1/businesses/corporation";
 
 export function corpPartySearch(query) {
   return ApiService.get(`${PERSON_SEARCH_URL}/?${query}`);
