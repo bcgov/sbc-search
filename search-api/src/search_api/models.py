@@ -5,6 +5,8 @@ import os
 from decimal import Decimal
 import decimal
 import flask.json
+from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
+from functools import reduce
 
 class MyJSONEncoder(flask.json.JSONEncoder):
 

@@ -1,6 +1,7 @@
 from tempfile import NamedTemporaryFile
 from flask import Flask, request, jsonify, send_from_directory, abort
 
+
 from openpyxl import Workbook
 from sqlalchemy import desc, func
 from functools import reduce
@@ -18,7 +19,10 @@ from search_api.models import (
     OfficesHeld,
     OfficerType,
     Event,
+    _get_corpparty_search_results,
+    _add_additional_cols_to_search_results,
 )
+from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 
 API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 

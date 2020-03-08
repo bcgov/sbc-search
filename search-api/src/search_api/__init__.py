@@ -7,7 +7,6 @@ from search_api import config
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 
-from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 from search_api.resources import DIRECTORS_API, BUSINESSES_API
 
 from search_api.models import app
