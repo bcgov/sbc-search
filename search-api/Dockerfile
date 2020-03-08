@@ -6,6 +6,8 @@ USER root
 RUN mkdir /opt/app && chmod 755 /opt/app
 WORKDIR /opt/app
 
+RUN apt-get update && \
+    apt-get install -y python-dev build-essential libaio1
 
 # Install the requirements
 COPY ./requirements/prod.txt .
@@ -27,8 +29,10 @@ RUN pip install --no-cache-dir -r repo-libraries.txt
 # Add the src dir to our pythonpath for live updates.
 # TDOO: disable for prod.
 #ENV FLASK_APP search_api/__init__.py
+ENV ORACLE_HOME /opt/ora/instantclient
+ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:$ORACLE_HOME
 
 # Run the server
 EXPOSE 5000
 
-CMD ["flask", "run","--host", "0.0.0.0"]
+CMD ./command.sh
