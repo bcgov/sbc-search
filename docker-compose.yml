@@ -25,10 +25,12 @@ services:
       context: search-api
     volumes:
       - ./search-api:/opt/app
+      - ./instantclient:/opt/ora/instantclient
     environment:
       - FLASK_ENV=development
       - FLASK_DEBUG=1
       - PYTHONPATH=/opt/app/src
+      - ORACLE_HOME=/opt/ora/instantclient
     networks:
       - bcros
 

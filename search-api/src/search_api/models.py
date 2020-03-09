@@ -3,12 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, MigrateCommand
 import os
 from decimal import Decimal
-
-app = Flask(__name__)
-
-
 import decimal
 import flask.json
+from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
+from functools import reduce
 
 class MyJSONEncoder(flask.json.JSONEncoder):
 
@@ -20,15 +18,17 @@ class MyJSONEncoder(flask.json.JSONEncoder):
 
 flask.json_encoder = MyJSONEncoder
 
+app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # https://stackoverflow.com/questions/33738467/how-do-i-know-if-i-can-disable-sqlalchemy-track-modifications/33790196#33790196
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
 class BaseModel(db.Model):
     __abstract__ = True
-    __table_args__ = {'quote':False, 'schema': 'bc_registries'}
+    #__table_args__ = {'quote':False, 'schema': 'bc_registries'}
     def as_dict(self):
         d = {}
         for c in self.__table__.columns:
@@ -344,3 +344,291 @@ class OfficesHeld(BaseModel):
     corp_party_id = db.Column(db.Integer, primary_key=True)
     officer_typ_cd = db.Column(db.String(3), primary_key=True)
     dd_corp_party_id = db.Column(db.Integer)
+
+
+
+def _merge_corpparty_search_addr_fields(row):
+    address = row.addr_line_1
+    if row.addr_line_2:
+        address += ", " + row.addr_line_2
+    if row.addr_line_3:
+        address += ", " + row.addr_line_3
+    return address
+
+
+def _is_addr_search(fields):
+    return "addr_line_1" in fields or "postal_cd" in fields
+
+
+def _add_additional_cols_to_search_results(args, row, result_dict):
+    fields = args.getlist('field')
+    additional_cols = args.get('additional_cols')
+    if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+        result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
+        result_dict['postal_cd'] = row.postal_cd
+    elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+        result_dict['state_typ_cd'] = row.state_typ_cd
+
+
+def _add_additional_cols_to_search_query(args, query):
+    fields = args.getlist('field')
+    additional_cols = args.get('additional_cols')
+    if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+        query = query.join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+        query = query.add_columns(
+            Address.addr_line_1,
+            Address.addr_line_2,
+            Address.addr_line_3,
+            Address.postal_cd)
+    elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+        query = query.join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
+            .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+        query = query.add_columns(CorpOpState.state_typ_cd)
+
+    return query
+
+
+def _get_model_by_field(field_name):
+
+    # return CorpParty
+    # [cvo] for performance we only query this one above table for now.
+
+    if field_name in ['first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt', 'corp_num',
+                      'corp_party_id']:  # CorpParty fields
+        return eval('CorpParty')
+    # elif field_name in ['corp_num']: # Corporation fields
+    #     return eval('Corporation')
+    # elif field_name in ['corp_nme']: # CorpName fields
+    #     return eval('CorpName')
+    elif field_name in ['addr_line_1','addr_line_2','addr_line_3','postal_cd','city','province']: # Address fields
+        return eval('Address')
+
+    #return None
+
+
+def _get_filter(field, operator, value):
+
+    if field == 'any_nme':
+        return (_get_filter('first_nme', operator, value)
+            | _get_filter('middle_nme', operator, value)
+            | _get_filter('last_nme', operator, value))
+
+    if field == 'addr':
+        # return _get_filter('first_nme', operator, value)
+        return (_get_filter('addr_line_1', operator, value)
+            | _get_filter('addr_line_2', operator, value)
+            | _get_filter('addr_line_3', operator, value))
+
+    model = _get_model_by_field(field)
+
+    value = value.lower()
+    if model:
+        Field = getattr(model, field)
+        # TODO: we should sanitize the values
+        if operator == 'contains':
+            return Field.ilike('%' + value + '%')
+        elif operator == 'exact':
+            return Field.ilike(value)
+        elif operator == 'endswith':
+            return Field.ilike('%' + value)
+        elif operator == 'startswith':
+            return Field.ilike(value + '%')
+        elif operator == 'wildcard':
+            return Field.ilike(value)
+        else:
+            raise Exception('invalid operator: {}'.format(operator))
+    else:
+        raise Exception('invalid field: {}'.format(field))
+
+
+def _get_sort_field(field_name):
+
+    model = _get_model_by_field(field_name)
+    if model:
+        return getattr(model, field_name)
+    else:
+        raise Exception('invalid sort field: {}'.format(field_name))
+
+
+def _get_corporation_search_results(args):
+    query = args.get("query")
+
+    if not query:
+        return "No search query was received", 400
+
+    # TODO: move queries to model class.
+    results = (
+        Corporation.query
+        .join(CorpName, Corporation.corp_num == CorpName.corp_num)
+        # .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
+        # .join(Office, Office.corp_num == Corporation.corp_num)
+        # .join(Address, Office.mailing_addr_id == Address.addr_id)
+        .with_entities(
+            CorpName.corp_nme,
+            Corporation.corp_num,
+            # Corporation.transition_dt,
+            # Address.addr_line_1,
+            # Address.addr_line_2,
+            # Address.addr_line_3,
+            # Address.postal_cd,
+            # Address.city,
+            # Address.province,
+        )
+        # .filter(Office.end_event_id == None)
+        # .filter(CorpName.end_event_id == None)
+    )
+
+    results = results.filter(
+        (Corporation.corp_num == query) |
+        (CorpName.corp_nme.ilike('%' + query + '%'))
+        # (CorpParty.first_nme.contains(query)) |
+        # (CorpParty.last_nme.contains(query)))
+    )
+
+    return results
+
+
+def _get_corpparty_search_results(args):
+    """
+    Querystring parameters as follows:
+
+    You may provide query=<string> for a simple search, OR any number of querystring triples such as
+
+    field=ANY_NME|first_nme|last_nme|<any column name>
+    &operator=exact|contains|startswith|endswith
+    &value=<string>
+    &sort_type=asc|desc
+    &sort_value=ANY_NME|first_nme|last_nme|<any column name>
+    &additional_cols=address|active|none
+
+    For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
+    curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"
+    """
+
+    query = args.get("query")
+
+    fields = args.getlist('field')
+    operators = args.getlist('operator')
+    values = args.getlist('value')
+    mode = args.get('mode')
+    sort_type = args.get('sort_type')
+    sort_value = args.get('sort_value')
+
+    if query and len(fields) > 0:
+        raise Exception("use simple query or advanced. don't mix")
+
+    # Only triples of clauses are allowed. So, the same number of fields, ops and values.
+    if len(fields) != len(operators) or len(operators) != len(values):
+        raise Exception("mismatched query param lengths: fields:{} operators:{} values:{}".format(
+            len(fields),
+            len(operators),
+            len(values)))
+
+    # Zip the lists, so ('last_nme', 'first_nme') , ('contains', 'exact'), ('Sky', 'Apple') => (('last_nme', 'contains', 'Sky'), ('first_nme', 'exact', 'Apple'))
+    clauses = list(zip(fields, operators, values))
+
+    # TODO: move queries to model class.
+            # TODO: we no longer need this as we want to show all types.
+            #.filter(CorpParty.party_typ_cd.in_(['FIO', 'DIR','OFF']))\
+
+    results = (CorpParty.query
+            # .filter(CorpParty.end_event_id == None)
+            # .filter(CorpName.end_event_id == None)
+            # .join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
+            # .join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
+            # .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
+            # .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
+            # .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+            .add_columns(
+                CorpParty.corp_party_id,
+                CorpParty.first_nme,
+                CorpParty.middle_nme,
+                CorpParty.last_nme,
+                CorpParty.appointment_dt,
+                CorpParty.cessation_dt,
+                CorpParty.corp_num,
+                CorpParty.party_typ_cd,
+                # Corporation.corp_num,
+                # CorpName.corp_nme,
+                # Address.addr_line_1,
+                # Address.addr_line_2,
+                # Address.addr_line_3,
+                # Address.postal_cd,
+                # Address.city,
+                # Address.province,
+                # CorpOpState.state_typ_cd,
+                # CorpOpState.full_desc,
+            ))
+
+    results = _add_additional_cols_to_search_query(args, results)
+
+    # Simple mode - return reasonable results for a single search string:
+    if query:
+        #results = results.filter((Corporation.corp_num == query) | (CorpParty.first_nme.contains(query)) | (CorpParty.last_nme.contains(query)))
+        results = results.filter(CorpParty.first_nme.ilike(query) | CorpParty.last_nme.ilike(query) | CorpParty.middle_nme.ilike(query))
+        # Advanced mode - return precise results for a set of clauses.
+    elif clauses:
+
+        # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
+        if mode == 'ALL':
+            def fn(accumulator, s):
+                return accumulator & _get_filter(*s)
+        else:
+            def fn(accumulator, s):
+                return accumulator | _get_filter(*s)
+
+        # We use reduce here to join all the items in clauses with the & operator or the | operator.
+        # Similar to if we did "|".join(clause), but calling the boolean operator instead.
+        filter_grp = reduce(
+            fn,
+            clauses[1:],
+            _get_filter(*clauses[0])
+        )
+        results = results.filter(filter_grp)
+
+    # Sorting
+    if sort_type is None:
+        results = results.order_by(CorpParty.last_nme, CorpParty.corp_num)
+    else:
+        field = _get_sort_field(sort_value)
+
+        if sort_type == 'desc':
+            results = results.order_by(desc(field))
+        else:
+            results = results.order_by(field)
+
+    # TODO: uncomment
+    #raise Exception(results.statement.compile())
+    return results
+
+def _normalize_addr(id):
+    if not id:
+        return ''
+
+    address = Address.query.filter(Address.addr_id == id).add_columns(
+        Address.addr_line_1,
+        Address.addr_line_2,
+        Address.addr_line_3,
+        Address.postal_cd,
+        Address.city,
+        Address.province,
+        Address.country_typ_cd,
+        ).one()[0]
+
+    def fn(accumulator, s):
+        if s:
+            return (accumulator or '') + ', ' + (s or '')
+        else:
+            return accumulator or ''
+
+    return reduce(fn, [address.addr_line_1, address.addr_line_2, address.addr_line_3, address.city, address.province, address.country_typ_cd])
+
+def _format_office_typ_cd(office_typ_cd):
+    if office_typ_cd == "RG":
+        return "Registered"
+    elif office_typ_cd == "RC":
+        return "Records"
+
+# if __name__ == '__main__':
+#     app = create_app()
+#     app.run(host='0.0.0.0')
