@@ -63,7 +63,9 @@ import SearchColumn from "@/components/Search/corpparty/SearchColumns.vue";
 import AddFilterButton from "@/components/Filter/AddFilterButton.vue";
 import CorpPartySearch from "@/components/Search/corpparty/CorpPartySearch.vue";
 import { mapGetters } from "vuex";
-import { omit, isEmpty } from "lodash-es";
+
+import omit from "lodash-es/omit";
+import isEmpty from "lodash-es/isEmpty";
 const qs = require("qs");
 import { searchApi } from "@/api/SearchApi";
 import CorpPartyTable from "@/components/Search/corpparty/CorpPartyTable.vue";

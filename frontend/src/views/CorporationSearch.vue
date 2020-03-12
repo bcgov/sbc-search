@@ -24,7 +24,7 @@
 import CorporationSearch from "@/components/Search/corporation/CorporationSearch.vue";
 import CorporationTable from "@/components/Search/corporation/CorporationTable.vue";
 import { corporationSearch } from "@/api/SearchApi.js";
-import { isEmpty } from "lodash-es";
+import isEmpty from "lodash-es/isEmpty";
 import { BACKEND_URL } from "@/config/index.ts";
 const qs = require("qs");
 

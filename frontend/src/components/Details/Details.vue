@@ -2,8 +2,13 @@
   <div>
     <v-container>
       <v-row>
-        <v-col cols="12" class="d-flex justify-space-between align-center mb-12">
-          <h2 class="display-1">Details for Filing #{{ detail.corp_party_id }}</h2>
+        <v-col
+          cols="12"
+          class="d-flex justify-space-between align-center mb-12"
+        >
+          <h2 class="display-1">
+            Details for Filing #{{ detail.corp_party_id }}
+          </h2>
           <PrintButton></PrintButton>
         </v-col>
       </v-row>
@@ -20,13 +25,17 @@
                 :class="{
                   'detail-big-margins': key === 'cessation_dt' || key === 'addr'
                 }"
-              >{{ getText(key) }}</span>
+                >{{ getText(key) }}</span
+              >
               <span class="detail-value">{{ val }}</span>
             </li>
           </ul>
         </v-col>
         <v-col cols="6">
-          <OfficeTable :details="filteredDetail" :officesheld="officesheld"></OfficeTable>
+          <OfficeTable
+            :details="filteredDetail"
+            :officesheld="officesheld"
+          ></OfficeTable>
         </v-col>
       </v-row>
     </v-container>
@@ -37,7 +46,8 @@
 import PrintButton from "@/components/PrintButton.vue";
 import { getTextFromValues } from "@/util/index.ts";
 import { CORPPARTY_HEADERS } from "@/config/index.ts";
-import { omit, pick } from "lodash-es";
+import pick from "lodash-es/pick";
+import omit from "lodash-es/omit";
 import { corpPartySearch, corpPartyOfficeSearch } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
 import OfficeTable from "@/components/Details/OfficeTable.vue";

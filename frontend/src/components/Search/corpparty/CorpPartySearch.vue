@@ -35,7 +35,7 @@ import SearchSelect from "@/components/Search/corpparty/SearchSelect.vue";
 import SearchInput from "@/components/Search/corpparty/SearchInput.vue";
 import { FIELD_VALUES, OPERATOR_VALUES } from "@/config/index.ts";
 import { mapGetters } from "vuex";
-import { filter } from "lodash-es";
+import filter from "lodash-es/filter";
 
 export default {
   props: {

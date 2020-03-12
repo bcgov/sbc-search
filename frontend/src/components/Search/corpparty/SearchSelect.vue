@@ -13,7 +13,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { filter } from "lodash-es";
+import filter from "lodash-es/filter";
 export default {
   props: {
     items: {

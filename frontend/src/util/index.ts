@@ -1,5 +1,5 @@
 const qs = require("qs");
-import { omit } from "lodash";
+import omit from "lodash-es/omit";
 
 export function getTextFromValues(values, value) {
   const result = values.find(v => v.value === value);

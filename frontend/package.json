@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "yarn && vue-cli-service serve --host 0.0.0.0",
     "build": "yarn && vue-cli-service build",
+    "build-report": "yarn && vue-cli-service build --report",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
@@ -28,7 +29,6 @@
     "vuex-module-decorators": "^0.16.1"
   },
   "devDependencies": {
-    "@mdi/js": "^4.9.95",
     "@types/jest": "^24.0.19",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",

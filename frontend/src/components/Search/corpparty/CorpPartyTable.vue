@@ -70,7 +70,7 @@ import { corpPartySearch } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
 import { mapGetters } from "vuex";
 import { buildQueryString } from "@/util/index.ts";
-import { isEmpty } from "lodash-es";
+import isEmpty from "lodash-es/isEmpty";
 import { mdiArrowLeft, mdiArrowRight } from "@mdi/js";
 
 export default {

@@ -4,7 +4,9 @@
       <v-row>
         <v-col cols="12">
           <div class="mb-10 d-flex justify-space-between align-center">
-            <h2 class="display-1">Corporation Details for Inc. #{{ details.corp_num }}</h2>
+            <h2 class="display-1">
+              Corporation Details for Inc. #{{ details.corp_num }}
+            </h2>
             <PrintButton></PrintButton>
           </div>
         </v-col>
@@ -18,7 +20,8 @@
                 <span
                   v-for="(name, index) in details.NAMES"
                   :key="'company' + index"
-                >{{ index + 1 }}. {{ name.name }}</span>
+                  >{{ index + 1 }}. {{ name.name }}</span
+                >
               </div>
             </li>
             <li
@@ -27,9 +30,7 @@
               :key="key + val"
             >
               <span class="detail-key font-weight-bold">
-                {{
-                getText(key)
-                }}
+                {{ getText(key) }}
               </span>
               <span class="detail-value">{{ val }}</span>
             </li>
@@ -37,9 +38,15 @@
             <li class="d-flex w-100 detail-list-item mb-5">
               <span class="detail-key font-weight-bold">Office(s)</span>
             </li>
-            <li class="mb-5" v-for="(office, index) in details.offices" :key="'office' + index">
+            <li
+              class="mb-5"
+              v-for="(office, index) in details.offices"
+              :key="'office' + index"
+            >
               <div class="d-flex w-100 detail-list-item">
-                <span class="detail-key font-weight-bold">Delivery Address</span>
+                <span class="detail-key font-weight-bold"
+                  >Delivery Address</span
+                >
                 <span class="detail-value">{{ office.delivery_addr }}</span>
               </div>
 
@@ -72,7 +79,7 @@
 import PrintButton from "@/components/PrintButton.vue";
 import { getTextFromValues } from "@/util/index.ts";
 import { COMPANY_HEADERS } from "@/config/index.ts";
-import { pick } from "lodash-es";
+import pick from "lodash-es/pick";
 import CorporationFilings from "@/components/Details/CorporationFilings.vue";
 export default {
   components: {
