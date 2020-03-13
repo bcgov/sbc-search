@@ -54,7 +54,8 @@ Download [cisco VPN client](https://software.cisco.com/download/home/286281283/t
 ```
 cd /opt
 tar zxvf anyconnect-linux64-4700136-predeploy-k9tar.gz
-cd anyconnect*/bin
+cd anyconnect*
+./vpn_install.sh
 vpn
 >> connect vpn2.gov.bc.ca
 ```
