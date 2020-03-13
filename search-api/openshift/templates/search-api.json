@@ -1,0 +1,303 @@
+{
+  "kind": "Template",
+  "apiVersion": "template.openshift.io/v1",
+  "metadata": {
+    "name": "${NAME}-build-template",
+    "creationTimestamp": null
+  },
+  "objects": [
+    {
+      "apiVersion": "v1",
+      "kind": "ImageStream",
+      "metadata": {
+        "name": "${NAME}"
+      }
+    },
+    {
+      "kind": "BuildConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}",
+        "labels": {
+          "app": "${NAME}"
+        }
+      },
+      "spec": {
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "runPolicy": "Serial",
+        "source": {
+          "contextDir": "${SOURCE_CONTEXT_DIR}",
+          "git": {
+            "ref": "${GIT_REF}",
+            "uri": "${GIT_REPO_URL}"
+          },
+          "type": "Git"
+        },
+        "strategy": {
+          "type": "Docker",
+          "dockerStrategy": {
+            "dockerfilePath": "${DOCKERFILE_PATH}"
+          }
+        },
+        "output": {
+          "to": {
+            "kind": "ImageStreamTag",
+            "name": "${NAME}:${OUTPUT_IMAGE_TAG}"
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}-${TAG_NAME}",
+        "labels": {
+          "app": "${NAME}-${TAG_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Rolling",
+          "rollingParams": {
+            "updatePeriodSeconds": 1,
+            "intervalSeconds": 1,
+            "timeoutSeconds": 600,
+            "maxUnavailable": "25%",
+            "maxSurge": "25%"
+          }
+        },
+        "triggers": [
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": ["${NAME}-${TAG_NAME}"],
+              "from": {
+                "kind": "ImageStreamTag",
+                "namespace": "${IMAGE_NAMESPACE}",
+                "name": "${NAME}:${OUTPUT_IMAGE_TAG}"
+              }
+            }
+          },
+          {
+            "type": "ConfigChange"
+          }
+        ],
+        "replicas": "${REPLICAS}",
+        "test": false,
+        "selector": {
+          "app": "${NAME}-${TAG_NAME}",
+          "deploymentconfig": "${NAME}-${TAG_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "${NAME}-${TAG_NAME}",
+              "deploymentconfig": "${NAME}-${TAG_NAME}"
+            }
+          },
+          "spec": {
+            "containers": [
+              {
+                "name": "${NAME}-${TAG_NAME}",
+                "image": "${TAG_NAME}/${NAME}:${OUTPUT_IMAGE_TAG}",
+                "env": [
+                  {
+                    "name": "DB_CONNECTION_URL",
+                    "value": "${DB_CONNECTION_URL}"
+                  }
+                ],
+                "ports": [
+                  {
+                    "containerPort": 5000,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {},
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/ops/healthz",
+                    "port": 5000,
+                    "scheme": "HTTP"
+                  },
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/ops/readyz",
+                    "port": 5000,
+                    "scheme": "HTTP"
+                  },
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "terminationMessagePolicy": "File",
+                "imagePullPolicy": "Always"
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst",
+            "securityContext": {},
+            "schedulerName": "default-scheduler"
+          }
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}-${TAG_NAME}",
+        "creationTimestamp": null,
+        "labels": {
+          "app": "${NAME}-${TAG_NAME}",
+          "template": "${NAME}-deploy"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "5000-tcp",
+            "protocol": "TCP",
+            "port": 5000,
+            "targetPort": 5000
+          }
+        ],
+        "selector": {
+          "deploymentconfig": "${NAME}-${TAG_NAME}"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      },
+      "status": {
+        "loadBalancer": {}
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${NAME}-${TAG_NAME}",
+        "labels": {
+          "app": "${NAME}-${TAG_NAME}",
+          "template": "${NAME}-deploy"
+        }
+      },
+      "spec": {
+        "to": {
+          "kind": "Service",
+          "name": "${NAME}-${TAG_NAME}",
+          "weight": 100
+        },
+        "port": {
+          "targetPort": "5000-tcp"
+        }
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "name": "NAME",
+      "displayName": "Name",
+      "description": "The name assigned to all of the resources defined in this template.",
+      "required": true,
+      "value": "search-api"
+    },
+    {
+      "name": "TAG_NAME",
+      "displayName": "Environment TAG name",
+      "description": "The TAG name for this environment, e.g., dev, test, prod",
+      "required": true,
+      "value": "dev"
+    },
+    {
+      "name": "IMAGE_NAMESPACE",
+      "displayName": "Image Namespace",
+      "required": true,
+      "description": "The namespace of the OpenShift project containing the imagestream for the application.",
+      "value": "dev"
+    },
+    {
+      "name": "GIT_REPO_URL",
+      "displayName": "Git Repo URL",
+      "description": "The URL to your GIT repo.",
+      "required": true,
+      "value": "https://github.com/countable-web/sbc-search.git"
+    },
+    {
+      "name": "GIT_REF",
+      "displayName": "Git Reference",
+      "description": "The git reference or branch.",
+      "required": true,
+      "value": "master"
+    },
+    {
+      "name": "SOURCE_CONTEXT_DIR",
+      "displayName": "Source Context Directory",
+      "description": "The source context directory.",
+      "required": false,
+      "value": "/search-api"
+    },
+    {
+      "name": "SOURCE_IMAGE_KIND",
+      "displayName": "Source Image Kind",
+      "description": "The 'kind' (type) of the  source image; typically ImageStreamTag, or DockerImage.",
+      "required": true,
+      "value": "ImageStreamTag"
+    },
+    {
+      "name": "SOURCE_IMAGE_NAME",
+      "displayName": "Source Image Name",
+      "required": true,
+      "description": "The name of the source image.",
+      "value": "python"
+    },
+    {
+      "name": "SOURCE_IMAGE_TAG",
+      "displayName": "Source Image Tag",
+      "required": true,
+      "description": "The tag of the source image.",
+      "value": "3.6"
+    },
+    {
+      "name": "DOCKERFILE_PATH",
+      "displayName": "Path to Dockerfile",
+      "required": true,
+      "description": "Path to the Dockerfile used to build this image",
+      "value": "Dockerfile-prod"
+    },
+    {
+      "name": "OUTPUT_IMAGE_TAG",
+      "displayName": "Output Image Tag",
+      "description": "The tag given to the built image.",
+      "required": true,
+      "value": "latest"
+    },
+    {
+      "name": "REPLICAS",
+      "displayName": "The number of replicas to run",
+      "description": "The number of replicas to run in this environment.",
+      "required": true,
+      "value": "1"
+    },
+    {
+      "name": "DB_CONNECTION_URL",
+      "displayName": "Postgres DB Connection URL",
+      "description": "URL to connect to postgres DB",
+      "required": true,
+      "value": "postgresql://user:pw@host:port/namespace"
+    }
+  ]
+}

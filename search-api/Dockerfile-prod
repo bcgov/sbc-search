@@ -1,0 +1,33 @@
+FROM python:3.7
+
+# # Installing Oracle instant client
+WORKDIR    /opt/oracle
+RUN        apt-get update && apt-get install -y libaio1 wget unzip \
+  && wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip \
+  && unzip instantclient-basiclite-linuxx64.zip \
+  && rm -f instantclient-basiclite-linuxx64.zip \
+  && cd /opt/oracle/instantclient* \
+  && rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci \
+  && echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf \
+  && ldconfig
+
+WORKDIR /opt
+
+ADD . /opt/app
+RUN chmod 755 /opt/app
+
+WORKDIR /opt/app
+
+RUN apt-get update && \
+  apt-get install -y python-dev build-essential libaio1
+
+RUN pip install --no-cache-dir -r requirements/prod.txt
+RUN pip install --no-cache-dir -r requirements/repo-libraries.txt
+
+# This may be used to lock things down but breaks alembic during dev work.
+USER 1001
+
+# Run the server
+EXPOSE 5000
+
+CMD ./command.sh

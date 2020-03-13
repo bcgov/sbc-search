@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+
+  search_api:
+    image: search_api
+    build:
+      context: search-api
+      dockerfile: Dockerfile-prod
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    ports:
+      - 5000:5000
