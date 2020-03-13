@@ -2,7 +2,7 @@ version: "3"
 
 services:
   search-web:
-    command: "yarn serve"
+    command: "npm run serve"
     environment:
       - NODE_ENV=development
     ports:
