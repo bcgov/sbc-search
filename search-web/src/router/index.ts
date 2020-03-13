@@ -6,6 +6,30 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/signin/:idpHint",
+    name: "signin",
+    component: () =>
+      import(/* webpackChunkName: "signin" */ "../views/SignInView.vue"),
+    props: true,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: "/signin/:idpHint/:redirectUrl",
+    name: "signin-redirect",
+    component: () =>
+      import(/* webpackChunkName: "signin" */ "../views/SignInView.vue"),
+    props: true,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: "/signin/:idpHint/:redirectUrl/:redirectUrlLoginFail",
+    name: "signin-redirect-fail",
+    component: () =>
+      import(/* webpackChunkName: "signin" */ "../views/SignInView.vue"),
+    props: true,
+    meta: { requiresAuth: false }
+  },
+  {
     path: "/",
     name: "Home",
     component: Home,
@@ -17,7 +41,9 @@ const routes = [
     path: "/corpparty/:id",
     name: "corpPartyDetails",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/CorpPartyDetails.vue"),
+      import(
+        /* webpackChunkName: "corppartydetails" */ "../views/CorpPartyDetails.vue"
+      ),
     meta: {
       title: route => `Details for Filing #${route.params.id}`
     }
@@ -26,7 +52,9 @@ const routes = [
     path: "/corporation/:id",
     name: "corporationDetails",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/CorporationDetails.vue"),
+      import(
+        /* webpackChunkName: "corporationdetails" */ "../views/CorporationDetails.vue"
+      ),
     meta: {
       title: route => `Corporation Details for Inc. #${route.params.id}`
     }
@@ -35,7 +63,9 @@ const routes = [
     path: "/corporation",
     name: "corporation",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/CorporationSearch.vue"),
+      import(
+        /* webpackChunkName: "corporation" */ "../views/CorporationSearch.vue"
+      ),
     meta: {
       title: "Corporation Search"
     }
