@@ -1,13 +1,12 @@
-version: '3'
+version: "3"
 
 services:
-  frontend:
-    command: 'yarn serve'
+  search-web:
+    command: "yarn serve"
     environment:
-        - NODE_ENV=development
+      - NODE_ENV=development
     ports:
-        - 8080:8080
+      - 8080:8080
   search_api:
     ports:
-        - 80:5000
-
+      - 80:5000

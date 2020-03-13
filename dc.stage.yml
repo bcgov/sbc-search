@@ -1,9 +1,8 @@
-version: '3'
+version: "3"
 
 services:
-  frontend:
-    command: 'yarn build'
+  search-web:
+    command: "yarn build"
   search_api:
     ports:
       - 5005:5000
-

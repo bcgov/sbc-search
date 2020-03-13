@@ -2,10 +2,10 @@ version: '3'
 
 services:
 
-  frontend:
-    build: ./frontend
+  search-web:
+    build: ./search-web
     volumes:
-      - ./frontend:/code
+      - ./search-web:/code
     working_dir: /code/
 
   db:
