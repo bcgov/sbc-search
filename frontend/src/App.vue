@@ -24,6 +24,9 @@ export default Vue.extend({
 * {
   font-family: "BCSans", "Verdana", "Arial", "sans-serif" !important;
 }
+.material-icons {
+  font-family: "Material Icons" !important;
+}
 .layout-wrapper {
   background-color: #f1f3f6;
 }

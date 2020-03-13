@@ -1,12 +1,12 @@
 <template>
   <div class="cursor-pointer">
-    <div class="mb-4 search-tips-header" @click="open = !open">
-      Search Tips
+    <div class="mb-4" @click="open = !open">
+      <div class="search-tips-header d-inline-block">Search Tips</div>
       <v-icon color="#2f7fd4" class="search-tips-icon" v-if="open">
-        {{ chevronUp }}
+        keyboard_arrow_up
       </v-icon>
       <v-icon color="#2f7fd4" class="search-tips-icon" v-else>
-        {{ chevronDown }}
+        keyboard_arrow_down
       </v-icon>
     </div>
     <div v-if="open">
@@ -30,12 +30,9 @@
 </template>
 
 <script>
-import { mdiChevronUp, mdiChevronDown } from "@mdi/js";
 export default {
   data() {
     return {
-      chevronUp: mdiChevronUp,
-      chevronDown: mdiChevronDown,
       open: false
     };
   }

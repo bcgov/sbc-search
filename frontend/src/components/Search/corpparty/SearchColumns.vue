@@ -24,13 +24,13 @@
         None
       </div>
     </div>
-    <div class="mb-4 mt-5 ad-info-header cursor-pointer" @click="tips = !tips">
-      Additional Information
+    <div class="mb-4 mt-5 cursor-pointer" @click="tips = !tips">
+      <div class="d-inline-block ad-info-header">Additional Information</div>
       <v-icon color="#2f7fd4" class="search-tips-icon" v-if="tips">
-        {{ chevronUp }}
+        keyboard_arrow_up
       </v-icon>
       <v-icon color="#2f7fd4" class="search-tips-icon" v-else>
-        {{ chevronDown }}
+        keyboard_arrow_down
       </v-icon>
     </div>
     <div v-if="tips">
@@ -41,8 +41,6 @@
 </template>
 
 <script>
-import { mdiChevronUp, mdiChevronDown } from "@mdi/js";
-
 export default {
   props: {
     initColumn: {
@@ -53,8 +51,6 @@ export default {
   data() {
     return {
       active: this.initColumn,
-      chevronUp: mdiChevronUp,
-      chevronDown: mdiChevronDown,
       tips: false
     };
   },

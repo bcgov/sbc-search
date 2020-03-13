@@ -40,10 +40,10 @@
           <div>Showing {{ itemsLength }} results</div>
           <div class="d-flex ml-5 align-center">
             <v-btn v-if="page > '1' && !loading" icon @click="pagePrev" small>
-              <v-icon>{{ arrowLeft }}</v-icon>
+              <v-icon>arrow_back</v-icon>
             </v-btn>
             <v-btn v-else disabled icon small>
-              <v-icon>{{ arrowLeft }}</v-icon>
+              <v-icon>arrow_back</v-icon>
             </v-btn>
             <div class="d-inline-block mr-3 ml-3">Page {{ page }}</div>
             <v-btn
@@ -52,10 +52,10 @@
               @click="pageNext"
               small
             >
-              <v-icon>{{ arrowRight }}</v-icon>
+              <v-icon>arrow_forward</v-icon>
             </v-btn>
             <v-btn icon v-else disabled small>
-              <v-icon>{{ arrowRight }}</v-icon>
+              <v-icon>arrow_forward</v-icon>
             </v-btn>
           </div>
         </div>
@@ -71,7 +71,6 @@ import dayjs from "dayjs";
 import { mapGetters } from "vuex";
 import { buildQueryString } from "@/util/index.ts";
 import isEmpty from "lodash-es/isEmpty";
-import { mdiArrowLeft, mdiArrowRight } from "@mdi/js";
 
 export default {
   props: {
@@ -119,9 +118,7 @@ export default {
       items: [],
       options: {},
       loading: true,
-      totalItems: 0,
-      arrowLeft: mdiArrowLeft,
-      arrowRight: mdiArrowRight
+      totalItems: 0
     };
   },
   methods: {
