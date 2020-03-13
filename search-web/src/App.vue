@@ -10,12 +10,16 @@
 import Vue from "vue";
 import "@bcgov/bc-sans/css/BCSans.css";
 import { mapGetters } from "vuex";
+import KeyCloakService from "sbc-common-components/src/services/keycloak.services";
 
 import SbcLayout from "sbc-common-components/src/components/SbcLayout.vue";
 
 export default Vue.extend({
   components: {
     SbcLayout
+  },
+  async mounted() {
+    await KeyCloakService.setKeycloakConfigUrl(`/config/kc/keycloak.json`);
   }
 });
 </script>
