@@ -11,7 +11,7 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "signin" */ "../views/SignInView.vue"),
     props: true,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false, title: "Sign In" }
   },
   {
     path: "/signin/:idpHint/:redirectUrl",
@@ -19,7 +19,7 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "signin" */ "../views/SignInView.vue"),
     props: true,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false, title: "Sign In" }
   },
   {
     path: "/signin/:idpHint/:redirectUrl/:redirectUrlLoginFail",
@@ -27,7 +27,23 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "signin" */ "../views/SignInView.vue"),
     props: true,
-    meta: { requiresAuth: false }
+    meta: { requiresAuth: false, title: "Sign In" }
+  },
+  {
+    path: "/signout",
+    name: "signout",
+    component: () =>
+      import(/* webpackChunkName: "signout" */ "../views/SignOutView.vue"),
+    props: true,
+    meta: { requiresAuth: true, title: "Sign Out" }
+  },
+  {
+    path: "/signout/:redirectUrl",
+    name: "signout-redirect",
+    component: () =>
+      import(/* webpackChunkName: "signout" */ "../views/SignOutView.vue"),
+    props: true,
+    meta: { requiresAuth: true, title: "Sign Out" }
   },
   {
     path: "/",
