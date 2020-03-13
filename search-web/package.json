@@ -8,7 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "build-report": "yarn && vue-cli-service build --report"
+    "build-report": "npm i && vue-cli-service build --report"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
