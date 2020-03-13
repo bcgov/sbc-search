@@ -10,7 +10,7 @@ const routes = [
     name: "Home",
     component: Home,
     meta: {
-      title: 'Director Search',
+      title: "Director Search"
     }
   },
   {
@@ -19,7 +19,7 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/CorpPartyDetails.vue"),
     meta: {
-      title: (route) => `Details for Filing #${route.params.id}`
+      title: route => `Details for Filing #${route.params.id}`
     }
   },
   {
@@ -28,7 +28,7 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/CorporationDetails.vue"),
     meta: {
-      title: (route) => `Corporation Details for Inc. #${route.params.id}`
+      title: route => `Corporation Details for Inc. #${route.params.id}`
     }
   },
   {
@@ -43,13 +43,13 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  routes,
+  routes
 });
 
 router.beforeEach((to, from, next) => {
-    const { title } = to.meta;
-    document.title = typeof title === 'function' ? title(to) : title;
-    next();
+  const { title } = to.meta;
+  document.title = typeof title === "function" ? title(to) : title;
+  next();
 });
 
 export default router;

@@ -1,6 +1,8 @@
 <template>
   <div>
-    <v-icon color="#2076d2" large class="cursor-pointer" @click="handlePrint">{{ printerIcon }}</v-icon>
+    <v-icon color="#2076d2" large class="cursor-pointer" @click="handlePrint">{{
+      printerIcon
+    }}</v-icon>
   </div>
 </template>
 
@@ -21,5 +23,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

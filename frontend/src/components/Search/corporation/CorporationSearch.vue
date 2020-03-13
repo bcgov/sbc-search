@@ -1,19 +1,24 @@
 <template>
   <div>
     <v-form class="d-flex align-top">
-      <SearchInput class="d-inline-block" :query.sync="searchQuery"></SearchInput>
+      <SearchInput
+        class="d-inline-block"
+        :query.sync="searchQuery"
+      ></SearchInput>
       <v-btn
         class="d-inline-block corporation-btn font-weight-regular ml-2"
         color="primary"
         height="55.5"
         type="submit"
         @click.prevent="handleSearch"
-      >Search</v-btn>
+        >Search</v-btn
+      >
       <v-btn
         @click="handleClear"
         class="d-inline-block corporation-btn font-weight-regular ml-2"
         height="55.5"
-      >Clear</v-btn>
+        >Clear</v-btn
+      >
     </v-form>
   </div>
 </template>

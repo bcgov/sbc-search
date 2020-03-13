@@ -3,14 +3,10 @@
     <div class="mb-4 search-tips-header" @click="open = !open">
       Search Tips
       <v-icon color="#2f7fd4" class="search-tips-icon" v-if="open">
-        {{
-        chevronUp
-        }}
+        {{ chevronUp }}
       </v-icon>
       <v-icon color="#2f7fd4" class="search-tips-icon" v-else>
-        {{
-        chevronDown
-        }}
+        {{ chevronDown }}
       </v-icon>
     </div>
     <div v-if="open">

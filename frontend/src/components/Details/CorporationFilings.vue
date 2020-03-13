@@ -1,8 +1,14 @@
 <template>
   <div>
     <h5 class="outline mb-5">Folio Number:</h5>
-    <v-text-field solo class="folio-input" placeholder="Enter Folio Number"></v-text-field>
-    <v-btn height="50" color="primary" class="folio-pay-btn">Pay to See Corporate Filings</v-btn>
+    <v-text-field
+      solo
+      class="folio-input"
+      placeholder="Enter Folio Number"
+    ></v-text-field>
+    <v-btn height="50" color="primary" class="folio-pay-btn"
+      >Pay to See Corporate Filings</v-btn
+    >
   </div>
 </template>
 
