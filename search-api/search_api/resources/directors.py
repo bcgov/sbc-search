@@ -7,6 +7,8 @@ from sqlalchemy import desc, func
 from functools import reduce
 from sqlalchemy.orm.exc import NoResultFound
 from flask import Blueprint
+
+from search_api.auth import jwt
 from search_api.models import (
     Corporation,
     CorpOpState,
@@ -34,6 +36,7 @@ def hello():
 
 
 @API.route('/person/search/')
+@jwt.requires_auth
 def corpparty_search():
     args = request.args
     results = _get_corpparty_search_results(args)
@@ -61,7 +64,9 @@ def corpparty_search():
 
     return jsonify({'results': corp_parties})
 
+
 @API.route('/person/search/export/')
+@jwt.requires_auth
 def corpparty_search_export():
 
     # Query string arguments
@@ -130,7 +135,9 @@ def corpparty_search_export():
 
         return send_from_directory(export_dir, filename, as_attachment=True)
 
+
 @API.route('/person/<id>')
+@jwt.requires_auth
 def person(id):
     #try:
 
@@ -191,8 +198,8 @@ def person(id):
     return jsonify(result_dict)
 
 
-
 @API.route('/person/officesheld/<corppartyid>')
+@jwt.requires_auth
 def officesheld(corppartyid):
     results = (OfficerType.query
             .join(OfficesHeld, OfficerType.officer_typ_cd==OfficesHeld.officer_typ_cd)

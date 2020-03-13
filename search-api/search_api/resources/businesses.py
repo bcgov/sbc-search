@@ -1,11 +1,13 @@
-from flask import Flask, request, jsonify, send_from_directory, abort
+from functools import reduce
 from tempfile import NamedTemporaryFile
 
+from flask import Flask, request, jsonify, send_from_directory, abort
+from flask import Blueprint
 from openpyxl import Workbook
 from sqlalchemy import desc, func
-from functools import reduce
 from sqlalchemy.orm.exc import NoResultFound
-from flask import Blueprint
+
+from search_api.auth import jwt
 from search_api.models import (
     Corporation,
     CorpOpState,
@@ -23,9 +25,12 @@ from search_api.models import (
     _format_office_typ_cd
 )
 
+
 API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
+
 @API.route('/corporation/search/')
+@jwt.requires_auth
 def corporation_search():
     args = request.args
     results = _get_corporation_search_results(args)
@@ -50,7 +55,9 @@ def corporation_search():
 
     return jsonify({'results': corporations})
 
+
 @API.route('/corporation/search/export/')
+@jwt.requires_auth
 def corporation_search_export():
 
     # Query string arguments
@@ -102,7 +109,9 @@ def corporation_search_export():
 
         return send_from_directory(export_dir, filename, as_attachment=True)
 
+
 @API.route('/corporation/<id>')
+@jwt.requires_auth
 def corporation(id):
 
     # TODO: move queries to model class.
