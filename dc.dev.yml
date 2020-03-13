@@ -10,3 +10,8 @@ services:
   search_api:
     ports:
       - 80:5000
+    volumes:
+      - ./instantclient:/opt/ora/instantclient
+    environment:
+      - PYTHONPATH=/opt/app/src
+      - ORACLE_HOME=/opt/ora/instantclient

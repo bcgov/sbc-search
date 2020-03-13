@@ -30,4 +30,4 @@ USER 1001
 # Run the server
 EXPOSE 5000
 
-CMD ./command.sh
+CMD ./command-prod.sh
