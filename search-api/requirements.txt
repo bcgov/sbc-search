@@ -1,3 +1,5 @@
+# NOTE: this is a copy of requirements/prod.txt, used by openshift
+
 cx_Oracle
 psycopg2
 Flask-SQLAlchemy==2.4.1
