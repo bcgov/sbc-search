@@ -13,12 +13,7 @@
         @click.prevent="handleSearch"
         >Search</v-btn
       >
-      <v-btn
-        @click="handleClear"
-        class="d-inline-block corporation-btn font-weight-regular ml-2"
-        height="55.5"
-        >Clear</v-btn
-      >
+
     </v-form>
   </div>
 </template>
@@ -43,9 +38,6 @@ export default {
           query
         }
       });
-    },
-    handleClear() {
-      this.$root.$emit("clearCorpSearchInput");
     }
   },
   data() {

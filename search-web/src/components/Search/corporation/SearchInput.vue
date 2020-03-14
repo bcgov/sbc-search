@@ -31,7 +31,6 @@ export default {
     };
   },
   mounted() {
-    this.$root.$on("clearCorpSearchInput", () => this.clear());
     this.$root.$on("setCorpSearchInput", r => (this.searchQuery = r));
   },
   methods: {
