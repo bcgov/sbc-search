@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ headers }}
     <v-data-table
       v-if="qs"
       class="elevation-1 corp-party-table"
