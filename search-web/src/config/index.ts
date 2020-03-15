@@ -30,12 +30,6 @@ export const CORPORATION_HEADERS = [
     align: "left"
   },
   {
-    text: "Company Name",
-    value: "corp_nme",
-    sortable: true,
-    align: "left"
-  },
-  {
     text: "Incorporated",
     value: "inc_date",
     sortable: true,
@@ -111,14 +105,15 @@ export const CORPPARTY_HEADERS = [
     align: "left"
   },
   {
-    text: "Inc/Reg #",
-    value: "corp_num",
-    sortable: true,
-    align: "left"
-  },
-  {
     text: "Company Name",
     value: "corp_nme",
+    sortable: true,
+    align: "left",
+    width: 150
+  },
+  {
+    text: "Inc/Reg #",
+    value: "corp_num",
     sortable: true,
     align: "left"
   },
