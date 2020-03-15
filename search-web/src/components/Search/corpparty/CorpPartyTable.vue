@@ -9,7 +9,9 @@
       :options.sync="options"
       :server-items-length="totalItems"
       :loading="loading"
+      :disable-sort="disableSorting"
       @update:page="updatePage"
+      @update:sort-by="fetchData"
       @update:sort-desc="fetchData"
       :footer-props="{
         'items-per-page-options': [20]
@@ -73,6 +75,7 @@ import dayjs from "dayjs";
 import { mapGetters } from "vuex";
 import { buildQueryString } from "@/util/index.ts";
 import isEmpty from "lodash-es/isEmpty";
+import debounce from "lodash-es/debounce";
 
 export default {
   props: {
@@ -120,7 +123,8 @@ export default {
       items: [],
       options: {},
       loading: true,
-      totalItems: 0
+      totalItems: 0,
+      disableSorting: false
     };
   },
   methods: {
@@ -198,14 +202,14 @@ export default {
         });
       }
     },
-    fetchData() {
+    fetchData: debounce(function() {
       if (!this.qs) {
         return;
       }
       this.loading = true;
+      this.disableSorting = true;
       const { sortBy, sortDesc } = this.options;
-      console.log("Sory By", sortBy),
-      console.log("Sort Desc", sortDesc)
+      console.log("Sory By", sortBy), console.log("Sort Desc", sortDesc);
       let queryString = this.qs;
       if (sortDesc && sortDesc.length > 0) {
         queryString += `&sort_type=${sortDesc[0] === true ? "dsc" : "asc"}`;
@@ -220,13 +224,15 @@ export default {
           this.items = result.data.results;
           this.totalItems = this.items.length;
           this.loading = false;
+          this.disableSorting = false;
         })
         .catch(e => {
           this.items = [];
           this.totalItems = 0;
           this.loading = false;
+          this.disableSorting = false;
         });
-    }
+    }, 100)
   },
   watch: {
     qs(nq) {
@@ -251,7 +257,5 @@ export default {
   display: none;
 }
 .corp-party-table th span {
-  
 }
-
 </style>
