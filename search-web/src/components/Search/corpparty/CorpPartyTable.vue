@@ -75,7 +75,6 @@ import dayjs from "dayjs";
 import { mapGetters } from "vuex";
 import { buildQueryString } from "@/util/index.ts";
 import isEmpty from "lodash-es/isEmpty";
-import debounce from "lodash-es/debounce";
 
 export default {
   props: {
@@ -202,14 +201,13 @@ export default {
         });
       }
     },
-    fetchData: debounce(function() {
+    fetchData() {
       if (!this.qs) {
         return;
       }
       this.loading = true;
       this.disableSorting = true;
       const { sortBy, sortDesc } = this.options;
-      console.log("Sory By", sortBy), console.log("Sort Desc", sortDesc);
       let queryString = this.qs;
       if (sortDesc && sortDesc.length > 0) {
         queryString += `&sort_type=${sortDesc[0] === true ? "dsc" : "asc"}`;
@@ -232,7 +230,7 @@ export default {
           this.loading = false;
           this.disableSorting = false;
         });
-    }, 100)
+    }
   },
   watch: {
     qs(nq) {
