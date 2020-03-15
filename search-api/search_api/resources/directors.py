@@ -7,6 +7,7 @@ from sqlalchemy import desc, func
 from functools import reduce
 from sqlalchemy.orm.exc import NoResultFound
 from flask import Blueprint
+
 from search_api.models import (
     Corporation,
     CorpOpState,
@@ -50,7 +51,7 @@ def corpparty_search():
     for row in results.items:
         result_fields = [
             'corp_party_id', 'first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt',
-            'corp_num', 'party_typ_cd']
+            'corp_num', 'corp_nme', 'party_typ_cd']
 
         result_dict = {key: getattr(row, key) for key in result_fields}
         result_dict['corp_party_id'] = int(result_dict['corp_party_id'])
@@ -60,6 +61,7 @@ def corpparty_search():
         corp_parties.append(result_dict)
 
     return jsonify({'results': corp_parties})
+
 
 @API.route('/person/search/export/')
 def corpparty_search_export():
@@ -130,6 +132,7 @@ def corpparty_search_export():
 
         return send_from_directory(export_dir, filename, as_attachment=True)
 
+
 @API.route('/person/<id>')
 def person(id):
     #try:
@@ -189,7 +192,6 @@ def person(id):
     # result_dict['full_desc'] = results[0][14]
 
     return jsonify(result_dict)
-
 
 
 @API.route('/person/officesheld/<corppartyid>')
