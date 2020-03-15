@@ -586,7 +586,7 @@ def _get_corpparty_search_results(args):
     else:
         field = _get_sort_field(sort_value)
 
-        if sort_type == 'desc':
+        if sort_type == 'dsc':
             results = results.order_by(field.desc())
         else:
             results = results.order_by(field)
