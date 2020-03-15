@@ -2,6 +2,7 @@
   <div>
     <v-data-table
       v-if="qs"
+      :calculate-widths="true"
       class="elevation-1 corp-party-table"
       :headers="headers"
       :items="results"
@@ -22,12 +23,14 @@
         >
           <td class="color-gray">{{ item["corp_party_id"] }}</td>
           <td>{{ item["last_nme"] }}</td>
-          <td>{{ item["middle_nme"] }}</td>
           <td>{{ item["first_nme"] }}</td>
+          <td>{{ item["middle_nme"] }}</td>
+          <td v-if="type === 'addr'">{{ item["addr"] }}</td>
+          <td>{{ item["party_typ_cd"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
           <td v-if="type === 'active'">{{ item["state_typ_cd"] }}</td>
-          <td v-if="type === 'addr'">{{ item["addr"] }}</td>
+          <td>{{ item["corp_nme"] }}</td>
           <td @click.prevent.stop="handleCorpClick(item['corp_num'])">
             <span class="anchor-text cursor-pointer">{{
               item["corp_num"]
@@ -146,8 +149,10 @@ export default {
             val === "last_nme" ||
             val === "middle_nme" ||
             val === "first_nme" ||
+            val === "party_typ_cd" ||
             val === "appointment_dt" ||
             val === "cessation_dt" ||
+            val === "corp_nme" ||
             val === "corp_num"
           ) {
             return true;
@@ -162,9 +167,11 @@ export default {
             val === "last_nme" ||
             val === "middle_nme" ||
             val === "first_nme" ||
+            val === "party_typ_cd" ||
             val === "appointment_dt" ||
             val === "cessation_dt" ||
             val === "corp_num" ||
+            val === "corp_nme" ||
             val === "addr"
           ) {
             return true;
@@ -179,9 +186,11 @@ export default {
             val === "last_nme" ||
             val === "middle_nme" ||
             val === "first_nme" ||
+            val === "party_typ_cd" ||
             val === "appointment_dt" ||
             val === "cessation_dt" ||
             val === "corp_num" ||
+            val === "corp_nme" ||
             val === "state_typ_cd"
           ) {
             return true;
@@ -241,4 +250,8 @@ export default {
 .corp-party-table .v-data-footer__icons-before {
   display: none;
 }
+.corp-party-table th span {
+  
+}
+
 </style>
