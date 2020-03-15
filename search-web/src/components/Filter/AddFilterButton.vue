@@ -1,10 +1,8 @@
 <template>
-
-    <v-btn class="add-filter-button sbc-button" height="50">
-      <v-icon left>add</v-icon>
-      {{ title }}
-    </v-btn>
-
+  <v-btn class="add-filter-button sbc-button" height="50">
+    <v-icon left>add</v-icon>
+    {{ title }}
+  </v-btn>
 </template>
 
 <script>

@@ -13,7 +13,6 @@
         @click.prevent="handleSearch"
         >Search</v-btn
       >
-
     </v-form>
   </div>
 </template>
