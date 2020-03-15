@@ -10,7 +10,6 @@
       :server-items-length="totalItems"
       :loading="loading"
       @update:page="updatePage"
-      @update:sort-by="fetchData"
       @update:sort-desc="fetchData"
       :footer-props="{
         'items-per-page-options': [20]
@@ -203,12 +202,13 @@ export default {
       if (!this.qs) {
         return;
       }
-
       this.loading = true;
       const { sortBy, sortDesc } = this.options;
+      console.log("Sory By", sortBy),
+      console.log("Sort Desc", sortDesc)
       let queryString = this.qs;
       if (sortDesc && sortDesc.length > 0) {
-        queryString += `&sort_type=${sortDesc[0] === true ? "desc" : "asc"}`;
+        queryString += `&sort_type=${sortDesc[0] === true ? "dsc" : "asc"}`;
       }
       if (sortBy && sortBy.length > 0) {
         queryString += `&sort_value=${sortBy[0]}`;
