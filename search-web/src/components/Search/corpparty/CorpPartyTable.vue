@@ -10,9 +10,8 @@
       :server-items-length="totalItems"
       :loading="loading"
       :disable-sort="disableSorting"
-      @update:page="updatePage"
-      @update:sort-by="fetchData"
-      @update:sort-desc="fetchData"
+      @update:sort-by="updateSort"
+      @update:sort-desc="updateSort"
       :footer-props="{
         'items-per-page-options': [20]
       }"
@@ -135,7 +134,12 @@ export default {
         this.$emit("pageUpdate", (parseInt(this.page) - 1).toString());
       }
     },
-    updatePage() {},
+    updateSort() {
+      this.$emit("sortUpdate", {
+        sortBy: this.options.sortBy,
+        sortDesc: this.options.sortDesc
+      });
+    },
     handleCorpClick(id) {
       window.open(`#/corporation/${id}`);
     },
@@ -210,14 +214,7 @@ export default {
       }
       this.loading = true;
       this.disableSorting = true;
-      const { sortBy, sortDesc } = this.options;
       let queryString = this.qs;
-      if (sortDesc && sortDesc.length > 0) {
-        queryString += `&sort_type=${sortDesc[0] === true ? "dsc" : "asc"}`;
-      }
-      if (sortBy && sortBy.length > 0) {
-        queryString += `&sort_value=${sortBy[0]}`;
-      }
 
       queryString += `&page=${this.page}`;
       corpPartySearch(queryString)
