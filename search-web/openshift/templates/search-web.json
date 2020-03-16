@@ -325,7 +325,7 @@
       "spec": {
         "to": {
           "kind": "Service",
-          "name": "${NAME}-image",
+          "name": "${NAME}-${TAG_NAME}",
           "weight": 100
         },
         "port": {
