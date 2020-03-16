@@ -3,7 +3,7 @@
   "apiVersion": "v1",
   "metadata": {
     "annotations": {
-      "description": "Build template for the sbc-search frontend.",
+      "description": "Build template for the sbc-search web.",
       "tags": "Vue.js"
     },
     "name": "${NAME}-build"
@@ -45,7 +45,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-nginx-image-runtime"
+        "name": "${NAME}-image"
       },
       "spec": {
         "tags": [
@@ -82,7 +82,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "frontend-s2i-image:${SOURCE_IMAGE_TAG}"
+              "name": "${NAME}-s2i-image:${SOURCE_IMAGE_TAG}"
             },
             "env": [
               {
@@ -151,7 +151,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "nginx-image-runtime:latest"
+              "name": "${SOURCE_IMAGE_NAME}-runtime:${SOURCE_IMAGE_TAG}"
             },
             "incremental": true
           },
@@ -193,9 +193,9 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-image",
+        "name": "${NAME}-${TAG_NAME}",
         "labels": {
-          "app": "${NAME}"
+          "app": "${NAME}-${TAG_NAME}"
         }
       },
       "spec": {
@@ -300,7 +300,7 @@
           }
         ],
         "selector": {
-          "app": "${NAME}-frontend"
+          "app": "${NAME}-${TAG_NAME}"
         },
         "sessionAffinity": "None",
         "type": "ClusterIP"
@@ -336,7 +336,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the objects defined in this template.  You should keep this as default unless your know what you're doing.",
       "required": true,
-      "value": "search-frontend"
+      "value": "search-web"
     },
     {
       "name": "TAG_NAME",
@@ -371,7 +371,7 @@
       "displayName": "Source Context Directory",
       "description": "The source context directory.",
       "required": true,
-      "value": "frontend"
+      "value": "search-web"
     },
     {
       "name": "SOURCE_IMAGE_KIND",
@@ -392,7 +392,7 @@
       "displayName": "Source Image Name",
       "required": true,
       "description": "The name of the source image.",
-      "value": "search-frontend"
+      "value": "search-web"
     },
     {
       "name": "SOURCE_IMAGE_TAG",
@@ -434,7 +434,7 @@
       "displayName": "Resources Memory Limit",
       "description": "The resources Memory limit (in Mi, Gi, etc) for this build.",
       "required": true,
-      "value": "2Gi"
+      "value": "4Gi"
     },
     {
       "name": "REPLICAS",

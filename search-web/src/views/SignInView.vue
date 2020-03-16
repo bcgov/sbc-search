@@ -35,9 +35,7 @@ export default {
       });
       window.location.reload(true);
     },
-    syncUserProfile() {
-      console.log("Sync");
-    }
+    syncUserProfile() {}
   }
 };
 </script>

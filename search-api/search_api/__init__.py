@@ -1,15 +1,12 @@
-import datetime
+from dotenv import load_dotenv
 import os
 
 from flask_cors import CORS
 
 from search_api import config
-from flask_migrate import Migrate
-from dotenv import load_dotenv
-
-from search_api.resources import DIRECTORS_API, BUSINESSES_API
-
+from search_api.auth import jwt
 from search_api.models import app
+from search_api.resources import DIRECTORS_API, BUSINESSES_API
 
 load_dotenv(verbose=True)
 
@@ -32,13 +29,13 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
 
     app.register_blueprint(DIRECTORS_API)
     app.register_blueprint(BUSINESSES_API)
+    setup_jwt_manager(app, jwt)
 
     @app.route("/ops/readyz")
     @app.route("/ops/healthz")
     def check():
         return {}, 200
 
-    # setup_jwt_manager(app, jwt)
 
     # @app.after_request
     # def add_version(response):  # pylint: disable=unused-variable
@@ -49,3 +46,12 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
     # register_shellcontext(app)
 
     return app
+
+
+def setup_jwt_manager(app, jwt_manager):
+    """Use flask app to configure the JWTManager to work for a particular Realm."""
+    def get_roles(a_dict):
+        return a_dict['realm_access']['roles']  # pragma: no cover
+    app.config['JWT_ROLE_CALLBACK'] = get_roles
+
+    jwt_manager.init_app(app)
