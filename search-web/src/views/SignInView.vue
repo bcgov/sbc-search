@@ -30,9 +30,12 @@ export default {
   },
   methods: {
     updateHeader() {
+      this.$router.push({
+        name: "Home"
+      });
+      window.location.reload(true);
     },
-    syncUserProfile() {
-    }
+    syncUserProfile() {}
   }
 };
 </script>
