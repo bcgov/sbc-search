@@ -140,6 +140,9 @@ export default {
       window.open(`#/corporation/${id}`);
     },
     handleCellClick(id) {
+      if (window.getSelection().toString()) {
+        return;
+      }
       window.open(`#/corpparty/${id}`);
     },
     filterHeaders(headers, type) {
