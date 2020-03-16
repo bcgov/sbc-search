@@ -9,7 +9,7 @@
           <thead>
             <tr>
               <th>Office Held</th>
-              <th>Filing #</th>
+              <th>Address</th>
               <th>Year</th>
             </tr>
           </thead>
@@ -51,7 +51,7 @@
           <thead>
             <tr>
               <th>Office Held</th>
-              <th>Filing #</th>
+              <th>Address</th>
               <th>Year</th>
             </tr>
           </thead>
@@ -92,7 +92,7 @@
           <thead>
             <tr>
               <th>Office Held</th>
-              <th>Filing #</th>
+              <th>Address</th>
               <th>Year</th>
             </tr>
           </thead>

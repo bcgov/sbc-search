@@ -2,16 +2,29 @@
   <div>
     <v-container>
       <v-row>
-        <v-col
-          cols="12"
-          class="d-flex justify-space-between align-center mb-12"
-        >
+        <v-col cols="12" class="d-flex justify-space-between align-top">
           <h2 class="display-1">
-            Details for Filing #{{ detail.corp_party_id }}
+            <span class="font-weight-bold"
+              >{{ detail.first_nme }} {{ detail.middle_nme }}
+              {{ detail.last_nme }}</span
+            >
+            <span v-if="detail.corp_nme">
+              at
+              <span
+                class="font-weight-bold"
+                @click="handleCorpClick(detail.corp_num)"
+                >{{ detail.corp_nme }}
+              </span></span
+            >
           </h2>
           <PrintButton></PrintButton>
         </v-col>
       </v-row>
+
+      <h2 class="pa-0 ma-0 mb-12 title font-weight-regular color-gray">
+        Filing #{{ detail.corp_party_id }}
+      </h2>
+
       <v-row justify="space-between">
         <v-col cols="6">
           <ul class="pa-0 ma-0">
@@ -114,6 +127,9 @@ export default {
   methods: {
     getText(data) {
       return getTextFromValues(CORPPARTY_HEADERS, data);
+    },
+    handleCorpClick(id) {
+      window.open(`#/corporation/${id}`);
     }
   }
 };
