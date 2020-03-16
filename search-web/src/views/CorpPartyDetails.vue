@@ -27,6 +27,7 @@ export default {
       officesheld: {}
     };
   },
+
   mounted() {
     const corp_party_id = this.$route.params["id"];
     if (corp_party_id) {
