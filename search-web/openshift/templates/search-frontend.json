@@ -3,7 +3,7 @@
   "apiVersion": "v1",
   "metadata": {
     "annotations": {
-      "description": "Build template for the sbc-search frontend.",
+      "description": "Build template for the sbc-search web.",
       "tags": "Vue.js"
     },
     "name": "${NAME}-build"
@@ -82,7 +82,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "frontend-s2i-image:${SOURCE_IMAGE_TAG}"
+              "name": "web-s2i-image:${SOURCE_IMAGE_TAG}"
             },
             "env": [
               {
@@ -160,7 +160,7 @@
         "output": {
           "to": {
             "kind": "${SOURCE_IMAGE_KIND}",
-            "name": "${SOURCE_IMAGE_NAME}-image:${OUTPUT_IMAGE_TAG}"
+            "name": "${SOURCE_IMAGE_NAME}-web-image:${OUTPUT_IMAGE_TAG}"
           }
         },
         "resources": {
@@ -223,7 +223,7 @@
               "containerNames": ["${NAME}-image"],
               "from": {
                 "kind": "ImageStreamTag",
-                "name": "${NAME}-image:${OUTPUT_IMAGE_TAG}"
+                "name": "${NAME}-web-image:${OUTPUT_IMAGE_TAG}"
               }
             }
           },
@@ -300,7 +300,7 @@
           }
         ],
         "selector": {
-          "app": "${NAME}-frontend"
+          "app": "${NAME}-web"
         },
         "sessionAffinity": "None",
         "type": "ClusterIP"
@@ -336,7 +336,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the objects defined in this template.  You should keep this as default unless your know what you're doing.",
       "required": true,
-      "value": "search-frontend"
+      "value": "search-web"
     },
     {
       "name": "TAG_NAME",
@@ -371,7 +371,7 @@
       "displayName": "Source Context Directory",
       "description": "The source context directory.",
       "required": true,
-      "value": "frontend"
+      "value": "web"
     },
     {
       "name": "SOURCE_IMAGE_KIND",
@@ -392,7 +392,7 @@
       "displayName": "Source Image Name",
       "required": true,
       "description": "The name of the source image.",
-      "value": "search-frontend"
+      "value": "search-web"
     },
     {
       "name": "SOURCE_IMAGE_TAG",
