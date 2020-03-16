@@ -101,8 +101,8 @@ export default {
       qs: null,
       additional_cols: "none",
       page: "1",
-      sort_value: null,
-      sort_type: null
+      sort_value: "last_nme",
+      sort_type: "dsc"
     };
   },
   mounted() {
@@ -123,11 +123,16 @@ export default {
       this.handleSearch();
     },
     handleSortUpdate(options) {
-      this.sort_value = options.sortBy[0];
-      if (options.sortDesc.length > 0) {
-        this.sort_type = options.sortDesc[0] ? "dsc" : "asc";
+      if (options.sortBy.length === 0 && options.sortDesc.length === 0) {
+        this.sort_value = "last_nme";
+        this.sort_type = "dsc";
       } else {
-        this.sort_type = null;
+        this.sort_value = options.sortBy[0];
+        if (options.sortDesc.length > 0) {
+          this.sort_type = options.sortDesc[0] ? "dsc" : "asc";
+        } else {
+          this.sort_type = "dsc";
+        }
       }
       this.handleSearch();
     },
@@ -173,7 +178,6 @@ export default {
         `&mode=${this.logic}&additional_cols=${
           this.additional_cols
         }&page=${page || this.page}`;
-
       if (this.sort_value && this.sort_type) {
         queryString += `&sort_type=${this.sort_type}&sort_value=${this.sort_value}`;
       }
