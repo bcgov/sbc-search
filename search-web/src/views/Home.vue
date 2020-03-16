@@ -149,7 +149,10 @@ export default {
       });
     },
     handleNewSearch() {
+      this.sort_value = "last_nme";
+      this.sort_type = "dsc";
       const queryString = this.generateQueryString(1);
+
       this.$router.push({
         query: qs.parse(queryString)
       });

@@ -12,6 +12,8 @@
       :disable-sort="disableSorting"
       @update:sort-by="updateSort"
       @update:sort-desc="updateSort"
+      :sort-by="sortBy"
+      :sort-desc="sortDesc"
       :footer-props="{
         'items-per-page-options': [20]
       }"
@@ -74,7 +76,7 @@ import dayjs from "dayjs";
 import { mapGetters } from "vuex";
 import { buildQueryString } from "@/util/index.ts";
 import isEmpty from "lodash-es/isEmpty";
-
+const qsl = require("qs");
 export default {
   props: {
     qs: {
@@ -122,7 +124,9 @@ export default {
       options: {},
       loading: true,
       totalItems: 0,
-      disableSorting: false
+      disableSorting: false,
+      sortBy: [],
+      sortDesc: []
     };
   },
   methods: {
@@ -215,8 +219,16 @@ export default {
       this.loading = true;
       this.disableSorting = true;
       let queryString = this.qs;
+      const { sort_type, sort_value } = qsl.parse(queryString);
+      if (sort_type && sort_value) {
+        this.sortBy = [sort_value];
+        if (sort_type === "asc") {
+          this.sortDesc = [false];
+        } else if (sort_type === "dsc") {
+          this.sortDesc = [true];
+        }
+      }
 
-      queryString += `&page=${this.page}`;
       corpPartySearch(queryString)
         .then(result => {
           this.items = result.data.results;
