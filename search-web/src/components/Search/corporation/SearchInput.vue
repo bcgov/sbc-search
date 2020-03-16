@@ -5,7 +5,7 @@
       label="Search Term"
       :height="height"
       v-model="searchQuery"
-      placeholder="eg. John Smith"
+      placeholder="Corporation Name or Number"
       filled
     />
   </div>
