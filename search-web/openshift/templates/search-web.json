@@ -163,7 +163,8 @@
             },
             "incremental": true
           },
-          "type": "Source"
+          "type": "Source",
+          "contextDir": "${SOURCE_CONTEXT_DIR}"
         },
         "output": {
           "to": {
