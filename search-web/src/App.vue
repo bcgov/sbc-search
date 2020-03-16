@@ -1,8 +1,26 @@
 <template>
   <v-app>
-    <SbcLayout>
-      <router-view />
-    </SbcLayout>
+    <div class="main-wrapper">
+      <div class="content">
+        <div class="content-header">
+          <SbcHeader
+            idpHint="bcros"
+            redirect-on-login-success="/"
+            redirect-on-login-fail="/"
+          >
+            <template v-slot:login-button-text>
+              Log In
+            </template>
+          </SbcHeader>
+        </div>
+        <div class="content-body">
+          <router-view />
+        </div>
+      </div>
+      <div class="footer">
+        <SbcFooter></SbcFooter>
+      </div>
+    </div>
   </v-app>
 </template>
 
@@ -12,13 +30,27 @@ import "@bcgov/bc-sans/css/BCSans.css";
 import { mapGetters } from "vuex";
 import KeyCloakService from "sbc-common-components/src/services/keycloak.services";
 
-import SbcLayout from "sbc-common-components/src/components/SbcLayout.vue";
+import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
+import SbcFooter from "sbc-common-components/src/components/SbcFooter.vue";
 
 export default Vue.extend({
   components: {
-    SbcLayout
+    SbcHeader,
+    SbcFooter
   },
   async mounted() {
+    const testConfig = {
+      AUTH_URL: "https://dev.bcregistry.ca/cooperatives/auth/",
+      VUE_APP_PAY_ROOT_API: "https://pay-api-dev.pathfinder.gov.bc.ca/api/v1",
+      VUE_APP_AUTH_ROOT_API: "http://localhost:80/api/v1",
+      VUE_APP_LEGAL_ROOT_API:
+        "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1",
+      VUE_APP_STATUS_ROOT_API:
+        "https://status-api-dev.pathfinder.gov.bc.ca/api/v1",
+      VUE_APP_PATH_NEW_BUSINESS:
+        "https://business-create-dev.pathfinder.gov.bc.ca/businesses/"
+    };
+    sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(testConfig));
     await KeyCloakService.setKeycloakConfigUrl(`/config/kc/keycloak.json`);
   }
 });
@@ -54,5 +86,27 @@ export default Vue.extend({
 
 .color-gray {
   color: $COLOR_GREY;
+}
+
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #f1f3f6;
+}
+.content-body {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 2em 0;
+}
+html,
+body {
+  height: 100%;
+}
+.content {
+  flex: 1 0 auto;
+}
+.footer {
+  flex-shrink: 0;
 }
 </style>

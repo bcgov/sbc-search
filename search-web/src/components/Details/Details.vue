@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="detail-container">
     <v-container>
       <v-row>
         <v-col cols="12" class="d-flex justify-space-between align-top">
@@ -11,13 +11,13 @@
             <span v-if="detail.corp_nme">
               at
               <span
-                class="font-weight-bold"
+                class="font-weight-bold cursor-pointer"
                 @click="handleCorpClick(detail.corp_num)"
                 >{{ detail.corp_nme }}
               </span></span
             >
           </h2>
-          <PrintButton></PrintButton>
+          <PrintButton class="pl-5"></PrintButton>
         </v-col>
       </v-row>
 
@@ -129,7 +129,7 @@ export default {
       return getTextFromValues(CORPPARTY_HEADERS, data);
     },
     handleCorpClick(id) {
-      window.open(`#/corporation/${id}`);
+      window.open(`/corporation/${id}`);
     }
   }
 };

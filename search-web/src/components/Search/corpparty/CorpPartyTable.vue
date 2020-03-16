@@ -145,13 +145,13 @@ export default {
       });
     },
     handleCorpClick(id) {
-      window.open(`#/corporation/${id}`);
+      window.open(`/corporation/${id}`);
     },
     handleCellClick(id) {
       if (window.getSelection().toString()) {
         return;
       }
-      window.open(`#/corpparty/${id}`);
+      window.open(`/corpparty/${id}`);
     },
     filterHeaders(headers, type) {
       if (type === "none") {

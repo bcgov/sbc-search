@@ -21,7 +21,7 @@
                 </td>
                 <td>
                   <a
-                    :href="`#/corporation/${o['corp_party_id']}`"
+                    :href="`/corporation/${o['corp_party_id']}`"
                     target="blank"
                     >{{ o["corp_party_id"] }}</a
                   >
@@ -66,7 +66,7 @@
                 </td>
                 <td>
                   <a
-                    :href="`#/corporation/${o['corp_party_id']}`"
+                    :href="`/corporation/${o['corp_party_id']}`"
                     target="blank"
                     >{{ o["corp_party_id"] }}</a
                   >
@@ -104,7 +104,7 @@
                 </td>
                 <td>
                   <a
-                    :href="`#/corporation/${o['corp_party_id']}`"
+                    :href="`/corporation/${o['corp_party_id']}`"
                     target="blank"
                     >{{ o["corp_party_id"] }}</a
                   >

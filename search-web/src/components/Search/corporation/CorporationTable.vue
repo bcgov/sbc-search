@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     handleTableRowClick(item) {
-      window.open(`#/corporation/${item["corp_num"]}`);
+      window.open(`/corporation/${item["corp_num"]}`);
     }
   }
 };
