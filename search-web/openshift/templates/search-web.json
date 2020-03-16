@@ -82,7 +82,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "web-s2i-image:${SOURCE_IMAGE_TAG}"
+              "name": "${NAME}-s2i-image:${SOURCE_IMAGE_TAG}"
             },
             "env": [
               {
