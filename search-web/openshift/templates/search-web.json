@@ -224,10 +224,10 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": ["${NAME}-image"],
+              "containerNames": ["${NAME}-runtime"],
               "from": {
                 "kind": "ImageStreamTag",
-                "name": "${NAME}-image:${OUTPUT_IMAGE_TAG}"
+                "name": "${NAME}-runtime:${OUTPUT_IMAGE_TAG}"
               }
             }
           },
@@ -260,9 +260,9 @@
                     "value": "${VUE_APP_BACKEND_HOST}"
                   }
                 ],
-                "image": "${NAME}-image",
+                "image": "${NAME}-runtime",
                 "imagePullPolicy": "IfNotPresent",
-                "name": "${NAME}-image",
+                "name": "${NAME}-runtime",
                 "ports": [
                   {
                     "containerPort": 8080,
