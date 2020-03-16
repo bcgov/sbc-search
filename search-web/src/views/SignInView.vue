@@ -30,7 +30,10 @@ export default {
   },
   methods: {
     updateHeader() {
-      console.log("Update Header");
+      this.$router.push({
+        name: "Home"
+      });
+      window.location.reload(true);
     },
     syncUserProfile() {
       console.log("Sync");
