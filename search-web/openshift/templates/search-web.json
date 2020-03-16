@@ -151,7 +151,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "${NAME}-runtime:latest"
+              "name": "${SOURCE_IMAGE_NAME}-runtime:${SOURCE_IMAGE_TAG}"
             },
             "incremental": true
           },
