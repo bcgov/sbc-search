@@ -94,6 +94,10 @@
                 "value": "${VUE_APP_BACKEND_HOST}"
               },
               {
+                "name": "VUE_APP_FRONTEND_DOMAIN",
+                "value": "${VUE_APP_FRONTEND_DOMAIN}"
+              },
+              {
                 "name": "VUE_APP_AUTH_ROOT_API",
                 "value": "${VUE_APP_AUTH_ROOT_API}"
               }
@@ -254,10 +258,6 @@
                         "fieldPath": "metadata.namespace"
                       }
                     }
-                  },
-                  {
-                    "name": "VUE_APP_BACKEND_HOST",
-                    "value": "${VUE_APP_BACKEND_HOST}"
                   }
                 ],
                 "image": "${NAME}-runtime",
@@ -451,6 +451,13 @@
       "name": "VUE_APP_BACKEND_HOST",
       "displayName": "Vue Backend Host",
       "description": "The hostname of the sbc-search API",
+      "required": true,
+      "value": "http://localhost"
+    },
+    {
+      "name": "VUE_APP_FRONTEND_DOMAIN",
+      "displayName": "Vue Frontend Domain",
+      "description": "The domain of the sbc-web container",
       "required": true,
       "value": "http://localhost"
     },
