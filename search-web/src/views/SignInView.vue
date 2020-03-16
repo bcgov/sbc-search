@@ -30,10 +30,8 @@ export default {
   },
   methods: {
     updateHeader() {
-      console.log("Update Header");
     },
     syncUserProfile() {
-      console.log("Sync");
     }
   }
 };
