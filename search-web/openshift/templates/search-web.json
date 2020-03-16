@@ -45,7 +45,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-nginx-image-runtime"
+        "name": "${NAME}-image"
       },
       "spec": {
         "tags": [
@@ -160,7 +160,7 @@
         "output": {
           "to": {
             "kind": "${SOURCE_IMAGE_KIND}",
-            "name": "${SOURCE_IMAGE_NAME}-web-image:${OUTPUT_IMAGE_TAG}"
+            "name": "${SOURCE_IMAGE_NAME}-image:${OUTPUT_IMAGE_TAG}"
           }
         },
         "resources": {
@@ -223,7 +223,7 @@
               "containerNames": ["${NAME}-image"],
               "from": {
                 "kind": "ImageStreamTag",
-                "name": "${NAME}-web-image:${OUTPUT_IMAGE_TAG}"
+                "name": "${NAME}-image:${OUTPUT_IMAGE_TAG}"
               }
             }
           },
