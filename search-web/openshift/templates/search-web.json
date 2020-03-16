@@ -92,6 +92,10 @@
               {
                 "name": "VUE_APP_BACKEND_HOST",
                 "value": "${VUE_APP_BACKEND_HOST}"
+              },
+              {
+                "name": "VUE_APP_AUTH_ROOT_API",
+                "value": "${VUE_APP_AUTH_ROOT_API}"
               }
             ]
           }
@@ -123,7 +127,7 @@
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-image",
+        "name": "${NAME}-runtime",
         "labels": {
           "app": "${NAME}"
         }
@@ -151,7 +155,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "${SOURCE_IMAGE_NAME}-runtime:${SOURCE_IMAGE_TAG}"
+              "name": "${SOURCE_IMAGE_NAME}-image:${SOURCE_IMAGE_TAG}"
             },
             "incremental": true
           },
@@ -160,7 +164,7 @@
         "output": {
           "to": {
             "kind": "${SOURCE_IMAGE_KIND}",
-            "name": "${SOURCE_IMAGE_NAME}-image:${OUTPUT_IMAGE_TAG}"
+            "name": "${SOURCE_IMAGE_NAME}-runtime:${OUTPUT_IMAGE_TAG}"
           }
         },
         "resources": {
@@ -181,7 +185,7 @@
             "imageChange": {
               "from": {
                 "kind": "${SOURCE_IMAGE_KIND}",
-                "name": "${SOURCE_IMAGE_NAME}-builder:latest"
+                "name": "${SOURCE_IMAGE_NAME}-builder:${OUTPUT_IMAGE_TAG}"
               }
             },
             "type": "ImageChange"
@@ -449,6 +453,13 @@
       "description": "The hostname of the sbc-search API",
       "required": true,
       "value": "http://localhost"
+    },
+    {
+      "name": "VUE_APP_AUTH_ROOT_API",
+      "displayName": "Authentication Root API URL",
+      "description": "The root API URL of Pathfinder auth service",
+      "required": true,
+      "value": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1"
     }
   ]
 }
