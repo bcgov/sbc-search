@@ -16,3 +16,4 @@ flask-cors
 openpyxl==3.0.3
 python-dotenv
 gunicorn
+flask-jwt-oidc>=0.1.5
