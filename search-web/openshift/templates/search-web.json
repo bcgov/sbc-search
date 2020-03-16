@@ -151,7 +151,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "nginx-image-runtime:latest"
+              "name": "${NAME}-runtime:latest"
             },
             "incremental": true
           },
