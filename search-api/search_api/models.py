@@ -389,21 +389,15 @@ def _add_additional_cols_to_search_query(args, query):
 
 
 def _get_model_by_field(field_name):
-
-    # return CorpParty
-    # [cvo] for performance we only query this one above table for now.
-
     if field_name in ['first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt', 'corp_num',
-                      'corp_party_id']:  # CorpParty fields
+                      'corp_party_id', 'party_typ_cd']:  # CorpParty fields
         return eval('CorpParty')
-    # elif field_name in ['corp_num']: # Corporation fields
-    #     return eval('Corporation')
-    # elif field_name in ['corp_nme']: # CorpName fields
-    #     return eval('CorpName')
-    elif field_name in ['addr_line_1','addr_line_2','addr_line_3','postal_cd','city','province']: # Address fields
+    elif field_name in ['corp_num']:  # Corporation fields
+        return eval('Corporation')
+    elif field_name in ['corp_nme']:  # CorpName fields
+        return eval('CorpName')
+    elif field_name in ['addr_line_1', 'addr_line_2', 'addr_line_3', 'postal_cd', 'city', 'province']:  # Address fields
         return eval('Address')
-
-    #return None
 
 
 def _get_filter(field, operator, value):
@@ -534,10 +528,10 @@ def _get_corpparty_search_results(args):
     results = (CorpParty.query
             # .filter(CorpParty.end_event_id == None)
             # .filter(CorpName.end_event_id == None)
-            # .join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
+            .join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
             # .join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
             # .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
-            # .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
+            .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
             # .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
             .add_columns(
                 CorpParty.corp_party_id,
@@ -549,7 +543,7 @@ def _get_corpparty_search_results(args):
                 CorpParty.corp_num,
                 CorpParty.party_typ_cd,
                 # Corporation.corp_num,
-                # CorpName.corp_nme,
+                CorpName.corp_nme,
                 # Address.addr_line_1,
                 # Address.addr_line_2,
                 # Address.addr_line_3,
@@ -592,8 +586,8 @@ def _get_corpparty_search_results(args):
     else:
         field = _get_sort_field(sort_value)
 
-        if sort_type == 'desc':
-            results = results.order_by(desc(field))
+        if sort_type == 'dsc':
+            results = results.order_by(field.desc())
         else:
             results = results.order_by(field)
 

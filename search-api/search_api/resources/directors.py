@@ -53,7 +53,7 @@ def corpparty_search():
     for row in results.items:
         result_fields = [
             'corp_party_id', 'first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt',
-            'corp_num', 'party_typ_cd']
+            'corp_num', 'corp_nme', 'party_typ_cd']
 
         result_dict = {key: getattr(row, key) for key in result_fields}
         result_dict['corp_party_id'] = int(result_dict['corp_party_id'])

@@ -51,4 +51,8 @@ export default Vue.extend({
   text-decoration: underline;
   color: #2076d2;
 }
+
+.color-gray {
+  color: $COLOR_GREY;
+}
 </style>

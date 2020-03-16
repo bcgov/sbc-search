@@ -5,7 +5,7 @@
       label="Search Term"
       :height="height"
       v-model="searchQuery"
-      placeholder="eg. John Smith"
+      placeholder="Corporation Name or Number"
       filled
     />
   </div>
@@ -31,7 +31,6 @@ export default {
     };
   },
   mounted() {
-    this.$root.$on("clearCorpSearchInput", () => this.clear());
     this.$root.$on("setCorpSearchInput", r => (this.searchQuery = r));
   },
   methods: {

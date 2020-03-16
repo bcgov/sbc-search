@@ -50,6 +50,7 @@
       <CorpPartyTable
         :page="page"
         @pageUpdate="handlePageUpdate"
+        @sortUpdate="handleSortUpdate"
         :qs="qs"
         :type="additional_cols"
       ></CorpPartyTable>
@@ -99,7 +100,9 @@ export default {
       logic: "ALL",
       qs: null,
       additional_cols: "none",
-      page: "1"
+      page: "1",
+      sort_value: "last_nme",
+      sort_type: "dsc"
     };
   },
   mounted() {
@@ -117,6 +120,20 @@ export default {
     },
     handlePageUpdate(page) {
       this.page = page;
+      this.handleSearch();
+    },
+    handleSortUpdate(options) {
+      if (options.sortBy.length === 0 && options.sortDesc.length === 0) {
+        this.sort_value = "last_nme";
+        this.sort_type = "dsc";
+      } else {
+        this.sort_value = options.sortBy[0];
+        if (options.sortDesc.length > 0) {
+          this.sort_type = options.sortDesc[0] ? "dsc" : "asc";
+        } else {
+          this.sort_type = "dsc";
+        }
+      }
       this.handleSearch();
     },
     handleColumnClick(type) {
@@ -137,35 +154,42 @@ export default {
       });
     },
     handleNewSearch() {
+      this.sort_value = "last_nme";
+      this.sort_type = "dsc";
       const queryString = this.generateQueryString(1);
+
       this.$router.push({
         query: qs.parse(queryString)
       });
-      this.renderTable();
     },
     handleSearch() {
       const queryString = this.generateQueryString();
       this.$router.push({
         query: qs.parse(queryString)
       });
-      this.renderTable();
     },
     renderTable() {
       const queryString = this.generateQueryString();
       this.qs = queryString;
     },
     generateQueryString(page) {
-      return (
+      let queryString =
         buildQueryString(this.filters) +
         `&mode=${this.logic}&additional_cols=${
           this.additional_cols
-        }&page=${page || this.page}`
-      );
+        }&page=${page || this.page}`;
+      if (this.sort_value && this.sort_type) {
+        queryString += `&sort_type=${this.sort_type}&sort_value=${this.sort_value}`;
+      }
+
+      return queryString;
     },
     init() {
       const mode = this.$route.query.mode;
       const additional_cols = this.$route.query.additional_cols;
       const page = this.$route.query.page;
+      const sort_value = this.$route.query.sort_value;
+      const sort_type = this.$route.query.sort_type;
 
       if (mode) {
         this.logic = mode;
@@ -179,6 +203,14 @@ export default {
         this.page = page;
       }
 
+      if (sort_value) {
+        this.sort_value = sort_value;
+      }
+
+      if (sort_type) {
+        this.sort_type = sort_type;
+      }
+
       if (isEmpty(this.$route.query)) {
         this.qs = null;
       } else {
@@ -186,7 +218,9 @@ export default {
           this.$route.query,
           "mode",
           "additional_cols",
-          "page"
+          "page",
+          "sort_type",
+          "sort_value"
         );
 
         if (typeof queryFilters.field === "string") {

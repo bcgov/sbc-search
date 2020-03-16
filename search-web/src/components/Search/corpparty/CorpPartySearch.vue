@@ -16,17 +16,18 @@
       :uid="uid"
       property="operator"
     ></SearchSelect>
-    <SearchInput
-      :uid="uid"
-      :query="initQuery"
-      class="d-inline-block"
-    ></SearchInput>
-    <v-btn v-if="remove" class="ml-5" height="56" outlined @click="handleRemove"
-      >Remove</v-btn
+    <SearchInput :uid="uid" :query="initQuery" class="d-inline-block">
+    </SearchInput>
+    <v-btn
+      tabindex="-1"
+      v-if="remove"
+      class="ml-5"
+      height="56"
+      outlined
+      @click="handleRemove"
     >
-    <v-btn v-if="clear" class="ml-5" height="56" outlined @click="handleClear"
-      >Clear</v-btn
-    >
+      Remove
+    </v-btn>
   </div>
 </template>
 
@@ -91,12 +92,6 @@ export default {
   methods: {
     handleRemove() {
       this.$store.commit("corpParty/filters/removeFilter", this.uid);
-    },
-    handleClear() {
-      this.$store.commit("corpParty/filters/setSearchValue", {
-        uid: this.uid,
-        value: ""
-      });
     }
   },
   watch: {

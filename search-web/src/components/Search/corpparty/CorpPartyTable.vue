@@ -2,15 +2,18 @@
   <div>
     <v-data-table
       v-if="qs"
+      :calculate-widths="true"
       class="elevation-1 corp-party-table"
       :headers="headers"
       :items="results"
       :options.sync="options"
       :server-items-length="totalItems"
       :loading="loading"
-      @update:page="updatePage"
-      @update:sort-by="fetchData"
-      @update:sort-desc="fetchData"
+      :disable-sort="disableSorting"
+      @update:sort-by="updateSort"
+      @update:sort-desc="updateSort"
+      :sort-by="sortBy"
+      :sort-desc="sortDesc"
       :footer-props="{
         'items-per-page-options': [20]
       }"
@@ -22,12 +25,14 @@
         >
           <td class="color-gray">{{ item["corp_party_id"] }}</td>
           <td>{{ item["last_nme"] }}</td>
-          <td>{{ item["middle_nme"] }}</td>
           <td>{{ item["first_nme"] }}</td>
+          <td>{{ item["middle_nme"] }}</td>
+          <td v-if="type === 'addr'">{{ item["addr"] }}</td>
+          <td>{{ item["party_typ_cd"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
           <td v-if="type === 'active'">{{ item["state_typ_cd"] }}</td>
-          <td v-if="type === 'addr'">{{ item["addr"] }}</td>
+          <td>{{ item["corp_nme"] }}</td>
           <td @click.prevent.stop="handleCorpClick(item['corp_num'])">
             <span class="anchor-text cursor-pointer">{{
               item["corp_num"]
@@ -71,7 +76,7 @@ import dayjs from "dayjs";
 import { mapGetters } from "vuex";
 import { buildQueryString } from "@/util/index.ts";
 import isEmpty from "lodash-es/isEmpty";
-
+const qsl = require("qs");
 export default {
   props: {
     qs: {
@@ -118,7 +123,10 @@ export default {
       items: [],
       options: {},
       loading: true,
-      totalItems: 0
+      totalItems: 0,
+      disableSorting: false,
+      sortBy: [],
+      sortDesc: []
     };
   },
   methods: {
@@ -130,11 +138,19 @@ export default {
         this.$emit("pageUpdate", (parseInt(this.page) - 1).toString());
       }
     },
-    updatePage() {},
+    updateSort() {
+      this.$emit("sortUpdate", {
+        sortBy: this.options.sortBy,
+        sortDesc: this.options.sortDesc
+      });
+    },
     handleCorpClick(id) {
       window.open(`#/corporation/${id}`);
     },
     handleCellClick(id) {
+      if (window.getSelection().toString()) {
+        return;
+      }
       window.open(`#/corpparty/${id}`);
     },
     filterHeaders(headers, type) {
@@ -146,8 +162,10 @@ export default {
             val === "last_nme" ||
             val === "middle_nme" ||
             val === "first_nme" ||
+            val === "party_typ_cd" ||
             val === "appointment_dt" ||
             val === "cessation_dt" ||
+            val === "corp_nme" ||
             val === "corp_num"
           ) {
             return true;
@@ -162,9 +180,11 @@ export default {
             val === "last_nme" ||
             val === "middle_nme" ||
             val === "first_nme" ||
+            val === "party_typ_cd" ||
             val === "appointment_dt" ||
             val === "cessation_dt" ||
             val === "corp_num" ||
+            val === "corp_nme" ||
             val === "addr"
           ) {
             return true;
@@ -179,9 +199,11 @@ export default {
             val === "last_nme" ||
             val === "middle_nme" ||
             val === "first_nme" ||
+            val === "party_typ_cd" ||
             val === "appointment_dt" ||
             val === "cessation_dt" ||
             val === "corp_num" ||
+            val === "corp_nme" ||
             val === "state_typ_cd"
           ) {
             return true;
@@ -194,28 +216,31 @@ export default {
       if (!this.qs) {
         return;
       }
-
       this.loading = true;
-      const { sortBy, sortDesc } = this.options;
+      this.disableSorting = true;
       let queryString = this.qs;
-      if (sortDesc && sortDesc.length > 0) {
-        queryString += `&sort_type=${sortDesc[0] === true ? "desc" : "asc"}`;
-      }
-      if (sortBy && sortBy.length > 0) {
-        queryString += `&sort_value=${sortBy[0]}`;
+      const { sort_type, sort_value } = qsl.parse(queryString);
+      if (sort_type && sort_value) {
+        this.sortBy = [sort_value];
+        if (sort_type === "asc") {
+          this.sortDesc = [false];
+        } else if (sort_type === "dsc") {
+          this.sortDesc = [true];
+        }
       }
 
-      queryString += `&page=${this.page}`;
       corpPartySearch(queryString)
         .then(result => {
           this.items = result.data.results;
           this.totalItems = this.items.length;
           this.loading = false;
+          this.disableSorting = false;
         })
         .catch(e => {
           this.items = [];
           this.totalItems = 0;
           this.loading = false;
+          this.disableSorting = false;
         });
     }
   },
@@ -240,5 +265,7 @@ export default {
 .corp-party-table .v-data-footer__icons-after,
 .corp-party-table .v-data-footer__icons-before {
   display: none;
+}
+.corp-party-table th span {
 }
 </style>
