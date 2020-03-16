@@ -193,9 +193,9 @@
       "kind": "DeploymentConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-image",
+        "name": "${NAME}-${TAG_NAME}",
         "labels": {
-          "app": "${NAME}"
+          "app": "${NAME}-${TAG_NAME}"
         }
       },
       "spec": {
@@ -300,7 +300,7 @@
           }
         ],
         "selector": {
-          "app": "${NAME}-web"
+          "app": "${NAME}-${TAG_NAME}"
         },
         "sessionAffinity": "None",
         "type": "ClusterIP"
