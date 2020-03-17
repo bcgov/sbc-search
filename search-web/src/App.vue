@@ -32,6 +32,7 @@ import KeyCloakService from "sbc-common-components/src/services/keycloak.service
 
 import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
 import SbcFooter from "sbc-common-components/src/components/SbcFooter.vue";
+import ApiService from "@/api/ApiService.js";
 
 export default Vue.extend({
   components: {
@@ -51,6 +52,12 @@ export default Vue.extend({
         "https://business-create-dev.pathfinder.gov.bc.ca/businesses/"
     };
     sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(testConfig));
+
+    if (sessionStorage.getItem("KEYCLOAK_TOKEN")) {
+      ApiService.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${sessionStorage.getItem("KEYCLOAK_TOKEN")}`;
+    }
     await KeyCloakService.setKeycloakConfigUrl(`/config/kc/keycloak.json`);
   }
 });
