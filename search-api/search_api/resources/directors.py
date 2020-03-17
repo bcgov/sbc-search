@@ -36,7 +36,7 @@ def hello():
 
 
 @API.route('/person/search/')
-@jwt.requires_auth
+# @jwt.requires_auth
 def corpparty_search():
     args = request.args
     results = _get_corpparty_search_results(args)
@@ -66,7 +66,7 @@ def corpparty_search():
 
 
 @API.route('/person/search/export/')
-@jwt.requires_auth
+# @jwt.requires_auth
 def corpparty_search_export():
 
     # Query string arguments
@@ -137,7 +137,7 @@ def corpparty_search_export():
 
 
 @API.route('/person/<id>')
-@jwt.requires_auth
+# @jwt.requires_auth
 def person(id):
     #try:
 
@@ -199,7 +199,7 @@ def person(id):
 
 
 @API.route('/person/officesheld/<corppartyid>')
-@jwt.requires_auth
+# @jwt.requires_auth
 def officesheld(corppartyid):
     results = (OfficerType.query
             .join(OfficesHeld, OfficerType.officer_typ_cd==OfficesHeld.officer_typ_cd)

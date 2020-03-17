@@ -1,13 +1,12 @@
-from functools import reduce
+from http import HTTPStatus
 from tempfile import NamedTemporaryFile
 
-from flask import Flask, request, jsonify, send_from_directory, abort
+from flask import request, jsonify, send_from_directory
 from flask import Blueprint
 from openpyxl import Workbook
-from sqlalchemy import desc, func
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import desc
 
-from search_api.auth import jwt
+from search_api.auth import jwt, authorized
 from search_api.models import (
     Corporation,
     CorpOpState,
@@ -30,8 +29,13 @@ API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 
 @API.route('/corporation/search/')
-@jwt.requires_auth
-def corporation_search():
+# @jwt.requires_auth
+def corporation_search(identifier):
+    # TODO SY - check roles
+    # check authorization
+    # if not authorized(identifier, jwt, action=['add_comment']):
+    #     return jsonify({'message': ''}), HTTPStatus.UNAUTHORIZED
+
     args = request.args
     results = _get_corporation_search_results(args)
 
@@ -57,7 +61,7 @@ def corporation_search():
 
 
 @API.route('/corporation/search/export/')
-@jwt.requires_auth
+# @jwt.requires_auth
 def corporation_search_export():
 
     # Query string arguments
@@ -111,7 +115,7 @@ def corporation_search_export():
 
 
 @API.route('/corporation/<id>')
-@jwt.requires_auth
+# @jwt.requires_auth
 def corporation(id):
 
     # TODO: move queries to model class.
