@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "serve": "yarn && vue-cli-service serve --host 0.0.0.0",
-        "build": "npm i && vue-cli-service build && cp -r nginx-default-cfg/ dist/",
+        "build": "npm i && vue-cli-service build && cp nginx.conf dist/",
         "test:unit": "vue-cli-service test:unit",
         "test:e2e": "vue-cli-service test:e2e",
         "lint": "vue-cli-service lint",
