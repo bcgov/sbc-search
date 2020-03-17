@@ -87,7 +87,7 @@
             "env": [
               {
                 "name": "OUTPUT_DIR",
-                "value": "dist"
+                "value": "."
               },
               {
                 "name": "VUE_APP_BACKEND_HOST",
@@ -148,12 +148,13 @@
               "paths": [
                 {
                   "destinationDir": ".",
-                  "sourcePath": "/opt/app-root/output/."
+                  "sourcePath": "/opt/app-root/output/dist/."
                 }
               ]
             }
           ],
-          "type": "Image"
+          "type": "Image",
+          "contextDir": "${SOURCE_CONTEXT_DIR}"
         },
         "strategy": {
           "sourceStrategy": {
