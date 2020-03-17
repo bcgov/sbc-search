@@ -34,6 +34,7 @@
               "containerNames": ["${NAME}-${TAG_NAME}"],
               "from": {
                 "kind": "ImageStreamTag",
+                "namespace": "${IMAGE_NAMESPACE}",
                 "name": "${NAME}:${OUTPUT_IMAGE_TAG}"
               }
             }
@@ -59,7 +60,7 @@
             "containers": [
               {
                 "name": "${NAME}-${TAG_NAME}",
-                "image": "${TAG_NAME}/${NAME}:${OUTPUT_IMAGE_TAG}",
+                "image": "docker-registry.default.svc:5000/${IMAGE_NAMESPACE}/${NAME}:${OUTPUT_IMAGE_TAG}",
                 "env": [
                   {
                     "name": "DB_CONNECTION_URL",
@@ -175,6 +176,13 @@
       "description": "The TAG name for this environment, e.g., dev, test, prod",
       "required": true,
       "value": "dev"
+    },
+    {
+      "name": "IMAGE_NAMESPACE",
+      "displayName": "Image Namespace",
+      "required": true,
+      "description": "The namespace of the OpenShift project containing the imagestream for the application.",
+      "value": "1rdehl-tools"
     },
     {
       "name": "OUTPUT_IMAGE_TAG",

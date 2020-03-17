@@ -43,6 +43,7 @@
               "containerNames": ["${NAME}-runtime"],
               "from": {
                 "kind": "ImageStreamTag",
+                "namespace": "${IMAGE_NAMESPACE}",
                 "name": "${NAME}-runtime:${OUTPUT_IMAGE_TAG}"
               }
             }
@@ -61,24 +62,11 @@
           "spec": {
             "containers": [
               {
-                "env": [
-                  {
-                    "name": "KUBERNETES_NAMESPACE",
-                    "valueFrom": {
-                      "fieldRef": {
-                        "apiVersion": "v1",
-                        "fieldPath": "metadata.namespace"
-                      }
-                    }
-                  }
-                ],
-                "image": "${NAME}-runtime",
-                "imagePullPolicy": "IfNotPresent",
+                "image": "docker-registry.default.svc:5000/${IMAGE_NAMESPACE}/${NAME}-runtime:${OUTPUT_IMAGE_TAG}",
                 "name": "${NAME}-runtime",
                 "ports": [
                   {
                     "containerPort": 8080,
-                    "name": "http",
                     "protocol": "TCP"
                   }
                 ],
@@ -167,6 +155,13 @@
       "description": "The name assigned to all of the deployments in this project.",
       "required": true,
       "value": "sbc-search"
+    },
+    {
+      "name": "IMAGE_NAMESPACE",
+      "displayName": "Image Namespace",
+      "required": true,
+      "description": "The namespace of the OpenShift project containing the imagestream for the application.",
+      "value": "1rdehl-tools"
     },
     {
       "name": "SOURCE_IMAGE_TAG",
