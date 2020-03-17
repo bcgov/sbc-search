@@ -169,48 +169,6 @@
       "value": "sbc-search"
     },
     {
-      "name": "GIT_REPO_URL",
-      "displayName": "Git Repo URL",
-      "description": "The URL to your GIT repo, don't use the this default unless your just experimenting.",
-      "required": true,
-      "value": "https://github.com/countable-web/sbc-search.git"
-    },
-    {
-      "name": "GIT_REF",
-      "displayName": "Git Reference",
-      "description": "The git reference or branch.",
-      "required": true,
-      "value": "master"
-    },
-    {
-      "name": "SOURCE_CONTEXT_DIR",
-      "displayName": "Source Context Directory",
-      "description": "The source context directory.",
-      "required": true,
-      "value": "search-web"
-    },
-    {
-      "name": "SOURCE_IMAGE_KIND",
-      "displayName": "Source Image Kind",
-      "required": true,
-      "description": "The 'kind' (type) of the  source image; typically ImageStreamTag, or DockerImage.",
-      "value": "ImageStreamTag"
-    },
-    {
-      "name": "SOURCE_IMAGE_NAME_SPACE",
-      "displayName": "Source Image Name Space",
-      "required": true,
-      "description": "The name space of the source image.",
-      "value": "openshift"
-    },
-    {
-      "name": "SOURCE_IMAGE_NAME",
-      "displayName": "Source Image Name",
-      "required": true,
-      "description": "The name of the source image.",
-      "value": "search-web"
-    },
-    {
       "name": "SOURCE_IMAGE_TAG",
       "displayName": "Source Image Tag",
       "required": true,
