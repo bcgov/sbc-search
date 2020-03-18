@@ -211,27 +211,6 @@
       "description": "The number of replicas to run in this environment.",
       "required": true,
       "value": "1"
-    },
-    {
-      "name": "VUE_APP_BACKEND_HOST",
-      "displayName": "Vue Backend Host",
-      "description": "The hostname of the sbc-search API",
-      "required": true,
-      "value": "http://localhost"
-    },
-    {
-      "name": "VUE_APP_FRONTEND_DOMAIN",
-      "displayName": "Vue Frontend Domain",
-      "description": "The domain of the sbc-web container",
-      "required": true,
-      "value": "http://localhost"
-    },
-    {
-      "name": "VUE_APP_AUTH_ROOT_API",
-      "displayName": "Authentication Root API URL",
-      "description": "The root API URL of Pathfinder auth service",
-      "required": true,
-      "value": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1"
     }
   ]
 }
