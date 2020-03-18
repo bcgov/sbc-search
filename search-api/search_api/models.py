@@ -496,7 +496,7 @@ def _get_corpparty_search_results(args):
     &additional_cols=address|active|none
 
     For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
-    curl "http://localhost/person/search/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"
+    curl "http://localhost/api/v1/directors/search/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"
     """
 
     query = args.get("query")
