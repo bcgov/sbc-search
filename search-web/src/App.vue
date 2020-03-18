@@ -3,11 +3,7 @@
     <div class="main-wrapper">
       <div class="content">
         <div class="content-header">
-          <SbcHeader
-            idpHint="bcros"
-            redirect-on-login-success="/"
-            redirect-on-login-fail="/"
-          >
+          <SbcHeader idpHint="bcros">
             <template v-slot:login-button-text>
               Log In
             </template>
@@ -43,15 +39,15 @@ export default Vue.extend({
   async mounted() {
     sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(AuthConfig));
     this.handleJWT();
-
     await KeyCloakService.setKeycloakConfigUrl(`/config/kc/keycloak.json`);
   },
   methods: {
     handleJWT() {
-      if (sessionStorage.getItem("KEYCLOAK_TOKEN")) {
+      const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
+      if (KEYCLOACK_TOKEN) {
         ApiService.defaults.headers.common[
           "Authorization"
-        ] = `Bearer ${sessionStorage.getItem("KEYCLOAK_TOKEN")}`;
+        ] = `Bearer ${KEYCLOACK_TOKEN}`;
       } else {
         delete ApiService.defaults.headers.common["Authorization"];
       }
