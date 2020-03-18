@@ -1,3 +1,4 @@
+*.bak
 instantclient
 */.env
 */prod.env
@@ -135,3 +136,6 @@ dmypy.json
 
 docker-compose.override.yml
 .vscode
+
+search-web/coverage/
+search-web/dist/

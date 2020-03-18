@@ -79,7 +79,7 @@ export const CORPPARTY_HEADERS = [
     value: "addr",
     sortable: true,
     align: "left"
-  },  
+  },
   {
     text: "Office Held",
     value: "party_typ_cd",
