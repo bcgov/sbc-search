@@ -33,6 +33,7 @@ import KeyCloakService from "sbc-common-components/src/services/keycloak.service
 import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
 import SbcFooter from "sbc-common-components/src/components/SbcFooter.vue";
 import ApiService from "@/api/ApiService.js";
+import AuthConfig from "@/config/authconfig.json";
 
 export default Vue.extend({
   components: {
@@ -40,25 +41,21 @@ export default Vue.extend({
     SbcFooter
   },
   async mounted() {
-    const testConfig = {
-      AUTH_URL: "https://dev.bcregistry.ca/cooperatives/auth/",
-      VUE_APP_PAY_ROOT_API: "https://pay-api-dev.pathfinder.gov.bc.ca/api/v1",
-      VUE_APP_AUTH_ROOT_API: "http://localhost:80/api/v1",
-      VUE_APP_LEGAL_ROOT_API:
-        "https://legal-api-dev.pathfinder.gov.bc.ca/api/v1",
-      VUE_APP_STATUS_ROOT_API:
-        "https://status-api-dev.pathfinder.gov.bc.ca/api/v1",
-      VUE_APP_PATH_NEW_BUSINESS:
-        "https://business-create-dev.pathfinder.gov.bc.ca/businesses/"
-    };
-    sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(testConfig));
+    sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(AuthConfig));
+    this.handleJWT();
 
-    if (sessionStorage.getItem("KEYCLOAK_TOKEN")) {
-      ApiService.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${sessionStorage.getItem("KEYCLOAK_TOKEN")}`;
-    }
     await KeyCloakService.setKeycloakConfigUrl(`/config/kc/keycloak.json`);
+  },
+  methods: {
+    handleJWT() {
+      if (sessionStorage.getItem("KEYCLOAK_TOKEN")) {
+        ApiService.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${sessionStorage.getItem("KEYCLOAK_TOKEN")}`;
+      } else {
+        delete ApiService.defaults.headers.common["Authorization"];
+      }
+    }
   }
 });
 </script>
