@@ -20,4 +20,3 @@ pep8-naming
 autopep8
 pydocstyle
 FreezeGun
-flask-jwt-oidc>=0.1.5
