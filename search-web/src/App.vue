@@ -116,4 +116,10 @@ body {
 .footer {
   flex-shrink: 0;
 }
+
+@media (max-width: 1600px) {
+  .content-body {
+    padding: 2em;
+  }
+}
 </style>
