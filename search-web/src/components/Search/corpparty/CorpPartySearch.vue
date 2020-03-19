@@ -14,8 +14,11 @@
       @change="handleOperatorChange"
       :selected.sync="selectedOperator"
     ></OperatorSelect>
-    <SearchInput :uid="uid" :query="initQuery" class="d-inline-block">
-    </SearchInput>
+    <SearchInput
+      :uid="uid"
+      :query="initQuery"
+      class="d-inline-block"
+    ></SearchInput>
     <v-btn
       tabindex="-1"
       v-if="remove"
@@ -23,9 +26,8 @@
       height="56"
       outlined
       @click="handleRemove"
+      >Remove</v-btn
     >
-      Remove
-    </v-btn>
   </div>
 </template>
 
@@ -67,7 +69,10 @@ export default {
     OPERATORS() {
       if (this.selectedField === "addr_line_1") {
         return OPERATOR_VALUES.filter(o => o.value === "contains");
+      } else if (this.selectedField === "state_typ_cd") {
+        return OPERATOR_VALUES.filter(o => o.value === "exact");
       }
+
       return OPERATOR_VALUES;
     }
   },
@@ -108,6 +113,13 @@ export default {
           uid: this.uid,
           property: "operator",
           value: "contains"
+        });
+      }
+      if (nf === "state_typ_cd") {
+        this.$store.commit("corpParty/filters/setSearchPropValue", {
+          uid: this.uid,
+          property: "operator",
+          value: "exact"
         });
       }
     }
