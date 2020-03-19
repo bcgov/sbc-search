@@ -16,6 +16,14 @@ export default {
       type: String
     }
   },
+  beforeUpdate() {
+    this.select = this.init;
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.select = this.init;
+    });
+  },
   data() {
     return {
       select: this.init

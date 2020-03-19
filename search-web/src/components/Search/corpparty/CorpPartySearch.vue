@@ -14,11 +14,20 @@
       @change="handleOperatorChange"
       :selected.sync="selectedOperator"
     ></OperatorSelect>
+
+    <TermSelect
+      v-if="selectedField === 'state_typ_cd'"
+      :items="TERMS"
+      :init="criteria.value || 'ACT'"
+      @change="handleTermChange"
+    ></TermSelect>
     <SearchInput
+      v-else
       :uid="uid"
       :query="initQuery"
       class="d-inline-block"
     ></SearchInput>
+
     <v-btn
       tabindex="-1"
       v-if="remove"
@@ -35,8 +44,9 @@
 import SearchInput from "@/components/Search/corpparty/SearchInput.vue";
 import FieldSelect from "@/components/Search/corpparty/FieldSelect.vue";
 import OperatorSelect from "@/components/Search/corpparty/OperatorSelect.vue";
-import { FIELD_VALUES, OPERATOR_VALUES } from "@/config/index.ts";
-import { mapGetters } from "vuex";
+import TermSelect from "@/components/Search/corpparty/TermSelect.vue";
+import { FIELD_VALUES, OPERATOR_VALUES, TERM_VALUES } from "@/config/index.ts";
+import { mapGetters, mapMutations } from "vuex";
 import filter from "lodash-es/filter";
 
 export default {
@@ -72,14 +82,17 @@ export default {
       } else if (this.selectedField === "state_typ_cd") {
         return OPERATOR_VALUES.filter(o => o.value === "exact");
       }
-
       return OPERATOR_VALUES;
+    },
+    TERMS() {
+      return TERM_VALUES[this.selectedField];
     }
   },
   components: {
     SearchInput,
     FieldSelect,
-    OperatorSelect
+    OperatorSelect,
+    TermSelect
   },
   data() {
     return {
@@ -88,39 +101,67 @@ export default {
     };
   },
   methods: {
+    ...mapMutations({
+      setSearchPropValue: "corpParty/filters/setSearchPropValue"
+    }),
     handleRemove() {
       this.$store.commit("corpParty/filters/removeFilter", this.uid);
     },
     handleFieldChange(field) {
-      this.$store.commit("corpParty/filters/setSearchPropValue", {
+      this.setSearchPropValue({
         uid: this.uid,
         property: "field",
         value: field
       });
     },
     handleOperatorChange(operator) {
-      this.$store.commit("corpParty/filters/setSearchPropValue", {
+      this.setSearchPropValue({
         uid: this.uid,
         property: "operator",
         value: operator
+      });
+    },
+    handleTermChange(value) {
+      this.setSearchPropValue({
+        uid: this.uid,
+        property: "value",
+        value: value
+      });
+    },
+    clearTerm() {
+      this.$store.commit("corpParty/filters/setSearchPropValue", {
+        uid: this.uid,
+        property: "value",
+        value: ""
       });
     }
   },
   watch: {
     selectedField(nf) {
       if (nf === "addr_line_1") {
-        this.$store.commit("corpParty/filters/setSearchPropValue", {
+        this.setSearchPropValue({
           uid: this.uid,
           property: "operator",
           value: "contains"
         });
-      }
-      if (nf === "state_typ_cd") {
-        this.$store.commit("corpParty/filters/setSearchPropValue", {
+        this.clearTerm();
+      } else if (nf === "state_typ_cd") {
+        this.setSearchPropValue({
           uid: this.uid,
           property: "operator",
           value: "exact"
         });
+
+        const value = this.criteria.value;
+        if (value !== "ACT" && value !== "HST") {
+          this.setSearchPropValue({
+            uid: this.uid,
+            property: "value",
+            value: "ACT"
+          });
+        }
+      } else {
+        this.clearTerm();
       }
     }
   }

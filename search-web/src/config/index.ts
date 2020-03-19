@@ -17,6 +17,14 @@ export const OPERATOR_VALUES = [
   { text: "Exact Match", value: "exact" },
   { text: "Wildcard (%)", value: "wildcard" }
 ];
+
+export const TERM_VALUES = {
+  state_typ_cd: [
+    { text: "Active", value: "ACT" },
+    { text: "Historical", value: "HST" }
+  ]
+};
+
 export const COMPANY_HEADERS = [
   { text: "Number", value: "corp_num" },
   { text: "Status", value: "state_typ_cd" },
