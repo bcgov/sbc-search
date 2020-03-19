@@ -30,7 +30,7 @@ API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 @API.route('/search/')
 # @jwt.requires_auth
-def corporation_search(identifier):
+def corporation_search():
     # TODO SY - check roles
     # check authorization
     # if not authorized(identifier, jwt, action=['add_comment']):
