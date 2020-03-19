@@ -35,7 +35,7 @@ def hello():
     return "Welcome to the director search API."
 
 
-@API.route('/person/search/')
+@API.route('/search/')
 # @jwt.requires_auth
 def corpparty_search():
     args = request.args
@@ -65,7 +65,7 @@ def corpparty_search():
     return jsonify({'results': corp_parties})
 
 
-@API.route('/person/search/export/')
+@API.route('/search/export/')
 # @jwt.requires_auth
 def corpparty_search_export():
 
@@ -136,7 +136,7 @@ def corpparty_search_export():
         return send_from_directory(export_dir, filename, as_attachment=True)
 
 
-@API.route('/person/<id>')
+@API.route('/<id>')
 # @jwt.requires_auth
 def person(id):
     #try:
@@ -198,7 +198,7 @@ def person(id):
     return jsonify(result_dict)
 
 
-@API.route('/person/officesheld/<corppartyid>')
+@API.route('/officesheld/<corppartyid>')
 # @jwt.requires_auth
 def officesheld(corppartyid):
     results = (OfficerType.query
