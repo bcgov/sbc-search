@@ -21,7 +21,7 @@ export const OPERATOR_VALUES = [
 export const TERM_VALUES = {
   state_typ_cd: [
     { text: "Active", value: "ACT" },
-    { text: "Historical", value: "HST" }
+    { text: "Historical", value: "HIS" }
   ]
 };
 

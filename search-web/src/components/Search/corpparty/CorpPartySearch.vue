@@ -153,7 +153,7 @@ export default {
         });
 
         const value = this.criteria.value;
-        if (value !== "ACT" && value !== "HST") {
+        if (value !== "ACT" && value !== "HIS") {
           this.setSearchPropValue({
             uid: this.uid,
             property: "value",
