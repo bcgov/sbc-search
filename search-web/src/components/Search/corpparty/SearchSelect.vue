@@ -1,14 +1,12 @@
 <template>
-  <div>
-    <v-select
-      class="search-select"
-      :label="selectLabel"
-      :height="height"
-      v-model="select"
-      :items="items"
-      filled
-    ></v-select>
-  </div>
+  <v-select
+    class="search-select"
+    :label="selectLabel"
+    :height="height"
+    v-model="select"
+    :items="items"
+    filled
+  ></v-select>
 </template>
 
 <script>

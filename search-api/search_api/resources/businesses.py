@@ -28,9 +28,9 @@ from search_api.models import (
 API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 
-@API.route('/corporation/search/')
+@API.route('/search/')
 @jwt.requires_auth
-def corporation_search(identifier):
+def corporation_search():
     # TODO SY - check roles
     # check authorization
     # if not authorized(identifier, jwt, action=['add_comment']):
@@ -60,7 +60,7 @@ def corporation_search(identifier):
     return jsonify({'results': corporations})
 
 
-@API.route('/corporation/search/export/')
+@API.route('/search/export/')
 @jwt.requires_auth
 def corporation_search_export():
 
@@ -114,7 +114,7 @@ def corporation_search_export():
         return send_from_directory(export_dir, filename, as_attachment=True)
 
 
-@API.route('/corporation/<id>')
+@API.route('/<id>')
 @jwt.requires_auth
 def corporation(id):
 

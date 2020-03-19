@@ -25,7 +25,7 @@ from search_api.models import (
     _add_additional_cols_to_search_results,
     _normalize_addr,
 )
-from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
+from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE, STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 
 API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
@@ -36,8 +36,9 @@ def hello():
     return "Welcome to the director search API."
 
 
-@API.route('/person/search/')
+@API.route('/search/')
 @jwt.requires_auth
+# @jwt.requires_auth
 def corpparty_search():
     args = request.args
     results = _get_corpparty_search_results(args)
@@ -54,7 +55,7 @@ def corpparty_search():
     for row in results.items:
         result_fields = [
             'corp_party_id', 'first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt',
-            'corp_num', 'corp_nme', 'party_typ_cd']
+            'corp_num', 'corp_nme', 'party_typ_cd', 'state_typ_cd']
 
         result_dict = {key: getattr(row, key) for key in result_fields}
         result_dict['corp_party_id'] = int(result_dict['corp_party_id'])
@@ -66,7 +67,7 @@ def corpparty_search():
     return jsonify({'results': corp_parties})
 
 
-@API.route('/person/search/export/')
+@API.route('/search/export/')
 @jwt.requires_auth
 def corpparty_search_export():
 
@@ -137,7 +138,7 @@ def corpparty_search_export():
         return send_from_directory(export_dir, filename, as_attachment=True)
 
 
-@API.route('/person/<id>')
+@API.route('/<id>')
 @jwt.requires_auth
 def person(id):
     #try:
@@ -199,7 +200,7 @@ def person(id):
     return jsonify(result_dict)
 
 
-@API.route('/person/officesheld/<corppartyid>')
+@API.route('/officesheld/<corppartyid>')
 @jwt.requires_auth
 def officesheld(corppartyid):
     results = (OfficerType.query
@@ -265,7 +266,7 @@ def officesheld(corppartyid):
 
 
 def _get_state_typ_cd_display_value(state_typ_cd):
-    if state_typ_cd == "ACT":
-        return "ACT"
+    if state_typ_cd == STATE_TYP_CD_ACT:
+        return STATE_TYP_CD_ACT
     else:
-        return "HIS"
+        return STATE_TYP_CD_HIS

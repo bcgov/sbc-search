@@ -1,15 +1,15 @@
 <template>
   <div class="home">
-    <h1>Welcome to Director Search.</h1>
+    <h1 class="home-title">{{ title }}</h1>
     <h4 class="mt-3 body-1 mb-10">
       Search for offices held at active and historical BC companies.
     </h4>
-
     <div class="pa-10 search-form-container">
       <SearchTips></SearchTips>
       <v-form>
         <div v-for="(criteria, index) in filters" :key="index">
           <CorpPartySearch
+            :criteria="criteria"
             :uid="criteria.uid"
             :remove="enableRemove"
           ></CorpPartySearch>
@@ -95,6 +95,7 @@ export default {
   },
   data() {
     return {
+      title: "Welcome to Director Search",
       uid: 1,
       searchQuery: null,
       logic: "ALL",

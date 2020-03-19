@@ -9,6 +9,8 @@
 
 <script>
 import SbcSignin from "sbc-common-components/src/components/SbcSignin.vue";
+import KeyCloakService from "sbc-common-components/src/services/keycloak.services";
+import ApiService from "@/api/ApiService.js";
 
 export default {
   components: {
@@ -29,11 +31,10 @@ export default {
     }
   },
   methods: {
-    updateHeader() {
+    async updateHeader() {
       this.$router.push({
         name: "Home"
       });
-      window.location.reload(true);
     },
     syncUserProfile() {}
   }
