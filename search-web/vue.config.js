@@ -23,5 +23,5 @@ module.exports = {
       }
     }
   },
-  transpileDependencies: ["vuetify"]
+  transpileDependencies: ["vuetify", "sbc-common-components"]
 };
