@@ -19,8 +19,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
 
-  search_api:
-    image: search_api
+  search-api:
     build:
       context: search-api
     volumes:
