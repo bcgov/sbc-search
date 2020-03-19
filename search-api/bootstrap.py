@@ -218,7 +218,7 @@ officer_types = ['SEC','DIR','INC']
 
 #CorpOpState
 corp_op_state1 = CorpOpState(
-    state_typ_cd = 'AAA',
+    state_typ_cd = 'ACT',
     op_state_typ_cd = 'ACT',
     short_desc = 'Act',
     full_desc = 'Active',
@@ -226,14 +226,14 @@ corp_op_state1 = CorpOpState(
 db.session.add(corp_op_state1)
 
 corp_op_state2 = CorpOpState(
-    state_typ_cd = 'HHH',
+    state_typ_cd = 'HIS',
     op_state_typ_cd = 'H',
     short_desc = 'Hist',
     full_desc = 'Historical',
 )
 db.session.add(corp_op_state2)
 
-corp_op_states = ['AAA','HHH']
+corp_op_states = ['ACT', 'HIS']
 
 index = 0
 while index < len(CORP_NUMS):

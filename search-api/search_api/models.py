@@ -5,7 +5,7 @@ import os
 from decimal import Decimal
 import decimal
 import flask.json
-from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
+from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE, STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 from functools import reduce
 
 class MyJSONEncoder(flask.json.JSONEncoder):
@@ -346,7 +346,6 @@ class OfficesHeld(BaseModel):
     dd_corp_party_id = db.Column(db.Integer)
 
 
-
 def _merge_corpparty_search_addr_fields(row):
     address = row.addr_line_1
     if row.addr_line_2:
@@ -398,20 +397,31 @@ def _get_model_by_field(field_name):
         return eval('CorpName')
     elif field_name in ['addr_line_1', 'addr_line_2', 'addr_line_3', 'postal_cd', 'city', 'province']:  # Address fields
         return eval('Address')
+    elif field_name in ['state_typ_cd']:
+        return eval('CorpOpState')
 
 
 def _get_filter(field, operator, value):
 
     if field == 'any_nme':
-        return (_get_filter('first_nme', operator, value)
-            | _get_filter('middle_nme', operator, value)
-            | _get_filter('last_nme', operator, value))
+        return (
+            _get_filter('first_nme', operator, value) |
+            _get_filter('middle_nme', operator, value) |
+            _get_filter('last_nme', operator, value))
 
     if field == 'addr':
-        # return _get_filter('first_nme', operator, value)
-        return (_get_filter('addr_line_1', operator, value)
-            | _get_filter('addr_line_2', operator, value)
-            | _get_filter('addr_line_3', operator, value))
+        return (
+            _get_filter('addr_line_1', operator, value) |
+            _get_filter('addr_line_2', operator, value) |
+            _get_filter('addr_line_3', operator, value))
+
+    if field == 'state_typ_cd':
+        # state_typ_cd is either "ACT", or displayed as "HIS" for any other value
+        if value == STATE_TYP_CD_ACT:
+            operator = 'exact'
+        elif value == STATE_TYP_CD_HIS:
+            operator = 'excludes'
+            value = STATE_TYP_CD_ACT
 
     model = _get_model_by_field(field)
 
@@ -429,6 +439,8 @@ def _get_filter(field, operator, value):
             return Field.ilike(value + '%')
         elif operator == 'wildcard':
             return Field.ilike(value)
+        elif operator == 'excludes':
+            return ~Field.ilike(value)
         else:
             raise Exception('invalid operator: {}'.format(operator))
     else:
@@ -529,8 +541,8 @@ def _get_corpparty_search_results(args):
             # .filter(CorpParty.end_event_id == None)
             # .filter(CorpName.end_event_id == None)
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
-            # .join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
-            # .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
+            .join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
+            .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
             .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
             # .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
             .add_columns(
@@ -550,7 +562,7 @@ def _get_corpparty_search_results(args):
                 # Address.postal_cd,
                 # Address.city,
                 # Address.province,
-                # CorpOpState.state_typ_cd,
+                CorpOpState.state_typ_cd,
                 # CorpOpState.full_desc,
             ))
 
