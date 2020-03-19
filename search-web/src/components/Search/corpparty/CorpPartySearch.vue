@@ -1,21 +1,19 @@
 <template>
   <div class="d-flex align-top">
-    <SearchSelect
-      class="d-inline-block mr-3"
-      selectLabel="Field"
+    <FieldSelect
+      class="field-select mr-3"
       :items="FIELDS"
-      :initValue="initField"
-      :uid="uid"
-      property="field"
-    ></SearchSelect>
-    <SearchSelect
-      selectLabel="Operator"
-      class="d-inline-block mr-3"
-      :items="operatorItems"
-      :initValue="initOperator"
-      :uid="uid"
-      property="operator"
-    ></SearchSelect>
+      :init="criteria.field"
+      @change="handleFieldChange"
+      :selected.sync="selectedField"
+    ></FieldSelect>
+    <OperatorSelect
+      class="field-select mr-3"
+      :items="OPERATORS"
+      :init="criteria.operator"
+      @change="handleOperatorChange"
+      :selected.sync="selectedOperator"
+    ></OperatorSelect>
     <SearchInput :uid="uid" :query="initQuery" class="d-inline-block">
     </SearchInput>
     <v-btn
@@ -32,14 +30,19 @@
 </template>
 
 <script>
-import SearchSelect from "@/components/Search/corpparty/SearchSelect.vue";
 import SearchInput from "@/components/Search/corpparty/SearchInput.vue";
+import FieldSelect from "@/components/Search/corpparty/FieldSelect.vue";
+import OperatorSelect from "@/components/Search/corpparty/OperatorSelect.vue";
 import { FIELD_VALUES, OPERATOR_VALUES } from "@/config/index.ts";
 import { mapGetters } from "vuex";
 import filter from "lodash-es/filter";
 
 export default {
   props: {
+    criteria: {
+      default: null,
+      type: Object
+    },
     clear: {
       default: true,
       type: Boolean
@@ -52,46 +55,50 @@ export default {
       default: null,
       type: Number
     },
-    initField: {
-      default: "first_nme",
-      type: String
-    },
-    initOperator: {
-      default: "exact",
-      type: String
-    },
     initQuery: {
       default: "",
       type: String
     }
   },
   computed: {
-    operatorItems() {
+    FIELDS() {
+      return FIELD_VALUES;
+    },
+    OPERATORS() {
       if (this.selectedField === "addr_line_1") {
-        return filter(this.OPERATORS, i => i.value === "contains");
+        return OPERATOR_VALUES.filter(o => o.value === "contains");
       }
-      return this.OPERATORS;
-    },
-    selectedField() {
-      return this.getFilterProperty(this.uid, "field");
-    },
-    ...mapGetters({
-      getFilterProperty: "corpParty/filters/getProperty"
-    })
+      return OPERATOR_VALUES;
+    }
   },
   components: {
     SearchInput,
-    SearchSelect
+    FieldSelect,
+    OperatorSelect
   },
   data() {
     return {
-      FIELDS: FIELD_VALUES,
-      OPERATORS: OPERATOR_VALUES
+      selectedField: this.criteria.field,
+      selectedOperator: this.criteria.operator
     };
   },
   methods: {
     handleRemove() {
       this.$store.commit("corpParty/filters/removeFilter", this.uid);
+    },
+    handleFieldChange(field) {
+      this.$store.commit("corpParty/filters/setSearchPropValue", {
+        uid: this.uid,
+        property: "field",
+        value: field
+      });
+    },
+    handleOperatorChange(operator) {
+      this.$store.commit("corpParty/filters/setSearchPropValue", {
+        uid: this.uid,
+        property: "operator",
+        value: operator
+      });
     }
   },
   watch: {
@@ -108,4 +115,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.field-select {
+  width: 200px;
+}
+</style>

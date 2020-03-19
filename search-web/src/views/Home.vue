@@ -4,12 +4,12 @@
     <h4 class="mt-3 body-1 mb-10">
       Search for offices held at active and historical BC companies.
     </h4>
-
     <div class="pa-10 search-form-container">
       <SearchTips></SearchTips>
       <v-form>
         <div v-for="(criteria, index) in filters" :key="index">
           <CorpPartySearch
+            :criteria="criteria"
             :uid="criteria.uid"
             :remove="enableRemove"
           ></CorpPartySearch>
