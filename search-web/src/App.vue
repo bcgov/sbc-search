@@ -36,6 +36,11 @@ export default Vue.extend({
     SbcHeader,
     SbcFooter
   },
+  data() {
+    return {
+      inAuth: false
+    };
+  },
   async mounted() {
     sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(AuthConfig));
     this.handleJWT();
