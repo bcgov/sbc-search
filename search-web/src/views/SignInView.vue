@@ -35,7 +35,6 @@ export default {
       this.$router.push({
         name: "Home"
       });
-      window.location.reload(true);
     },
     syncUserProfile() {}
   }
