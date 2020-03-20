@@ -21,6 +21,8 @@
         </v-col>
       </v-row>
 
+      <h2>{{ detail.full_desc }}</h2>
+
       <h2 class="pa-0 ma-0 mb-12 title font-weight-regular color-gray">
         Filing #{{ detail.corp_party_id }}
       </h2>
