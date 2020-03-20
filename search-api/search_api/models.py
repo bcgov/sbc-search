@@ -500,6 +500,8 @@ def _get_filter(field, operator, value):
         elif operator == 'startswith':
             return Field.ilike(value + '%')
         elif operator == 'wildcard':
+            # We support entering * or % as wildcards, but the actual wildcard is %
+            value = value.replace("*", "%")
             return Field.ilike(value)
         elif operator == 'excludes':
             return ~Field.ilike(value)
