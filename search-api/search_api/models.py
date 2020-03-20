@@ -683,7 +683,7 @@ def _normalize_addr(id):
 
     def fn(accumulator, s):
         if s:
-            return (accumulator or '') + ', ' + (s or '')
+            return ((accumulator or '') + ', ' if accumulator else '') + (s or '')
         else:
             return accumulator or ''
 
