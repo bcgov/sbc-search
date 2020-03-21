@@ -2,6 +2,7 @@ import { mount, shallowMount, createLocalVue } from "@vue/test-utils";
 import Home from "@/views/Home.vue";
 import CorpPartySearch from "@/components/Search/corpparty/CorpPartySearch.vue"
 import SearchInput from "@/components/Search/corpparty/SearchInput.vue"
+import CorpPartyTable from "@/components/Search/corpparty/CorpPartyTable.vue"
 import store from "@/store/index";
 import Vue from "vue";
 import Vuetify from "vuetify";
@@ -107,4 +108,51 @@ describe("Home.vue", () => {
         value: "Van Oyen"
       });
     });
+
+
+    it("renders table", async () => {
+      const $route = {
+        query: {
+          field: ["first_nme", "last_nme"],
+          operator: ["exact", "contains"],
+          value: ["Clark", "Van Oyen"],
+          mode: "ALL",
+          additional_cols: "none",
+          page: "1",
+          sort_type: "dsc",
+          sort_value: "last_nme"
+        }
+      };
+      const wrapper = mount(Home, {
+        store,
+        mocks: {
+          $route
+        },
+        localVue,
+        vuetify
+      });
+      await localVue.nextTick()
+      
+      const corpPartyTable = wrapper.find(CorpPartyTable)
+      expect(corpPartyTable.isVueInstance()).toBe(true)
+      expect(corpPartyTable.find(".corp-party-table").exists()).toBe(true)
+      
+    })
+
+    it("does not render a table", async () => {
+      const wrapper = mount(Home, {
+        store,
+        mocks: {
+          $route
+        },
+        localVue,
+        vuetify
+      });
+      await localVue.nextTick()
+      
+      const corpPartyTable = wrapper.find(CorpPartyTable)
+      expect(corpPartyTable.isVueInstance()).toBe(true)
+      expect(corpPartyTable.find(".corp-party-table").exists()).toBe(false)
+      
+    })
 });
