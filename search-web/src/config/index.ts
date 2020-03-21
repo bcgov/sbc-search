@@ -15,7 +15,7 @@ export const OPERATOR_VALUES = [
   { text: "Starts With", value: "startswith" },
   { text: "Ends With", value: "endswith" },
   { text: "Exact Match", value: "exact" },
-  { text: "Wildcard (%)", value: "wildcard" }
+  { text: "Wildcard (% or *)", value: "wildcard" }
 ];
 
 export const TERM_VALUES = {
