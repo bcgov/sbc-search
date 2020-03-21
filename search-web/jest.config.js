@@ -11,7 +11,7 @@ module.exports = {
     "/node_modules/(?!sbc-common-components/.*|lodash-es)"
   ],
   collectCoverage: true,
-  collectCoverageFrom: ["**/*.{js,vue}", "!**/node_modules/**"],
+  collectCoverageFrom: ["**/*.{js,vue}", "!**/node_modules/**", "!dist/**"],
   coverageReporters: ["html", "text-summary"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1"
