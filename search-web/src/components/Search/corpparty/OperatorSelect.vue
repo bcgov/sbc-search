@@ -2,6 +2,7 @@
   <div>
     <v-select
       filled
+      class="operator-select"
       v-model="select"
       :items="items"
       label="Operator"

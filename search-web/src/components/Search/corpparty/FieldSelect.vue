@@ -1,6 +1,12 @@
 <template>
   <div>
-    <v-select filled v-model="select" :items="items" label="Field"></v-select>
+    <v-select
+      class="field-select"
+      filled
+      v-model="select"
+      :items="items"
+      label="Field"
+    ></v-select>
   </div>
 </template>
 

@@ -1,5 +1,11 @@
 <template>
-  <v-select filled v-model="select" :items="items" label="Term"></v-select>
+  <v-select
+    class="term-select"
+    filled
+    v-model="select"
+    :items="items"
+    label="Term"
+  ></v-select>
 </template>
 
 <script>

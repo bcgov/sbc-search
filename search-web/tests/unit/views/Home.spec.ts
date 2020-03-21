@@ -1,5 +1,7 @@
 import { mount, shallowMount, createLocalVue } from "@vue/test-utils";
 import Home from "@/views/Home.vue";
+import CorpPartySearch from "@/components/Search/corpparty/CorpPartySearch.vue"
+import SearchInput from "@/components/Search/corpparty/SearchInput.vue"
 import store from "@/store/index";
 import Vue from "vue";
 import Vuetify from "vuetify";
@@ -56,11 +58,11 @@ describe("Home.vue", () => {
     });
     expect(wrapper.find(".search-tips-header").text());
   }),
-    it("renders filters from query string", () => {
+    it("renders filters from query string", async () => {
       const $route = {
         query: {
           field: ["first_nme", "last_nme"],
-          operator: ["exact", "exact"],
+          operator: ["exact", "contains"],
           value: ["Clark", "Van Oyen"],
           mode: "ALL",
           additional_cols: "none",
@@ -80,6 +82,17 @@ describe("Home.vue", () => {
           CorpPartyTable: true
         }
       });
+      await localVue.nextTick()
+      const corpPartySearch = wrapper.findAll(CorpPartySearch);
+      expect(corpPartySearch.at(0).vm['selectedField']).toBe('first_nme')
+      expect(corpPartySearch.at(1).vm['selectedField']).toBe('last_nme')
+      expect(corpPartySearch.at(0).vm['selectedOperator']).toBe('exact')
+      expect(corpPartySearch.at(1).vm['selectedOperator']).toBe('contains')
+
+      const searchInput = wrapper.findAll(SearchInput);
+      expect(searchInput.at(0).vm['searchQuery']).toBe('Clark')
+      expect(searchInput.at(1).vm['searchQuery']).toBe('Van Oyen')
+     
 
       expect(wrapper.vm["filters"][0]).toEqual({
         uid: 1,
@@ -90,7 +103,7 @@ describe("Home.vue", () => {
       expect(wrapper.vm["filters"][1]).toEqual({
         uid: 2,
         field: "last_nme",
-        operator: "exact",
+        operator: "contains",
         value: "Van Oyen"
       });
     });
