@@ -608,7 +608,7 @@ def _get_corpparty_search_results(args):
         .join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
         .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
         .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
-        # .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+        .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
         .add_columns(
             CorpParty.corp_party_id,
             CorpParty.first_nme,
@@ -620,10 +620,10 @@ def _get_corpparty_search_results(args):
             CorpParty.party_typ_cd,
             # Corporation.corp_num,
             CorpName.corp_nme,
-            # Address.addr_line_1,
-            # Address.addr_line_2,
-            # Address.addr_line_3,
-            # Address.postal_cd,
+            Address.addr_line_1,
+            Address.addr_line_2,
+            Address.addr_line_3,
+            Address.postal_cd,
             # Address.city,
             # Address.province,
             CorpOpState.state_typ_cd,
