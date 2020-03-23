@@ -502,17 +502,21 @@ def _get_corporation_search_results(args):
     results = (
         Corporation.query
         .join(CorpName, Corporation.corp_num == CorpName.corp_num)
-        # .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
-        # .join(Office, Office.corp_num == Corporation.corp_num)
-        # .join(Address, Office.mailing_addr_id == Address.addr_id)
+        .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
+        .join(Office, Office.corp_num == Corporation.corp_num)
+        .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
+        .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+        .join(Address, Office.mailing_addr_id == Address.addr_id)
         .with_entities(
             CorpName.corp_nme,
             Corporation.corp_num,
+            Corporation.corp_typ_cd,
             # Corporation.transition_dt,
-            # Address.addr_line_1,
-            # Address.addr_line_2,
-            # Address.addr_line_3,
-            # Address.postal_cd,
+            CorpOpState.state_typ_cd,
+            Address.addr_line_1,
+            Address.addr_line_2,
+            Address.addr_line_3,
+            Address.postal_cd,
             # Address.city,
             # Address.province,
         )

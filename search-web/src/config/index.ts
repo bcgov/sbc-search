@@ -39,14 +39,26 @@ export const CORPORATION_HEADERS = [
     align: "left"
   },
   {
+    text: "Entity Type",
+    value: "corp_typ_cd",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Company Name",
+    value: "corp_nme",
+    sortable: true,
+    align: "left"
+  },
+  {
     text: "Incorporated",
     value: "inc_date",
     sortable: true,
     align: "left"
   },
   {
-    text: "Act/His",
-    value: "status",
+    text: "Company Status",
+    value: "state_typ_cd",
     sortable: true,
     align: "left"
   },

@@ -1,4 +1,3 @@
-from http import HTTPStatus
 from tempfile import NamedTemporaryFile
 
 from flask import request, jsonify, send_from_directory
@@ -20,6 +19,7 @@ from search_api.models import (
     OfficerType,
     Event,
     _get_corporation_search_results,
+    _merge_corpparty_search_addr_fields,
     _normalize_addr,
     _format_office_typ_cd
 )
@@ -51,9 +51,10 @@ def corporation_search():
     for row in results.items:
         result_dict = {}
 
-        result_fields = ['corp_num', 'corp_nme']
+        result_fields = ['corp_num', 'corp_nme', 'corp_typ_cd', 'state_typ_cd']
 
         result_dict = {key: getattr(row, key) for key in result_fields}
+        result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
 
         corporations.append(result_dict)
 
