@@ -27,11 +27,11 @@
           <td>{{ item["last_nme"] }}</td>
           <td>{{ item["first_nme"] }}</td>
           <td>{{ item["middle_nme"] }}</td>
-          <td v-if="type === 'addr'">{{ item["addr"] }}</td>
+          <td>{{ item["addr"] }}</td>
           <td>{{ item["party_typ_cd"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
-          <td v-if="type === 'active'">{{ item["state_typ_cd"] }}</td>
+          <td>{{ item["state_typ_cd"] }}</td>
           <td>{{ item["corp_nme"] }}</td>
           <td @click.prevent.stop="handleCorpClick(item['corp_num'])">
             <span class="anchor-text cursor-pointer">{{
@@ -154,63 +154,25 @@ export default {
       window.open(`/corpparty/${id}`);
     },
     filterHeaders(headers, type) {
-      if (type === "none") {
-        return headers.filter(h => {
-          const val = h.value;
-          if (
-            val === "corp_party_id" ||
-            val === "last_nme" ||
-            val === "middle_nme" ||
-            val === "first_nme" ||
-            val === "party_typ_cd" ||
-            val === "appointment_dt" ||
-            val === "cessation_dt" ||
-            val === "corp_nme" ||
-            val === "corp_num"
-          ) {
-            return true;
-          }
-          return false;
-        });
-      } else if (type === "addr") {
-        return headers.filter(h => {
-          const val = h.value;
-          if (
-            val === "corp_party_id" ||
-            val === "last_nme" ||
-            val === "middle_nme" ||
-            val === "first_nme" ||
-            val === "party_typ_cd" ||
-            val === "appointment_dt" ||
-            val === "cessation_dt" ||
-            val === "corp_num" ||
-            val === "corp_nme" ||
-            val === "addr"
-          ) {
-            return true;
-          }
-          return false;
-        });
-      } else if (type === "active") {
-        return headers.filter(h => {
-          const val = h.value;
-          if (
-            val === "corp_party_id" ||
-            val === "last_nme" ||
-            val === "middle_nme" ||
-            val === "first_nme" ||
-            val === "party_typ_cd" ||
-            val === "appointment_dt" ||
-            val === "cessation_dt" ||
-            val === "corp_num" ||
-            val === "corp_nme" ||
-            val === "state_typ_cd"
-          ) {
-            return true;
-          }
-          return false;
-        });
-      }
+      return headers.filter(h => {
+        const val = h.value;
+        if (
+          val === "corp_party_id" ||
+          val === "last_nme" ||
+          val === "middle_nme" ||
+          val === "first_nme" ||
+          val === "party_typ_cd" ||
+          val === "appointment_dt" ||
+          val === "cessation_dt" ||
+          val === "corp_num" ||
+          val === "corp_nme" ||
+          val === "state_typ_cd" ||
+          val === "addr"
+        ) {
+          return true;
+        }
+        return false;
+      });
     },
     fetchData() {
       if (!this.qs) {

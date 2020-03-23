@@ -35,15 +35,8 @@
       </v-form>
     </div>
     <div class="mt-10">
-      <div v-if="qs" class="mb-5">
+      <div v-if="qs" class="d-flex justify-space-between align-center mb-5">
         <h4 class="headline">Search Results</h4>
-      </div>
-      <div v-if="qs" class="d-flex justify-space-between align-center">
-        <SearchColumn
-          @click="handleColumnClick"
-          class="mb-10"
-          :initColumn="additional_cols"
-        ></SearchColumn>
         <v-btn class="export-btn" height="50" @click="handleExport"
           >Export to .xlsx</v-btn
         >
@@ -53,7 +46,6 @@
         @pageUpdate="handlePageUpdate"
         @sortUpdate="handleSortUpdate"
         :qs="qs"
-        :type="additional_cols"
       ></CorpPartyTable>
     </div>
   </div>
@@ -61,7 +53,6 @@
 
 <script>
 import SbcButton from "@/components/SbcButton.vue";
-import SearchColumn from "@/components/Search/corpparty/SearchColumns.vue";
 import AddFilterButton from "@/components/Filter/AddFilterButton.vue";
 import CorpPartySearch from "@/components/Search/corpparty/CorpPartySearch.vue";
 import { mapGetters } from "vuex";
@@ -82,8 +73,7 @@ export default {
     AddFilterButton,
     CorpPartyTable,
     SearchLogic,
-    SearchTips,
-    SearchColumn
+    SearchTips
   },
   computed: {
     enableRemove() {
@@ -101,7 +91,6 @@ export default {
       searchQuery: null,
       logic: "ALL",
       qs: null,
-      additional_cols: "none",
       page: "1",
       sort_value: "last_nme",
       sort_type: "dsc"
@@ -138,14 +127,6 @@ export default {
       }
       this.handleSearch();
     },
-    handleColumnClick(type) {
-      const query = Object.assign({}, this.$route.query);
-      query.additional_cols = type;
-      this.additional_cols = type;
-      this.$router.push({
-        query
-      });
-    },
     addFilter(event, field = "first_nme", operator = "contains", value = "") {
       this.uid++;
       this.$store.commit("corpParty/filters/addFilter", {
@@ -177,9 +158,7 @@ export default {
     generateQueryString(page) {
       let queryString =
         buildQueryString(this.filters) +
-        `&mode=${this.logic}&additional_cols=${
-          this.additional_cols
-        }&page=${page || this.page}`;
+        `&mode=${this.logic}&page=${page || this.page}`;
       if (this.sort_value && this.sort_type) {
         queryString += `&sort_type=${this.sort_type}&sort_value=${this.sort_value}`;
       }
@@ -188,17 +167,12 @@ export default {
     },
     init() {
       const mode = this.$route.query.mode;
-      const additional_cols = this.$route.query.additional_cols;
       const page = this.$route.query.page;
       const sort_value = this.$route.query.sort_value;
       const sort_type = this.$route.query.sort_type;
 
       if (mode) {
         this.logic = mode;
-      }
-
-      if (additional_cols) {
-        this.additional_cols = additional_cols;
       }
 
       if (page) {
@@ -219,7 +193,6 @@ export default {
         const queryFilters = omit(
           this.$route.query,
           "mode",
-          "additional_cols",
           "page",
           "sort_type",
           "sort_value"

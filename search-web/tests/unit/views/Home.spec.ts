@@ -66,7 +66,6 @@ describe("Home.vue", () => {
           operator: ["exact", "contains"],
           value: ["Clark", "Van Oyen"],
           mode: "ALL",
-          additional_cols: "none",
           page: "1",
           sort_type: "dsc",
           sort_value: "last_nme"
@@ -117,7 +116,6 @@ describe("Home.vue", () => {
           operator: ["exact", "contains"],
           value: ["Clark", "Van Oyen"],
           mode: "ALL",
-          additional_cols: "none",
           page: "1",
           sort_type: "dsc",
           sort_value: "last_nme"

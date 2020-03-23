@@ -1,12 +1,8 @@
+import datetime
 from tempfile import NamedTemporaryFile
-from flask import Flask, request, jsonify, send_from_directory, abort
 
-
+from flask import Blueprint, request, jsonify, send_from_directory
 from openpyxl import Workbook
-from sqlalchemy import desc, func
-from functools import reduce
-from sqlalchemy.orm.exc import NoResultFound
-from flask import Blueprint
 
 from search_api.auth import jwt
 from search_api.models import (
@@ -24,11 +20,10 @@ from search_api.models import (
     Filing,
     FilingType,
     _get_corpparty_search_results,
-    _add_additional_cols_to_search_results,
     _merge_corpparty_search_addr_fields,
     _normalize_addr,
 )
-from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE, STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
+from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 
 API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
@@ -61,8 +56,6 @@ def corpparty_search():
         result_dict['corp_party_id'] = int(result_dict['corp_party_id'])
         result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
 
-        _add_additional_cols_to_search_results(args, row, result_dict)
-
         corp_parties.append(result_dict)
 
     return jsonify({'results': corp_parties})
@@ -75,7 +68,6 @@ def corpparty_search_export():
     # Query string arguments
     args = request.args
     fields = args.getlist('field')
-    additional_cols = args.get('additional_cols')
 
     # Fetching results
     results = _get_corpparty_search_results(args)
@@ -96,13 +88,9 @@ def corpparty_search_export():
         _ = sheet.cell(column=5, row=1, value="Appointment Date")
         _ = sheet.cell(column=6, row=1, value="Cessation Date")
         _ = sheet.cell(column=7, row=1, value="Corporation Id")
-
-        if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-            _ = sheet.cell(column=8, row=1, value="Address")
-            _ = sheet.cell(column=9, row=1, value="Postal Code")
-        elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-            _ = sheet.cell(column=8, row=1, value="Status")
-
+        _ = sheet.cell(column=8, row=1, value="Address")
+        _ = sheet.cell(column=9, row=1, value="Postal Code")
+        _ = sheet.cell(column=10, row=1, value="Status")
 
         index = 2
         for row in results:
@@ -122,12 +110,10 @@ def corpparty_search_export():
             # Corporation.corp_num
             _ = sheet.cell(column=7, row=index, value=row[7])
             # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
-            if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-                # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
-                _ = sheet.cell(column=8, row=index, value=_merge_corpparty_search_addr_fields(row))
-                _ = sheet.cell(column=9, row=index, value=row.postal_cd)
-            elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-                _ = sheet.cell(column=8, row=index, value=_get_state_typ_cd_display_value(row.state_typ_cd))
+            _ = sheet.cell(column=8, row=index, value=_merge_corpparty_search_addr_fields(row))
+            _ = sheet.cell(column=9, row=index, value=row.postal_cd)
+            # CorpOpState.state_typ_cd
+            _ = sheet.cell(column=10, row=index, value=_get_state_typ_cd_display_value(row.state_typ_cd))
 
             index += 1
 
