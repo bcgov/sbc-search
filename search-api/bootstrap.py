@@ -138,6 +138,20 @@ CORP_PARTY_NAMES = [
     "Anastasia Black Gray",
 ]
 
+CORP_TYP_CDS = [
+    "A",
+    "B",
+    "BC",
+    "C",
+    "CC",
+    "CCC",
+    "CP",
+    "CS",
+    "CUL",
+    "EPR",
+    "FOR",
+]
+
 ADDRESSES = [
     "131 Rue Northview , Dollard-des-Ormeaux, QC, H9B 3J6",
     "106 Saint-Georges Rue , La Prairie, QC, J5R 2L9",
@@ -272,7 +286,8 @@ while index < len(CORP_NUMS):
     # CORPORATION
     corporation = Corporation(
         corp_num=CORP_NUMS[index],
-        transition_dt=default_date,
+        recognition_dts=default_date,
+        corp_typ_cd=CORP_TYP_CDS[index % 11]
     )
     db.session.add(corporation)
 
