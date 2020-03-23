@@ -51,8 +51,8 @@ export const CORPORATION_HEADERS = [
     align: "left"
   },
   {
-    text: "Incorporated Date",
-    value: "inc_date",
+    text: "Incorporated",
+    value: "recognition_dts",
     sortable: true,
     align: "left"
   },
@@ -65,6 +65,12 @@ export const CORPORATION_HEADERS = [
   {
     text: "Company Address",
     value: "addr",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Postal Code",
+    value: "postal_cd",
     sortable: true,
     align: "left"
   }
@@ -98,6 +104,12 @@ export const CORPPARTY_HEADERS = [
   {
     text: "Address",
     value: "addr",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Postal Code",
+    value: "postal_cd",
     sortable: true,
     align: "left"
   },
@@ -177,12 +189,6 @@ export const CORPPARTY_HEADERS = [
   {
     text: "Province",
     value: "province",
-    sortable: true,
-    align: "left"
-  },
-  {
-    text: "Postal Code",
-    value: "postal_cd",
     sortable: true,
     align: "left"
   },

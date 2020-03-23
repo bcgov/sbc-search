@@ -28,6 +28,7 @@
           <td>{{ item["first_nme"] }}</td>
           <td>{{ item["middle_nme"] }}</td>
           <td>{{ item["addr"] }}</td>
+          <td>{{ item["postal_cd"] }}</td>
           <td>{{ item["party_typ_cd"] }}</td>
           <td>{{ item["appointment_dt"] }}</td>
           <td>{{ item["cessation_dt"] }}</td>
@@ -167,7 +168,8 @@ export default {
           val === "corp_num" ||
           val === "corp_nme" ||
           val === "state_typ_cd" ||
-          val === "addr"
+          val === "addr" ||
+          val === "postal_cd"
         ) {
           return true;
         }

@@ -15,6 +15,7 @@
           <td>{{ item["recognition_dts"] }}</td>
           <td>{{ item["state_typ_cd"] }}</td>
           <td>{{ item["addr"] }}</td>
+          <td>{{ item["postal_cd"] }}</td>
         </tr>
       </template>
     </v-data-table>

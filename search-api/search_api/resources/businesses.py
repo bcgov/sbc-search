@@ -1,14 +1,13 @@
+import datetime
 from tempfile import NamedTemporaryFile
 
-from flask import request, jsonify, send_from_directory
-from flask import Blueprint
+from flask import Blueprint, request, jsonify, send_from_directory
 from openpyxl import Workbook
 from sqlalchemy import desc
 
 from search_api.auth import jwt, authorized
 from search_api.models import (
     Corporation,
-    CorpOpState,
     CorpState,
     CorpParty,
     CorpName,
@@ -51,7 +50,7 @@ def corporation_search():
     for row in results.items:
         result_dict = {}
 
-        result_fields = ['corp_num', 'corp_nme', 'recognition_dts', 'corp_typ_cd', 'state_typ_cd']
+        result_fields = ['corp_num', 'corp_nme', 'recognition_dts', 'corp_typ_cd', 'state_typ_cd', 'postal_cd']
 
         result_dict = {key: getattr(row, key) for key in result_fields}
         result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
@@ -75,37 +74,34 @@ def corporation_search_export():
     wb = Workbook()
 
     export_dir = "/tmp"
-    with NamedTemporaryFile(mode='w+b', dir=export_dir, delete=True) as f:
+    with NamedTemporaryFile(mode='w+b', dir=export_dir, delete=True):
 
         sheet = wb.active
 
         # Sheet headers (first row)
-        _ = sheet.cell(column=1, row=1, value="Corporation Id")
-        _ = sheet.cell(column=2, row=1, value="Corp Name")
-        # _ = sheet.cell(column=3, row=1, value="Transition Date")
-        # _ = sheet.cell(column=4, row=1, value="Address")
-        # _ = sheet.cell(column=5, row=1, value="Postal Code")
-        # _ = sheet.cell(column=6, row=1, value="City")
-        # _ = sheet.cell(column=7, row=1, value="Province")
+        _ = sheet.cell(column=1, row=1, value="Inc/Reg #")
+        _ = sheet.cell(column=2, row=1, value="Entity Type")
+        _ = sheet.cell(column=3, row=1, value="Company Name")
+        _ = sheet.cell(column=4, row=1, value="Incorporated")
+        _ = sheet.cell(column=5, row=1, value="Company Status")
+        _ = sheet.cell(column=6, row=1, value="Company Address")
+        _ = sheet.cell(column=7, row=1, value="Postal Code")
 
-        index = 2
-        for row in results:
+        for index, row in enumerate(results, 2):
             # Corporation.corp_num
-            _ = sheet.cell(column=1, row=index, value=row[0])
+            _ = sheet.cell(column=1, row=index, value=row.corp_num)
+            # Corporation.corp_typ_cd
+            _ = sheet.cell(column=2, row=index, value=row.corp_typ_cd)
             # CorpName.corp_nme
-            _ = sheet.cell(column=2, row=index, value=row[1])
-            # Corporation.transition_dt
-            # _ = sheet.cell(column=3, row=index, value=row[3])
-            # # Address.addr_line_1
-            # _ = sheet.cell(column=4, row=index, value=row[4])
-            # # Address.postal_cd
-            # _ = sheet.cell(column=5, row=index, value=row[5])
-            # # Address.city
-            # _ = sheet.cell(column=6, row=index, value=row[6])
-            # # Address.province
-            # _ = sheet.cell(column=7, row=index, value=row[7])
-
-            index += 1
+            _ = sheet.cell(column=3, row=index, value=row.corp_nme)
+            # Corporation.recognition_dts
+            _ = sheet.cell(column=4, row=index, value=row.recognition_dts)
+            # CorpOpState.state_typ_cd
+            _ = sheet.cell(column=5, row=index, value=row.state_typ_cd)
+            # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
+            _ = sheet.cell(column=6, row=index, value=_merge_corpparty_search_addr_fields(row))
+            # Address.postal_cd
+            _ = sheet.cell(column=7, row=index, value=row.postal_cd)
 
         current_date = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
         filename = "Corporation Search Results {date}.xlsx".format(date=current_date)
