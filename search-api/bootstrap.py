@@ -286,7 +286,7 @@ while index < len(CORP_NUMS):
     # CORPORATION
     corporation = Corporation(
         corp_num=CORP_NUMS[index],
-        transition_dt=default_date,
+        recognition_dts=default_date,
         corp_typ_cd=CORP_TYP_CDS[index % 11]
     )
     db.session.add(corporation)

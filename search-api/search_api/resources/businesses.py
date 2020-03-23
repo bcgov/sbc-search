@@ -51,7 +51,7 @@ def corporation_search():
     for row in results.items:
         result_dict = {}
 
-        result_fields = ['corp_num', 'corp_nme', 'corp_typ_cd', 'state_typ_cd']
+        result_fields = ['corp_num', 'corp_nme', 'recognition_dts', 'corp_typ_cd', 'state_typ_cd']
 
         result_dict = {key: getattr(row, key) for key in result_fields}
         result_dict['addr'] = _merge_corpparty_search_addr_fields(row)

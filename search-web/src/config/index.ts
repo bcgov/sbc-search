@@ -51,7 +51,7 @@ export const CORPORATION_HEADERS = [
     align: "left"
   },
   {
-    text: "Incorporated",
+    text: "Incorporated Date",
     value: "inc_date",
     sortable: true,
     align: "left"

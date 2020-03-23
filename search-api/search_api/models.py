@@ -425,7 +425,7 @@ def _get_model_by_field(field_name):
     if field_name in ['first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt', 'corp_num',
                       'corp_party_id', 'party_typ_cd']:  # CorpParty fields
         return eval('CorpParty')
-    elif field_name in ['corp_num']:  # Corporation fields
+    elif field_name in ['corp_num', 'recognition_dts']:  # Corporation fields
         return eval('Corporation')
     elif field_name in ['corp_nme']:  # CorpName fields
         return eval('CorpName')
@@ -511,7 +511,7 @@ def _get_corporation_search_results(args):
             CorpName.corp_nme,
             Corporation.corp_num,
             Corporation.corp_typ_cd,
-            # Corporation.transition_dt,
+            Corporation.recognition_dts,
             CorpOpState.state_typ_cd,
             Address.addr_line_1,
             Address.addr_line_2,
