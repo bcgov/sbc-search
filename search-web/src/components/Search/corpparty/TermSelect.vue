@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <v-select
-      class="field-select"
-      filled
-      v-model="select"
-      :items="items"
-      label="Field"
-    ></v-select>
-  </div>
+  <v-select
+    class="term-select"
+    filled
+    v-model="select"
+    :items="items"
+    label="Term"
+  ></v-select>
 </template>
 
 <script>
@@ -21,14 +19,6 @@ export default {
       default: null,
       type: String
     }
-  },
-  beforeUpdate() {
-    this.select = this.init;
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.select = this.init;
-    });
   },
   data() {
     return {

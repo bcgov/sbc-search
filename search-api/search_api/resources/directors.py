@@ -21,6 +21,8 @@ from search_api.models import (
     OfficesHeld,
     OfficerType,
     Event,
+    Filing,
+    FilingType,
     _get_corpparty_search_results,
     _add_additional_cols_to_search_results,
     _normalize_addr,
@@ -141,10 +143,12 @@ def corpparty_search_export():
 @API.route('/<id>')
 @jwt.requires_auth
 def person(id):
-    #try:
-
-    result = (CorpParty.query
+    result = (
+        CorpParty.query
         .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
+        .join(Event, Event.event_id == CorpParty.start_event_id)
+        .join(Filing, Filing.event_id == Event.event_id)
+        .join(FilingType, FilingType.filing_typ_cd == Filing.filing_typ_cd)
         .add_columns(\
             # CorpParty.corp_party_id,
             # CorpParty.first_nme,
@@ -159,18 +163,20 @@ def person(id):
             Corporation.admin_email,
             # CorpOpState.state_typ_cd,
             # CorpOpState.full_desc,
-        ).filter(CorpParty.corp_party_id==int(id))).one()
+            FilingType.full_desc
+        ).filter(CorpParty.corp_party_id == int(id))).one()
 
     person = result[0]
     result_dict = {}
-    name = CorpName.query.filter(CorpName.corp_num == person.corp_num).add_columns(CorpName.corp_nme).filter()[0] #TODO: handle multiple names
+    name = CorpName.query.filter(CorpName.corp_num == person.corp_num).add_columns(
+        CorpName.corp_nme).filter()[0]  # TODO: handle multiple names
     offices = Office.query.filter(Office.corp_num == person.corp_num).all()
     delivery_addr = _normalize_addr(person.delivery_addr_id)
     mailing_addr = _normalize_addr(person.mailing_addr_id)
 
     states = CorpState.query.filter(
         CorpState.corp_num == person.corp_num,
-        CorpState.end_event_id == None).all()
+        CorpState.end_event_id == None).all()  # noqa
 
     # TODO : list all, or just the one from the correct time.
     corp_delivery_addr = _normalize_addr(offices[0].delivery_addr_id) if offices else ''
@@ -193,9 +199,9 @@ def person(id):
     result_dict['corp_mailing_addr'] = corp_mailing_addr
     result_dict['corp_typ_cd'] = result[1]
     result_dict['corp_admin_email'] = result[2]
+    result_dict['full_desc'] = result[3]
 
     result_dict['states'] = [s.as_dict() for s in states]
-    # result_dict['full_desc'] = results[0][14]
 
     return jsonify(result_dict)
 
@@ -203,20 +209,21 @@ def person(id):
 @API.route('/officesheld/<corppartyid>')
 @jwt.requires_auth
 def officesheld(corppartyid):
-    results = (OfficerType.query
-            .join(OfficesHeld, OfficerType.officer_typ_cd==OfficesHeld.officer_typ_cd)
-            .join(CorpParty, OfficesHeld.corp_party_id == CorpParty.corp_party_id)
-            #.join(Address, CorpParty.mailing_addr_id == Address.addr_id)
-            .join(Event, Event.event_id == CorpParty.start_event_id)
-            .add_columns(
-                CorpParty.corp_party_id,
-                OfficerType.officer_typ_cd,
-                OfficerType.short_desc,
-                CorpParty.appointment_dt,
-                Event.event_timestmp
-            )
-            .filter(CorpParty.corp_party_id==int(corppartyid))
+    results = (
+        OfficerType.query
+        .join(OfficesHeld, OfficerType.officer_typ_cd == OfficesHeld.officer_typ_cd)
+        .join(CorpParty, OfficesHeld.corp_party_id == CorpParty.corp_party_id)
+        # .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+        .join(Event, Event.event_id == CorpParty.start_event_id)
+        .add_columns(
+            CorpParty.corp_party_id,
+            OfficerType.officer_typ_cd,
+            OfficerType.short_desc,
+            CorpParty.appointment_dt,
+            Event.event_timestmp
         )
+        .filter(CorpParty.corp_party_id == int(corppartyid))
+    )
 
     offices = []
     for row in results:
@@ -226,12 +233,11 @@ def officesheld(corppartyid):
         result_dict['officer_typ_cd'] = row[2]
         result_dict['short_desc'] = row[3]
         result_dict['appointment_dt'] = row[4]
-        result_dict['year'] = row[5].year
+        result_dict['year'] = row[5].year if row[5] else None
 
         offices.append(result_dict)
 
-
-    person = CorpParty.query.filter(CorpParty.corp_party_id==int(corppartyid)).one()
+    person = CorpParty.query.filter(CorpParty.corp_party_id == int(corppartyid)).one()
 
     # one or both addr may be null, handle each case.
     if person.delivery_addr_id or person.mailing_addr_id:
@@ -243,25 +249,41 @@ def officesheld(corppartyid):
         elif person.mailing_addr_id:
             expr = (CorpParty.mailing_addr_id == person.mailing_addr_id)
 
-        same_addr = CorpParty.query.add_columns(
-            Event.event_timestmp
-        ).filter(expr).join(Event, Event.event_id == CorpParty.start_event_id)
+        same_addr = (
+            CorpParty.query
+            .join(Event, Event.event_id == CorpParty.start_event_id)
+            .add_columns(Event.event_timestmp)
+            .filter(expr)
+        )
     else:
         same_addr = []
 
-    same_name_and_company = CorpParty.query.add_columns(
-        Event.event_timestmp
-    ).filter(
-        CorpParty.first_nme.ilike(person.first_nme),
-        CorpParty.last_nme.ilike(person.last_nme),
-        CorpParty.corp_num.ilike(person.corp_num),
-    ).join(Event, Event.event_id == CorpParty.start_event_id)
+    same_name_and_company = (
+        CorpParty.query
+        .join(Event, Event.event_id == CorpParty.start_event_id)
+        .add_columns(Event.event_timestmp)
+    )
 
+    if person.first_nme:
+        same_name_and_company = same_name_and_company.filter(
+            CorpParty.first_nme.ilike(person.first_nme))
+
+    if person.last_nme:
+        same_name_and_company = same_name_and_company.filter(
+            CorpParty.last_nme.ilike(person.last_nme))
+
+    if person.corp_num:
+        same_name_and_company = same_name_and_company.filter(
+            CorpParty.corp_num.ilike(person.corp_num))
 
     return jsonify({
         'offices': offices,
-        'same_addr': [{**s[0].as_dict(), **{'year':int(s[1].year)}} for s in same_addr if s[0].corp_party_id != int(corppartyid)],
-        'same_name_and_company': [{**s[0].as_dict(), **{'year':int(s[1].year)}} for s in same_name_and_company if s[0].corp_party_id != int(corppartyid)],
+        'same_addr': [
+            {**s[0].as_dict(), **{'year': int(s[1].year)}} for s in same_addr if
+            s[0].corp_party_id != int(corppartyid)],
+        'same_name_and_company': [
+            {**s[0].as_dict(), **{'year': int(s[1].year)}} for s in same_name_and_company if
+            s[0].corp_party_id != int(corppartyid)],
     })
 
 

@@ -21,8 +21,8 @@
         enter postal code, for added accuracy.
       </div>
       <div class="mb-4">
-        <span class="font-weight-bold">AND/OR:</span>
-        AND will find results which are true for all filters only. OR will find
+        <span class="font-weight-bold">ALL/ANY:</span>
+        ALL will find results which are true for all filters only. ANY will find
         results which are true for any of the filters.
       </div>
     </div>

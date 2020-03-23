@@ -6,7 +6,8 @@ export const FIELD_VALUES = [
   { text: "Middle Name", value: "middle_nme" },
   { text: "Any Name", value: "any_nme" },
   { text: "Street Address", value: "addr_line_1" },
-  { text: "Postal Code", value: "postal_code" }
+  { text: "Postal Code", value: "postal_code" },
+  { text: "Company Status", value: "state_typ_cd" }
 ];
 
 export const OPERATOR_VALUES = [
@@ -14,8 +15,16 @@ export const OPERATOR_VALUES = [
   { text: "Starts With", value: "startswith" },
   { text: "Ends With", value: "endswith" },
   { text: "Exact Match", value: "exact" },
-  { text: "Wildcard (%)", value: "wildcard" }
+  { text: "Wildcard (% or *)", value: "wildcard" }
 ];
+
+export const TERM_VALUES = {
+  state_typ_cd: [
+    { text: "Active", value: "ACT" },
+    { text: "Historical", value: "HIS" }
+  ]
+};
+
 export const COMPANY_HEADERS = [
   { text: "Number", value: "corp_num" },
   { text: "Status", value: "state_typ_cd" },
