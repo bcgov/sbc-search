@@ -1,3 +1,17 @@
+# Copyright © 2020 Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -5,7 +19,7 @@ import os
 from decimal import Decimal
 import decimal
 import flask.json
-from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE, STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
+from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 from functools import reduce
 
 
@@ -421,39 +435,11 @@ def _is_addr_search(fields):
     return "addr_line_1" in fields or "postal_cd" in fields
 
 
-def _add_additional_cols_to_search_results(args, row, result_dict):
-    fields = args.getlist('field')
-    additional_cols = args.get('additional_cols')
-    if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-        result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
-        result_dict['postal_cd'] = row.postal_cd
-    elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-        result_dict['state_typ_cd'] = row.state_typ_cd
-
-
-def _add_additional_cols_to_search_query(args, query):
-    fields = args.getlist('field')
-    additional_cols = args.get('additional_cols')
-    if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-        query = query.join(Address, CorpParty.mailing_addr_id == Address.addr_id)
-        query = query.add_columns(
-            Address.addr_line_1,
-            Address.addr_line_2,
-            Address.addr_line_3,
-            Address.postal_cd)
-    elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-        query = query.join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
-            .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
-        query = query.add_columns(CorpOpState.state_typ_cd)
-
-    return query
-
-
 def _get_model_by_field(field_name):
     if field_name in ['first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt', 'corp_num',
                       'corp_party_id', 'party_typ_cd']:  # CorpParty fields
         return eval('CorpParty')
-    elif field_name in ['corp_num']:  # Corporation fields
+    elif field_name in ['corp_num', 'recognition_dts']:  # Corporation fields
         return eval('Corporation')
     elif field_name in ['corp_nme']:  # CorpName fields
         return eval('CorpName')
@@ -530,17 +516,21 @@ def _get_corporation_search_results(args):
     results = (
         Corporation.query
         .join(CorpName, Corporation.corp_num == CorpName.corp_num)
-        # .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
-        # .join(Office, Office.corp_num == Corporation.corp_num)
-        # .join(Address, Office.mailing_addr_id == Address.addr_id)
+        .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
+        .join(Office, Office.corp_num == Corporation.corp_num)
+        .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
+        .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+        .join(Address, Office.mailing_addr_id == Address.addr_id)
         .with_entities(
             CorpName.corp_nme,
             Corporation.corp_num,
-            # Corporation.transition_dt,
-            # Address.addr_line_1,
-            # Address.addr_line_2,
-            # Address.addr_line_3,
-            # Address.postal_cd,
+            Corporation.corp_typ_cd,
+            Corporation.recognition_dts,
+            CorpOpState.state_typ_cd,
+            Address.addr_line_1,
+            Address.addr_line_2,
+            Address.addr_line_3,
+            Address.postal_cd,
             # Address.city,
             # Address.province,
         )
@@ -569,7 +559,6 @@ def _get_corpparty_search_results(args):
     &value=<string>
     &sort_type=asc|desc
     &sort_value=ANY_NME|first_nme|last_nme|<any column name>
-    &additional_cols=address|active|none
 
     For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
     curl "http://localhost/api/v1/directors/search/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"  # noqa
@@ -629,8 +618,6 @@ def _get_corpparty_search_results(args):
             CorpOpState.state_typ_cd,
             # CorpOpState.full_desc,
         ))
-
-    results = _add_additional_cols_to_search_query(args, results)
 
     # Simple mode - return reasonable results for a single search string:
     if query:

@@ -10,10 +10,12 @@
       <template v-slot:item="{ item }">
         <tr class="cursor-pointer" @click="handleTableRowClick(item)">
           <td class="anchor-text">{{ item["corp_num"] }}</td>
+          <td>{{ item["corp_typ_cd"] }}</td>
           <td>{{ item["corp_nme"] }}</td>
-          <td>{{ item["inc_date"] }}</td>
-          <td>{{ item["status"] }}</td>
+          <td>{{ item["recognition_dts"] }}</td>
+          <td>{{ item["state_typ_cd"] }}</td>
           <td>{{ item["addr"] }}</td>
+          <td>{{ item["postal_cd"] }}</td>
         </tr>
       </template>
     </v-data-table>

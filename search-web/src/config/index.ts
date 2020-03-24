@@ -39,20 +39,38 @@ export const CORPORATION_HEADERS = [
     align: "left"
   },
   {
-    text: "Incorporated",
-    value: "inc_date",
+    text: "Entity Type",
+    value: "corp_typ_cd",
     sortable: true,
     align: "left"
   },
   {
-    text: "Act/His",
-    value: "status",
+    text: "Company Name",
+    value: "corp_nme",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Incorporated",
+    value: "recognition_dts",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Company Status",
+    value: "state_typ_cd",
     sortable: true,
     align: "left"
   },
   {
     text: "Company Address",
     value: "addr",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Postal Code",
+    value: "postal_cd",
     sortable: true,
     align: "left"
   }
@@ -86,6 +104,12 @@ export const CORPPARTY_HEADERS = [
   {
     text: "Address",
     value: "addr",
+    sortable: true,
+    align: "left"
+  },
+  {
+    text: "Postal Code",
+    value: "postal_cd",
     sortable: true,
     align: "left"
   },
@@ -165,12 +189,6 @@ export const CORPPARTY_HEADERS = [
   {
     text: "Province",
     value: "province",
-    sortable: true,
-    align: "left"
-  },
-  {
-    text: "Postal Code",
-    value: "postal_cd",
     sortable: true,
     align: "left"
   },
