@@ -10,7 +10,9 @@
           </SbcHeader>
         </div>
         <div class="content-body">
-          <router-view />
+          <v-container>
+            <router-view />
+          </v-container>
         </div>
       </div>
       <div class="footer">
@@ -89,6 +91,10 @@ export default Vue.extend({
   color: #2076d2;
 }
 
+.content-body {
+  margin-top: 2em;
+}
+
 .color-gray {
   color: $COLOR_GREY;
 }
@@ -98,11 +104,6 @@ export default Vue.extend({
   flex-direction: column;
   height: 100%;
   background-color: #f1f3f6;
-}
-.content-body {
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: 2em 0;
 }
 html,
 body {
