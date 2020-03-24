@@ -130,6 +130,9 @@
         },
         "port": {
           "targetPort": "8080-tcp"
+        },
+        "tls": {
+          "termination": "edge"
         }
       }
     }
