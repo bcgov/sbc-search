@@ -158,6 +158,9 @@
         },
         "port": {
           "targetPort": "5000-tcp"
+        },
+        "tls": {
+          "termination": "edge"
         }
       }
     }

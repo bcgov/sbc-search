@@ -2,6 +2,7 @@
   <div>
     <v-data-table
       v-if="qs"
+      mobile-breakpoint="0"
       :calculate-widths="true"
       class="elevation-1 corp-party-table"
       :headers="headers"

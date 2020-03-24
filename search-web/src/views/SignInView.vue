@@ -32,6 +32,12 @@ export default {
   },
   methods: {
     async updateHeader() {
+      const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
+      if (KEYCLOACK_TOKEN) {
+        ApiService.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${KEYCLOACK_TOKEN}`;
+      }
       this.$router.push({
         name: "Home"
       });
