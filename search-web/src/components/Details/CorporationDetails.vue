@@ -68,7 +68,7 @@
           </ul>
         </v-col>
         <v-col cols="6">
-          <CorporationFilings></CorporationFilings>
+          <CorporationFilings :corp_num="details.corp_num"></CorporationFilings>
         </v-col>
       </v-row>
     </v-container>

@@ -6,14 +6,31 @@
       class="folio-input"
       placeholder="Enter Folio Number"
     ></v-text-field>
-    <v-btn height="50" color="primary" class="folio-pay-btn"
-      >Pay to See Corporate Filings</v-btn
+    <v-btn
+      height="50"
+      color="primary"
+      class="folio-pay-btn"
+      @click="handleClick"
+      >Direct Link To Company on BC Online (You must log in first)</v-btn
     >
   </div>
 </template>
 
 <script>
-export default {};
+import { getDeepLink } from "@/util/index.ts";
+export default {
+  props: {
+    corp_num: {
+      default: null,
+      type: Number
+    }
+  },
+  methods: {
+    handleClick() {
+      window.open(getDeepLink(this.corp_num));
+    }
+  }
+};
 </script>
 
 <style lang="scss">
@@ -23,6 +40,5 @@ export default {};
 .v-application .folio-pay-btn {
   letter-spacing: 0 !important;
   text-transform: none !important;
-  width: 215px;
 }
 </style>
