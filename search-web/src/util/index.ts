@@ -19,3 +19,7 @@ export function buildQueryString(filters) {
   });
   return queryString;
 }
+
+export function getDeepLink(corpNum) {
+  return `https://tst.corponline.gov.bc.ca/corporateonline/colin/search/searchAction.do?corpNum=${corpNum}&_flowExecutionKey=e4s2`;
+}
