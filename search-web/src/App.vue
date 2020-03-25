@@ -38,28 +38,11 @@ export default Vue.extend({
     SbcHeader,
     SbcFooter
   },
-  data() {
-    return {
-      inAuth: false
-    };
-  },
   async mounted() {
     sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(AuthConfig));
-    this.handleJWT();
     await KeyCloakService.setKeycloakConfigUrl(`/config/kc/keycloak.json`);
   },
-  methods: {
-    handleJWT() {
-      const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
-      if (KEYCLOACK_TOKEN) {
-        ApiService.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${KEYCLOACK_TOKEN}`;
-      } else {
-        delete ApiService.defaults.headers.common["Authorization"];
-      }
-    }
-  }
+  methods: {}
 });
 </script>
 
