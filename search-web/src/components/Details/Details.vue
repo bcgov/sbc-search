@@ -11,7 +11,7 @@
             <span v-if="detail.corp_nme">
               at
               <span
-                class="font-weight-bold cursor-pointer"
+                class="font-weight-bold cursor-pointer detail-office-link"
                 @click="handleCorpClick(detail.corp_num)"
                 >{{ detail.corp_nme }}
               </span></span
@@ -147,5 +147,9 @@ export default {
 
 .v-application .detail-big-margins {
   margin-bottom: 4em !important;
+}
+
+.detail-office-link {
+  border-bottom: 2px solid black;
 }
 </style>
