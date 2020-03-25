@@ -147,28 +147,22 @@ def person(id):
     result = (
         CorpParty.query
         .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
-        .join(Event, Event.event_id == CorpParty.start_event_id)
-        .join(Filing, Filing.event_id == Event.event_id)
-        .join(FilingType, FilingType.filing_typ_cd == Filing.filing_typ_cd)
-        .add_columns(\
-            # CorpParty.corp_party_id,
-            # CorpParty.first_nme,
-            # CorpParty.middle_nme,
-            # CorpParty.last_nme,
-            # CorpParty.appointment_dt,
-            # CorpParty.cessation_dt,
-            # CorpParty.corp_num,
-            # CorpParty.delivery_addr_id,
-            # CorpParty.party_typ_cd
+        .add_columns(
             Corporation.corp_typ_cd,
-            Corporation.admin_email,
-            # CorpOpState.state_typ_cd,
-            # CorpOpState.full_desc,
-            FilingType.full_desc
+            Corporation.admin_email
         ).filter(CorpParty.corp_party_id == int(id))).one()
 
     person = result[0]
     result_dict = {}
+
+    filing_description = (
+        CorpParty.query
+        .join(Event, Event.event_id == CorpParty.start_event_id)
+        .join(Filing, Filing.event_id == Event.event_id)
+        .join(FilingType, FilingType.filing_typ_cd == Filing.filing_typ_cd)
+        .add_columns(FilingType.full_desc)
+        .filter(CorpParty.corp_party_id == int(id)).all())
+
     name = CorpName.query.filter(CorpName.corp_num == person.corp_num).add_columns(
         CorpName.corp_nme).filter()[0]  # TODO: handle multiple names
     offices = Office.query.filter(Office.corp_num == person.corp_num).all()
@@ -200,7 +194,7 @@ def person(id):
     result_dict['corp_mailing_addr'] = corp_mailing_addr
     result_dict['corp_typ_cd'] = result[1]
     result_dict['corp_admin_email'] = result[2]
-    result_dict['full_desc'] = result[3]
+    result_dict['full_desc'] = filing_description[0].full_desc if filing_description else None
 
     result_dict['states'] = [s.as_dict() for s in states]
 
