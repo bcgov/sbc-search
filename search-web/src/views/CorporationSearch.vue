@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ page }}
     <h1>Welcome to Corporation Search.</h1>
     <h4 class="mt-3 body-1 mb-10">
       Search for active and historical BC companies by Name, Incorporation
@@ -20,6 +19,7 @@
         :page="page"
         :query="query"
         @pageUpdate="handlePageUpdate"
+        @sortUpdate="handleSortUpdate"
       ></CorporationTable>
     </div>
   </div>
@@ -52,7 +52,9 @@ export default {
   data() {
     return {
       query: null,
-      page: "1"
+      page: "1",
+      sort_value: "corp_nme",
+      sort_type: "dsc"
     };
   },
   methods: {
@@ -61,7 +63,9 @@ export default {
       this.$router.push({
         query: {
           query: searchQuery,
-          page: 1
+          page: 1,
+          sort_type: "dsc",
+          sort_value: "corp_nme"
         }
       });
     },
@@ -70,6 +74,23 @@ export default {
       const query = Object.assign({}, this.$route.query);
       query.page = this.page;
       this.$router.push({ query });
+    },
+    handleSortUpdate(options) {
+      if (options.sortBy.length === 0 && options.sortDesc.length === 0) {
+        this.sort_type = "dsc";
+        this.sort_value = "corp_nme";
+      } else if (options.sortBy.length === 1 && options.sortDesc.length === 1) {
+        this.sort_value = options.sortBy[0];
+        this.sort_type = options.sortDesc[0] ? "dsc" : "asc";
+      }
+      const query = Object.assign({}, this.$route.query);
+      query.sort_value = this.sort_value;
+      query.sort_type = this.sort_type;
+      this.$router.push({ query }).catch(e => {
+        if (e.name !== "NavigationDuplicated") {
+          console.error(e);
+        }
+      });
     },
     handleExport() {
       window.open(
@@ -84,6 +105,9 @@ export default {
       const query = this.$route.query;
       this.$root.$emit("setCorpSearchInput", query.query);
       this.query = query;
+      if (query.page) {
+        this.page = query.page;
+      }
     }
   }
 };
