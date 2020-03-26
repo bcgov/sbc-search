@@ -1,12 +1,13 @@
 <template>
   <div>
+    {{ page }}
     <h1>Welcome to Corporation Search.</h1>
     <h4 class="mt-3 body-1 mb-10">
       Search for active and historical BC companies by Name, Incorporation
       Number or Address.
     </h4>
     <div class="pa-10 pb-4 mb-10 corp-search-container">
-      <CorporationSearch></CorporationSearch>
+      <CorporationSearch @search="handleSearch"></CorporationSearch>
     </div>
     <div v-if="!isQueryEmpty">
       <div class="d-flex justify-space-between align-center mb-5">
@@ -15,7 +16,11 @@
           >Export to .xlsx</v-btn
         >
       </div>
-      <CorporationTable :corporations="corporations"></CorporationTable>
+      <CorporationTable
+        :page="page"
+        :query="query"
+        @pageUpdate="handlePageUpdate"
+      ></CorporationTable>
     </div>
   </div>
 </template>
@@ -41,39 +46,44 @@ export default {
   watch: {
     "$route.query"(nq) {
       this.$root.$emit("setCorpSearchInput", nq.query);
-      this.search(nq);
+      this.query = nq;
     }
   },
   data() {
     return {
-      corporations: []
+      query: null,
+      page: "1"
     };
   },
   methods: {
+    handleSearch(searchQuery) {
+      this.page = "1";
+      this.$router.push({
+        query: {
+          query: searchQuery,
+          page: 1
+        }
+      });
+    },
+    handlePageUpdate(page) {
+      this.page = page;
+      const query = Object.assign({}, this.$route.query);
+      query.page = this.page;
+      this.$router.push({ query });
+    },
     handleExport() {
       window.open(
         `${
           process.env.VUE_APP_BACKEND_HOST
         }${EXPORT_CORPORATION_URL}/?${qs.stringify(this.$route.query)}`
       );
-    },
-    search(query) {
-      corporationSearch(query)
-        .then(result => {
-          this.corporations = result.data.results;
-        })
-        .catch(e => {
-          this.corporations = [];
-        });
     }
   },
   mounted() {
     if (!this.isQueryEmpty && this.$route.query.query) {
-      const query = this.$route.query.query;
-      this.$root.$emit("setCorpSearchInput", query);
-      this.search({
-        query
-      });
+      const query = this.$route.query;
+      this.$root.$emit("setCorpSearchInput", query.query);
+      this.query = query;
     }
   }
 };

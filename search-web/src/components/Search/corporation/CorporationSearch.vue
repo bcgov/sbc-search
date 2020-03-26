@@ -31,12 +31,7 @@ export default {
   },
   methods: {
     handleSearch() {
-      const query = this.searchQuery;
-      this.$router.push({
-        query: {
-          query
-        }
-      });
+      this.$emit("search", this.searchQuery);
     }
   },
   data() {

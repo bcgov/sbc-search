@@ -231,6 +231,4 @@ export default {
 .corp-party-table .v-data-footer__icons-before {
   display: none;
 }
-.corp-party-table th span {
-}
 </style>
