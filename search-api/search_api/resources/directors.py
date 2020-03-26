@@ -21,13 +21,10 @@ from openpyxl import Workbook
 from search_api.auth import jwt
 from search_api.models import (
     Corporation,
-    CorpOpState,
     CorpState,
     CorpParty,
     CorpName,
-    Address,
     Office,
-    OfficeType,
     OfficesHeld,
     OfficerType,
     Event,
