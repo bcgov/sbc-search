@@ -10,7 +10,7 @@
           </SbcHeader>
         </div>
         <div class="content-body">
-          <v-container>
+          <v-container :fluid="$vuetify.breakpoint.mdOnly">
             <router-view />
           </v-container>
         </div>
@@ -102,6 +102,13 @@ body {
 @media (max-width: 1600px) {
   .content-body {
     padding: 2em;
+  }
+}
+
+@media (max-width: 600px) {
+  .content-body {
+    padding: 0em 0.5em;
+    margin: 0;
   }
 }
 </style>

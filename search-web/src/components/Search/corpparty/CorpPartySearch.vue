@@ -1,18 +1,26 @@
 <template>
-  <div class="d-flex align-top">
+  <div class="d-flex align-top cps-container">
     <FieldSelect
-      class="field-select mr-3"
+      class="field-select"
       :items="FIELDS"
       :init="criteria.field"
       @change="handleFieldChange"
       :selected.sync="selectedField"
+      :class="{
+        'mr-0': $vuetify.breakpoint.smAndDown,
+        'mr-3': $vuetify.breakpoint.mdAndUp
+      }"
     ></FieldSelect>
     <OperatorSelect
-      class="field-select mr-3"
+      class="field-select"
       :items="OPERATORS"
       :init="criteria.operator"
       @change="handleOperatorChange"
       :selected.sync="selectedOperator"
+      :class="{
+        'mr-0': $vuetify.breakpoint.smAndDown,
+        'mr-3': $vuetify.breakpoint.mdAndUp
+      }"
     ></OperatorSelect>
 
     <TermSelect
@@ -25,13 +33,18 @@
       v-else
       :uid="uid"
       :query="initQuery"
-      class="d-inline-block"
+      class="d-inline-block search-input"
     ></SearchInput>
 
     <v-btn
       tabindex="-1"
       v-if="remove"
-      class="ml-5"
+      :block="$vuetify.breakpoint.smAndDown"
+      :class="{
+        'ml-0': $vuetify.breakpoint.smAndDown,
+        'ml-5': $vuetify.breakpoint.mdAndUp,
+        'mb-10': $vuetify.breakpoint.smAndDown
+      }"
       height="56"
       outlined
       @click="handleRemove"
@@ -169,7 +182,31 @@ export default {
 </script>
 
 <style lang="scss">
+.cps-container {
+  flex-wrap: wrap;
+}
 .field-select {
   width: 200px;
+}
+
+@media (max-width: 1264px) {
+  .field-select {
+    width: 180px;
+  }
+}
+
+@media (max-width: 959px) {
+  .field-select {
+    width: 100%;
+  }
+  .search-input {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .field-select {
+    width: 100% !important;
+  }
 }
 </style>
