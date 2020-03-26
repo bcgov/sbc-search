@@ -23,7 +23,7 @@
 <script>
 import CorporationSearch from "@/components/Search/corporation/CorporationSearch.vue";
 import CorporationTable from "@/components/Search/corporation/CorporationTable.vue";
-import { corporationSearch } from "@/api/SearchApi.js";
+import { corporationSearch, EXPORT_CORPORATION_URL } from "@/api/SearchApi.js";
 import isEmpty from "lodash-es/isEmpty";
 import { BACKEND_URL } from "@/config/index.ts";
 const qs = require("qs");
@@ -52,9 +52,9 @@ export default {
   methods: {
     handleExport() {
       window.open(
-        `${BACKEND_URL}/corporation/search/export/?${qs.stringify(
-          this.$route.query
-        )}`
+        `${
+          process.env.VUE_APP_BACKEND_HOST
+        }${EXPORT_CORPORATION_URL}/?${qs.stringify(this.$route.query)}`
       );
     },
     search(query) {

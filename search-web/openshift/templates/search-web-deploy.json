@@ -60,6 +60,22 @@
             }
           },
           "spec": {
+
+            "volumes": [
+              {
+                "name": "web-ui-configuration",
+                "configMap": {
+                  "name": "${NAME}-${TAG_NAME}-ui-configuration",
+                  "defaultMode": 420
+                }
+              }, {
+                "name": "keycloak-configuration",
+                "configMap": {
+                  "name": "${NAME}-${TAG_NAME}-keycloak-config",
+                  "defaultMode": 420
+                }
+              }
+            ],
             "containers": [
               {
                 "image": "docker-registry.default.svc:5000/${IMAGE_NAMESPACE}/${NAME}-runtime:${OUTPUT_IMAGE_TAG}",
@@ -72,7 +88,19 @@
                 ],
                 "resources": {},
                 "terminationMessagePath": "/dev/termination-log",
-                "terminationMessagePolicy": "File"
+                "terminationMessagePolicy": "File",
+                "volumeMounts": [
+                  {
+                    "name": "web-ui-configuration",
+                    "readOnly": true,
+                    "mountPath": "/opt/app-root/src/config"
+                  },
+                  {
+                    "name": "keycloak-configuration",
+                    "readOnly": true,
+                    "mountPath": "/opt/app-root/src/config/kc"
+                  }
+                ]
               }
             ],
             "dnsPolicy": "ClusterFirst",

@@ -10,7 +10,7 @@
             <thead>
               <tr>
                 <th>Office Held</th>
-                <th>Address</th>
+                <th>Filing #</th>
                 <th>Year</th>
               </tr>
             </thead>
@@ -21,7 +21,7 @@
                 </td>
                 <td>
                   <a
-                    :href="`/corporation/${o['corp_party_id']}`"
+                    :href="`/corpparty/${o['corp_party_id']}`"
                     target="blank"
                     >{{ o["corp_party_id"] }}</a
                   >
@@ -52,7 +52,7 @@
             <thead>
               <tr>
                 <th>Office Held</th>
-                <th>Address</th>
+                <th>Filing #</th>
                 <th>Year</th>
               </tr>
             </thead>
@@ -66,7 +66,7 @@
                 </td>
                 <td>
                   <a
-                    :href="`/corporation/${o['corp_party_id']}`"
+                    :href="`/corpparty/${o['corp_party_id']}`"
                     target="blank"
                     >{{ o["corp_party_id"] }}</a
                   >
@@ -93,7 +93,7 @@
             <thead>
               <tr>
                 <th>Office Held</th>
-                <th>Address</th>
+                <th>Filing #</th>
                 <th>Year</th>
               </tr>
             </thead>
@@ -104,7 +104,7 @@
                 </td>
                 <td>
                   <a
-                    :href="`/corporation/${o['corp_party_id']}`"
+                    :href="`/corpparty/${o['corp_party_id']}`"
                     target="blank"
                     >{{ o["corp_party_id"] }}</a
                   >

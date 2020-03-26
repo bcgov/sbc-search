@@ -60,7 +60,7 @@ import { mapGetters } from "vuex";
 import omit from "lodash-es/omit";
 import isEmpty from "lodash-es/isEmpty";
 const qs = require("qs");
-import { searchApi } from "@/api/SearchApi";
+import { searchApi, EXPORT_CORPPARTY_URL } from "@/api/SearchApi";
 import CorpPartyTable from "@/components/Search/corpparty/CorpPartyTable.vue";
 import { buildQueryString } from "@/util/index.ts";
 import SearchLogic from "@/components/Search/corpparty/SearchLogic.vue";
@@ -107,7 +107,9 @@ export default {
   methods: {
     handleExport() {
       const queryString = this.generateQueryString();
-      window.open(`${BACKEND_URL}/person/search/export/?${queryString}`);
+      window.open(
+        `${process.env.VUE_APP_BACKEND_HOST}${EXPORT_CORPPARTY_URL}/?${queryString}`
+      );
     },
     handlePageUpdate(page) {
       this.page = page;
