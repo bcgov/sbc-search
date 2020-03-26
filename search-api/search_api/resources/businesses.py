@@ -22,15 +22,8 @@ from sqlalchemy import desc
 from search_api.auth import jwt, authorized
 from search_api.models import (
     Corporation,
-    CorpState,
-    CorpParty,
     CorpName,
-    Address,
     Office,
-    OfficeType,
-    OfficesHeld,
-    OfficerType,
-    Event,
     _get_corporation_search_results,
     _merge_corpparty_search_addr_fields,
     _normalize_addr,
