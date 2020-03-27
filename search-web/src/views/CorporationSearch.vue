@@ -5,8 +5,19 @@
       Search for active and historical BC companies by Name, Incorporation
       Number or Address.
     </h4>
-    <div class="pa-10 pb-4 mb-10 corp-search-container">
-      <CorporationSearch @search="handleSearch"></CorporationSearch>
+    <div
+      class="mb-10 corp-search-container"
+      :class="{
+        'pa-10': $vuetify.breakpoint.smAndUp,
+        'pa-2': $vuetify.breakpoint.xsOnly
+      }"
+    >
+      <CorporationSearch
+        @search="handleSearch"
+        :class="{
+          'mb-n6': $vuetify.breakpoint.smAndUp
+        }"
+      ></CorporationSearch>
     </div>
     <div v-if="!isQueryEmpty">
       <div class="d-flex justify-space-between align-center mb-5">
@@ -83,6 +94,7 @@ export default {
         this.sort_value = options.sortBy[0];
         this.sort_type = options.sortDesc[0] ? "dsc" : "asc";
       }
+
       const query = Object.assign({}, this.$route.query);
       query.sort_value = this.sort_value;
       query.sort_type = this.sort_type;
