@@ -5,8 +5,19 @@
       Search for active and historical BC companies by Name, Incorporation
       Number or Address.
     </h4>
-    <div class="pa-10 pb-4 mb-10 corp-search-container">
-      <CorporationSearch></CorporationSearch>
+    <div
+      class="mb-10 corp-search-container"
+      :class="{
+        'pa-10': $vuetify.breakpoint.smAndUp,
+        'pa-2': $vuetify.breakpoint.xsOnly
+      }"
+    >
+      <CorporationSearch
+        @search="handleSearch"
+        :class="{
+          'mb-n6': $vuetify.breakpoint.smAndUp
+        }"
+      ></CorporationSearch>
     </div>
     <div v-if="!isQueryEmpty">
       <div class="d-flex justify-space-between align-center mb-5">
@@ -15,7 +26,12 @@
           >Export to .xlsx</v-btn
         >
       </div>
-      <CorporationTable :corporations="corporations"></CorporationTable>
+      <CorporationTable
+        :page="page"
+        :query="query"
+        @pageUpdate="handlePageUpdate"
+        @sortUpdate="handleSortUpdate"
+      ></CorporationTable>
     </div>
   </div>
 </template>
@@ -41,39 +57,69 @@ export default {
   watch: {
     "$route.query"(nq) {
       this.$root.$emit("setCorpSearchInput", nq.query);
-      this.search(nq);
+      this.query = nq;
     }
   },
   data() {
     return {
-      corporations: []
+      query: null,
+      page: "1",
+      sort_value: "corp_nme",
+      sort_type: "dsc"
     };
   },
   methods: {
+    handleSearch(searchQuery) {
+      this.page = "1";
+      this.$router.push({
+        query: {
+          query: searchQuery,
+          page: 1,
+          sort_type: "dsc",
+          sort_value: "corp_nme"
+        }
+      });
+    },
+    handlePageUpdate(page) {
+      this.page = page;
+      const query = Object.assign({}, this.$route.query);
+      query.page = this.page;
+      this.$router.push({ query });
+    },
+    handleSortUpdate(options) {
+      if (options.sortBy.length === 0 && options.sortDesc.length === 0) {
+        this.sort_type = "dsc";
+        this.sort_value = "corp_nme";
+      } else if (options.sortBy.length === 1 && options.sortDesc.length === 1) {
+        this.sort_value = options.sortBy[0];
+        this.sort_type = options.sortDesc[0] ? "dsc" : "asc";
+      }
+
+      const query = Object.assign({}, this.$route.query);
+      query.sort_value = this.sort_value;
+      query.sort_type = this.sort_type;
+      this.$router.push({ query }).catch(e => {
+        if (e.name !== "NavigationDuplicated") {
+          console.error(e);
+        }
+      });
+    },
     handleExport() {
       window.open(
         `${
           process.env.VUE_APP_BACKEND_HOST
         }${EXPORT_CORPORATION_URL}/?${qs.stringify(this.$route.query)}`
       );
-    },
-    search(query) {
-      corporationSearch(query)
-        .then(result => {
-          this.corporations = result.data.results;
-        })
-        .catch(e => {
-          this.corporations = [];
-        });
     }
   },
   mounted() {
     if (!this.isQueryEmpty && this.$route.query.query) {
-      const query = this.$route.query.query;
-      this.$root.$emit("setCorpSearchInput", query);
-      this.search({
-        query
-      });
+      const query = this.$route.query;
+      this.$root.$emit("setCorpSearchInput", query.query);
+      this.query = query;
+      if (query.page) {
+        this.page = query.page;
+      }
     }
   }
 };

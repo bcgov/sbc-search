@@ -1,11 +1,32 @@
 <template>
   <div class="home">
-    <h1 class="home-title">{{ title }}</h1>
-    <h4 class="mt-3 body-1 mb-10">
+    <h1
+      class="home-title font-weight-bold"
+      :class="{
+        'display-1': $vuetify.breakpoint.smAndDown
+      }"
+    >
+      {{ title }}
+    </h1>
+    <h4
+      class="body-1 home-subtitle"
+      :class="{
+        'mt-4': $vuetify.breakpoint.smAndDown,
+        'mb-4': $vuetify.breakpoint.smAndDown,
+        'mt-3': $vuetify.breakpoint.mdAndUp,
+        'mb-10': $vuetify.breakpoint.mdAndUp
+      }"
+    >
       Search for offices held at active and historical BC companies.
     </h4>
 
-    <div class="pa-10 search-form-container">
+    <div
+      class="search-form-container"
+      :class="{
+        'pa-5': $vuetify.breakpoint.smAndDown,
+        'pa-10': $vuetify.breakpoint.mdAndUp
+      }"
+    >
       <SearchTips></SearchTips>
       <v-form>
         <div v-for="(criteria, index) in filters" :key="index">

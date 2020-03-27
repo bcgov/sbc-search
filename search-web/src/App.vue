@@ -10,7 +10,7 @@
           </SbcHeader>
         </div>
         <div class="content-body">
-          <v-container>
+          <v-container :fluid="$vuetify.breakpoint.mdOnly">
             <router-view />
           </v-container>
         </div>
@@ -88,6 +88,9 @@ export default Vue.extend({
   height: 100%;
   background-color: #f1f3f6;
 }
+.w-100 {
+  width: 100% !important;
+}
 html,
 body {
   height: 100%;
@@ -102,6 +105,13 @@ body {
 @media (max-width: 1600px) {
   .content-body {
     padding: 2em;
+  }
+}
+
+@media (max-width: 600px) {
+  .content-body {
+    padding: 0em 0.5em;
+    margin: 0;
   }
 }
 </style>

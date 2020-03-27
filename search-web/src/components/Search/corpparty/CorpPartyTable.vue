@@ -3,7 +3,6 @@
     <v-data-table
       v-if="qs"
       mobile-breakpoint="0"
-      :calculate-widths="true"
       class="elevation-1 corp-party-table"
       :headers="headers"
       :items="results"
@@ -230,7 +229,5 @@ export default {
 .corp-party-table .v-data-footer__icons-after,
 .corp-party-table .v-data-footer__icons-before {
   display: none;
-}
-.corp-party-table th span {
 }
 </style>
