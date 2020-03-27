@@ -82,6 +82,10 @@ export default Vue.extend({
   color: $COLOR_GREY;
 }
 
+.color-black {
+  color: black;
+}
+
 .main-wrapper {
   display: flex;
   flex-direction: column;

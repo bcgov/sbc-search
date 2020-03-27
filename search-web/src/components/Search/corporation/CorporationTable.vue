@@ -3,7 +3,7 @@
     <v-data-table
       v-if="query"
       class="corporation-table"
-      mobile-breakpoint="0"
+      mobile-breakpoint="960"
       :loading="loading"
       :headers="headers"
       :options.sync="options"
@@ -17,8 +17,28 @@
         'items-per-page-options': [20]
       }"
     >
-      <template v-slot:item="{ item }">
-        <tr class="cursor-pointer" @click="handleTableRowClick(item)">
+      <template v-slot:item="{ item, index, headers }">
+        <!-- Mobile View Begin -->
+        <tr
+          @click="handleTableRowClick(item)"
+          class="cursor-pointer d-table-row d-md-none mobile-tr-row"
+          v-for="(value, i) in Object.values(orderItems(item))"
+          :key="`row${index}${value}${i}`"
+        >
+          <td class="d-table-cell">
+            <div class="d-flex w-100 justify-space-between">
+              <div class="color-black">{{ headers[i].text }}</div>
+              <div class="text-right">{{ value }}</div>
+            </div>
+          </td>
+        </tr>
+        <v-divider class="d-md-none" />
+        <!-- Mobile View End -->
+
+        <tr
+          class="cursor-pointer d-none d-md-table-row"
+          @click="handleTableRowClick(item)"
+        >
           <td class="anchor-text">{{ item["corp_num"] }}</td>
           <td>{{ item["corp_typ_cd"] }}</td>
           <td>{{ item["corp_nme"] }}</td>
@@ -60,6 +80,7 @@
 <script>
 import { CORPORATION_HEADERS } from "@/config/index.ts";
 import { corporationSearch } from "@/api/SearchApi";
+import pick from "lodash-es/pick";
 
 export default {
   props: {
@@ -85,6 +106,17 @@ export default {
     };
   },
   methods: {
+    orderItems(items) {
+      return pick(items, [
+        "corp_num",
+        "corp_typ_cd",
+        "corp_nme",
+        "recognition_dts",
+        "state_typ_cd",
+        "addr",
+        "postal_cd"
+      ]);
+    },
     pageNext() {
       this.$emit("pageUpdate", (parseInt(this.page) + 1).toString());
     },
