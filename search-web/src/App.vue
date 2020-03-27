@@ -88,6 +88,9 @@ export default Vue.extend({
   height: 100%;
   background-color: #f1f3f6;
 }
+.w-100 {
+  width: 100% !important;
+}
 html,
 body {
   height: 100%;

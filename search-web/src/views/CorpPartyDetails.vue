@@ -51,4 +51,15 @@ export default {
   padding: 2em 4em;
   background-color: white;
 }
+@media (max-width: 1264px) {
+  .detail-section {
+    padding: 1em 2em;
+  }
+}
+
+@media (max-width: 599px) {
+  .detail-section {
+    padding: 0em 1em;
+  }
+}
 </style>
