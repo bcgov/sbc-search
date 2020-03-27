@@ -35,7 +35,7 @@ API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 
 @API.route('/search/')
-# @jwt.requires_auth
+@jwt.requires_auth
 def corporation_search():
     # TODO SY - check roles
     # check authorization
@@ -68,7 +68,7 @@ def corporation_search():
 
 
 @API.route('/search/export/')
-# @jwt.requires_auth
+@jwt.requires_auth
 def corporation_search_export():
 
     # Query string arguments
@@ -119,7 +119,7 @@ def corporation_search_export():
 
 
 @API.route('/<id>')
-# @jwt.requires_auth
+@jwt.requires_auth
 def corporation(id):
 
     # TODO: move queries to model class.

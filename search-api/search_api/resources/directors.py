@@ -40,11 +40,13 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
+@jwt.requires_auth
 def hello():
     return "Welcome to the director search API."
 
 
 @API.route('/search/')
+@jwt.requires_auth
 # @jwt.requires_auth
 def corpparty_search():
     args = request.args
@@ -73,7 +75,7 @@ def corpparty_search():
 
 
 @API.route('/search/export/')
-# @jwt.requires_auth
+@jwt.requires_auth
 def corpparty_search_export():
 
     # Query string arguments
@@ -139,7 +141,7 @@ def corpparty_search_export():
 
 
 @API.route('/<id>')
-# @jwt.requires_auth
+@jwt.requires_auth
 def person(id):
     result = (
         CorpParty.query
@@ -199,7 +201,7 @@ def person(id):
 
 
 @API.route('/officesheld/<corppartyid>')
-# @jwt.requires_auth
+@jwt.requires_auth
 def officesheld(corppartyid):
     results = (
         OfficerType.query
