@@ -18,7 +18,7 @@ export default {
   },
   props: {
     idpHint: {
-      default: "bcsc",
+      default: "bcros",
       type: String
     },
     redirectUrlLoginFail: {

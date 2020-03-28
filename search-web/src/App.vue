@@ -3,7 +3,7 @@
     <div class="main-wrapper">
       <div class="content">
         <div class="content-header">
-          <SbcHeader idpHint="idir">
+          <SbcHeader idpHint="bcros">
             <template v-slot:login-button-text>
               Log In
             </template>

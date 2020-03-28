@@ -101,7 +101,7 @@ router.beforeEach((to, from, next) => {
   if (!KEYCLOACK_TOKEN && to.name !== "signin") {
     delete ApiService.defaults.headers.common["Authorization"];
     next({
-      path: "/signin/bcsc"
+      path: "/signin/bcros"
     });
   } else {
     ApiService.defaults.headers.common[
