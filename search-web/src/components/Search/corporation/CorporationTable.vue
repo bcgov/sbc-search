@@ -48,6 +48,14 @@
           <td>{{ item["postal_cd"] }}</td>
         </tr>
       </template>
+      <template v-slot:footer>
+        <v-progress-linear
+          :active="loading"
+          :indeterminate="true"
+          color="primary"
+          height="2"
+        ></v-progress-linear>
+      </template>
       <template v-slot:footer.page-text="{ itemsLength }">
         <div class="custom-footer d-flex align-center">
           <div>Showing {{ itemsLength }} results</div>

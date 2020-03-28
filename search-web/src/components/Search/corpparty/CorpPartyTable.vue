@@ -73,6 +73,14 @@
           </td>
         </tr>
       </template>
+      <template v-slot:footer>
+        <v-progress-linear
+          :active="loading"
+          :indeterminate="true"
+          color="primary"
+          height="2"
+        ></v-progress-linear>
+      </template>
       <template v-slot:footer.page-text="{ itemsLength }">
         <div class="custom-footer d-flex align-center">
           <div>Showing {{ itemsLength }} results</div>
@@ -229,8 +237,10 @@ export default {
       if (!this.qs) {
         return;
       }
+
       this.loading = true;
       this.disableSorting = true;
+
       let queryString = this.qs;
       const { sort_type, sort_value } = qsl.parse(queryString);
       if (sort_type && sort_value) {
