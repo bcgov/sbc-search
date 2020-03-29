@@ -16,14 +16,12 @@ import os
 from decimal import Decimal
 from functools import reduce
 
-from flask import Flask
 import flask.json
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+
 from sqlalchemy import desc
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
-
 
 class MyJSONEncoder(flask.json.JSONEncoder):
 
@@ -35,16 +33,7 @@ class MyJSONEncoder(flask.json.JSONEncoder):
 
 
 flask.json_encoder = MyJSONEncoder
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres')
-# https://stackoverflow.com/questions/33738467/how-do-i-know-if-i-can-disable-sqlalchemy-track-modifications/33790196#33790196
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
+db = SQLAlchemy()
 
 class BaseModel(db.Model):
     __abstract__ = True

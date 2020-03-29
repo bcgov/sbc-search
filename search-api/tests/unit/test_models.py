@@ -9,20 +9,18 @@ Test suite to ensure that the Entity model routines are working as expected.
 from search_api.models import Corporation
 import datetime
 
+from search_api import create_app
 
 default_date = datetime.datetime.now() + datetime.timedelta(weeks=-1)
 
 
-
-
-def test_corporation(db_session):
+def test_corporation(session):
     """Assert that an Entity can be stored in the service."""
     corporation = Corporation(
         corp_num='BC1234567',
         recognition_dts=default_date,
         corp_typ_cd='C'
     )
-    session = db_session
     session.add(corporation)
     session.commit()
     assert corporation.corp_num is not None
