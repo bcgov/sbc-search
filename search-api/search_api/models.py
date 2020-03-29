@@ -259,6 +259,7 @@ class Corporation(BaseModel):
                 results = results.order_by(field.desc())
             else:
                 results = results.order_by(field)
+        return results
 
 
 class CorpName(BaseModel):

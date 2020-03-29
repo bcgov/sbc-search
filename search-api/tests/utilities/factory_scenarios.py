@@ -21,9 +21,9 @@ from enum import Enum
 
 
 JWT_HEADER = {
-    'alg': os.getenv('JWT_OIDC_ALGORITHMS'),
+    'alg': 'RS256',
     'typ': 'JWT',
-    'kid': os.getenv('JWT_OIDC_AUDIENCE')
+    'kid': 'flask-jwt-oidc-test-client'
 }
 
 
@@ -31,7 +31,8 @@ class TestJwtClaims(dict, Enum):
     """Test scenarios of jwt claims."""
 
     no_role = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
+        'iss': 'https://example.localdomain/auth/realms/example',
+        'aud': 'flask-jwt-oidc-test-client',
         'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302065',
         'firstname': 'Test',
         'lastname': 'User 2',
@@ -49,47 +50,9 @@ class TestJwtClaims(dict, Enum):
         'preferred_username': 'troublemaker'
     }
 
-    edit_role = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
-        'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302064',
-        'firstname': 'Test',
-        'lastname': 'User',
-        'preferred_username': 'testuser',
-        'realm_access': {
-            'roles': [
-                'edit'
-            ]
-        }
-    }
-
-    edit_role_2 = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
-        'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302075',
-        'firstname': 'Test',
-        'lastname': 'User 2',
-        'preferred_username': 'testuser2',
-        'realm_access': {
-            'roles': [
-                'edit'
-            ]
-        }
-    }
-
-    view_role = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
-        'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302064',
-        'firstname': 'Test',
-        'lastname': 'User',
-        'preferred_username': 'testuser',
-        'realm_access': {
-            'roles': [
-                'view'
-            ]
-        }
-    }
-
     staff_role = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
+        'iss': 'https://example.localdomain/auth/realms/example',
+        'aud': 'flask-jwt-oidc-test-client',
         'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302064',
         'firstname': 'Test',
         'lastname': 'User',
@@ -102,7 +65,8 @@ class TestJwtClaims(dict, Enum):
     }
 
     system_role = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
+        'iss': 'https://example.localdomain/auth/realms/example',
+        'aud': 'flask-jwt-oidc-test-client',
         'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302064',
         'firstname': 'Test',
         'lastname': 'User',
@@ -115,65 +79,12 @@ class TestJwtClaims(dict, Enum):
         'corp_type': 'CP'
     }
 
-    passcode = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
-        'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302064',
-        'firstname': 'Test',
-        'lastname': 'User',
-        'preferred_username': 'CP1234567',
-        'username': 'CP1234567',
-        'realm_access': {
-            'roles': [
-                'system'
-            ]
-        },
-        'loginSource': 'PASSCODE'
-    }
-
-    updated_test = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
-        'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302064',
-        'firstname': 'Updated_Test',
-        'lastname': 'User',
-        'username': 'testuser',
-        'realm_access': {
-            'roles': [
-            ]
-        }
-    }
-    user_test = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
-        'sub': '1b20db59-19a0-4727-affe-c6f64309fd04',
-        'firstname': 'Test',
-        'lastname': 'User',
-        'preferred_username': 'CP1234567',
-        'username': 'CP1234567',
-        'realm_access': {
-            'roles': [
-                'edit', 'uma_authorization', 'staff'
-            ]
-        },
-        'loginSource': 'PASSCODE'
-    }
-
-    tester_role = {
-        'iss': os.getenv('JWT_OIDC_ISSUER'),
-        'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302064',
-        'firstname': 'Test',
-        'lastname': 'User',
-        'preferred_username': 'testuser',
-        'realm_access': {
-            'roles': [
-                'tester'
-            ]
-        }
-    }
-
     @staticmethod
     def get_test_user(sub):
         """Return test user with subject from argument."""
         return {
-            'iss': os.getenv('JWT_OIDC_ISSUER'),
+            'iss': 'https://example.localdomain/auth/realms/example',
+            'aud': 'flask-jwt-oidc-test-client',
             'sub': sub,
             'firstname': 'Test',
             'lastname': 'User',
@@ -181,7 +92,7 @@ class TestJwtClaims(dict, Enum):
             'username': 'CP1234567',
             'realm_access': {
                 'roles': [
-                    'edit', 'uma_authorization', 'staff'
+                    'staff'
                 ]
             },
             'loginSource': 'PASSCODE'

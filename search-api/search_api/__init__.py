@@ -22,6 +22,8 @@ from search_api.auth import jwt
 from search_api.resources import DIRECTORS_API, BUSINESSES_API
 from search_api.models import db
 from flask_migrate import Migrate
+from sqlalchemy import exc
+
 load_dotenv(verbose=True)
 
 
@@ -47,18 +49,20 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
     setup_jwt_manager(app, jwt)
 
     @app.route("/ops/readyz")
+    def readyz():
+        return {'message': 'api is ready'}, 200
+
     @app.route("/ops/healthz")
-    def check():
-        return {}, 200
+    def healthz():
 
+        """Return a JSON object stating the health of the Service and dependencies."""
+        try:
+            db.engine.execute('SELECT 1')
+        except exc.SQLAlchemyError:
+            return {'message': 'api is down'}, 500
 
-    # @app.after_request
-    # def add_version(response):  # pylint: disable=unused-variable
-    #     version = get_run_version()
-    #     response.headers['API'] = f'search_api/{version}'
-    #     return response
-
-    # register_shellcontext(app)
+        # made it here, so all checks passed
+        return {'message': 'api is healthy'}, 200
 
     return app
 

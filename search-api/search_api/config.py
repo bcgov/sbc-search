@@ -72,7 +72,7 @@ class _Config:  # pylint: disable=too-few-public-methods
 
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
-    JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS')
+    JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', None)
     JWT_OIDC_JWKS_URI = os.getenv('JWT_OIDC_JWKS_URI')
     JWT_OIDC_ISSUER = os.getenv('JWT_OIDC_ISSUER')
     JWT_OIDC_AUDIENCE = os.getenv('JWT_OIDC_AUDIENCE')
@@ -102,18 +102,13 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
     DEBUG = True
     TESTING = True
 
-    # TEST ORACLE
-    ORACLE_USER = os.getenv('TEST_ORACLE_USER', '')
-    ORACLE_SCHEMA = os.getenv('TEST_ORACLE_SCHEMA', None)
-    ORACLE_PASSWORD = os.getenv('TEST_ORACLE_PASSWORD', '')
-    ORACLE_DB_NAME = os.getenv('TEST_ORACLE_DB_NAME', '')
-    ORACLE_HOST = os.getenv('TEST_ORACLE_HOST', '')
-    ORACLE_PORT = int(os.getenv('TEST_ORACLE_PORT', '1521'))
-
     # JWT OIDC settings
     # JWT_OIDC_TEST_MODE will set jwt_manager to use
     JWT_OIDC_TEST_MODE = True
-    JWT_OIDC_TEST_AUDIENCE = 'example'
+    JWT_OIDC_AUDIENCE = 'flask-jwt-oidc-test-client'
+    JWT_OIDC_TEST_AUDIENCE = 'flask-jwt-oidc-test-client'
+    JWT_OIDC_ALGORITHMS=['RS256']
+    JWT_OIDC_ISSUER = 'https://example.localdomain/auth/realms/example'
     JWT_OIDC_TEST_ISSUER = 'https://example.localdomain/auth/realms/example'
     JWT_OIDC_TEST_KEYS = {
         'keys': [

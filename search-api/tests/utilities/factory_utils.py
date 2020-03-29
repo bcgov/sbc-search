@@ -36,6 +36,8 @@ from tests.utilities.factory_scenarios import (
     TestUserInfo)
 
 '''
+from tests.utilities.factory_scenarios import (
+    JWT_HEADER)
 
 def factory_auth_header(jwt, claims):
     """Produce JWT tokens for use in tests."""

@@ -20,9 +20,9 @@ from sqlalchemy import event, text
 
 from search_api.models import db as _db
 from search_api import create_app
-from tests.utilities.jwt_wrapper import JWTWrapper
 
-_JWT = JWTWrapper.get_instance()
+from search_api.auth import jwt as _jwt
+from search_api.bootstrap import populate
 
 @pytest.fixture(scope='session')
 def app():
@@ -63,7 +63,7 @@ def db(app):  # pylint: disable=redefined-outer-name, invalid-name
         # even though this isn't referenced directly, it sets up the internal configs that upgrade needs
         Migrate(app, _db)
         upgrade()
-
+        populate()
         return _db
 
 @pytest.fixture(scope='function')
@@ -105,7 +105,9 @@ def session(app, db):  # pylint: disable=redefined-outer-name, invalid-name
 @pytest.fixture(scope='function')
 def app_request():
     """Return a session-wide application configured in TEST mode."""
-    return app
+    _app = create_app('testing')
+
+    return _app
 
 
 @pytest.fixture(scope='session')
@@ -117,7 +119,7 @@ def client(app):  # pylint: disable=redefined-outer-name
 @pytest.fixture(scope='session')
 def jwt():
     """Return a session-wide jwt manager."""
-    return _JWT
+    return _jwt
 
 
 @pytest.fixture(scope='session')
