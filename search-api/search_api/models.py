@@ -734,7 +734,6 @@ def _get_corporation_search_results(args):
     if not query:
         return "No search query was received", 400
 
-<<<<<<< HEAD
     # TODO: move queries to model class.
     results = (
         Corporation.query
