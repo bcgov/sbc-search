@@ -531,18 +531,14 @@ def _get_corporation_search_results(args):
             Address.addr_line_2,
             Address.addr_line_3,
             Address.postal_cd,
-            # Address.city,
-            # Address.province,
         )
+        .filter(CorpName.end_event_id == None)
         # .filter(Office.end_event_id == None)
-        # .filter(CorpName.end_event_id == None)
     )
 
     results = results.filter(
         (Corporation.corp_num == query) |
         (CorpName.corp_nme.ilike('%' + query + '%'))
-        # (CorpParty.first_nme.contains(query)) |
-        # (CorpParty.last_nme.contains(query)))
     )
 
     return results
