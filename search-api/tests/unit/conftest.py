@@ -34,7 +34,6 @@ def app():
     return _app
 
 
-
 @pytest.fixture(scope='session')
 def db(app):  # pylint: disable=redefined-outer-name, invalid-name
     """Return a session-wide initialised database.

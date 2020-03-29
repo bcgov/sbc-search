@@ -25,6 +25,7 @@ def test_ops_healthz_success(client):
     assert rv.status_code == 200
     assert rv.json == {'message': 'api is healthy'}
 
+
 def test_ops_healthz_fail(app_request):
     """Assert that the service is unhealthy if a connection toThe database cannot be made."""
     app_request.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://does:not@exist:5432/nada'
