@@ -17,20 +17,12 @@ from tempfile import NamedTemporaryFile
 
 from flask import Blueprint, request, jsonify, send_from_directory
 from openpyxl import Workbook
-from sqlalchemy import desc
 
 from search_api.auth import jwt, authorized
 from search_api.models import (
     Corporation,
-    CorpState,
-    CorpParty,
     CorpName,
-    Address,
     Office,
-    OfficeType,
-    OfficesHeld,
-    OfficerType,
-    Event,
     _get_corporation_search_results,
     _merge_corpparty_search_addr_fields,
     _normalize_addr,
@@ -42,7 +34,7 @@ API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 
 @API.route('/search/')
-# @jwt.requires_auth
+@jwt.requires_auth
 def corporation_search():
     # TODO SY - check roles
     # check authorization
@@ -51,10 +43,6 @@ def corporation_search():
 
     args = request.args
     results = _get_corporation_search_results(args)
-
-    # Total number of results
-    # This is waaay to expensive.
-    # total_results = results.count()
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
@@ -75,7 +63,7 @@ def corporation_search():
 
 
 @API.route('/search/export/')
-# @jwt.requires_auth
+@jwt.requires_auth
 def corporation_search_export():
 
     # Query string arguments
@@ -126,48 +114,26 @@ def corporation_search_export():
 
 
 @API.route('/<id>')
-# @jwt.requires_auth
+@jwt.requires_auth
 def corporation(id):
 
-    # TODO: move queries to model class.
-    result = (
-        Corporation.query
-        # .join(CorpState, CorpState.corp_num == Corporation.corp_num)
-        # .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
-        # .join(Office, Office.corp_num == Corporation.corp_num)
-        .add_columns(
-            Corporation.corp_num,
-            Corporation.transition_dt,
-            Corporation.admin_email,
-            # Office.mailing_addr_id,
-            # Office.office_typ_cd,
-            # CorpOpState.state_typ_cd,
-            # CorpOpState.full_desc
-        )
-        # .filter(Office.end_event_id == None)
-        # .filter(CorpState.end_event_id == None)
-        .filter(Corporation.corp_num == id).one())
-
-    corp = result[0]
-    offices = Office.query.filter_by(corp_num=id, end_event_id=None)
-    names = CorpName.query.filter_by(corp_num=id).order_by(desc(CorpName.end_event_id))
+    corp = Corporation.get_corporation_by_id(id)
+    offices = Office.get_offices_by_corp_id(id)
+    names = CorpName.get_corp_name_by_corp_id(id)
 
     output = {}
-    # TODO: switch to marshmallow.
     output['corp_num'] = corp.corp_num
     output['transition_dt'] = corp.transition_dt
     output['offices'] = []
     for office in offices:
         output['offices'].append({
-            'delivery_addr': _normalize_addr(office.delivery_addr_id),  # TODO: get full address.
+            'delivery_addr': _normalize_addr(office.delivery_addr_id),
             'mailing_addr': _normalize_addr(office.mailing_addr_id),
             'office_typ_cd': _format_office_typ_cd(office.office_typ_cd),
             'email_address': office.email_address
         })
 
-    output['admin_email'] = result[3]
-    # output['state_typ_cd'] = result[4]
-    # output['full_desc'] = result[5]
+    output['admin_email'] = corp.admin_email
 
     output['NAMES'] = []
     for row in names:

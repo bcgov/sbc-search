@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import ApiService from "@/api/ApiService";
 
 Vue.use(VueRouter);
 
@@ -96,7 +97,18 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const { title } = to.meta;
   document.title = typeof title === "function" ? title(to) : title;
-  next();
+  const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
+  if (!KEYCLOACK_TOKEN && to.name !== "signin") {
+    delete ApiService.defaults.headers.common["Authorization"];
+    next({
+      path: "/signin/bcros"
+    });
+  } else {
+    ApiService.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${KEYCLOACK_TOKEN}`;
+    next();
+  }
 });
 
 export default router;

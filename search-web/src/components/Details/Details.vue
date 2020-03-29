@@ -2,8 +2,19 @@
   <div class="detail-container">
     <v-container>
       <v-row>
-        <v-col cols="12" class="d-flex justify-space-between align-top">
-          <h2 class="display-1">
+        <v-col
+          cols="12"
+          class="d-flex detail-header-container justify-space-between align-top pl-0 ma-0 pa-0"
+          :class="{
+            'flex-wrap': $vuetify.breakpoint.smAndDown
+          }"
+        >
+          <h2
+            :class="{
+              'pl-0': $vuetify.breakpoint.xsOnly,
+              'display-1': $vuetify.breakpoint.smAndUp
+            }"
+          >
             <span class="font-weight-bold"
               >{{ detail.first_nme }} {{ detail.middle_nme }}
               {{ detail.last_nme }}</span
@@ -11,47 +22,60 @@
             <span v-if="detail.corp_nme">
               at
               <span
-                class="font-weight-bold cursor-pointer"
+                class="font-weight-bold cursor-pointer detail-office-link"
                 @click="handleCorpClick(detail.corp_num)"
                 >{{ detail.corp_nme }}
               </span></span
             >
           </h2>
-          <PrintButton class="pl-5"></PrintButton>
+          <PrintButton
+            :class="{
+              'pt-5': $vuetify.breakpoint.smAndDown,
+              'pl-5': $vuetify.breakpoint.mdAndUp
+            }"
+          ></PrintButton>
         </v-col>
       </v-row>
+      <v-row>
+        <h2
+          :class="{
+            title: $vuetify.breakpoint.smAndDown,
+            'font-weight-bold': $vuetify.breakpoint.smAndDown
+          }"
+        >
+          {{ detail.full_desc }}
+        </h2>
+      </v-row>
+      <v-row>
+        <h2 class="pa-0 ma-0 mb-12 title font-weight-regular color-gray">
+          Filing #{{ detail.corp_party_id }}
+        </h2>
+      </v-row>
 
-      <h2>{{ detail.full_desc }}</h2>
-
-      <h2 class="pa-0 ma-0 mb-12 title font-weight-regular color-gray">
-        Filing #{{ detail.corp_party_id }}
-      </h2>
-
-      <v-row justify="space-between">
-        <v-col cols="6">
-          <ul class="pa-0 ma-0">
-            <li
-              v-for="(val, key) in filteredDetail"
-              :key="key"
-              class="d-flex w-100 detail-list-item"
+      <v-row>
+        <ul class="pa-0 ma-0 detail-list">
+          <li
+            v-for="(val, key) in filteredDetail"
+            :key="key"
+            class="d-flex w-100 detail-list-item"
+          >
+            <span
+              class="font-weight-bold mb-1 detail-key"
+              :class="{
+                'detail-big-margins': key === 'cessation_dt' || key === 'addr'
+              }"
+              >{{ getText(key) }}</span
             >
-              <span
-                class="font-weight-bold mb-1 detail-key"
-                :class="{
-                  'detail-big-margins': key === 'cessation_dt' || key === 'addr'
-                }"
-                >{{ getText(key) }}</span
-              >
-              <span class="detail-value">{{ val }}</span>
-            </li>
-          </ul>
-        </v-col>
-        <v-col cols="6">
-          <OfficeTable
-            :details="filteredDetail"
-            :officesheld="officesheld"
-          ></OfficeTable>
-        </v-col>
+            <span class="detail-value">{{ val }}</span>
+          </li>
+        </ul>
+      </v-row>
+      <v-row>
+        <OfficeTable
+          :details="filteredDetail"
+          :officesheld="officesheld"
+          class="mt-10 w-100"
+        ></OfficeTable>
       </v-row>
     </v-container>
   </div>
@@ -147,5 +171,13 @@ export default {
 
 .v-application .detail-big-margins {
   margin-bottom: 4em !important;
+}
+
+.detail-office-link {
+  border-bottom: 2px solid black;
+}
+
+.detail-list {
+  width: 100%;
 }
 </style>

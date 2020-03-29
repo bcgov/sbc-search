@@ -12,21 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 import os
 from decimal import Decimal
-import decimal
-import flask.json
-from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 from functools import reduce
+
+from flask import Flask
+import flask.json
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from sqlalchemy import desc
+
+from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 
 
 class MyJSONEncoder(flask.json.JSONEncoder):
 
     def default(self, obj):
-        if isinstance(obj, decimal.Decimal):
+        if isinstance(obj, Decimal):
             # Convert decimal instances to strings.
             return str(obj)
         return super(MyJSONEncoder, self).default(obj)
@@ -114,6 +116,18 @@ class Address(BaseModel):
     route_service_no = db.Column(db.String(4))
     province_state_name = db.Column(db.String(30))
 
+    @staticmethod
+    def get_address_by_id(id):
+        return Address.query.filter(Address.addr_id == id).add_columns(
+            Address.addr_line_1,
+            Address.addr_line_2,
+            Address.addr_line_3,
+            Address.postal_cd,
+            Address.city,
+            Address.province,
+            Address.country_typ_cd,
+        ).one()[0]
+
 
 class CorpOpState(BaseModel):
     # A lookup table of states a corporation can be in.
@@ -146,6 +160,12 @@ class CorpState(BaseModel):
     end_event_id = db.Column(db.Integer)
     state_typ_cd = db.Column(db.String(3))
     dd_corp_num = db.Column(db.String(10))
+
+    @staticmethod
+    def get_corp_states_by_corp_id(id):
+        return CorpState.query.filter(
+            CorpState.corp_num == id,
+            CorpState.end_event_id == None).all()  # noqa: E711
 
 
 class Corporation(BaseModel):
@@ -186,8 +206,6 @@ class Corporation(BaseModel):
     bn_9 = db.Column(db.String(9))
     bn_15 = db.Column(db.String(15))
     accession_num = db.Column(db.String(10))
-    # CORP_PASSWORD = db.Column(db.String(300))
-    # PROMPT_QUESTION = db.Column(db.String(100))
     admin_email = db.Column(db.String(254))
     send_ar_ind = db.Column(db.String(1))
     tilma_involved_ind = db.Column(db.String(1))
@@ -199,11 +217,59 @@ class Corporation(BaseModel):
     last_ledger_dt = db.Column(db.Date)
     ar_reminder_option = db.Column(db.String(10))
     ar_reminder_date = db.Column(db.String(20))
-    # TEMP_PASSWORD = db.Column(db.String(300))
-    # TEMP_PASSWORD_EXPIRY_DATE = db.Column(db.Date)
 
     def __repr__(self):
         return 'corp num: {}'.format(self.corp_num)
+
+    @staticmethod
+    def get_corporation_by_id(id):
+        return (
+            Corporation.query
+            .add_columns(
+                Corporation.corp_num,
+                Corporation.transition_dt,
+                Corporation.admin_email,
+            )
+            .filter(Corporation.corp_num == id).one())[0]
+
+    @staticmethod
+    def query_corporations(query, sort_type, sort_value):
+        results = (
+            Corporation.query
+            .join(CorpName, Corporation.corp_num == CorpName.corp_num)
+            .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
+            .join(Office, Office.corp_num == Corporation.corp_num)
+            .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
+            .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+            .join(Address, Office.mailing_addr_id == Address.addr_id)
+            .with_entities(
+                CorpName.corp_nme,
+                Corporation.corp_num,
+                Corporation.corp_typ_cd,
+                Corporation.recognition_dts,
+                CorpOpState.state_typ_cd,
+                Address.addr_line_1,
+                Address.addr_line_2,
+                Address.addr_line_3,
+                Address.postal_cd,
+            )
+        )
+
+        results = results.filter(
+            (Corporation.corp_num == query) |
+            (CorpName.corp_nme.ilike('%' + query + '%'))
+        )
+
+        # Sorting
+        if sort_type is None:
+            results = results.order_by(Corporation.corp_nme)
+        else:
+            field = _get_sort_field(sort_value)
+
+            if sort_type == 'dsc':
+                results = results.order_by(field.desc())
+            else:
+                results = results.order_by(field)
 
 
 class CorpName(BaseModel):
@@ -231,6 +297,10 @@ class CorpName(BaseModel):
     def __repr__(self):
         return 'corp num: {}'.format(self.corp_num)
 
+    @staticmethod
+    def get_corp_name_by_corp_id(id):
+        return CorpName.query.filter_by(corp_num=id).order_by(desc(CorpName.end_event_id))
+
 
 class Office(BaseModel):
     __tablename__ = "office"
@@ -253,6 +323,10 @@ class Office(BaseModel):
     delivery_addr_id = db.Column(db.Integer)
     dd_corp_num = db.Column(db.String(10))
     email_address = db.Column(db.String(75))
+
+    @staticmethod
+    def get_offices_by_corp_id(id):
+        return Office.query.filter_by(corp_num=id, end_event_id=None)
 
 
 class OfficeType(BaseModel):
@@ -319,6 +393,151 @@ class CorpParty(BaseModel):
 
     def __repr__(self):
         return 'corp num: {}'.format(self.corp_party_id)
+
+    @staticmethod
+    def get_corp_party_by_id(id):
+        return CorpParty.query.filter(CorpParty.corp_party_id == int(id)).one()
+
+    @staticmethod
+    def get_corporation_info_by_corp_party_id(id):
+        return (
+            CorpParty.query.filter(CorpParty.corp_party_id == int(id))
+            .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
+            .add_columns(
+                Corporation.corp_typ_cd,
+                Corporation.admin_email
+            ).one())
+
+    @staticmethod
+    def get_filing_description_by_corp_party_id(id):
+        return (
+            CorpParty.query
+            .join(Event, Event.event_id == CorpParty.start_event_id)
+            .join(Filing, Filing.event_id == Event.event_id)
+            .join(FilingType, FilingType.filing_typ_cd == Filing.filing_typ_cd)
+            .add_columns(FilingType.full_desc)
+            .filter(CorpParty.corp_party_id == int(id)).all())
+
+    @staticmethod
+    def get_offices_held_by_corp_party_id(id):
+        return (
+            CorpParty.query
+            .join(OfficesHeld, OfficesHeld.corp_party_id == CorpParty.corp_party_id)
+            .join(OfficerType, OfficerType.officer_typ_cd == OfficesHeld.officer_typ_cd)
+            .join(Event, Event.event_id == CorpParty.start_event_id)
+            .add_columns(
+                CorpParty.corp_party_id,
+                OfficerType.officer_typ_cd,
+                OfficerType.short_desc,
+                CorpParty.appointment_dt,
+                Event.event_timestmp
+            )
+            .filter(CorpParty.corp_party_id == int(id))
+        )
+
+    @staticmethod
+    def get_corp_party_at_same_addr(id):
+        person = CorpParty.get_corp_party_by_id(id)
+
+        # one or both addr may be null, handle each case.
+        if person.delivery_addr_id or person.mailing_addr_id:
+            if person.delivery_addr_id and person.mailing_addr_id:
+                expr = (CorpParty.delivery_addr_id == person.delivery_addr_id) | \
+                    (CorpParty.mailing_addr_id == person.mailing_addr_id)
+            elif person.delivery_addr_id:
+                expr = (CorpParty.delivery_addr_id == person.delivery_addr_id)
+            elif person.mailing_addr_id:
+                expr = (CorpParty.mailing_addr_id == person.mailing_addr_id)
+
+            same_addr = (
+                CorpParty.query
+                .join(Event, Event.event_id == CorpParty.start_event_id)
+                .add_columns(Event.event_timestmp)
+                .filter(expr)
+            )
+        else:
+            same_addr = []
+
+        return same_addr
+
+    @staticmethod
+    def get_corp_party_same_name_at_same_addr(id):
+        person = CorpParty.get_corp_party_by_id(id)
+        same_name_and_company = (
+            CorpParty.query
+            .join(Event, Event.event_id == CorpParty.start_event_id)
+            .add_columns(Event.event_timestmp)
+        )
+
+        if person.first_nme:
+            same_name_and_company = same_name_and_company.filter(
+                CorpParty.first_nme.ilike(person.first_nme))
+
+        if person.last_nme:
+            same_name_and_company = same_name_and_company.filter(
+                CorpParty.last_nme.ilike(person.last_nme))
+
+        if person.corp_num:
+            same_name_and_company = same_name_and_company.filter(
+                CorpParty.corp_num.ilike(person.corp_num))
+
+        return same_name_and_company
+
+    @staticmethod
+    def query_corp_parties(clauses, mode, sort_type, sort_value):
+        results = (
+            CorpParty.query
+            .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
+            .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
+            .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+            .join(CorpName, Corporation.corp_num == CorpName.corp_num)
+            .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+            .add_columns(
+                CorpParty.corp_party_id,
+                CorpParty.first_nme,
+                CorpParty.middle_nme,
+                CorpParty.last_nme,
+                CorpParty.appointment_dt,
+                CorpParty.cessation_dt,
+                CorpParty.corp_num,
+                CorpParty.party_typ_cd,
+                CorpName.corp_nme,
+                Address.addr_line_1,
+                Address.addr_line_2,
+                Address.addr_line_3,
+                Address.postal_cd,
+                CorpOpState.state_typ_cd,
+            ))
+
+        # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
+        if mode == 'ALL':
+            def fn(accumulator, s):
+                return accumulator & _get_filter(*s)
+        else:
+            def fn(accumulator, s):
+                return accumulator | _get_filter(*s)
+
+        # We use reduce here to join all the items in clauses with the & operator or the | operator.
+        # Similar to if we did "|".join(clause), but calling the boolean operator instead.
+        filter_grp = reduce(
+            fn,
+            clauses[1:],
+            _get_filter(*clauses[0])
+        )
+        results = results.filter(filter_grp)
+
+        # Sorting
+        if sort_type is None:
+            results = results.order_by(CorpParty.last_nme, CorpParty.corp_num)
+        else:
+            field = _get_sort_field(sort_value)
+
+            if sort_type == 'dsc':
+                results = results.order_by(field.desc())
+            else:
+                results = results.order_by(field)
+
+        return results
 
 
 class Event(BaseModel):
@@ -439,7 +658,7 @@ def _get_model_by_field(field_name):
     if field_name in ['first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt', 'corp_num',
                       'corp_party_id', 'party_typ_cd']:  # CorpParty fields
         return eval('CorpParty')
-    elif field_name in ['corp_num', 'recognition_dts']:  # Corporation fields
+    elif field_name in ['corp_num', 'recognition_dts', 'corp_typ_cd']:  # Corporation fields
         return eval('Corporation')
     elif field_name in ['corp_nme']:  # CorpName fields
         return eval('CorpName')
@@ -509,9 +728,13 @@ def _get_sort_field(field_name):
 def _get_corporation_search_results(args):
     query = args.get("query")
 
+    sort_type = args.get('sort_type')
+    sort_value = args.get('sort_value')
+
     if not query:
         return "No search query was received", 400
 
+<<<<<<< HEAD
     # TODO: move queries to model class.
     results = (
         Corporation.query
@@ -541,6 +764,7 @@ def _get_corporation_search_results(args):
         (CorpName.corp_nme.ilike('%' + query + '%'))
     )
 
+    results = Corporation.query_corporations(query, sort_type, sort_value)
     return results
 
 
@@ -548,7 +772,7 @@ def _get_corpparty_search_results(args):
     """
     Querystring parameters as follows:
 
-    You may provide query=<string> for a simple search, OR any number of querystring triples such as
+    You may provide any number of querystring triples such as
 
     field=ANY_NME|first_nme|last_nme|<any column name>
     &operator=exact|contains|startswith|endswith
@@ -583,71 +807,7 @@ def _get_corpparty_search_results(args):
     #  (('last_nme', 'contains', 'Sky'), ('first_nme', 'exact', 'Apple'))
     clauses = list(zip(fields, operators, values))
 
-    # TODO: move queries to model class.
-
-    results = (
-        CorpParty.query
-        # .filter(CorpParty.end_event_id == None)
-        # .filter(CorpName.end_event_id == None)
-        .join(Corporation, Corporation.corp_num == CorpParty.corp_num)\
-        .join(CorpState, CorpState.corp_num == CorpParty.corp_num)\
-        .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)\
-        .join(CorpName, Corporation.corp_num == CorpName.corp_num)\
-        .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
-        .add_columns(
-            CorpParty.corp_party_id,
-            CorpParty.first_nme,
-            CorpParty.middle_nme,
-            CorpParty.last_nme,
-            CorpParty.appointment_dt,
-            CorpParty.cessation_dt,
-            CorpParty.corp_num,
-            CorpParty.party_typ_cd,
-            # Corporation.corp_num,
-            CorpName.corp_nme,
-            Address.addr_line_1,
-            Address.addr_line_2,
-            Address.addr_line_3,
-            Address.postal_cd,
-            # Address.city,
-            # Address.province,
-            CorpOpState.state_typ_cd,
-            # CorpOpState.full_desc,
-        ))
-
-    # Simple mode - return reasonable results for a single search string:
-    if query:
-        results = results.filter(CorpParty.first_nme.ilike(query) | CorpParty.last_nme.ilike(query) | CorpParty.middle_nme.ilike(query))
-    # Advanced mode - return precise results for a set of clauses.
-    elif clauses:
-
-        # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
-        if mode == 'ALL':
-            def fn(accumulator, s):
-                return accumulator & _get_filter(*s)
-        else:
-            def fn(accumulator, s):
-                return accumulator | _get_filter(*s)
-
-        # We use reduce here to join all the items in clauses with the & operator or the | operator.
-        # Similar to if we did "|".join(clause), but calling the boolean operator instead.
-        filter_grp = reduce(
-            fn,
-            clauses[1:],
-            _get_filter(*clauses[0])
-        )
-        results = results.filter(filter_grp)
-
-    # Sorting
-    if sort_type is None:
-        results = results.order_by(CorpParty.last_nme, CorpParty.corp_num)
-    else:
-        field = _get_sort_field(sort_value)
-
-        if sort_type == 'dsc':
-            results = results.order_by(field.desc())
-        else:
-            results = results.order_by(field)
+    results = CorpParty.query_corp_parties(clauses, mode, sort_type, sort_value)
 
     return results
 
@@ -656,15 +816,7 @@ def _normalize_addr(id):
     if not id:
         return ''
 
-    address = Address.query.filter(Address.addr_id == id).add_columns(
-        Address.addr_line_1,
-        Address.addr_line_2,
-        Address.addr_line_3,
-        Address.postal_cd,
-        Address.city,
-        Address.province,
-        Address.country_typ_cd,
-    ).one()[0]
+    address = Address.get_address_by_id(id)
 
     def fn(accumulator, s):
         if s:

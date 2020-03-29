@@ -38,4 +38,10 @@ export default {
   padding: 2em 4em;
   background-color: white;
 }
+
+@media (max-width: 959px) {
+  .detail-section {
+    padding: 1em;
+  }
+}
 </style>

@@ -3,16 +3,30 @@
     <v-container>
       <v-row>
         <v-col cols="12">
-          <div class="mb-10 d-flex justify-space-between align-center">
-            <h2 class="display-1">
+          <div
+            class="mb-10 d-flex justify-space-between align-center"
+            :class="{
+              'flex-wrap': $vuetify.breakpoint.smAndDown
+            }"
+          >
+            <h2
+              class="display-1"
+              :class="{
+                'w-100': $vuetify.breakpoint.smAndDown
+              }"
+            >
               Corporation Details for Inc. #{{ details.corp_num }}
             </h2>
-            <PrintButton></PrintButton>
+            <PrintButton
+              :class="{
+                'mt-5': $vuetify.breakpoint.smAndDown
+              }"
+            ></PrintButton>
           </div>
         </v-col>
       </v-row>
       <v-row justify="space-between">
-        <v-col cols="6">
+        <v-col xs="12" sm="12" md="12" lg="6">
           <ul class="pa-0 ma-0 detail-list">
             <li class="d-flex w-100 detail-list-item mb-5">
               <span class="detail-key font-weight-bold">Company Name(s)</span>
@@ -67,7 +81,7 @@
             </li>
           </ul>
         </v-col>
-        <v-col cols="6">
+        <v-col xs="12" sm="12" md="6" lg="6">
           <CorporationFilings :corp_num="details.corp_num"></CorporationFilings>
         </v-col>
       </v-row>

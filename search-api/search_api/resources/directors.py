@@ -21,13 +21,10 @@ from openpyxl import Workbook
 from search_api.auth import jwt
 from search_api.models import (
     Corporation,
-    CorpOpState,
     CorpState,
     CorpParty,
     CorpName,
-    Address,
     Office,
-    OfficeType,
     OfficesHeld,
     OfficerType,
     Event,
@@ -43,19 +40,16 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
+@jwt.requires_auth
 def hello():
     return "Welcome to the director search API."
 
 
 @API.route('/search/')
-# @jwt.requires_auth
+@jwt.requires_auth
 def corpparty_search():
     args = request.args
     results = _get_corpparty_search_results(args)
-
-    # Total number of results
-    # This is waaay to expensive on a large db.
-    # total_results = results.count()
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
@@ -76,7 +70,7 @@ def corpparty_search():
 
 
 @API.route('/search/export/')
-# @jwt.requires_auth
+@jwt.requires_auth
 def corpparty_search_export():
 
     # Query string arguments
@@ -142,42 +136,25 @@ def corpparty_search_export():
 
 
 @API.route('/<id>')
-# @jwt.requires_auth
+@jwt.requires_auth
 def person(id):
-    result = (
-        CorpParty.query
-        .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
-        .add_columns(
-            Corporation.corp_typ_cd,
-            Corporation.admin_email
-        ).filter(CorpParty.corp_party_id == int(id))).one()
+    result = CorpParty.get_corporation_info_by_corp_party_id(id)
 
     person = result[0]
     result_dict = {}
 
-    filing_description = (
-        CorpParty.query
-        .join(Event, Event.event_id == CorpParty.start_event_id)
-        .join(Filing, Filing.event_id == Event.event_id)
-        .join(FilingType, FilingType.filing_typ_cd == Filing.filing_typ_cd)
-        .add_columns(FilingType.full_desc)
-        .filter(CorpParty.corp_party_id == int(id)).all())
+    filing_description = CorpParty.get_filing_description_by_corp_party_id(id)
 
-    name = CorpName.query.filter(CorpName.corp_num == person.corp_num).add_columns(
-        CorpName.corp_nme).filter()[0]  # TODO: handle multiple names
-    offices = Office.query.filter(Office.corp_num == person.corp_num).all()
+    name = CorpName.get_corp_name_by_corp_id(person.corp_num)[0]
+    offices = Office.get_offices_by_corp_id(person.corp_num)
     delivery_addr = _normalize_addr(person.delivery_addr_id)
     mailing_addr = _normalize_addr(person.mailing_addr_id)
 
-    states = CorpState.query.filter(
-        CorpState.corp_num == person.corp_num,
-        CorpState.end_event_id == None).all()  # noqa
+    states = CorpState.get_corp_states_by_corp_id(person.corp_num)
 
-    # TODO : list all, or just the one from the correct time.
-    corp_delivery_addr = _normalize_addr(offices[0].delivery_addr_id) if offices else ''
-    corp_mailing_addr = _normalize_addr(offices[0].mailing_addr_id) if offices else ''
+    corp_delivery_addr = ';'.join([_normalize_addr(office.delivery_addr_id) for office in offices])
+    corp_mailing_addr = ';'.join([_normalize_addr(office.mailing_addr_id) for office in offices])
 
-    # TODO: switch to marshmallow.
     result_dict['corp_party_id'] = int(person.corp_party_id)
     result_dict['first_nme'] = person.first_nme
     result_dict['middle_nme'] = person.middle_nme
@@ -192,8 +169,8 @@ def person(id):
     result_dict['mailing_addr'] = mailing_addr
     result_dict['corp_delivery_addr'] = corp_delivery_addr
     result_dict['corp_mailing_addr'] = corp_mailing_addr
-    result_dict['corp_typ_cd'] = result[1]
-    result_dict['corp_admin_email'] = result[2]
+    result_dict['corp_typ_cd'] = result.corp_typ_cd
+    result_dict['corp_admin_email'] = result.admin_email
     result_dict['full_desc'] = filing_description[0].full_desc if filing_description else None
 
     result_dict['states'] = [s.as_dict() for s in states]
@@ -202,74 +179,23 @@ def person(id):
 
 
 @API.route('/officesheld/<corppartyid>')
-# @jwt.requires_auth
+@jwt.requires_auth
 def officesheld(corppartyid):
-    results = (
-        OfficerType.query
-        .join(OfficesHeld, OfficerType.officer_typ_cd == OfficesHeld.officer_typ_cd)
-        .join(CorpParty, OfficesHeld.corp_party_id == CorpParty.corp_party_id)
-        # .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
-        .join(Event, Event.event_id == CorpParty.start_event_id)
-        .add_columns(
-            CorpParty.corp_party_id,
-            OfficerType.officer_typ_cd,
-            OfficerType.short_desc,
-            CorpParty.appointment_dt,
-            Event.event_timestmp
-        )
-        .filter(CorpParty.corp_party_id == int(corppartyid))
-    )
-
+    results = CorpParty.get_offices_held_by_corp_party_id(corppartyid)
     offices = []
     for row in results:
         result_dict = {}
 
-        result_dict['corp_party_id'] = int(row[1])
-        result_dict['officer_typ_cd'] = row[2]
-        result_dict['short_desc'] = row[3]
-        result_dict['appointment_dt'] = row[4]
-        result_dict['year'] = row[5].year if row[5] else None
+        result_dict['corp_party_id'] = int(row.corp_party_id)
+        result_dict['officer_typ_cd'] = row.officer_typ_cd
+        result_dict['short_desc'] = row.short_desc
+        result_dict['appointment_dt'] = row.appointment_dt
+        result_dict['year'] = row.event_timestmp.year if row.event_timestmp else None
 
         offices.append(result_dict)
 
-    person = CorpParty.query.filter(CorpParty.corp_party_id == int(corppartyid)).one()
-
-    # one or both addr may be null, handle each case.
-    if person.delivery_addr_id or person.mailing_addr_id:
-        if person.delivery_addr_id and person.mailing_addr_id:
-            expr = (CorpParty.delivery_addr_id == person.delivery_addr_id) | \
-                (CorpParty.mailing_addr_id == person.mailing_addr_id)
-        elif person.delivery_addr_id:
-            expr = (CorpParty.delivery_addr_id == person.delivery_addr_id)
-        elif person.mailing_addr_id:
-            expr = (CorpParty.mailing_addr_id == person.mailing_addr_id)
-
-        same_addr = (
-            CorpParty.query
-            .join(Event, Event.event_id == CorpParty.start_event_id)
-            .add_columns(Event.event_timestmp)
-            .filter(expr)
-        )
-    else:
-        same_addr = []
-
-    same_name_and_company = (
-        CorpParty.query
-        .join(Event, Event.event_id == CorpParty.start_event_id)
-        .add_columns(Event.event_timestmp)
-    )
-
-    if person.first_nme:
-        same_name_and_company = same_name_and_company.filter(
-            CorpParty.first_nme.ilike(person.first_nme))
-
-    if person.last_nme:
-        same_name_and_company = same_name_and_company.filter(
-            CorpParty.last_nme.ilike(person.last_nme))
-
-    if person.corp_num:
-        same_name_and_company = same_name_and_company.filter(
-            CorpParty.corp_num.ilike(person.corp_num))
+    same_addr = CorpParty.get_corp_party_at_same_addr(corppartyid)
+    same_name_and_company = CorpParty.get_corp_party_same_name_at_same_addr(corppartyid)
 
     return jsonify({
         'offices': offices,

@@ -11,7 +11,7 @@
       color="primary"
       class="folio-pay-btn"
       @click="handleClick"
-      >Direct Link To Company on BC Online (You must log in first)</v-btn
+      >Direct Link To Company on BC Online</v-btn
     >
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
   props: {
     corp_num: {
       default: null,
-      type: Number
+      type: String
     }
   },
   methods: {

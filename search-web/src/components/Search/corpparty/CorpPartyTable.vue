@@ -2,8 +2,7 @@
   <div>
     <v-data-table
       v-if="qs"
-      mobile-breakpoint="0"
-      :calculate-widths="true"
+      mobile-breakpoint="960"
       class="elevation-1 corp-party-table"
       :headers="headers"
       :items="results"
@@ -19,9 +18,41 @@
         'items-per-page-options': [20]
       }"
     >
-      <template v-slot:item="{ item }">
+      <template v-slot:item="{ item, index, headers }">
+        <!-- Mobile View Begin -->
         <tr
-          class="cursor-pointer"
+          class="cursor-pointer d-table-row d-md-none mobile-tr-row"
+          v-for="(value, i) in Object.values(orderItems(item))"
+          :key="`row${index}${value}${i}`"
+        >
+          <td
+            v-if="headers[i].value === 'corp_num'"
+            class="d-table-cell"
+            @click.prevent.stop="handleCorpClick(item['corp_num'])"
+          >
+            <div class="d-flex w-100 justify-space-between">
+              <div class="color-black">{{ headers[i].text }}</div>
+              <div class="text-right anchor-text cursor-pointer">
+                {{ value }}
+              </div>
+            </div>
+          </td>
+          <td
+            v-else
+            class="d-table-cell"
+            @click="handleCellClick(item['corp_party_id'])"
+          >
+            <div class="d-flex w-100 justify-space-between">
+              <div class="color-black">{{ headers[i].text }}</div>
+              <div class="text-right">{{ value }}</div>
+            </div>
+          </td>
+        </tr>
+        <v-divider class="d-md-none" />
+        <!-- Mobile View End -->
+
+        <tr
+          class="cursor-pointer d-none d-md-table-row"
           @click="handleCellClick(item['corp_party_id'])"
         >
           <td class="color-gray">{{ item["corp_party_id"] }}</td>
@@ -41,6 +72,14 @@
             }}</span>
           </td>
         </tr>
+      </template>
+      <template v-slot:footer>
+        <v-progress-linear
+          :active="loading"
+          :indeterminate="true"
+          color="primary"
+          height="2"
+        ></v-progress-linear>
       </template>
       <template v-slot:footer.page-text="{ itemsLength }">
         <div class="custom-footer d-flex align-center">
@@ -78,6 +117,7 @@ import dayjs from "dayjs";
 import { mapGetters } from "vuex";
 import { buildQueryString } from "@/util/index.ts";
 import isEmpty from "lodash-es/isEmpty";
+import pick from "lodash-es/pick";
 const qsl = require("qs");
 export default {
   props: {
@@ -132,6 +172,22 @@ export default {
     };
   },
   methods: {
+    orderItems(items) {
+      return pick(items, [
+        "corp_party_id",
+        "last_nme",
+        "first_nme",
+        "middle_nme",
+        "addr",
+        "postal_cd",
+        "party_typ_cd",
+        "appointment_dt",
+        "cessation_dt",
+        "state_typ_cd",
+        "corp_nme",
+        "corp_num"
+      ]);
+    },
     pageNext() {
       this.$emit("pageUpdate", (parseInt(this.page) + 1).toString());
     },
@@ -181,8 +237,10 @@ export default {
       if (!this.qs) {
         return;
       }
+
       this.loading = true;
       this.disableSorting = true;
+
       let queryString = this.qs;
       const { sort_type, sort_value } = qsl.parse(queryString);
       if (sort_type && sort_value) {
@@ -231,6 +289,9 @@ export default {
 .corp-party-table .v-data-footer__icons-before {
   display: none;
 }
-.corp-party-table th span {
+
+.mobile-tr-row,
+.mobile-tr-row td {
+  border-bottom: 0 !important;
 }
 </style>

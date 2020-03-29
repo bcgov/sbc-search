@@ -1,5 +1,20 @@
 <template>
   <v-app>
+    <div v-if="$vuetify.breakpoint.smAndDown">
+      <BackToTop bottom="10px" right="10px" visibleoffset="600">
+        <v-btn class="mx-2" fab dark small color="primary">
+          <v-icon dark>expand_less</v-icon>
+        </v-btn>
+      </BackToTop>
+    </div>
+    <div v-else>
+      <BackToTop bottom="20px" right="20px" visibleoffset="600">
+        <v-btn class="mx-2" fab dark color="primary">
+          <v-icon dark>expand_less</v-icon>
+        </v-btn>
+      </BackToTop>
+    </div>
+
     <div class="main-wrapper">
       <div class="content">
         <div class="content-header">
@@ -10,7 +25,7 @@
           </SbcHeader>
         </div>
         <div class="content-body">
-          <v-container>
+          <v-container :fluid="$vuetify.breakpoint.mdOnly">
             <router-view />
           </v-container>
         </div>
@@ -27,7 +42,7 @@ import Vue from "vue";
 import "@bcgov/bc-sans/css/BCSans.css";
 import { mapGetters } from "vuex";
 import KeyCloakService from "sbc-common-components/src/services/keycloak.services";
-
+import BackToTop from "vue-backtotop";
 import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
 import SbcFooter from "sbc-common-components/src/components/SbcFooter.vue";
 import ApiService from "@/api/ApiService.js";
@@ -36,30 +51,14 @@ import AuthConfig from "@/config/authconfig.json";
 export default Vue.extend({
   components: {
     SbcHeader,
-    SbcFooter
-  },
-  data() {
-    return {
-      inAuth: false
-    };
+    SbcFooter,
+    BackToTop
   },
   async mounted() {
     sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(AuthConfig));
-    this.handleJWT();
     await KeyCloakService.setKeycloakConfigUrl(`/config/kc/keycloak.json`);
   },
-  methods: {
-    handleJWT() {
-      const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
-      if (KEYCLOACK_TOKEN) {
-        ApiService.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${KEYCLOACK_TOKEN}`;
-      } else {
-        delete ApiService.defaults.headers.common["Authorization"];
-      }
-    }
-  }
+  methods: {}
 });
 </script>
 
@@ -99,11 +98,18 @@ export default Vue.extend({
   color: $COLOR_GREY;
 }
 
+.color-black {
+  color: black;
+}
+
 .main-wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
   background-color: #f1f3f6;
+}
+.w-100 {
+  width: 100% !important;
 }
 html,
 body {
@@ -119,6 +125,13 @@ body {
 @media (max-width: 1600px) {
   .content-body {
     padding: 2em;
+  }
+}
+
+@media (max-width: 600px) {
+  .content-body {
+    padding: 0em 0.5em;
+    margin: 0;
   }
 }
 </style>
