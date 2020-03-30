@@ -41,7 +41,10 @@ import CorporationSearch from "@/components/Search/corporation/CorporationSearch
 import CorporationTable from "@/components/Search/corporation/CorporationTable.vue";
 import { corporationSearch, EXPORT_CORPORATION_URL } from "@/api/SearchApi.js";
 import isEmpty from "lodash-es/isEmpty";
+import { downloadFile } from "@/util/index.ts";
 import { BACKEND_URL } from "@/config/index.ts";
+import dayjs from "dayjs";
+
 const qs = require("qs");
 
 export default {
@@ -105,10 +108,12 @@ export default {
       });
     },
     handleExport() {
-      window.open(
+      const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
+      downloadFile(
         `${
           process.env.VUE_APP_BACKEND_HOST
-        }${EXPORT_CORPORATION_URL}/?${qs.stringify(this.$route.query)}`
+        }${EXPORT_CORPORATION_URL}/?${qs.stringify(this.$route.query)}`,
+        `Corporation Search Results ${datetime}.xlsx`
       );
     }
   },

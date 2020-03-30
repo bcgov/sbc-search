@@ -1,5 +1,7 @@
 const qs = require("qs");
 import omit from "lodash-es/omit";
+import ApiService from "@/api/ApiService.js";
+const fileDownload = require("js-file-download");
 
 export function getTextFromValues(values, value) {
   const result = values.find(v => v.value === value);
@@ -22,4 +24,18 @@ export function buildQueryString(filters) {
 
 export function getDeepLink(corpNum) {
   return `https://tst.corponline.gov.bc.ca/corporateonline/colin/search/searchAction.do?corpNum=${corpNum}&_flowExecutionKey=e4s2`;
+}
+
+export async function downloadFile(url, fileName) {
+  const response = await ApiService({
+    url: url,
+    method: "GET",
+    responseType: "blob",
+    headers: { Accept: "application/vnd.ms-excel" }
+  });
+  fileDownload(
+    response.data,
+    fileName || "DS-Results.xlsx",
+    "application/vnd.ms-excel"
+  );
 }
