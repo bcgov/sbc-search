@@ -6526,6 +6526,11 @@ js-beautify@^1.6.12, js-beautify@^1.6.14:
     mkdirp "~0.5.1"
     nopt "~4.0.1"
 
+js-file-download@^0.4.10:
+  version "0.4.10"
+  resolved "https://registry.yarnpkg.com/js-file-download/-/js-file-download-0.4.10.tgz#016ece060121cabc611b0f95aab64df63ba55071"
+  integrity sha512-kX4J3mEFdiQ1w4YarrO940hpwuEhxcpzL5FZoA3WLR3D+/FPJtu04I7PesC4nJDdrQYM6xeckBiULGUxvxZluQ==
+
 js-message@1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/js-message/-/js-message-1.0.5.tgz#2300d24b1af08e89dd095bc1a4c9c9cfcb892d15"

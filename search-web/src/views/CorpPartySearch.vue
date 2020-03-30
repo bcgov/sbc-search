@@ -77,7 +77,7 @@ import SbcButton from "@/components/SbcButton.vue";
 import AddFilterButton from "@/components/Filter/AddFilterButton.vue";
 import CorpPartySearch from "@/components/Search/corpparty/CorpPartySearch.vue";
 import { mapGetters } from "vuex";
-
+import { downloadFile } from "@/util/index.ts";
 import omit from "lodash-es/omit";
 import isEmpty from "lodash-es/isEmpty";
 const qs = require("qs");
@@ -87,6 +87,7 @@ import { buildQueryString } from "@/util/index.ts";
 import SearchLogic from "@/components/Search/corpparty/SearchLogic.vue";
 import SearchTips from "@/components/Search/corpparty/SearchTips.vue";
 import { BACKEND_URL } from "@/config/index.ts";
+import dayjs from "dayjs";
 export default {
   components: {
     SbcButton,
@@ -128,8 +129,10 @@ export default {
   methods: {
     handleExport() {
       const queryString = this.generateQueryString();
-      window.open(
-        `${process.env.VUE_APP_BACKEND_HOST}${EXPORT_CORPPARTY_URL}/?${queryString}`
+      const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
+      downloadFile(
+        `${process.env.VUE_APP_BACKEND_HOST}${EXPORT_CORPPARTY_URL}/?${queryString}`,
+        `Director Search Results ${datetime}.xlsx`
       );
     },
     handlePageUpdate(page) {
