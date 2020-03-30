@@ -73,7 +73,7 @@ export default {
         case "addr_line_1":
           return "45 Sesame";
 
-        case "postal_code":
+        case "postal_cd":
           return "A1A 1A1";
       }
     }

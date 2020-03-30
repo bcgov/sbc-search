@@ -16,14 +16,12 @@ import os
 from decimal import Decimal
 from functools import reduce
 
-from flask import Flask
 import flask.json
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+
 from sqlalchemy import desc
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
-
 
 class MyJSONEncoder(flask.json.JSONEncoder):
 
@@ -35,16 +33,7 @@ class MyJSONEncoder(flask.json.JSONEncoder):
 
 
 flask.json_encoder = MyJSONEncoder
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres')
-# https://stackoverflow.com/questions/33738467/how-do-i-know-if-i-can-disable-sqlalchemy-track-modifications/33790196#33790196
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
+db = SQLAlchemy()
 
 class BaseModel(db.Model):
     __abstract__ = True
@@ -270,6 +259,7 @@ class Corporation(BaseModel):
                 results = results.order_by(field.desc())
             else:
                 results = results.order_by(field)
+        return results
 
 
 class CorpName(BaseModel):
@@ -733,6 +723,35 @@ def _get_corporation_search_results(args):
 
     if not query:
         return "No search query was received", 400
+
+    # TODO: move queries to model class.
+    results = (
+        Corporation.query
+        .join(CorpName, Corporation.corp_num == CorpName.corp_num)
+        .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
+        .join(Office, Office.corp_num == Corporation.corp_num)
+        .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
+        .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+        .join(Address, Office.mailing_addr_id == Address.addr_id)
+        .with_entities(
+            CorpName.corp_nme,
+            Corporation.corp_num,
+            Corporation.corp_typ_cd,
+            Corporation.recognition_dts,
+            CorpOpState.state_typ_cd,
+            Address.addr_line_1,
+            Address.addr_line_2,
+            Address.addr_line_3,
+            Address.postal_cd,
+        )
+        .filter(CorpName.end_event_id == None)
+        # .filter(Office.end_event_id == None)
+    )
+
+    results = results.filter(
+        (Corporation.corp_num == query) |
+        (CorpName.corp_nme.ilike('%' + query + '%'))
+    )
 
     results = Corporation.query_corporations(query, sort_type, sort_value)
     return results

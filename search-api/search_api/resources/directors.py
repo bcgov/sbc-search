@@ -42,7 +42,7 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 @API.route('/')
 @jwt.requires_auth
 def hello():
-    return "Welcome to the director search API."
+    return {"message": "Welcome to the director search API."}
 
 
 @API.route('/search/')
