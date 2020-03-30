@@ -46,7 +46,7 @@ def hello():
 
 
 @API.route('/search/')
-@jwt.requires_auth
+
 def corpparty_search():
     args = request.args
     results = _get_corpparty_search_results(args)
@@ -136,7 +136,7 @@ def corpparty_search_export():
 
 
 @API.route('/<id>')
-@jwt.requires_auth
+
 def person(id):
     result = CorpParty.get_corporation_info_by_corp_party_id(id)
 
@@ -179,7 +179,6 @@ def person(id):
 
 
 @API.route('/officesheld/<corppartyid>')
-@jwt.requires_auth
 def officesheld(corppartyid):
     results = CorpParty.get_offices_held_by_corp_party_id(corppartyid)
     offices = []

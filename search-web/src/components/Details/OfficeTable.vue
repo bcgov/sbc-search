@@ -16,7 +16,7 @@
             </thead>
             <tbody>
               <tr v-for="(o, index) in offices" :key="index">
-                <td>
+                <td class="office-held-desc">
                   {{ o.short_desc }}
                 </td>
                 <td>

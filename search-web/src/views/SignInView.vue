@@ -39,7 +39,7 @@ export default {
         ] = `Bearer ${KEYCLOACK_TOKEN}`;
       }
       this.$router.push({
-        name: "Home"
+        name: "corpPartySearch"
       });
     },
     syncUserProfile() {}

@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import CorpPartySearch from "../views/CorpPartySearch.vue";
 import ApiService from "@/api/ApiService";
 
 Vue.use(VueRouter);
@@ -48,8 +48,8 @@ const routes = [
   },
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "corpPartySearch",
+    component: CorpPartySearch,
     meta: {
       title: "Director Search"
     }

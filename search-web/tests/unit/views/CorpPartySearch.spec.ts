@@ -1,5 +1,5 @@
 import { mount, shallowMount, createLocalVue } from "@vue/test-utils";
-import Home from "@/views/Home.vue";
+import CorpPartySearchView from "@/views/CorpPartySearch.vue";
 import CorpPartySearch from "@/components/Search/corpparty/CorpPartySearch.vue"
 import SearchInput from "@/components/Search/corpparty/SearchInput.vue"
 import CorpPartyTable from "@/components/Search/corpparty/CorpPartyTable.vue"
@@ -10,7 +10,7 @@ import Vuex from "vuex";
 
 Vue.use(Vuetify);
 
-describe("Home.vue", () => {
+describe("CorpPartySearch", () => {
   const localVue = createLocalVue();
   localVue.use(Vuex);
 
@@ -20,7 +20,7 @@ describe("Home.vue", () => {
   };
 
   it("renders a vue instance", () => {
-    const wrapper = shallowMount(Home, {
+    const wrapper = shallowMount(CorpPartySearchView, {
       store,
       mocks: {
         $route
@@ -32,7 +32,7 @@ describe("Home.vue", () => {
   });
 
   it("render a title", async () => {
-    const wrapper = shallowMount(Home, {
+    const wrapper = shallowMount(CorpPartySearchView, {
       store,
       mocks: {
         $route
@@ -49,7 +49,7 @@ describe("Home.vue", () => {
   });
 
   it("renders search tips", () => {
-    const wrapper = mount(Home, {
+    const wrapper = mount(CorpPartySearchView, {
       store,
       mocks: {
         $route
@@ -71,7 +71,7 @@ describe("Home.vue", () => {
           sort_value: "last_nme"
         }
       };
-      const wrapper = mount(Home, {
+      const wrapper = mount(CorpPartySearchView, {
         store,
         mocks: {
           $route
@@ -121,7 +121,7 @@ describe("Home.vue", () => {
           sort_value: "last_nme"
         }
       };
-      const wrapper = mount(Home, {
+      const wrapper = mount(CorpPartySearchView, {
         store,
         mocks: {
           $route
@@ -138,7 +138,7 @@ describe("Home.vue", () => {
     })
 
     it("does not render a table", async () => {
-      const wrapper = mount(Home, {
+      const wrapper = mount(CorpPartySearchView, {
         store,
         mocks: {
           $route
