@@ -15,7 +15,9 @@
                 'w-100': $vuetify.breakpoint.smAndDown
               }"
             >
-              Corporation Details for Inc. #{{ details.corp_num }}
+              Corporation Details for Inc. #<span class="details-corp-number">{{
+                details.corp_num
+              }}</span>
             </h2>
             <PrintButton
               :class="{
