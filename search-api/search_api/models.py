@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 from decimal import Decimal
 from functools import reduce
 
@@ -22,6 +21,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
+from search_api.utils.utils import convert_to_snake_case
+
 
 class MyJSONEncoder(flask.json.JSONEncoder):
 
@@ -34,6 +35,7 @@ class MyJSONEncoder(flask.json.JSONEncoder):
 
 flask.json_encoder = MyJSONEncoder
 db = SQLAlchemy()
+
 
 class BaseModel(db.Model):
     __abstract__ = True
@@ -645,34 +647,34 @@ def _is_addr_search(fields):
 
 
 def _get_model_by_field(field_name):
-    if field_name in ['first_nme', 'middle_nme', 'last_nme', 'appointment_dt', 'cessation_dt', 'corp_num',
-                      'corp_party_id', 'party_typ_cd']:  # CorpParty fields
+    if field_name in ['firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt', 'corpNum',
+                      'corpPartyId', 'partyTypCd']:  # CorpParty fields
         return eval('CorpParty')
-    elif field_name in ['corp_num', 'recognition_dts', 'corp_typ_cd']:  # Corporation fields
+    elif field_name in ['corpNum', 'recognitionDts', 'corpTypCd']:  # Corporation fields
         return eval('Corporation')
-    elif field_name in ['corp_nme']:  # CorpName fields
+    elif field_name in ['corpNme']:  # CorpName fields
         return eval('CorpName')
-    elif field_name in ['addr_line_1', 'addr_line_2', 'addr_line_3', 'postal_cd', 'city', 'province']:  # Address fields
+    elif field_name in ['addrLine1', 'addrLine2', 'addrLine3', 'postalCd', 'city', 'province']:  # Address fields
         return eval('Address')
-    elif field_name in ['state_typ_cd']:
+    elif field_name in ['stateTypCd']:
         return eval('CorpOpState')
 
 
 def _get_filter(field, operator, value):
 
-    if field == 'any_nme':
+    if field == 'anyNme':
         return (
-            _get_filter('first_nme', operator, value) |
-            _get_filter('middle_nme', operator, value) |
-            _get_filter('last_nme', operator, value))
+            _get_filter('firstNme', operator, value) |
+            _get_filter('middleNme', operator, value) |
+            _get_filter('lastNme', operator, value))
 
     if field == 'addr':
         return (
-            _get_filter('addr_line_1', operator, value) |
-            _get_filter('addr_line_2', operator, value) |
-            _get_filter('addr_line_3', operator, value))
+            _get_filter('addrLine1', operator, value) |
+            _get_filter('addrLine2', operator, value) |
+            _get_filter('addrLine3', operator, value))
 
-    if field == 'state_typ_cd':
+    if field == 'stateTypCd':
         # state_typ_cd is either "ACT", or displayed as "HIS" for any other value
         if value == STATE_TYP_CD_ACT:
             operator = 'exact'
@@ -684,7 +686,7 @@ def _get_filter(field, operator, value):
 
     value = value.lower()
     if model:
-        Field = getattr(model, field)
+        Field = getattr(model, convert_to_snake_case(field))
         # TODO: we should sanitize the values
         if operator == 'contains':
             return Field.ilike('%' + value + '%')
@@ -710,7 +712,7 @@ def _get_sort_field(field_name):
 
     model = _get_model_by_field(field_name)
     if model:
-        return getattr(model, field_name)
+        return getattr(model, convert_to_snake_case(field_name))
     else:
         raise Exception('invalid sort field: {}'.format(field_name))
 
@@ -744,8 +746,7 @@ def _get_corporation_search_results(args):
             Address.addr_line_3,
             Address.postal_cd,
         )
-        .filter(CorpName.end_event_id == None)
-        # .filter(Office.end_event_id == None)
+        .filter(CorpName.end_event_id == None)  # noqa
     )
 
     results = results.filter(
@@ -770,7 +771,7 @@ def _get_corpparty_search_results(args):
     &sort_value=ANY_NME|first_nme|last_nme|<any column name>
 
     For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
-    curl "http://localhost/api/v1/directors/search/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"  # noqa
+    curl "http://localhost/api/v1/directors/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"  # noqa
     """
 
     query = args.get("query")

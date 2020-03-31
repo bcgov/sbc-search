@@ -28,12 +28,13 @@ from search_api.models import (
     _normalize_addr,
     _format_office_typ_cd
 )
+from search_api.utils.utils import convert_to_snake_case
 
 
 API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 
-@API.route('/search/')
+@API.route('/')
 @jwt.requires_auth
 def corporation_search():
     # TODO SY - check roles
@@ -52,9 +53,9 @@ def corporation_search():
     for row in results.items:
         result_dict = {}
 
-        result_fields = ['corp_num', 'corp_nme', 'recognition_dts', 'corp_typ_cd', 'state_typ_cd', 'postal_cd']
+        result_fields = ['corpNum', 'corpNme', 'recognitionDts', 'corpTypCd', 'stateTypCd', 'postalCd']
 
-        result_dict = {key: getattr(row, key) for key in result_fields}
+        result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
         result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
 
         corporations.append(result_dict)
@@ -62,7 +63,7 @@ def corporation_search():
     return jsonify({'results': corporations})
 
 
-@API.route('/search/export/')
+@API.route('/export/')
 @jwt.requires_auth
 def corporation_search_export():
 
@@ -122,18 +123,18 @@ def corporation(id):
     names = CorpName.get_corp_name_by_corp_id(id)
 
     output = {}
-    output['corp_num'] = corp.corp_num
-    output['transition_dt'] = corp.transition_dt
+    output['corpNum'] = corp.corp_num
+    output['transitionDt'] = corp.transition_dt
     output['offices'] = []
     for office in offices:
         output['offices'].append({
-            'delivery_addr': _normalize_addr(office.delivery_addr_id),
-            'mailing_addr': _normalize_addr(office.mailing_addr_id),
-            'office_typ_cd': _format_office_typ_cd(office.office_typ_cd),
-            'email_address': office.email_address
+            'deliveryAddr': _normalize_addr(office.delivery_addr_id),
+            'mailingAddr': _normalize_addr(office.mailing_addr_id),
+            'officeTypCd': _format_office_typ_cd(office.office_typ_cd),
+            'emailAddress': office.email_address
         })
 
-    output['admin_email'] = corp.admin_email
+    output['adminEmail'] = corp.admin_email
 
     output['NAMES'] = []
     for row in names:

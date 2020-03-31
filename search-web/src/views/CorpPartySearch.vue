@@ -114,7 +114,7 @@ export default {
       logic: "ALL",
       qs: null,
       page: "1",
-      sort_value: "last_nme",
+      sort_value: "lastNme",
       sort_type: "dsc"
     };
   },
@@ -141,7 +141,7 @@ export default {
     },
     handleSortUpdate(options) {
       if (options.sortBy.length === 0 && options.sortDesc.length === 0) {
-        this.sort_value = "last_nme";
+        this.sort_value = "lastNme";
         this.sort_type = "dsc";
       } else {
         this.sort_value = options.sortBy[0];
@@ -153,7 +153,7 @@ export default {
       }
       this.handleSearch();
     },
-    addFilter(event, field = "first_nme", operator = "contains", value = "") {
+    addFilter(event, field = "firstNme", operator = "contains", value = "") {
       this.uid++;
       this.$store.commit("corpParty/filters/addFilter", {
         uid: this.uid,
@@ -163,7 +163,7 @@ export default {
       });
     },
     handleNewSearch() {
-      this.sort_value = "last_nme";
+      this.sort_value = "lastNme";
       this.sort_type = "dsc";
       const queryString = this.generateQueryString(1);
 

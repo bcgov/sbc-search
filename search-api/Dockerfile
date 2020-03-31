@@ -14,7 +14,6 @@ RUN        apt-get update && apt-get install -y libaio1 wget unzip \
 
 # Create working directory
 RUN mkdir /opt/app && chmod 755 /opt/app
-WORKDIR /opt/app
 
 RUN apt-get update && \
     apt-get install -y python-dev build-essential libaio1
@@ -27,6 +26,8 @@ COPY ./requirements/repo-libraries.txt .
 RUN pip install --no-cache-dir -r prod.txt
 RUN pip install --no-cache-dir -r dev.txt
 RUN pip install --no-cache-dir -r repo-libraries.txt
+
+WORKDIR /opt/app
 
 # This may be used to lock things down but breaks alembic during dev work.
 # TODO: add this for production only.

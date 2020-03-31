@@ -26,9 +26,9 @@
           :key="`row${index}${value}${i}`"
         >
           <td
-            v-if="headers[i].value === 'corp_num'"
+            v-if="headers[i].value === 'corpNum'"
             class="d-table-cell"
-            @click.prevent.stop="handleCorpClick(item['corp_num'])"
+            @click.prevent.stop="handleCorpClick(item['corpNum'])"
           >
             <div class="d-flex w-100 justify-space-between">
               <div class="color-black">{{ headers[i].text }}</div>
@@ -40,7 +40,7 @@
           <td
             v-else
             class="d-table-cell"
-            @click="handleCellClick(item['corp_party_id'])"
+            @click="handleCellClick(item['corpPartyId'])"
           >
             <div class="d-flex w-100 justify-space-between">
               <div class="color-black">{{ headers[i].text }}</div>
@@ -53,22 +53,22 @@
 
         <tr
           class="cursor-pointer d-none d-md-table-row"
-          @click="handleCellClick(item['corp_party_id'])"
+          @click="handleCellClick(item['corpPartyId'])"
         >
-          <td class="color-gray">{{ item["corp_party_id"] }}</td>
-          <td>{{ item["last_nme"] }}</td>
-          <td>{{ item["first_nme"] }}</td>
-          <td>{{ item["middle_nme"] }}</td>
+          <td class="color-gray">{{ item["corpPartyId"] }}</td>
+          <td>{{ item["lastNme"] }}</td>
+          <td>{{ item["firstNme"] }}</td>
+          <td>{{ item["middleNme"] }}</td>
           <td>{{ item["addr"] }}</td>
-          <td>{{ item["postal_cd"] }}</td>
-          <td>{{ item["party_typ_cd"] }}</td>
-          <td>{{ item["appointment_dt"] }}</td>
-          <td>{{ item["cessation_dt"] }}</td>
-          <td>{{ item["state_typ_cd"] }}</td>
-          <td>{{ item["corp_nme"] }}</td>
-          <td @click.prevent.stop="handleCorpClick(item['corp_num'])">
+          <td>{{ item["postalCd"] }}</td>
+          <td>{{ item["partyTypCd"] }}</td>
+          <td>{{ item["appointmentDt"] }}</td>
+          <td>{{ item["cessationDt"] }}</td>
+          <td>{{ item["stateTypCd"] }}</td>
+          <td>{{ item["corpNme"] }}</td>
+          <td @click.prevent.stop="handleCorpClick(item['corpNum'])">
             <span class="anchor-text cursor-pointer">{{
-              item["corp_num"]
+              item["corpNum"]
             }}</span>
           </td>
         </tr>
@@ -140,16 +140,16 @@ export default {
     },
     results() {
       return this.items.map(r => {
-        if (r["appointment_dt"]) {
-          r["appointment_dt"] = dayjs(r["appointment_dt"]).format("YYYY-MM-DD");
+        if (r["appointmentDt"]) {
+          r["appointmentDt"] = dayjs(r["appointmentDt"]).format("YYYY-MM-DD");
         } else {
-          r["appointment_dt"] = "-";
+          r["appointmentDt"] = "-";
         }
 
-        if (r["cessation_dt"]) {
-          r["cessation_dt"] = dayjs(r["cessation_dt"]).format("YYYY-MM-DD");
+        if (r["cessationDt"]) {
+          r["cessationDt"] = dayjs(r["cessationDt"]).format("YYYY-MM-DD");
         } else {
-          r["cessation_dt"] = "-";
+          r["cessationDt"] = "-";
         }
 
         return r;
@@ -174,18 +174,18 @@ export default {
   methods: {
     orderItems(items) {
       return pick(items, [
-        "corp_party_id",
-        "last_nme",
-        "first_nme",
-        "middle_nme",
+        "corpPartyId",
+        "lastNme",
+        "firstNme",
+        "middleNme",
         "addr",
-        "postal_cd",
-        "party_typ_cd",
-        "appointment_dt",
-        "cessation_dt",
-        "state_typ_cd",
-        "corp_nme",
-        "corp_num"
+        "postalCd",
+        "partyTypCd",
+        "appointmentDt",
+        "cessationDt",
+        "stateTypCd",
+        "corpNme",
+        "corpNum"
       ]);
     },
     pageNext() {
@@ -215,18 +215,18 @@ export default {
       return headers.filter(h => {
         const val = h.value;
         if (
-          val === "corp_party_id" ||
-          val === "last_nme" ||
-          val === "middle_nme" ||
-          val === "first_nme" ||
-          val === "party_typ_cd" ||
-          val === "appointment_dt" ||
-          val === "cessation_dt" ||
-          val === "corp_num" ||
-          val === "corp_nme" ||
-          val === "state_typ_cd" ||
+          val === "corpPartyId" ||
+          val === "lastNme" ||
+          val === "middleNme" ||
+          val === "firstNme" ||
+          val === "partyTypCd" ||
+          val === "appointmentDt" ||
+          val === "cessationDt" ||
+          val === "corpNum" ||
+          val === "corpNme" ||
+          val === "stateTypCd" ||
           val === "addr" ||
-          val === "postal_cd"
+          val === "postalCd"
         ) {
           return true;
         }

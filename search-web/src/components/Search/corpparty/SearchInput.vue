@@ -58,22 +58,22 @@ export default {
   methods: {
     getPlaceHolder() {
       switch (this.selectField) {
-        case "any_nme":
+        case "anyNme":
           return "James";
 
-        case "first_nme":
+        case "firstNme":
           return "John";
 
-        case "last_nme":
+        case "lastNme":
           return "Smith";
 
-        case "middle_nme":
+        case "middleNme":
           return "Allan";
 
-        case "addr_line_1":
+        case "addrLine1":
           return "45 Sesame";
 
-        case "postal_cd":
+        case "postalCd":
           return "A1A 1A1";
       }
     }

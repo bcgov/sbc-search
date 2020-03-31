@@ -29,7 +29,7 @@ from search_api import status as http_status
 def _dir_search(client, jwt, session, params):
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
-    rv = client.get('/api/v1/directors/search/{}'.format(params),
+    rv = client.get('/api/v1/directors/{}'.format(params),
                     headers=headers, content_type='application/json')
 
     assert rv.status_code == http_status.HTTP_200_OK
@@ -79,13 +79,13 @@ def test_search_corporations(client, jwt, session):
 
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
-    rv = client.get('/api/v1/businesses/search/?query=1234567890&page=1&sort_type=dsc&sort_value=corp_nme',
+    rv = client.get('/api/v1/businesses/?query=1234567890&page=1&sort_type=dsc&sort_value=corp_nme',
                     headers=headers, content_type='application/json')
 
     assert rv.status_code == http_status.HTTP_200_OK
 
     dictionary = json.loads(rv.data)
-    
+
     assert dictionary['results'][0]['corp_num'] == '1234567890'
 
     assert len(dictionary) == 1
@@ -96,13 +96,13 @@ def test_search_corporations_name(client, jwt, session):
 
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
-    rv = client.get('/api/v1/businesses/search/?query=pembina&page=1&sort_type=dsc&sort_value=corp_nme',
+    rv = client.get('/api/v1/businesses/?query=pembina&page=1&sort_type=dsc&sort_value=corp_nme',
                     headers=headers, content_type='application/json')
 
     assert rv.status_code == http_status.HTTP_200_OK
 
     dictionary = json.loads(rv.data)
-    
+
     assert dictionary['results'][0]['corp_num'] == '1234567890'
 
     assert len(dictionary) == 1

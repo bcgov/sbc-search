@@ -39,13 +39,13 @@
           class="cursor-pointer d-none d-md-table-row"
           @click="handleTableRowClick(item)"
         >
-          <td class="anchor-text">{{ item["corp_num"] }}</td>
-          <td>{{ item["corp_typ_cd"] }}</td>
-          <td>{{ item["corp_nme"] }}</td>
-          <td>{{ item["recognition_dts"] }}</td>
-          <td>{{ item["state_typ_cd"] }}</td>
+          <td class="anchor-text">{{ item["corpNum"] }}</td>
+          <td>{{ item["corpTypCd"] }}</td>
+          <td>{{ item["corpNme"] }}</td>
+          <td>{{ item["recognitionDts"] }}</td>
+          <td>{{ item["stateTypCd"] }}</td>
           <td>{{ item["addr"] }}</td>
-          <td>{{ item["postal_cd"] }}</td>
+          <td>{{ item["postalCd"] }}</td>
         </tr>
       </template>
       <template v-slot:footer>
@@ -116,13 +116,13 @@ export default {
   methods: {
     orderItems(items) {
       return pick(items, [
-        "corp_num",
-        "corp_typ_cd",
-        "corp_nme",
-        "recognition_dts",
-        "state_typ_cd",
+        "corpNum",
+        "corpTypCd",
+        "corpNme",
+        "recognitionDts",
+        "stateTypCd",
         "addr",
-        "postal_cd"
+        "postalCd"
       ]);
     },
     pageNext() {
@@ -140,7 +140,7 @@ export default {
       });
     },
     handleTableRowClick(item) {
-      window.open(`/corporation/${item["corp_num"]}`);
+      window.open(`/corporation/${item["corpNum"]}`);
     },
     fetchData(query) {
       const { sort_type, sort_value } = query;

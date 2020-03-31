@@ -2,7 +2,7 @@
   <div>
     <div v-if="!isEmpty(officesheld)">
       <h5 class="font-weight-regular body-1 mb-3">
-        <i>Other offices held at</i> {{ details.corp_nme }}
+        <i>Other offices held at</i> {{ details.corpNme }}
       </h5>
       <div v-if="offices && offices.length > 0">
         <v-simple-table class="office-table">
@@ -17,14 +17,12 @@
             <tbody>
               <tr v-for="(o, index) in offices" :key="index">
                 <td class="office-held-desc">
-                  {{ o.short_desc }}
+                  {{ o.shortDesc }}
                 </td>
                 <td>
-                  <a
-                    :href="`/corpparty/${o['corp_party_id']}`"
-                    target="blank"
-                    >{{ o["corp_party_id"] }}</a
-                  >
+                  <a :href="`/corpparty/${o['corpPartyId']}`" target="blank">
+                    {{ o["corpPartyId"] }}
+                  </a>
                 </td>
                 <td>
                   -
@@ -38,8 +36,8 @@
         <h5>No offices found</h5>
       </div>
       <h5 class="font-weight-regular body-1 mb-3 mt-6">
-        <i>Other</i> {{ details.last_nme }}, {{ details.first_nme }}
-        {{ details.middle_nme }} <i>at company</i> {{ details.corp_nme }}
+        <i>Other</i> {{ details.lastNme }}, {{ details.firstNme }}
+        {{ details.middleNme }} <i>at company</i> {{ details.corpNme }}
       </h5>
       <div
         v-if="
@@ -62,14 +60,12 @@
                 :key="index"
               >
                 <td>
-                  {{ o.party_typ_cd }}
+                  {{ o.partyTypCd }}
                 </td>
                 <td>
-                  <a
-                    :href="`/corpparty/${o['corp_party_id']}`"
-                    target="blank"
-                    >{{ o["corp_party_id"] }}</a
-                  >
+                  <a :href="`/corpparty/${o['corpPartyId']}`" target="blank">
+                    {{ o["corpPartyId"] }}
+                  </a>
                 </td>
                 <td>
                   {{ o.year || "-" }}
@@ -84,8 +80,8 @@
       </div>
 
       <h5 class="font-weight-regular body-1 mb-3 mt-6">
-        <i>Other</i> {{ details.last_nme }}, {{ details.first_nme }}
-        {{ details.middle_nme }} <i>at address</i> {{ details.addr }}
+        <i>Other</i> {{ details.lastNme }}, {{ details.firstNme }}
+        {{ details.middleNme }} <i>at address</i> {{ details.addr }}
       </h5>
       <div v-if="officesheld.same_addr && officesheld.same_addr.length > 0">
         <v-simple-table class="office-table">
@@ -100,14 +96,12 @@
             <tbody>
               <tr v-for="(o, index) in officesheld.same_addr" :key="index">
                 <td>
-                  {{ o.party_typ_cd }}
+                  {{ o.partyTypCd }}
                 </td>
                 <td>
-                  <a
-                    :href="`/corpparty/${o['corp_party_id']}`"
-                    target="blank"
-                    >{{ o["corp_party_id"] }}</a
-                  >
+                  <a :href="`/corpparty/${o['corpPartyId']}`" target="blank">
+                    {{ o["corpPartyId"] }}
+                  </a>
                 </td>
                 <td>
                   {{ o.year || "-" }}
@@ -139,8 +133,8 @@ export default {
     officesheld: {
       default: function() {
         return {
-          same_addr: null,
-          same_name_and_company: null
+          sameAddr: null,
+          sameNameAndCompany: null
         };
       },
       type: Object
@@ -148,10 +142,10 @@ export default {
     details: {
       default: function() {
         return {
-          corp_nme: null,
-          last_nme: null,
-          first_nme: null,
-          middle_nme: null,
+          corpNme: null,
+          lastNme: null,
+          firstNme: null,
+          middleNme: null,
           addr: null
         };
       },
