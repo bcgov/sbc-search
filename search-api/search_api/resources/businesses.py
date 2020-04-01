@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import datetime
-import math
 from tempfile import NamedTemporaryFile
 
 from flask import Blueprint, request, jsonify, send_from_directory
@@ -48,10 +47,8 @@ def corporation_search():
     total_results = results.count()
 
     # Pagination
-    page_size = 50
     page = int(args.get("page")) if "page" in args else 1
-    results = results.paginate(int(page), page_size, False)
-    total_pages = math.ceil(total_results / page_size)
+    results = results.paginate(int(page), 50, False)
 
     corporations = []
     for row in results.items:
@@ -64,7 +61,7 @@ def corporation_search():
 
         corporations.append(result_dict)
 
-    return jsonify({'results': corporations, 'total': total_results, 'totalPages': total_pages})
+    return jsonify({'results': corporations, 'total': total_results})
 
 
 @API.route('/export/')
