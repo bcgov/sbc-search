@@ -23,8 +23,8 @@ RUN apt-get update && \
 COPY ./requirements/prod.txt .
 COPY ./requirements/repo-libraries.txt .
 
-RUN pip install --no-cache-dir -r requirements/prod.txt
-RUN pip install --no-cache-dir -r requirements/repo-libraries.txt
+RUN pip install --no-cache-dir -r prod.txt
+RUN pip install --no-cache-dir -r repo-libraries.txt
 
 WORKDIR /opt/app
 

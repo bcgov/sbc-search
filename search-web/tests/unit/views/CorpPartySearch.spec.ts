@@ -62,13 +62,13 @@ describe("CorpPartySearch", () => {
     it("renders filters from query string", async () => {
       const $route = {
         query: {
-          field: ["first_nme", "last_nme"],
+          field: ["firstNme", "lastNme"],
           operator: ["exact", "contains"],
           value: ["Clark", "Van Oyen"],
           mode: "ALL",
           page: "1",
           sort_type: "dsc",
-          sort_value: "last_nme"
+          sort_value: "lastNme"
         }
       };
       const wrapper = mount(CorpPartySearchView, {
@@ -84,8 +84,8 @@ describe("CorpPartySearch", () => {
       });
       await localVue.nextTick();
       const corpPartySearch = wrapper.findAll(CorpPartySearch);
-      expect(corpPartySearch.at(0).vm["selectedField"]).toBe("first_nme");
-      expect(corpPartySearch.at(1).vm["selectedField"]).toBe("last_nme");
+      expect(corpPartySearch.at(0).vm["selectedField"]).toBe("firstNme");
+      expect(corpPartySearch.at(1).vm["selectedField"]).toBe("lastNme");
       expect(corpPartySearch.at(0).vm["selectedOperator"]).toBe("exact");
       expect(corpPartySearch.at(1).vm["selectedOperator"]).toBe("contains");
 
@@ -95,13 +95,13 @@ describe("CorpPartySearch", () => {
 
       expect(wrapper.vm["filters"][0]).toEqual({
         uid: 1,
-        field: "first_nme",
+        field: "firstNme",
         operator: "exact",
         value: "Clark"
       });
       expect(wrapper.vm["filters"][1]).toEqual({
         uid: 2,
-        field: "last_nme",
+        field: "lastNme",
         operator: "contains",
         value: "Van Oyen"
       });
@@ -110,13 +110,13 @@ describe("CorpPartySearch", () => {
   it("renders table", async () => {
     const $route = {
       query: {
-        field: ["first_nme", "last_nme"],
+        field: ["firstNme", "lastNme"],
         operator: ["exact", "contains"],
         value: ["Clark", "Van Oyen"],
         mode: "ALL",
         page: "1",
         sort_type: "dsc",
-        sort_value: "last_nme"
+        sort_value: "lastNme"
       }
     };
     const wrapper = mount(CorpPartySearchView, {
