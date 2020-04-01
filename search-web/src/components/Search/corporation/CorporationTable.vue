@@ -66,7 +66,9 @@
             <v-btn v-else disabled icon small>
               <v-icon>arrow_back</v-icon>
             </v-btn>
-            <div class="d-inline-block mr-3 ml-3">Page {{ page }}</div>
+            <div class="d-inline-block mr-3 ml-3">
+              Page {{ page }} of {{ totalPages }}
+            </div>
             <v-btn
               icon
               v-if="corporations.length > 49 && !loading"
@@ -107,6 +109,7 @@ export default {
       corporations: [],
       loading: false,
       totalItems: 0,
+      totalPages: 0,
       options: {},
       disableSorting: false,
       sortBy: [],
@@ -155,11 +158,13 @@ export default {
         .then(result => {
           this.corporations = result.data.results;
           this.totalItems = result.data.total;
+          this.totalPages = result.data.totalPages;
           this.loading = false;
         })
         .catch(e => {
           this.corporations = [];
           this.totalItems = 0;
+          this.totalPages = 0;
           this.loading = false;
         });
     }
