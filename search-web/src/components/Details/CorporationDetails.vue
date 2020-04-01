@@ -16,7 +16,7 @@
               }"
             >
               Corporation Details for Inc. #<span class="details-corp-number">{{
-                details.corp_num
+                details.corpNum
               }}</span>
             </h2>
             <PrintButton
@@ -63,28 +63,28 @@
                 <span class="detail-key font-weight-bold"
                   >Delivery Address</span
                 >
-                <span class="detail-value">{{ office.delivery_addr }}</span>
+                <span class="detail-value">{{ office.deliveryAddr }}</span>
               </div>
 
               <div class="d-flex w-100 detail-list-item">
                 <span class="detail-key font-weight-bold">Mailing Address</span>
-                <span class="detail-value">{{ office.mailing_addr }}</span>
+                <span class="detail-value">{{ office.mailingAddr }}</span>
               </div>
 
               <div class="d-flex w-100 detail-list-item">
                 <span class="detail-key font-weight-bold">Type</span>
-                <span class="detail-value">{{ office.office_typ_cd }}</span>
+                <span class="detail-value">{{ office.officeTypCd }}</span>
               </div>
 
               <div class="d-flex w-100 detail-list-item">
                 <span class="detail-key font-weight-bold">Email</span>
-                <span class="detail-value">{{ office.email_address }}</span>
+                <span class="detail-value">{{ office.emailAddress }}</span>
               </div>
             </li>
           </ul>
         </v-col>
         <v-col xs="12" sm="12" md="6" lg="6">
-          <CorporationFilings :corp_num="details.corp_num"></CorporationFilings>
+          <CorporationFilings :corpNum="details.corpNum"></CorporationFilings>
         </v-col>
       </v-row>
     </v-container>
@@ -110,7 +110,7 @@ export default {
   },
   computed: {
     filteredDetail() {
-      return pick(this.details, ["corp_num", "state_typ_cd", "admin_email"]);
+      return pick(this.details, ["corpNum", "stateTypCd", "adminEmail"]);
     }
   },
   methods: {

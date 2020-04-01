@@ -1,13 +1,13 @@
 export const BACKEND_URL = process.env.VUE_APP_BACKEND_HOST;
 
 export const FIELD_VALUES = [
-  { text: "First Name", value: "first_nme" },
-  { text: "Last Name", value: "last_nme" },
-  { text: "Middle Name", value: "middle_nme" },
-  { text: "Any Name", value: "any_nme" },
-  { text: "Street Address", value: "addr_line_1" },
-  { text: "Postal Code", value: "postal_cd" },
-  { text: "Company Status", value: "state_typ_cd" }
+  { text: "First Name", value: "firstNme" },
+  { text: "Last Name", value: "lastNme" },
+  { text: "Middle Name", value: "middleNme" },
+  { text: "Any Name", value: "anyNme" },
+  { text: "Street Address", value: "addrLine1" },
+  { text: "Postal Code", value: "postalCd" },
+  { text: "Company Status", value: "stateTypCd" }
 ];
 
 export const OPERATOR_VALUES = [
@@ -26,43 +26,43 @@ export const TERM_VALUES = {
 };
 
 export const COMPANY_HEADERS = [
-  { text: "Number", value: "corp_num" },
-  { text: "Status", value: "state_typ_cd" },
-  { text: "Admin Email", value: "admin_email" }
+  { text: "Number", value: "corpNum" },
+  { text: "Status", value: "stateTypCd" },
+  { text: "Admin Email", value: "adminEmail" }
 ];
 
 export const CORPORATION_HEADERS = [
   {
     text: "Inc/Reg #",
-    value: "corp_num",
+    value: "corpNum",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Entity Type",
-    value: "corp_typ_cd",
+    value: "corpTypCd",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Company Name",
-    value: "corp_nme",
+    value: "corpNme",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Incorporated",
-    value: "recognition_dts",
+    value: "recognitionDts",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Company Status",
-    value: "state_typ_cd",
+    value: "stateTypCd",
     sortable: true,
     align: "left",
     width: 150
@@ -76,7 +76,7 @@ export const CORPORATION_HEADERS = [
   },
   {
     text: "Postal Code",
-    value: "postal_cd",
+    value: "postalCd",
     sortable: true,
     align: "left",
     width: 150
@@ -86,28 +86,28 @@ export const CORPORATION_HEADERS = [
 export const CORPPARTY_HEADERS = [
   {
     text: "Filing #",
-    value: "corp_party_id",
+    value: "corpPartyId",
     sortable: true,
     align: "left",
     width: 100
   },
   {
     text: "Surname",
-    value: "last_nme",
+    value: "lastNme",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "First Name",
-    value: "first_nme",
+    value: "firstNme",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Middle Name",
-    value: "middle_nme",
+    value: "middleNme",
     sortable: true,
     align: "left",
     width: 150
@@ -121,87 +121,87 @@ export const CORPPARTY_HEADERS = [
   },
   {
     text: "Postal Code",
-    value: "postal_cd",
+    value: "postalCd",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Office Held",
-    value: "party_typ_cd",
+    value: "partyTypCd",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Appointed",
-    value: "appointment_dt",
+    value: "appointmentDt",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Ceased",
-    value: "cessation_dt",
+    value: "cessationDt",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Company Status",
-    value: "state_typ_cd",
+    value: "stateTypCd",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Company Name",
-    value: "corp_nme",
+    value: "corpNme",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Inc/Reg #",
-    value: "corp_num",
+    value: "corpNum",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Mailing Address",
-    value: "mailing_addr",
+    value: "mailingAddr",
     sortable: true,
     align: "left",
     width: 150
   },
   {
     text: "Delivery Address",
-    value: "delivery_addr",
+    value: "deliveryAddr",
     sortable: true,
     align: "left"
   },
   {
     text: "Email",
-    value: "corp_party_email",
+    value: "corpPartyEmail",
     sortable: true,
     align: "left"
   },
   {
     text: "Company Delivery Address",
-    value: "corp_delivery_addr",
+    value: "corpDeliveryAddr",
     sortable: true,
     align: "left"
   },
   {
     text: "Company Mailing Address",
-    value: "corp_mailing_addr",
+    value: "corpMailingAddr",
     sortable: true,
     align: "left"
   },
   {
     text: "Company Admin Email",
-    value: "corp_admin_email",
+    value: "corpAdminEmail",
     sortable: true,
     align: "left"
   },
@@ -213,7 +213,7 @@ export const CORPPARTY_HEADERS = [
   },
   {
     text: "Type",
-    value: "corp_typ_cd",
+    value: "corpTypCd",
     sortable: true,
     align: "left"
   }

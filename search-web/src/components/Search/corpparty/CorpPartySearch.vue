@@ -24,7 +24,7 @@
     ></OperatorSelect>
 
     <TermSelect
-      v-if="selectedField === 'state_typ_cd'"
+      v-if="selectedField === 'stateTypCd'"
       :items="TERMS"
       :init="criteria.value || 'ACT'"
       @change="handleTermChange"
@@ -90,9 +90,9 @@ export default {
       return FIELD_VALUES;
     },
     OPERATORS() {
-      if (this.selectedField === "addr_line_1") {
+      if (this.selectedField === "addrLine1") {
         return OPERATOR_VALUES.filter(o => o.value === "contains");
-      } else if (this.selectedField === "state_typ_cd") {
+      } else if (this.selectedField === "stateTypCd") {
         return OPERATOR_VALUES.filter(o => o.value === "exact");
       }
       return OPERATOR_VALUES;
@@ -151,14 +151,14 @@ export default {
   },
   watch: {
     selectedField(nf) {
-      if (nf === "addr_line_1") {
+      if (nf === "addrLine1") {
         this.setSearchPropValue({
           uid: this.uid,
           property: "operator",
           value: "contains"
         });
         this.clearTerm();
-      } else if (nf === "state_typ_cd") {
+      } else if (nf === "stateTypCd") {
         this.setSearchPropValue({
           uid: this.uid,
           property: "operator",

@@ -2,8 +2,8 @@ export default {
   namespaced: true,
   state: {
     filters: [
-      { uid: 0, field: "first_nme", operator: "exact", value: "" },
-      { uid: 1, field: "last_nme", operator: "exact", value: "" }
+      { uid: 0, field: "firstNme", operator: "exact", value: "" },
+      { uid: 1, field: "lastNme", operator: "exact", value: "" }
     ]
   },
   mutations: {

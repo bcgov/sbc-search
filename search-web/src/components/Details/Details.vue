@@ -16,15 +16,15 @@
             }"
           >
             <span class="font-weight-bold"
-              >{{ detail.first_nme }} {{ detail.middle_nme }}
-              {{ detail.last_nme }}</span
+              >{{ detail.firstNme }} {{ detail.middleNme }}
+              {{ detail.lastNme }}</span
             >
-            <span v-if="detail.corp_nme">
+            <span v-if="detail.corpNme">
               at
               <span
                 class="font-weight-bold cursor-pointer detail-office-link"
-                @click="handleCorpClick(detail.corp_num)"
-                >{{ detail.corp_nme }}
+                @click="handleCorpClick(detail.corpNum)"
+                >{{ detail.corpNme }}
               </span></span
             >
           </h2>
@@ -43,14 +43,14 @@
             'font-weight-bold': $vuetify.breakpoint.smAndDown
           }"
         >
-          {{ detail.full_desc }}
+          {{ detail.fullDesc }}
         </h2>
       </v-row>
       <v-row>
         <h2
           class="pa-0 ma-0 mb-12 title font-weight-regular color-gray detail-filing-number"
         >
-          Filing #{{ detail.corp_party_id }}
+          Filing #{{ detail.corpPartyId }}
         </h2>
       </v-row>
 
@@ -64,7 +64,7 @@
             <span
               class="font-weight-bold mb-1 detail-key"
               :class="{
-                'detail-big-margins': key === 'cessation_dt' || key === 'addr'
+                'detail-big-margins': key === 'cessationDt' || key === 'addr'
               }"
               >{{ getText(key) }}</span
             >
@@ -110,45 +110,45 @@ export default {
   computed: {
     filteredDetail() {
       const filtered = omit(this.detail, [
-        "postal_cd",
+        "postalCd",
         "province",
-        "corp_party_id"
+        "corpPartyId"
       ]);
-      if (filtered["appointment_dt"]) {
-        filtered["appointment_dt"] = dayjs(filtered["appointment_dt"]).format(
+      if (filtered["appointmentDt"]) {
+        filtered["appointmentDt"] = dayjs(filtered["appointmentDt"]).format(
           "YYYY-MM-DD"
         );
       } else {
-        filtered["appointment_dt"] = "-";
+        filtered["appointmentDt"] = "-";
       }
-      if (filtered["cessation_dt"]) {
-        filtered["cessation_dt"] = dayjs(filtered["cessation_dt"]).format(
+      if (filtered["cessationDt"]) {
+        filtered["cessationDt"] = dayjs(filtered["cessationDt"]).format(
           "YYYY-MM-DD"
         );
       } else {
-        filtered["cessation_dt"] = "-";
+        filtered["cessationDt"] = "-";
       }
 
-      filtered["state_typ_cd"] =
-        filtered["states"] && filtered["states"][0]["state_typ_cd"];
+      filtered["stateTypCd"] =
+        filtered["states"] && filtered["states"][0]["stateTypCd"];
 
       return pick(filtered, [
-        "last_nme",
-        "first_nme",
-        "middle_nme",
-        "delivery_addr",
-        "mailing_addr",
-        "corp_party_email",
-        "party_typ_cd",
-        "appointment_dt",
-        "cessation_dt",
-        "state_typ_cd",
-        "corp_nme",
-        "corp_num",
-        "corp_typ_cd",
-        "corp_delivery_addr",
-        "corp_mailing_addr",
-        "corp_admin_email"
+        "lastNme",
+        "firstNme",
+        "middleNme",
+        "deliveryAddr",
+        "mailingAddr",
+        "corpPartyEmail",
+        "partyTypCd",
+        "appointmentDt",
+        "cessationDt",
+        "stateTypCd",
+        "corpNme",
+        "corpNum",
+        "corpTypCd",
+        "corpDeliveryAddr",
+        "corpMailingAddr",
+        "corpAdminEmail"
       ]);
     }
   },

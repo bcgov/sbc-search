@@ -15,14 +15,15 @@
 from dotenv import load_dotenv
 import os
 
-from flask_cors import CORS
 from flask import Flask
+from flask_cors import CORS
+from flask_migrate import Migrate
+from sqlalchemy import exc
+
 from search_api import config
 from search_api.auth import jwt
 from search_api.resources import DIRECTORS_API, BUSINESSES_API
 from search_api.models import db
-from flask_migrate import Migrate
-from sqlalchemy import exc
 
 load_dotenv(verbose=True)
 
@@ -46,6 +47,7 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
 
     app.register_blueprint(DIRECTORS_API)
     app.register_blueprint(BUSINESSES_API)
+
     setup_jwt_manager(app, jwt)
 
     @app.route("/ops/readyz")
@@ -54,7 +56,6 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
 
     @app.route("/ops/healthz")
     def healthz():
-
         """Return a JSON object stating the health of the Service and dependencies."""
         # TODO: temporarily disabled because this is failing on openshift
         # try:

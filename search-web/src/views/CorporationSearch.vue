@@ -67,7 +67,7 @@ export default {
     return {
       query: null,
       page: "1",
-      sort_value: "corp_nme",
+      sort_value: "corpNme",
       sort_type: "dsc"
     };
   },
@@ -79,7 +79,7 @@ export default {
           query: searchQuery,
           page: 1,
           sort_type: "dsc",
-          sort_value: "corp_nme"
+          sort_value: "corpNme"
         }
       });
     },
@@ -92,7 +92,7 @@ export default {
     handleSortUpdate(options) {
       if (options.sortBy.length === 0 && options.sortDesc.length === 0) {
         this.sort_type = "dsc";
-        this.sort_value = "corp_nme";
+        this.sort_value = "corpNme";
       } else if (options.sortBy.length === 1 && options.sortDesc.length === 1) {
         this.sort_value = options.sortBy[0];
         this.sort_type = options.sortDesc[0] ? "dsc" : "asc";
