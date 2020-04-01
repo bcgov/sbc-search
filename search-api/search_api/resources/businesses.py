@@ -44,11 +44,10 @@ def corporation_search():
 
     args = request.args
     results = _get_corporation_search_results(args)
-    total_results = results.count()
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
-    results = results.paginate(int(page), 50, False)
+    results = results.paginate(int(page), 20, False)
 
     corporations = []
     for row in results.items:
@@ -61,7 +60,7 @@ def corporation_search():
 
         corporations.append(result_dict)
 
-    return jsonify({'results': corporations, 'total': total_results})
+    return jsonify({'results': corporations})
 
 
 @API.route('/export/')
