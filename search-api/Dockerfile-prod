@@ -19,6 +19,10 @@ RUN chmod 755 /opt/app
 RUN apt-get update && \
   apt-get install -y python-dev build-essential libaio1
 
+# Install the requirements
+COPY ./requirements/prod.txt .
+COPY ./requirements/repo-libraries.txt .
+
 RUN pip install --no-cache-dir -r requirements/prod.txt
 RUN pip install --no-cache-dir -r requirements/repo-libraries.txt
 

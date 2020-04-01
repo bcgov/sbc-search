@@ -20,7 +20,6 @@ export default {
     if (corporation_id || corporation_id === 0) {
       corporationDetailSearch(corporation_id)
         .then(result => {
-          console.log(result.data);
           this.details = result.data;
         })
         .catch(e => {});
