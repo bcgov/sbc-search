@@ -39,10 +39,11 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 def corpparty_search():
     args = request.args
     results = _get_corpparty_search_results(args)
+    total_results = results.count()
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
-    results = results.paginate(int(page), 20, False)
+    results = results.paginate(int(page), 50, False)
 
     corp_parties = []
     for row in results.items:
@@ -55,7 +56,7 @@ def corpparty_search():
 
         corp_parties.append(result_dict)
 
-    return jsonify({'results': corp_parties})
+    return jsonify({'results': corp_parties, 'total': total_results})
 
 
 @API.route('/export/')
