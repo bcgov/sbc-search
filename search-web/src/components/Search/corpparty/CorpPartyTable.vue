@@ -15,7 +15,7 @@
       :sort-by="sortBy"
       :sort-desc="sortDesc"
       :footer-props="{
-        'items-per-page-options': [20]
+        'items-per-page-options': [50]
       }"
     >
       <template v-slot:item="{ item, index, headers }">
@@ -94,7 +94,7 @@
             <div class="d-inline-block mr-3 ml-3">Page {{ page }}</div>
             <v-btn
               icon
-              v-if="results.length > 19 && !loading"
+              v-if="results.length > 49 && !loading"
               @click="pageNext"
               small
             >

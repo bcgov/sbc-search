@@ -85,6 +85,8 @@ class _Config:  # pylint: disable=too-few-public-methods
     except (TypeError, ValueError):
         JWT_OIDC_JWKS_CACHE_TIMEOUT = 300
 
+    AUTH_API_URL = os.getenv('AUTH_API_URL')
+
     TESTING = False
     DEBUG = False
 

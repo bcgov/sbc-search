@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import datetime
+from http import HTTPStatus
 from tempfile import NamedTemporaryFile
 
 from flask import Blueprint, request, jsonify, send_from_directory
@@ -37,17 +38,16 @@ API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 @API.route('/')
 @jwt.requires_auth
 def corporation_search():
-    # TODO SY - check roles
-    # check authorization
-    # if not authorized(identifier, jwt, action=['add_comment']):
-    #     return jsonify({'message': ''}), HTTPStatus.UNAUTHORIZED
+    account_id = request.headers.get("X-Account-Id")
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     args = request.args
     results = _get_corporation_search_results(args)
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
-    results = results.paginate(int(page), 20, False)
+    results = results.paginate(int(page), 50, False)
 
     corporations = []
     for row in results.items:
@@ -66,6 +66,9 @@ def corporation_search():
 @API.route('/export/')
 @jwt.requires_auth
 def corporation_search_export():
+    account_id = request.headers.get("X-Account-Id")
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     # Query string arguments
     args = request.args
@@ -117,6 +120,9 @@ def corporation_search_export():
 @API.route('/<id>')
 @jwt.requires_auth
 def corporation(id):
+    account_id = request.headers.get("X-Account-Id")
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     corp = Corporation.get_corporation_by_id(id)
     offices = Office.get_offices_by_corp_id(id)

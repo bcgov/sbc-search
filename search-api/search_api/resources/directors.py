@@ -13,12 +13,13 @@
 # limitations under the License.
 
 import datetime
+from http import HTTPStatus
 from tempfile import NamedTemporaryFile
 
 from flask import Blueprint, request, jsonify, send_from_directory
 from openpyxl import Workbook
 
-from search_api.auth import jwt
+from search_api.auth import jwt, authorized
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 from search_api.models import (
     CorpState,
@@ -37,12 +38,16 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 @API.route('/')
 @jwt.requires_auth
 def corpparty_search():
+    account_id = request.headers.get("X-Account-Id")
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+
     args = request.args
     results = _get_corpparty_search_results(args)
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
-    results = results.paginate(int(page), 20, False)
+    results = results.paginate(int(page), 50, False)
 
     corp_parties = []
     for row in results.items:
@@ -61,6 +66,9 @@ def corpparty_search():
 @API.route('/export/')
 @jwt.requires_auth
 def corpparty_search_export():
+    account_id = request.headers.get("X-Account-Id")
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     # Query string arguments
     args = request.args
@@ -127,6 +135,10 @@ def corpparty_search_export():
 @API.route('/<id>')
 @jwt.requires_auth
 def person(id):
+    account_id = request.headers.get("X-Account-Id")
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+
     result = CorpParty.get_corporation_info_by_corp_party_id(id)
 
     person = result[0]
@@ -170,6 +182,10 @@ def person(id):
 @API.route('/<corppartyid>/offices')
 @jwt.requires_auth
 def officesheld(corppartyid):
+    account_id = request.headers.get("X-Account-Id")
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+
     results = CorpParty.get_offices_held_by_corp_party_id(corppartyid)
     offices = []
     for row in results:
