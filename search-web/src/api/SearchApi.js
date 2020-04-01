@@ -2,7 +2,6 @@ import ApiService from "./ApiService.js";
 
 export const API_PREFIX = "/api/v1";
 export const DIRECTOR_SEARCH_PREFIX = `${API_PREFIX}/directors`;
-export const CORPPARTY_OFFICE_URL = `${DIRECTOR_SEARCH_PREFIX}/officesheld`;
 export const CORPORATION_SEARCH_PREFIX = `${API_PREFIX}/businesses`;
 export const EXPORT_CORPPARTY_URL = `${DIRECTOR_SEARCH_PREFIX}/export`;
 export const EXPORT_CORPORATION_URL = `${CORPORATION_SEARCH_PREFIX}export`;
@@ -16,7 +15,7 @@ export function corpPartySearchDetail(id) {
 }
 
 export function corpPartyOfficeSearch(id) {
-  return ApiService.get(`${CORPPARTY_OFFICE_URL}/${id}`);
+  return ApiService.get(`${DIRECTOR_SEARCH_PREFIX}/${id}/offices`);
 }
 
 export function corporationDetailSearch(id) {

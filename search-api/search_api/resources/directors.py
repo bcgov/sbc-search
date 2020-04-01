@@ -167,7 +167,7 @@ def person(id):
     return jsonify(result_dict)
 
 
-@API.route('/officesheld/<corppartyid>')
+@API.route('/<corppartyid>/offices')
 @jwt.requires_auth
 def officesheld(corppartyid):
     results = CorpParty.get_offices_held_by_corp_party_id(corppartyid)

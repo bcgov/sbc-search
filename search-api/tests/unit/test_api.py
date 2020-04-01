@@ -142,7 +142,7 @@ def test_get_director_officesheld(client, jwt, session):
 
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
-    rv = client.get('/api/v1/directors/officesheld/22',
+    rv = client.get('/api/v1/directors/22/offices',
                     headers=headers, content_type='application/json')
 
     assert rv.status_code == http_status.HTTP_200_OK
