@@ -20,3 +20,4 @@ flask-jwt-oidc==0.1.5
 Werkzeug==0.16.0
 requests==2.23.0
 sentry-sdk==0.14.3
+sentry-sdk[flask]==0.10.2
