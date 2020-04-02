@@ -13,21 +13,21 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-builder"
+        "name": "${NAME}-${TAG_NAME}-builder"
       }
     },
     {
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-runtime"
+        "name": "${NAME}-${TAG_NAME}-runtime"
       }
     },
     {
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-s2i-image"
+        "name": "${NAME}-${TAG_NAME}-s2i-image"
       },
       "spec": {
         "tags": [
@@ -45,7 +45,7 @@
       "kind": "ImageStream",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-image"
+        "name": "${NAME}-${TAG_NAME}-image"
       },
       "spec": {
         "tags": [
@@ -63,7 +63,7 @@
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-builder",
+        "name": "${NAME}-${TAG_NAME}-builder",
         "labels": {
           "app": "${NAME}"
         }
@@ -82,7 +82,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "${NAME}-s2i-image:${SOURCE_IMAGE_TAG}"
+              "name": "${NAME}-${TAG_NAME}-s2i-image:${SOURCE_IMAGE_TAG}"
             },
             "env": [
               {
@@ -107,7 +107,7 @@
         "output": {
           "to": {
             "kind": "ImageStreamTag",
-            "name": "${NAME}-builder:${OUTPUT_IMAGE_TAG}"
+            "name": "${NAME}-${TAG_NAME}-builder:${OUTPUT_IMAGE_TAG}"
           }
         },
         "resources": {
@@ -143,7 +143,7 @@
               "as": null,
               "from": {
                 "kind": "${SOURCE_IMAGE_KIND}",
-                "name": "${SOURCE_IMAGE_NAME}-builder:${SOURCE_IMAGE_TAG}"
+                "name": "${SOURCE_IMAGE_NAME}-${TAG_NAME}-builder:${SOURCE_IMAGE_TAG}"
               },
               "paths": [
                 {
@@ -159,7 +159,7 @@
           "sourceStrategy": {
             "from": {
               "kind": "${SOURCE_IMAGE_KIND}",
-              "name": "${SOURCE_IMAGE_NAME}-image:${SOURCE_IMAGE_TAG}"
+              "name": "${SOURCE_IMAGE_NAME}-${TAG_NAME}-image:${SOURCE_IMAGE_TAG}"
             },
             "incremental": true
           },
@@ -169,7 +169,7 @@
         "output": {
           "to": {
             "kind": "${SOURCE_IMAGE_KIND}",
-            "name": "${SOURCE_IMAGE_NAME}-runtime:${OUTPUT_IMAGE_TAG}"
+            "name": "${SOURCE_IMAGE_NAME}-${TAG_NAME}-runtime:${OUTPUT_IMAGE_TAG}"
           }
         },
         "resources": {
@@ -190,7 +190,7 @@
             "imageChange": {
               "from": {
                 "kind": "${SOURCE_IMAGE_KIND}",
-                "name": "${SOURCE_IMAGE_NAME}-builder:${OUTPUT_IMAGE_TAG}"
+                "name": "${SOURCE_IMAGE_NAME}-${TAG_NAME}-builder:${OUTPUT_IMAGE_TAG}"
               }
             },
             "type": "ImageChange"

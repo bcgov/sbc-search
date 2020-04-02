@@ -30,7 +30,17 @@
         "strategy": {
           "type": "JenkinsPipeline",
           "jenkinsPipelineStrategy": {
-            "jenkinsfilePath": "./jenkins/${TAG_NAME}.groovy"
+            "jenkinsfilePath": "./jenkins/${JENKINSFILE_NAME}.groovy",
+            "env": [
+              {
+                "name": "APP_BUILDER_NAME",
+                "value": "${APP_NAME}-${TAG_NAME}-builder"
+              },
+              {
+                "name": "APP_RUNTIME_NAME",
+                "value": "${APP_NAME}-${TAG_NAME}-runtime"
+              }
+            ]
           }
         },
         "output": {},
@@ -84,6 +94,13 @@
       "description": "The source context directory.",
       "required": false,
       "value": "search-web"
+    },
+    {
+      "name": "JENKINSFILE_NAME",
+      "displayName": "Jenkinsfile name (without extension)",
+      "description": "Name of Jenkinsfile used for this pipeline.",
+      "required": false,
+      "value": "dev"
     }
   ]
 }
