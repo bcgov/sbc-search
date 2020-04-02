@@ -30,7 +30,7 @@
         "strategy": {
           "type": "JenkinsPipeline",
           "jenkinsPipelineStrategy": {
-            "jenkinsfilePath": "${JENKINS_FILE}"
+            "jenkinsfilePath": "./jenkins/${TAG_NAME}.groovy"
           }
         },
         "output": {},
@@ -84,13 +84,6 @@
       "description": "The source context directory.",
       "required": false,
       "value": "search-api"
-    },
-    {
-      "name": "JENKINS_FILE",
-      "displayName": "The Jenksinfile this pipeline should use.",
-      "description": "The Jenkinsfile this pipeline should use.",
-      "required": false,
-      "value": "./jenkins/${TAG_NAME}.groovy"
     }
   ]
 }

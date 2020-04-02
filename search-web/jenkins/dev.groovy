@@ -24,6 +24,7 @@ import groovy.json.*
 
 // define constants - values sent in as env vars from whatever calls this pipeline
 def APP_NAME = 'search-web'
+def APP_BUILDER_NAME = "${APP_NAME}-builder"
 def APP_RUNTIME_NAME = "${APP_NAME}-runtime"
 def DESTINATION_TAG = 'dev'
 def TOOLS_TAG = 'tools'
@@ -116,8 +117,8 @@ if( run_pipeline ) {
                 script {
                     openshift.withCluster() {
                         openshift.withProject("${NAMESPACE_BUILD}") {
-                            echo "Building ${APP_NAME} ..."
-                            def build = openshift.selector("bc", "${APP_NAME}").startBuild()
+                            echo "Building ${APP_BUILDER_NAME} ..."
+                            def build = openshift.selector("bc", "${APP_BUILDER_NAME}").startBuild()
                             build.untilEach {
                                 return it.object().status.phase == "Running"
                             }
