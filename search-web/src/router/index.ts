@@ -112,7 +112,7 @@ router.beforeEach((to, from, next) => {
     ApiService.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${KEYCLOACK_TOKEN}`;
-    ApiService.defaults.headers.common["X-Account-Id"] = CURRENT_ACCOUNT_ID;
+    ApiService.defaults.headers["X-Account-Id"] = CURRENT_ACCOUNT_ID;
     next();
   }
 });
