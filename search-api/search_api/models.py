@@ -482,8 +482,8 @@ class CorpParty(BaseModel):
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
             .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
             .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
-            .join(CorpName, Corporation.corp_num == CorpName.corp_num)
-            .join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+            .outerjoin(CorpName, Corporation.corp_num == CorpName.corp_num)
+            .outerjoin(Address, CorpParty.mailing_addr_id == Address.addr_id)
             .add_columns(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
@@ -499,7 +499,11 @@ class CorpParty(BaseModel):
                 Address.addr_line_3,
                 Address.postal_cd,
                 CorpOpState.state_typ_cd,
-            ))
+            )).filter(
+                CorpParty.end_event_id == None,
+                CorpState.end_event_id == None,
+                CorpName.end_event_id == None,
+            )
 
         # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
         if mode == 'ALL':
