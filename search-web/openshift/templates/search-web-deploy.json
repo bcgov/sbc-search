@@ -40,11 +40,11 @@
             "type": "ImageChange",
             "imageChangeParams": {
               "automatic": true,
-              "containerNames": ["${NAME}-runtime"],
+              "containerNames": ["${NAME}-${TAG_NAME}-runtime"],
               "from": {
                 "kind": "ImageStreamTag",
                 "namespace": "${IMAGE_NAMESPACE}",
-                "name": "${NAME}-runtime:${OUTPUT_IMAGE_TAG}"
+                "name": "${NAME}-${TAG_NAME}-runtime:${OUTPUT_IMAGE_TAG}"
               }
             }
           },
@@ -78,7 +78,7 @@
             ],
             "containers": [
               {
-                "image": "docker-registry.default.svc:5000/${IMAGE_NAMESPACE}/${NAME}-runtime:${OUTPUT_IMAGE_TAG}",
+                "image": "docker-registry.default.svc:5000/${IMAGE_NAMESPACE}/${NAME}-${TAG_NAME}-runtime:${OUTPUT_IMAGE_TAG}",
                 "name": "${NAME}-runtime",
                 "ports": [
                   {

@@ -34,11 +34,11 @@
             "env": [
               {
                 "name": "APP_BUILDER_NAME",
-                "value": "${APP_NAME}-${TAG_NAME}-builder"
+                "value": "${NAME}-${TAG_NAME}-builder"
               },
               {
                 "name": "APP_RUNTIME_NAME",
-                "value": "${APP_NAME}-${TAG_NAME}-runtime"
+                "value": "${NAME}-${TAG_NAME}-runtime"
               }
             ]
           }

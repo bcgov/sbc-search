@@ -131,7 +131,7 @@
       "kind": "BuildConfig",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${NAME}-runtime",
+        "name": "${NAME}-${TAG_NAME}-runtime",
         "labels": {
           "app": "${NAME}"
         }
