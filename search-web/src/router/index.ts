@@ -101,7 +101,7 @@ router.beforeEach((to, from, next) => {
   const CURRENT_ACCOUNT = sessionStorage.getItem("CURRENT_ACCOUNT");
   const CURRENT_ACCOUNT_ID = CURRENT_ACCOUNT
     ? JSON.parse(CURRENT_ACCOUNT).id
-    : undefined;
+    : "";
   if (!KEYCLOACK_TOKEN && to.name !== "signin") {
     delete ApiService.defaults.headers.common["Authorization"];
     delete ApiService.defaults.headers.common["X-Account-Id"];

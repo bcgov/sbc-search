@@ -17,15 +17,21 @@ import os
 
 from flask import Flask
 from flask_cors import CORS
-from flask_migrate import Migrate
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 from sqlalchemy import exc
 
 from search_api import config
 from search_api.auth import jwt
 from search_api.resources import DIRECTORS_API, BUSINESSES_API
 from search_api.models import db
+from search_api.utils.util_logging import setup_logging
+
 
 load_dotenv(verbose=True)
+
+
+setup_logging(os.path.join(config._Config.PROJECT_ROOT, 'logging.conf'))  # important to do this first
 
 
 def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
@@ -35,7 +41,6 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
     app.config.from_object(config.CONFIGURATION[run_mode])
 
     db.init_app(app)
-    migrate = Migrate(app, db)
 
     CORS(app)
 

@@ -25,7 +25,7 @@ def authorized(jwt, account_id):
     the Director Search (DIR_SEARCH) application.
     """
 
-    if not jwt:
+    if not jwt or not account_id:
         return False
 
     token = jwt.get_token_auth_header()

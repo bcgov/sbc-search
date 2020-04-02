@@ -38,7 +38,7 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 @API.route('/')
 @jwt.requires_auth
 def corpparty_search():
-    account_id = request.headers.get("X-Account-Id")
+    account_id = request.headers.get("X-Account-Id", None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
@@ -66,7 +66,7 @@ def corpparty_search():
 @API.route('/export/')
 @jwt.requires_auth
 def corpparty_search_export():
-    account_id = request.headers.get("X-Account-Id")
+    account_id = request.headers.get("X-Account-Id", None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
@@ -135,7 +135,7 @@ def corpparty_search_export():
 @API.route('/<id>')
 @jwt.requires_auth
 def person(id):
-    account_id = request.headers.get("X-Account-Id")
+    account_id = request.headers.get("X-Account-Id", None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
@@ -182,7 +182,7 @@ def person(id):
 @API.route('/<corppartyid>/offices')
 @jwt.requires_auth
 def officesheld(corppartyid):
-    account_id = request.headers.get("X-Account-Id")
+    account_id = request.headers.get("X-Account-Id", None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
