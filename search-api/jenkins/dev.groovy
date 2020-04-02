@@ -1,8 +1,6 @@
 #!/usr/bin/env groovy
 
-// [TODO SY] Check that this is the correct license info
-
-// Copyright © 2018 Province of British Columbia
+// Copyright © 2020 Province of British Columbia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +13,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
+
 //JENKINS DEPLOY ENVIRONMENT VARIABLES:
 // - JENKINS_JAVA_OVERRIDES  -Dhudson.model.DirectoryBrowserSupport.CSP= -Duser.timezone=America/Vancouver
 //   -> user.timezone : set the local timezone so logfiles report correxct time
@@ -25,20 +23,20 @@
 import groovy.json.*
 
 // define constants - values sent in as env vars from whatever calls this pipeline
-def APP_NAME = 'sbc-search'
-def DESTINATION_TAG = 'staging'
-def DESTINATION_ENV_TAG = 'test'
+def APP_NAME = 'search-api'
+def DESTINATION_TAG = 'dev'
+def E2E_TAG = 'e2e'
 def TOOLS_TAG = 'tools'
-def NAMESPACE_APP = '' // [TODO SY]
+def NAMESPACE_APP = '1rdehl'
 def NAMESPACE_SHARED = '' // [TODO SY]
 def NAMESPACE_BUILD = "${NAMESPACE_APP}"  + '-' + "${TOOLS_TAG}"
-def NAMESPACE_DEPLOY = "${NAMESPACE_APP}" + '-' + "${DESTINATION_ENV_TAG}"
+def NAMESPACE_DEPLOY = "${NAMESPACE_APP}" + '-' + "${DESTINATION_TAG}"
 def NAMESPACE_UNITTEST = "${NAMESPACE_SHARED}" + '-'+ "${TOOLS_TAG}"
 
-def ROCKETCHAT_DEVELOPER_CHANNEL='#relationship-developers' // [TODO SY] - find out if this is correct
+def ROCKETCHAT_DEVELOPER_CHANNEL='#registries-search' // [TODO SY] - find out if this is correct
 
 // post a notification to rocketchat
-def rocketChatNotificaiton(token, channel, comments) {
+def rocketChatNotification(token, channel, comments) {
   def payload = JsonOutput.toJson([text: comments, channel: channel])
   def rocketChatUrl = "https://chat.pathfinder.gov.bc.ca/hooks/" + "${token}"
 
@@ -159,6 +157,23 @@ if( run_pipeline ) {
                     }
                 }
             }
+
+            stage("Tag ${APP_NAME}:${E2E_TAG}") {
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject("${NAMESPACE_BUILD}") {
+                            try {
+                                echo "Tagging ${APP_NAME} for deployment to ${E2E_TAG} ..."
+                                openshift.tag("${APP_NAME}:${DESTINATION_TAG}", "${APP_NAME}:${E2E_TAG}")
+                            } catch (Exception e) {
+                                echo e.getMessage()
+                                build_ok = false
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
         if (build_ok) {
@@ -195,6 +210,32 @@ if( run_pipeline ) {
             }
         }
 
+        if (build_ok) {
+            try {
+                stage("Run tests on ${APP_NAME}:${DESTINATION_TAG}") {
+                    script {
+                        openshift.withCluster() {
+                            openshift.withProject("${NAMESPACE_UNITTEST}") {
+                                def test_pipeline = openshift.selector('bc', 'pytest-pipeline')
+                                test_pipeline.startBuild('--wait=true', "-e=component=${APP_NAME}", "-e=component_tag=${DESTINATION_TAG}", "-e=tag=${DESTINATION_TAG}", "-e=namespace=${NAMESPACE_APP}", "-e=db_type=PG").logs('-f')
+                                echo "All tests passed"
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                echo e.getMessage()
+                echo "Not all tests passed."
+                build_ok = false
+            }
+        }
+
+        if (build_ok) {
+            stage("Run E2E API tests") {
+
+            }
+        }
+
         stage("Notify on RocketChat") {
             if(build_ok) {
                 currentBuild.result = "SUCCESS"
@@ -206,7 +247,7 @@ if( run_pipeline ) {
                     script: """oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
                         returnStdout: true).trim()
 
-            rocketChatNotificaiton("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
+            // rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
         }
     }
 }

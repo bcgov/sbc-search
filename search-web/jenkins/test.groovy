@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
-// [TODO SY] Check that this is the correct license info
-// Copyright © 2018 Province of British Columbia
+
+// Copyright © 2020 Province of British Columbia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,19 +23,20 @@
 import groovy.json.*
 
 // define constants - values sent in as env vars from whatever calls this pipeline
-def APP_NAME = 'sbc-search'
+def APP_NAME = 'search-web'
+def APP_RUNTIME_NAME = "${APP_NAME}-test-runtime"
 def SOURCE_TAG = 'dev'
 def DESTINATION_TAG = 'test'
 def TOOLS_TAG = 'tools'
 
-def NAMESPACE_APP = '' // [TODO SY]
+def NAMESPACE_APP = '1rdehl'
 def NAMESPACE_BUILD = "${NAMESPACE_APP}"  + '-' + "${TOOLS_TAG}"
 def NAMESPACE_DEPLOY = "${NAMESPACE_APP}" + '-' + "${DESTINATION_TAG}"
 
-def ROCKETCHAT_DEVELOPER_CHANNEL='#relationship-developers'
+def ROCKETCHAT_DEVELOPER_CHANNEL='#registries-search'
 
 // post a notification to rocketchat
-def rocketChatNotificaiton(token, channel, comments) {
+def rocketChatNotification(token, channel, comments) {
   def payload = JsonOutput.toJson([text: comments, channel: channel])
   def rocketChatUrl = "https://chat.pathfinder.gov.bc.ca/hooks/" + "${token}"
 
@@ -60,7 +61,7 @@ node {
                 openshift.withCluster() {
                     openshift.withProject("${NAMESPACE_BUILD}") {
                         echo "Tagging ${APP_NAME} for deployment to ${DESTINATION_TAG} ..."
-                        openshift.tag("${APP_NAME}:${SOURCE_TAG}", "${APP_NAME}:${DESTINATION_TAG}")
+                        openshift.tag("${APP_RUNTIME_NAME}:${SOURCE_TAG}", "${APP_RUNTIME_NAME}:${DESTINATION_TAG}")
                     }
                 }
             }
@@ -117,6 +118,6 @@ node {
                 script: """oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
                     returnStdout: true).trim()
 
-        rocketChatNotificaiton("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
+        // rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
     }
 }

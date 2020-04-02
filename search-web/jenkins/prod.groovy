@@ -1,8 +1,6 @@
 #!/usr/bin/env groovy
 
-// [TODO SY] Check that this is the correct license info
-
-// Copyright © 2018 Province of British Columbia
+// Copyright © 2020 Province of British Columbia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,16 +23,60 @@
 import groovy.json.*
 
 // define constants - values sent in as env vars from whatever calls this pipeline
-def APP_NAME = 'sbc-search'
+def APP_NAME = 'search-web'
+def APP_RUNTIME_NAME = "${APP_NAME}-runtime"
 def SOURCE_TAG = 'test'
 def DESTINATION_TAG = 'prod'
 def TOOLS_TAG = 'tools'
 
-def NAMESPACE_APP = '' // [TODO SY]
+def NAMESPACE_APP = '1rdehl'
 def NAMESPACE_BUILD = "${NAMESPACE_APP}"  + '-' + "${TOOLS_TAG}"
 def NAMESPACE_DEPLOY = "${NAMESPACE_APP}" + '-' + "${DESTINATION_TAG}"
 
-def ROCKETCHAT_DEVELOPER_CHANNEL='#relationship-developers' // [TODO SY] - find out if this is correct
+def ROCKETCHAT_DEVELOPER_CHANNEL='#registries-search'
+
+// post a notification to rocketchat
+def rocketChatNotification(token, channel, comments) {
+  def payload = JsonOutput.toJson([text: comments, channel: channel])
+  def rocketChatUrl = "https://chat.pathfinder.gov.bc.ca/hooks/" + "${token}"
+
+  sh(returnStdout: true,
+     script: "curl -X POST -H 'Content-Type: application/json' --data \'${payload}\' ${rocketChatUrl}")
+}
+
+
+@NonCPS
+boolean triggerBuild(String contextDirectory) {
+    // Determine if code has changed within the source context directory.
+    def changeLogSets = currentBuild.changeSets
+    def filesChangeCnt = 0
+    for (int i = 0; i < changeLogSets.size(); i++) {
+        def entries = changeLogSets[i].items
+        for (int j = 0; j < entries.length; j++) {
+            def entry = entries[j]
+            //echo "${entry.commitId} by ${entry.author} on ${new Date(entry.timestamp)}: ${entry.msg}"
+            def files = new ArrayList(entry.affectedFiles)
+            for (int k = 0; k < files.size(); k++) {
+                def file = files[k]
+                def filePath = file.path
+                //echo ">> ${file.path}"
+                if (filePath.contains(contextDirectory)) {
+                    filesChangeCnt = 1
+                    k = files.size()
+                    j = entries.length
+                }
+            }
+        }
+    }
+
+    if ( filesChangeCnt < 1 ) {
+        echo('The changes do not require a build.')
+        return false
+    } else {
+        echo('The changes require a build.')
+        return true
+    }
+}
 
 // Get an image's hash tag
 String getImageTagHash(String imageName, String tag = "") {
@@ -47,15 +89,6 @@ String getImageTagHash(String imageName, String tag = "") {
     return istag.out.tokenize('@')[1].trim()
 }
 
-// post a notification to rocketchat
-def rocketChatNotification(token, channel, comments) {
-  def payload = JsonOutput.toJson([text: comments, channel: channel])
-  def rocketChatUrl = "https://chat.pathfinder.gov.bc.ca/hooks/" + "${token}"
-
-  sh(returnStdout: true,
-     script: "curl -X POST -H 'Content-Type: application/json' --data \'${payload}\' ${rocketChatUrl}")
-}
-
 node {
     properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10']]])
 
@@ -63,7 +96,7 @@ node {
     def old_version
 
     try {
-        stage("Tag ${APP_NAME}:${DESTINATION_TAG}") {
+        stage("Tag ${APP_RUNTIME_NAME}:${DESTINATION_TAG}") {
             script {
                 openshift.withCluster() {
                     openshift.withProject("${NAMESPACE_DEPLOY}") {
@@ -72,13 +105,13 @@ node {
                 }
                 openshift.withCluster() {
                     openshift.withProject("${NAMESPACE_BUILD}") {
-                        echo "Tagging ${APP_NAME}:${DESTINATION_TAG}-prev ..."
-                        def IMAGE_HASH = getImageTagHash("${APP_NAME}", "${DESTINATION_TAG}")
+                        echo "Tagging ${APP_RUNTIME_NAME}:${DESTINATION_TAG}-prev ..."
+                        def IMAGE_HASH = getImageTagHash("${APP_RUNTIME_NAME}", "${DESTINATION_TAG}")
                         echo "IMAGE_HASH: ${IMAGE_HASH}"
-                        openshift.tag("${APP_NAME}@${IMAGE_HASH}", "${APP_NAME}:${DESTINATION_TAG}-prev")
+                        openshift.tag("${APP_RUNTIME_NAME}@${IMAGE_HASH}", "${APP_RUNTIME_NAME}:${DESTINATION_TAG}-prev")
 
-                        echo "Tagging ${APP_NAME} for deployment to ${DESTINATION_TAG} ..."
-                        openshift.tag("${APP_NAME}:${SOURCE_TAG}", "${APP_NAME}:${DESTINATION_TAG}")
+                        echo "Tagging ${APP_RUNTIME_NAME} for deployment to ${DESTINATION_TAG} ..."
+                        openshift.tag("${APP_RUNTIME_NAME}:${SOURCE_TAG}", "${APP_RUNTIME_NAME}:${DESTINATION_TAG}")
                     }
                 }
             }
@@ -135,6 +168,6 @@ node {
                 script: """oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
                     returnStdout: true).trim()
 
-        rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
+        // rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
     }
 }
