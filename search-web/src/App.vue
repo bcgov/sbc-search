@@ -45,8 +45,6 @@ import KeyCloakService from "sbc-common-components/src/services/keycloak.service
 import BackToTop from "vue-backtotop";
 import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
 import SbcFooter from "sbc-common-components/src/components/SbcFooter.vue";
-import ApiService from "@/api/ApiService.js";
-import AuthConfig from "@/config/authconfig.json";
 
 export default Vue.extend({
   components: {
@@ -55,7 +53,6 @@ export default Vue.extend({
     BackToTop
   },
   async mounted() {
-    sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(AuthConfig));
     await KeyCloakService.setKeycloakConfigUrl(`/config/kc/keycloak.json`);
   },
   methods: {}
