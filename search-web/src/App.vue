@@ -53,7 +53,9 @@ export default Vue.extend({
     BackToTop
   },
   async mounted() {
-    await KeyCloakService.setKeycloakConfigUrl(`/config/kc/keycloak.json`);
+    await KeyCloakService.setKeycloakConfigUrl(
+      `${process.env.BASE_URL}config/kc/keycloak.json`
+    );
   },
   methods: {}
 });

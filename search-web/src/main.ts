@@ -15,7 +15,7 @@ saveConfigToSessionStorage().then(data => {
 async function saveConfigToSessionStorage() {
   const authConfigPath = `${process.env.BASE_URL}config/configuration.json`;
   const authConfig = await axios.get(authConfigPath);
-  sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(authConfig));
+  sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(authConfig.data));
 }
 
 function renderVue() {
