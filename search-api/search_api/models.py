@@ -18,7 +18,7 @@ from functools import reduce
 import flask.json
 from flask_sqlalchemy import SQLAlchemy
 
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 from search_api.utils.utils import convert_to_snake_case
@@ -253,14 +253,10 @@ class Corporation(BaseModel):
 
         # Sorting
         if sort_type is None:
-            results = results.order_by(Corporation.corp_nme)
+            results = results.order_by(func.lower(Corporation.corp_nme))
         else:
-            field = _get_sort_field(sort_value)
+            results = _sort_by_field(results, sort_type, sort_value)
 
-            if sort_type == 'dsc':
-                results = results.order_by(field.desc())
-            else:
-                results = results.order_by(field)
         return results
 
 
@@ -500,10 +496,9 @@ class CorpParty(BaseModel):
                 Address.postal_cd,
                 CorpOpState.state_typ_cd,
             )).filter(
-                CorpParty.end_event_id == None,
+                CorpParty.end_event_id == None,  # noqa
                 CorpState.end_event_id == None,
-                CorpName.end_event_id == None,
-            )
+                CorpName.end_event_id == None)
 
         # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
         if mode == 'ALL':
@@ -524,14 +519,9 @@ class CorpParty(BaseModel):
 
         # Sorting
         if sort_type is None:
-            results = results.order_by(CorpParty.last_nme, CorpParty.corp_num)
+            results = results.order_by(func.lower(CorpParty.last_nme), CorpParty.corp_num)
         else:
-            field = _get_sort_field(sort_value)
-
-            if sort_type == 'dsc':
-                results = results.order_by(field.desc())
-            else:
-                results = results.order_by(field)
+            results = _sort_by_field(results, sort_type, sort_value)
 
         return results
 
@@ -664,6 +654,15 @@ def _get_model_by_field(field_name):
         return eval('CorpOpState')
 
 
+def _is_field_string(field_name):
+    if field_name in [
+        'firstNme', 'middleNme', 'lastNme', 'corpNum', 'corpPartyId', 'partyTypCd', 'corpTypCd',
+            'corpNme', 'addrLine1', 'addrLine2', 'addrLine3', 'postalCd', 'city', 'province', 'stateTypCd']:
+        return True
+    else:
+        return False
+
+
 def _get_filter(field, operator, value):
 
     if field == 'anyNme':
@@ -719,6 +718,22 @@ def _get_sort_field(field_name):
         return getattr(model, convert_to_snake_case(field_name))
     else:
         raise Exception('invalid sort field: {}'.format(field_name))
+
+
+def _sort_by_field(results, sort_type, sort_value):
+    field = _get_sort_field(sort_value)
+
+    sort_field_str = "{field}".format(field=field)
+
+    if _is_field_string(sort_value):
+        sort_field_str = "func.lower({field})".format(field=sort_field_str)
+
+    if sort_type == 'dsc':
+        sort_field_str += ".desc()"
+
+    results = results.order_by(eval(sort_field_str))
+
+    return results
 
 
 def _get_corporation_search_results(args):
