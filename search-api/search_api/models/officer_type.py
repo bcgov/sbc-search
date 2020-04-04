@@ -11,3 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from search_api.models.base import BaseModel, db
+
+
+class OfficerType(BaseModel):
+    __tablename__ = "officer_type"
+    """
+    officer_typ_cd    CHAR        3      9
+    short_desc        VARCHAR2    75     9
+    full_desc         VARCHAR2    125    9
+    """
+
+    officer_typ_cd = db.Column(db.String(3), primary_key=True)
+    short_desc = db.Column(db.String(75))
+    full_desc = db.Column(db.String(125))

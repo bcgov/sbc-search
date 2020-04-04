@@ -18,11 +18,12 @@ import pytest
 from flask_migrate import Migrate, upgrade
 from sqlalchemy import event, text
 
-from search_api.models import db as _db
+from search_api.models.base import db as _db
 from search_api import create_app
 
 from search_api.auth import jwt as _jwt
 from search_api.bootstrap import populate
+
 
 @pytest.fixture(scope='session')
 def app():
@@ -126,5 +127,3 @@ def client_ctx(app):  # pylint: disable=redefined-outer-name
     """Return session-wide Flask test client."""
     with app.test_client() as _client:
         yield _client
-
-
