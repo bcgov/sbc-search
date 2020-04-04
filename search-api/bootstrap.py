@@ -13,22 +13,21 @@
 # limitations under the License.
 
 import datetime
-from search_api.models import (
-    Corporation,
-    CorpOpState,
-    CorpState,
-    CorpParty,
-    CorpName,
-    Address,
-    Office,
-    OfficeType,
-    OfficerType,
-    OfficesHeld,
-    Event,
-    Filing,
-    FilingType,
-    db,
-)
+from search_api.models.base import db
+from search_api.models.corporation import Corporation
+from search_api.models.corp_op_state import CorpOpState
+from search_api.models.corp_state import CorpState
+from search_api.models.corp_party import CorpParty
+from search_api.models.corp_name import CorpName
+from search_api.models.address import Address
+from search_api.models.office import Office
+from search_api.models.office_type import OfficeType
+from search_api.models.officer_type import OfficerType
+from search_api.models.offices_held import OfficesHeld
+from search_api.models.event import Event
+from search_api.models.filing import Filing
+from search_api.models.filing_type import FilingType
+
 
 def reset():
 
@@ -115,6 +114,11 @@ CORP_NAMES = [
 ]
 
 CORP_PARTY_NAMES = [
+    "abc PATTERSON",
+    "abc Patterson",
+    "abc PATTRERSON",
+    "abc PATTISON",
+    "abc Patten",
     "Lillian Black Kane",
     "Cadence Van Holden",
     "Gianni Dawson",

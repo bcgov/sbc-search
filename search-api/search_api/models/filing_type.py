@@ -11,3 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from search_api.models.base import BaseModel, db
+
+
+class FilingType(BaseModel):
+    __tablename__ = "filing_type"
+    """
+    FILING_TYP_CD       CHAR        5      420
+    FILING_TYP_CLASS    VARCHAR2    10     420
+    SHORT_DESC          VARCHAR2    50     420
+    FULL_DESC           VARCHAR2    125    420
+    """
+
+    filing_typ_cd = db.Column(db.String(5), primary_key=True)
+    filing_typ_class = db.Column(db.String(10))
+    short_desc = db.Column(db.String(50))
+    full_desc = db.Column(db.String(125))

@@ -20,13 +20,12 @@ from flask import Blueprint, request, jsonify, send_from_directory
 from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
-from search_api.models import (
-    Corporation,
-    CorpName,
-    Office,
-    _get_corporation_search_results,
-    _merge_corpparty_search_addr_fields,
-    _normalize_addr,
+from search_api.models.address import Address
+from search_api.models.corporation import Corporation
+from search_api.models.corp_name import CorpName
+from search_api.models.office import Office
+from search_api.utils.model_utils import (
+    _merge_addr_fields,
     _format_office_typ_cd
 )
 from search_api.utils.utils import convert_to_snake_case
@@ -43,7 +42,7 @@ def corporation_search():
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     args = request.args
-    results = _get_corporation_search_results(args)
+    results = Corporation.search_corporations(args)
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
@@ -56,7 +55,7 @@ def corporation_search():
         result_fields = ['corpNum', 'corpNme', 'recognitionDts', 'corpTypCd', 'stateTypCd', 'postalCd']
 
         result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
-        result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
+        result_dict['addr'] = _merge_addr_fields(row)
 
         corporations.append(result_dict)
 
@@ -74,7 +73,7 @@ def corporation_search_export():
     args = request.args
 
     # Fetching results
-    results = _get_corporation_search_results(args)
+    results = Corporation.search_corporations(args)
 
     # Exporting to Excel
     wb = Workbook()
@@ -105,7 +104,7 @@ def corporation_search_export():
             # CorpOpState.state_typ_cd
             _ = sheet.cell(column=5, row=index, value=row.state_typ_cd)
             # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
-            _ = sheet.cell(column=6, row=index, value=_merge_corpparty_search_addr_fields(row))
+            _ = sheet.cell(column=6, row=index, value=_merge_addr_fields(row))
             # Address.postal_cd
             _ = sheet.cell(column=7, row=index, value=row.postal_cd)
 
@@ -134,8 +133,8 @@ def corporation(id):
     output['offices'] = []
     for office in offices:
         output['offices'].append({
-            'deliveryAddr': _normalize_addr(office.delivery_addr_id),
-            'mailingAddr': _normalize_addr(office.mailing_addr_id),
+            'deliveryAddr': Address.normalize_addr(office.delivery_addr_id),
+            'mailingAddr': Address.normalize_addr(office.mailing_addr_id),
             'officeTypCd': _format_office_typ_cd(office.office_typ_cd),
             'emailAddress': office.email_address
         })

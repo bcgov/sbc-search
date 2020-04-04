@@ -24,7 +24,7 @@ from sqlalchemy import exc
 from search_api import config
 from search_api.auth import jwt
 from search_api.resources import DIRECTORS_API, BUSINESSES_API
-from search_api.models import db
+from search_api.models.base import db
 from search_api.utils.util_logging import setup_logging
 
 

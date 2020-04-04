@@ -21,14 +21,13 @@ from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
-from search_api.models import (
-    CorpState,
-    CorpParty,
-    CorpName,
-    Office,
-    _get_corpparty_search_results,
-    _merge_corpparty_search_addr_fields,
-    _normalize_addr,
+from search_api.models.address import Address
+from search_api.models.corp_state import CorpState
+from search_api.models.corp_party import CorpParty
+from search_api.models.corp_name import CorpName
+from search_api.models.office import Office
+from search_api.utils.model_utils import (
+    _merge_addr_fields,
 )
 from search_api.utils.utils import convert_to_snake_case
 
@@ -43,7 +42,7 @@ def corpparty_search():
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     args = request.args
-    results = _get_corpparty_search_results(args)
+    results = CorpParty.search_corp_parties(args)
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
@@ -56,7 +55,7 @@ def corpparty_search():
             'corpNum', 'corpNme', 'partyTypCd', 'stateTypCd', 'postalCd']
         result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
         result_dict['corpPartyId'] = int(result_dict['corpPartyId'])
-        result_dict['addr'] = _merge_corpparty_search_addr_fields(row)
+        result_dict['addr'] = _merge_addr_fields(row)
 
         corp_parties.append(result_dict)
 
@@ -74,7 +73,7 @@ def corpparty_search_export():
     args = request.args
 
     # Fetching results
-    results = _get_corpparty_search_results(args)
+    results = CorpParty.search_corp_parties(args)
 
     # Exporting to Excel
     wb = Workbook()
@@ -108,7 +107,7 @@ def corpparty_search_export():
             # CorpParty.middle_nme
             _ = sheet.cell(column=4, row=index, value=row.middle_nme)
             # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
-            _ = sheet.cell(column=5, row=index, value=_merge_corpparty_search_addr_fields(row))
+            _ = sheet.cell(column=5, row=index, value=_merge_addr_fields(row))
             # Address.postal_cd
             _ = sheet.cell(column=6, row=index, value=row.postal_cd)
             # CorpParty.party_typ_cd
@@ -148,13 +147,13 @@ def person(id):
 
     name = CorpName.get_corp_name_by_corp_id(person.corp_num)[0]
     offices = Office.get_offices_by_corp_id(person.corp_num)
-    delivery_addr = _normalize_addr(person.delivery_addr_id)
-    mailing_addr = _normalize_addr(person.mailing_addr_id)
+    delivery_addr = Address.normalize_addr(person.delivery_addr_id)
+    mailing_addr = Address.normalize_addr(person.mailing_addr_id)
 
     states = CorpState.get_corp_states_by_corp_id(person.corp_num)
 
-    corp_delivery_addr = ';'.join([_normalize_addr(office.delivery_addr_id) for office in offices])
-    corp_mailing_addr = ';'.join([_normalize_addr(office.mailing_addr_id) for office in offices])
+    corp_delivery_addr = ';'.join([Address.normalize_addr(office.delivery_addr_id) for office in offices])
+    corp_mailing_addr = ';'.join([Address.normalize_addr(office.mailing_addr_id) for office in offices])
 
     result_dict['corpPartyId'] = int(person.corp_party_id)
     result_dict['firstNme'] = person.first_nme

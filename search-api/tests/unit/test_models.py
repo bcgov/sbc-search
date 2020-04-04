@@ -6,10 +6,10 @@
 Test suite to ensure that the Entity model routines are working as expected.
 """
 
-from search_api.models import Corporation
 import datetime
 
-from search_api import create_app
+from search_api.models.corporation import Corporation
+
 
 default_date = datetime.datetime.now() + datetime.timedelta(weeks=-1)
 
