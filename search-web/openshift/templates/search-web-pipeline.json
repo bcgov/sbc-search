@@ -39,6 +39,10 @@
               {
                 "name": "APP_RUNTIME_NAME",
                 "value": "${NAME}-${TAG_NAME}-runtime"
+              },
+              {
+                "name": "DESTINATION_TAG",
+                "value": "${TAG_NAME}"
               }
             ]
           }
