@@ -14,6 +14,7 @@
 
 import datetime
 from http import HTTPStatus
+import logging
 from tempfile import NamedTemporaryFile
 
 from flask import Blueprint, request, jsonify, send_from_directory
@@ -31,22 +32,32 @@ from search_api.utils.model_utils import (
 )
 from search_api.utils.utils import convert_to_snake_case
 
+
+logger = logging.getLogger(__name__)
 API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
 @jwt.requires_auth
 def corpparty_search():
+    logger.debug("Starting director search")
+
     account_id = request.headers.get("X-Account-Id", None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
+    logger.debug("Authorization check finished; starting query")
+
     args = request.args
     results = CorpParty.search_corp_parties(args)
+
+    logger.debug("Initial results")
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
     results = results.paginate(int(page), 50, False)
+
+    logger.debug("Paginated results")
 
     corp_parties = []
     for row in results.items:
@@ -58,6 +69,8 @@ def corpparty_search():
         result_dict['addr'] = _merge_addr_fields(row)
 
         corp_parties.append(result_dict)
+
+    logger.debug("Returning JSON results")
 
     return jsonify({'results': corp_parties})
 
