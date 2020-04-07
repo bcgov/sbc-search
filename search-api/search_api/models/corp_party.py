@@ -247,7 +247,10 @@ class CorpParty(BaseModel):
             )).filter(
                 CorpParty.end_event_id == None,  # noqa
                 CorpState.end_event_id == None,
-                CorpName.end_event_id == None)
+                CorpName.end_event_id == None,
+                # CorpName should be "Corporation" or "Number BC Company"
+                CorpName.corp_name_typ_cd.in_(("CO", "NB"))
+            )
 
         # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
         if mode == 'ALL':
