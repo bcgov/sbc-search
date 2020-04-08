@@ -16,4 +16,4 @@ import re
 
 
 def convert_to_snake_case(name):
-    return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()
+    return re.sub(r'(?<!^)(?=[A-Z0-9])', '_', name).lower()
