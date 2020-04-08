@@ -17,6 +17,7 @@ import os
 
 from flask import Flask
 from flask_cors import CORS
+from flask_migrate import Migrate
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sqlalchemy import exc
@@ -41,6 +42,9 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
     app.config.from_object(config.CONFIGURATION[run_mode])
 
     db.init_app(app)
+
+    if app.debug:
+        migrate = Migrate(app, db)  # noqa
 
     CORS(app)
 
