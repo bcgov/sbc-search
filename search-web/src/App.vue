@@ -103,8 +103,16 @@ export default Vue.extend({
   color: $COLOR_GREY;
 }
 
+.color-dark-grey {
+  color: $COLOR_DARK_GREY !important;
+}
+
 .color-black {
   color: black;
+}
+
+.border-gray {
+  border: 1px solid $COLOR_GREY !important;
 }
 
 .main-wrapper {

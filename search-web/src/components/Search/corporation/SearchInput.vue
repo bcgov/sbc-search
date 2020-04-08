@@ -1,5 +1,6 @@
 <template>
   <v-text-field
+    background-color="#e5e8ec"
     class="search-input"
     label="Search Term"
     :height="height"

@@ -1,5 +1,10 @@
 <template>
-  <v-btn class="add-filter-button sbc-button" height="50">
+  <v-btn
+    class="add-filter-button sbc-button text-capitalize body-1 color-dark-grey border-gray"
+    outlined
+    height="50"
+    :elevation="0"
+  >
     <v-icon left>add</v-icon>
     {{ title }}
   </v-btn>

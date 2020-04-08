@@ -22,7 +22,11 @@
     <div v-if="!isQueryEmpty">
       <div class="d-flex justify-space-between align-center mb-5">
         <h4 class="headline">Search Results</h4>
-        <v-btn class="export-btn" height="50" @click="handleExport"
+        <v-btn
+          class="export-btn"
+          height="50"
+          @click="handleExport"
+          :elevation="0"
           >Export to .xlsx</v-btn
         >
       </div>
