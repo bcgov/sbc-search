@@ -59,7 +59,7 @@ export default Vue.extend({
 
     const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
     if (KEYCLOACK_TOKEN) {
-      tokenService.init();
+      await tokenService.init();
       tokenService.scheduleRefreshTimer();
     }
   },
