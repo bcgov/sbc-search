@@ -17,7 +17,7 @@ from http import HTTPStatus
 import logging
 from tempfile import NamedTemporaryFile
 
-from flask import Blueprint, request, jsonify, send_from_directory
+from flask import Blueprint, current_app, request, jsonify, send_from_directory
 from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
@@ -40,18 +40,18 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 @API.route('/')
 @jwt.requires_auth
 def corpparty_search():
-    logger.info("Starting director search")
+    current_app.logger.info("Starting director search")
 
     account_id = request.headers.get("X-Account-Id", None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
-    logger.info("Authorization check finished; starting query {query}".format(query=request.url))
+    current_app.logger.info("Authorization check finished; starting query {query}".format(query=request.url))
 
     args = request.args
     results = CorpParty.search_corp_parties(args)
 
-    logger.info("Before query")
+    current_app.logger.info("Before query")
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
@@ -62,7 +62,7 @@ def corpparty_search():
     # Ref: https://github.com/pallets/flask-sqlalchemy/pull/613
     results = results.limit(per_page).offset((page - 1) * per_page).all()
 
-    logger.info("After query")
+    current_app.logger.info("After query")
 
     corp_parties = []
     for row in results:
@@ -75,7 +75,7 @@ def corpparty_search():
 
         corp_parties.append(result_dict)
 
-    logger.info("Returning JSON results")
+    current_app.logger.info("Returning JSON results")
 
     return jsonify({'results': corp_parties})
 
