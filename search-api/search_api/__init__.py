@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from dotenv import load_dotenv
+import logging
 import os
 
 from flask import Flask
@@ -40,6 +41,7 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
 
     app = Flask(__name__)
     app.config.from_object(config.CONFIGURATION[run_mode])
+    app.logger.setLevel(logging.INFO)
 
     db.init_app(app)
 
