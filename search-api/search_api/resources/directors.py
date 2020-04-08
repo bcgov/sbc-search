@@ -40,30 +40,29 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 @API.route('/')
 @jwt.requires_auth
 def corpparty_search():
-    logger.debug("Starting director search")
+    logger.info("Starting director search")
 
     account_id = request.headers.get("X-Account-Id", None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
-    logger.debug("Authorization check finished; starting query {query}".format(query=request.url))
+    logger.info("Authorization check finished; starting query {query}".format(query=request.url))
 
     args = request.args
     results = CorpParty.search_corp_parties(args)
 
-    logger.debug("Initial results")
+    logger.info("Before query")
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
 
     per_page = 50
-    # results = results.paginate(page=int(page), per_page=50, count=False)
     # Manually paginate results, because flask-sqlalchemy's paginate() method counts the total,
     # which is slow for large tables. This has been addressed in flask-sqlalchemy but is unreleased.
     # Ref: https://github.com/pallets/flask-sqlalchemy/pull/613
     results = results.limit(per_page).offset((page - 1) * per_page).all()
 
-    logger.debug("Paginated results")
+    logger.info("After query")
 
     corp_parties = []
     for row in results:
@@ -76,7 +75,7 @@ def corpparty_search():
 
         corp_parties.append(result_dict)
 
-    logger.debug("Returning JSON results")
+    logger.info("Returning JSON results")
 
     return jsonify({'results': corp_parties})
 
