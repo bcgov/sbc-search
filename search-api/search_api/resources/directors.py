@@ -46,7 +46,7 @@ def corpparty_search():
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
-    logger.debug("Authorization check finished; starting query")
+    logger.debug("Authorization check finished; starting query {query}".format(query=request.url))
 
     args = request.args
     results = CorpParty.search_corp_parties(args)
@@ -55,12 +55,18 @@ def corpparty_search():
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
-    results = results.paginate(int(page), 50, False)
+
+    per_page = 50
+    # results = results.paginate(page=int(page), per_page=50, count=False)
+    # Manually paginate results, because flask-sqlalchemy's paginate() method counts the total,
+    # which is slow for large tables. This has been addressed in flask-sqlalchemy but is unreleased.
+    # Ref: https://github.com/pallets/flask-sqlalchemy/pull/613
+    results = results.limit(per_page).offset((page - 1) * per_page).all()
 
     logger.debug("Paginated results")
 
     corp_parties = []
-    for row in results.items:
+    for row in results:
         result_fields = [
             'corpPartyId', 'firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt',
             'corpNum', 'corpNme', 'partyTypCd', 'stateTypCd', 'postalCd']
