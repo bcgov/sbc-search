@@ -144,17 +144,6 @@ CORP_PARTY_NAMES = [
     "Iarslov Steele",
     "Mohamed Michael Poole",
     "Kira Black Harvey",
-    "Jordin Van Carter",
-    "Jonathon Bird",
-    "Destinee Van Braun",
-    "Falia Black",
-    "Rigoberto Pitts",
-    "Diego Monroe",
-    "Gabriela Dawson",
-    "Ava Richard",
-    "Javier Michael Atkins",
-    "Tobias Van Rose",
-    "Anastasia Black Gray",
 ]
 
 CORP_TYP_CDS = [
@@ -349,8 +338,8 @@ def populate():
             party_typ_cd=(party_types[index % 3]),
             corp_num=CORP_NUMS[index],
             first_nme=corp_party_name[0],
-            middle_nme=corp_party_name[1] if len(corp_party_name) == 3 else None,
-            last_nme=corp_party_name[2] if len(corp_party_name) == 3 else corp_party_name[1],
+            middle_nme=corp_party_name[1] if len(corp_party_name) > 1 else None,
+            last_nme=corp_party_name[2] if len(corp_party_name) > 2 else corp_party_name[1],
             appointment_dt=appointment_date,
             cessation_dt=cessation_date,
             mailing_addr_id=index,

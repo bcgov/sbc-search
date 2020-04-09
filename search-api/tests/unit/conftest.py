@@ -22,7 +22,7 @@ from search_api.models.base import db as _db
 from search_api import create_app
 
 from search_api.auth import jwt as _jwt
-from search_api.bootstrap import populate
+from bootstrap import populate
 
 
 @pytest.fixture(scope='session')

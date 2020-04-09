@@ -15,6 +15,8 @@
 from flask import current_app
 from flask_jwt_oidc import JwtManager
 import requests
+import os
+import json
 
 jwt = JwtManager()
 
@@ -24,6 +26,13 @@ def authorized(jwt, account_id):
     Assert that the user is authorized to access Director Search. The user should have an orgMembership in
     the Director Search (DIR_SEARCH) application.
     """
+
+    # When running tests, just mock out this entire user membership authorization check as it requires
+    # an external service.
+    is_testing = current_app.config['TESTING']
+
+    if is_testing:
+        return True
 
     if not jwt or not account_id:
         return False
@@ -36,7 +45,12 @@ def authorized(jwt, account_id):
     headers = {'Authorization': 'Bearer {token}'.format(token=token)}
     response = requests.get(auth_api_url, headers=headers)
 
-    if "orgMembership" in response.json():
+    try:
+        response_json = response.json()
+    except json.decoder.JSONDecodeError as e:
+        raise Exception("Invalid JSON in auth rsp: `{}`".format(response.text))
+
+    if "orgMembership" in response_json:
         return True
 
     return False
