@@ -22,7 +22,6 @@
         'mr-3': $vuetify.breakpoint.mdAndUp
       }"
     ></OperatorSelect>
-
     <TermSelect
       v-if="selectedField === 'stateTypCd'"
       :items="TERMS"
