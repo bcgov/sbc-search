@@ -17,12 +17,11 @@
 Test-Suite to ensure that the /entities endpoint is working as expected.
 """
 
-import copy
 import json
 from unittest.mock import patch
 
 from tests.utilities.factory_utils import factory_auth_header
-from tests.utilities.factory_scenarios import TestJwtClaims, JWT_HEADER
+from tests.utilities.factory_scenarios import TestJwtClaims
 from search_api import status as http_status
 
 
@@ -39,7 +38,10 @@ def _dir_search(client, jwt, session, params):
 def test_search_directors_sort(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
 
-    dictionary = _dir_search(client, jwt, session, '?field=firstNme&operator=contains&value=a&mode=ALL&page=1&sort_type=asc&sort_value=middleNme')
+    dictionary = _dir_search(
+        client, jwt, session,
+        '?field=firstNme&operator=contains&value=a&mode=ALL&page=1&sort_type=asc&'
+        'sort_value=middleNme&additional_cols=none')
     assert len(dictionary['results']) == 24
     assert dictionary['results'][0]['middleNme'] == 'Black'
 
@@ -47,14 +49,21 @@ def test_search_directors_sort(client, jwt, session):  # pylint:disable=unused-a
 def test_search_directors_firstNme_exact(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
 
-    dictionary = _dir_search(client, jwt, session, '?field=firstNme&operator=exact&value=Lillian&mode=ALL&page=1&sort_type=asc&sort_value=lastNme')
+    dictionary = _dir_search(
+        client, jwt, session,
+        '?field=firstNme&operator=exact&value=Lillian&mode=ALL&page=1&sort_type=asc&'
+        'sort_value=lastNme&additional_cols=none')
     assert len(dictionary['results']) == 1
     assert dictionary['results'][0]['middleNme'] == 'Black'
+
 
 def test_search_directors_addr(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
 
-    dictionary = _dir_search(client, jwt, session, '?field=addr&operator=contains&value=131%20Rue%20North&mode=ALL&page=1&sort_type=dsc&sort_value=lastNme')
+    dictionary = _dir_search(
+        client, jwt, session,
+        '?field=addr&operator=contains&value=131%20Rue%20North&mode=ALL&page=1&sort_type=dsc&'
+        'sort_value=lastNme&additional_cols=addr')
     assert len(dictionary['results']) == 2
     assert 'lastNme' in dictionary['results'][0]
 
@@ -62,14 +71,28 @@ def test_search_directors_addr(client, jwt, session):  # pylint:disable=unused-a
 def test_search_directors_anyNme(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
 
-    dictionary = _dir_search(client, jwt, session, '?field=anyNme&operator=contains&value=black&mode=ALL&page=1&sort_type=dsc&sort_value=lastNme')
+    dictionary = _dir_search(
+        client, jwt, session,
+        '?field=anyNme&operator=contains&value=black&mode=ALL&page=1&sort_type=dsc&'
+        'sort_value=lastNme&additional_cols=none')
     assert len(dictionary['results']) == 3
 
 
-def test_search_directors_any_postal_cde(client, jwt, session):  # pylint:disable=unused-argument
+def test_search_directors_any_postal_code(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
 
-    dictionary = _dir_search(client, jwt, session, '?field=postalCd&operator=exact&value=H2B%202X7&mode=ALL&page=1&sort_type=dsc&sort_value=lastNme')
+    # search for postal code with a space in the middle
+    dictionary = _dir_search(
+        client, jwt, session,
+        '?field=postalCd&operator=exact&value=H2B%202X7&mode=ALL&page=1&sort_type=dsc&'
+        'sort_value=lastNme&additional_cols=addr')
+    assert len(dictionary['results']) == 2
+
+    # search for postal code without a space in the middle
+    dictionary = _dir_search(
+        client, jwt, session,
+        '?field=postalCd&operator=exact&value=H2B2X7&mode=ALL&page=1&sort_type=dsc&'
+        'sort_value=lastNme&additional_cols=addr')
     assert len(dictionary['results']) == 2
 
 
@@ -134,8 +157,9 @@ def test_get_director(client, jwt, session):  # pylint:disable=unused-argument
         'partyTypCd': "DIR"}
 
     # The exact record above may differ depending on IDs, verify just the field names.
-    for k,v in example.items():
+    for k, v in example.items():
         assert k in dictionary
+
 
 def test_get_director_officesheld(client, jwt, session):
     """Check the offices-held service."""
@@ -153,14 +177,23 @@ def test_get_director_officesheld(client, jwt, session):
     assert 'sameAddr' in dictionary
     assert 'sameNameAndCompany' in dictionary
 
+
 def test_search_directors(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
 
-    dictionary = _dir_search(client, jwt, session, '?field=firstNme&operator=contains&value=a&mode=ALL&page=1&sort_type=dsc&sort_value=lastNme')
+    dictionary = _dir_search(
+        client, jwt, session,
+        '?field=firstNme&operator=contains&value=a&mode=ALL&page=1&sort_type=dsc&'
+        'sort_value=lastNme&&additional_cols=addr')
     assert len(dictionary['results']) == 24
 
-    example = {'addr': 'PO Box 273', 'appointmentDt': 'Sun, 20 Oct 2019 00:00:00 GMT', 'cessationDt': 'Sun, 20 Oct 2019 00:00:00 GMT', 'corpNme': 'Bank of Montreal', 'corpNum': '3756789012', 'corpPartyId': 22, 'firstNme': 'Iarslov', 'lastNme': 'Steele', 'middleNme': None, 'partyTypCd': 'DIR', 'postalCd': 'T0M 0G0', 'stateTypCd': 'ACT'}
-    for k,v in example.items():
+    example = {
+        'addr': 'PO Box 273', 'appointmentDt': 'Sun, 20 Oct 2019 00:00:00 GMT',
+        'cessationDt': 'Sun, 20 Oct 2019 00:00:00 GMT', 'corpNme': 'Bank of Montreal',
+        'corpNum': '3756789012', 'corpPartyId': 22, 'firstNme': 'Iarslov', 'lastNme': 'Steele',
+        'middleNme': None, 'partyTypCd': 'DIR', 'postalCd': 'T0M 0G0'}
+
+    for k, v in example.items():
         assert k in dictionary['results'][0]
 
 

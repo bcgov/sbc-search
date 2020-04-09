@@ -68,8 +68,6 @@ def _get_filter(field, operator, value):
             _get_filter('lastNme', operator, value))
 
     if field == 'addr':
-        # Snake case converter doesn't add the underscores indicated below, so add it here so
-        # the db field is correctly named after conversion.
         return (
             _get_filter('addrLine1', operator, value) |
             _get_filter('addrLine2', operator, value) |
@@ -82,6 +80,11 @@ def _get_filter(field, operator, value):
         elif value == STATE_TYP_CD_HIS:
             operator = 'excludes'
             value = STATE_TYP_CD_ACT
+
+    if field == 'postalCd':
+        # Search for postal codes with or without a space in the middle
+        value = value[0:3] + "%" + value[3:6]
+        operator = 'contains'
 
     model = _get_model_by_field(field)
 
