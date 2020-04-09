@@ -81,6 +81,11 @@ def _get_filter(field, operator, value):
             operator = 'excludes'
             value = STATE_TYP_CD_ACT
 
+    if field == 'postalCd':
+        # Search for postal codes with or without a space in the middle
+        value = value[0:3] + "%" + value[3:6]
+        operator = 'contains'
+
     model = _get_model_by_field(field)
 
     value = value.lower()

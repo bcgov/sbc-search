@@ -21,7 +21,7 @@ from flask import Blueprint, current_app, request, jsonify, send_from_directory
 from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
-from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
+from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE, STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 from search_api.models.address import Address
 from search_api.models.corp_state import CorpState
 from search_api.models.corp_party import CorpParty
@@ -29,6 +29,7 @@ from search_api.models.corp_name import CorpName
 from search_api.models.office import Office
 from search_api.utils.model_utils import (
     _merge_addr_fields,
+    _is_addr_search
 )
 from search_api.utils.utils import convert_to_snake_case
 
@@ -49,6 +50,8 @@ def corpparty_search():
     current_app.logger.info("Authorization check finished; starting query {query}".format(query=request.url))
 
     args = request.args
+    fields = args.getlist('field')
+    additional_cols = args.get('additional_cols')
     results = CorpParty.search_corp_parties(args)
 
     current_app.logger.info("Before query")
@@ -68,10 +71,11 @@ def corpparty_search():
     for row in results:
         result_fields = [
             'corpPartyId', 'firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt',
-            'corpNum', 'corpNme', 'partyTypCd', 'stateTypCd', 'postalCd']
+            'corpNum', 'corpNme', 'partyTypCd']
         result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
         result_dict['corpPartyId'] = int(result_dict['corpPartyId'])
-        result_dict['addr'] = _merge_addr_fields(row)
+
+        CorpParty.add_additional_cols_to_search_results(additional_cols, fields, row, result_dict)
 
         corp_parties.append(result_dict)
 
@@ -89,6 +93,8 @@ def corpparty_search_export():
 
     # Query string arguments
     args = request.args
+    fields = args.getlist('field')
+    additional_cols = args.get('additional_cols')
 
     # Fetching results
     results = CorpParty.search_corp_parties(args)
@@ -102,44 +108,31 @@ def corpparty_search_export():
         sheet = wb.active
 
         # Sheet headers (first row)
-        _ = sheet.cell(column=1, row=1, value="Filing #")
-        _ = sheet.cell(column=2, row=1, value="Surname")
-        _ = sheet.cell(column=3, row=1, value="First Name")
-        _ = sheet.cell(column=4, row=1, value="Middle Name")
-        _ = sheet.cell(column=5, row=1, value="Address")
-        _ = sheet.cell(column=6, row=1, value="Postal Code")
-        _ = sheet.cell(column=7, row=1, value="Office Held")
-        _ = sheet.cell(column=8, row=1, value="Appointed")
-        _ = sheet.cell(column=9, row=1, value="Ceased")
-        _ = sheet.cell(column=10, row=1, value="Company Status")
-        _ = sheet.cell(column=11, row=1, value="Company Name")
-        _ = sheet.cell(column=12, row=1, value="Inc/Reg #")
+        column_headers = [
+            "Filing #", "Surname", "First Name", "Middle Name",
+            "Office Held", "Appointed", "Ceased", "Company Name", "Inc/Reg #"]
+        if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+            column_headers.insert(4, "Address")
+            column_headers.insert(5, "Postal Code")
+        elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+            column_headers.insert(7, "Company Status")
 
-        for index, row in enumerate(results, 2):
-            # CorpParty.corp_party_id
-            _ = sheet.cell(column=1, row=index, value=row.corp_party_id)
-            # CorpParty.last_nme
-            _ = sheet.cell(column=2, row=index, value=row.last_nme)
-            # CorpParty.first_nme
-            _ = sheet.cell(column=3, row=index, value=row.first_nme)
-            # CorpParty.middle_nme
-            _ = sheet.cell(column=4, row=index, value=row.middle_nme)
-            # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
-            _ = sheet.cell(column=5, row=index, value=_merge_addr_fields(row))
-            # Address.postal_cd
-            _ = sheet.cell(column=6, row=index, value=row.postal_cd)
-            # CorpParty.party_typ_cd
-            _ = sheet.cell(column=7, row=index, value=row.party_typ_cd)
-            # CorpParty.appointment_dt
-            _ = sheet.cell(column=8, row=index, value=row.appointment_dt)
-            # CorpParty.cessation_dt
-            _ = sheet.cell(column=9, row=index, value=row.cessation_dt)
-            # CorpOpState.state_typ_cd
-            _ = sheet.cell(column=10, row=index, value=_get_state_typ_cd_display_value(row.state_typ_cd))
-            # CorpName.corp_nme
-            _ = sheet.cell(column=11, row=index, value=row.corp_nme)
-            # Corporation.corp_num
-            _ = sheet.cell(column=12, row=index, value=row.corp_num)
+        for index, column_header in enumerate(column_headers, start=1):
+            _ = sheet.cell(column=index, row=1, value=column_header)
+
+        for row_index, row in enumerate(results, start=2):
+            columns = [
+                row.corp_party_id, row.last_nme, row.first_nme, row.middle_nme, row.party_typ_cd,
+                row.appointment_dt, row.cessation_dt, row.corp_nme, row.corp_num]
+
+            if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+                columns.insert(4, _merge_addr_fields(row))
+                columns.insert(5, row.postal_cd)
+            elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+                columns.insert(7, _get_state_typ_cd_display_value(row.state_typ_cd))
+
+            for column_index, column_value in enumerate(columns, start=1):
+                _ = sheet.cell(column=column_index, row=row_index, value=column_value)
 
         current_date = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
         filename = "Director Search Results {date}.xlsx".format(date=current_date)

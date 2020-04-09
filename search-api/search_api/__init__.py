@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 import logging
 import os
 
-from flask import Flask
+from flask import Flask, current_app
 from flask_cors import CORS
 from flask_migrate import Migrate
 import sentry_sdk
@@ -68,11 +68,14 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
     @app.route("/ops/healthz")
     def healthz():
         """Return a JSON object stating the health of the Service and dependencies."""
+
+        current_app.logger.info("Starting healthz")
         try:
             db.engine.execute('SELECT 1 FROM CORP_PARTY')
         except exc.SQLAlchemyError:
             return {'message': 'api is down'}, 500
 
+        current_app.logger.info("Finished healthz")
         # made it here, so all checks passed
         return {'message': 'api is healthy'}, 200
 

@@ -26,12 +26,14 @@
           :key="`row${index}${value}${i}`"
         >
           <td
-            v-if="headers[i].value === 'corpNum'"
+            v-if="headers[i] && headers[i].value === 'corpNum'"
             class="d-table-cell"
             @click.prevent.stop="handleCorpClick(item['corpNum'])"
           >
             <div class="d-flex w-100 justify-space-between">
-              <div class="color-black">{{ headers[i].text }}</div>
+              <div class="color-black">
+                {{ headers[i] ? headers[i].text : "" }}
+              </div>
               <div class="text-right anchor-text cursor-pointer">
                 {{ value }}
               </div>
@@ -43,7 +45,9 @@
             @click="handleCellClick(item['corpPartyId'])"
           >
             <div class="d-flex w-100 justify-space-between">
-              <div class="color-black">{{ headers[i].text }}</div>
+              <div class="color-black">
+                {{ headers[i] ? headers[i].text : "" }}
+              </div>
               <div class="text-right">{{ value }}</div>
             </div>
           </td>
@@ -59,12 +63,12 @@
           <td>{{ item["lastNme"] }}</td>
           <td>{{ item["firstNme"] }}</td>
           <td>{{ item["middleNme"] }}</td>
-          <td>{{ item["addr"] }}</td>
-          <td>{{ item["postalCd"] }}</td>
+          <td v-if="type === 'addr'">{{ item["addr"] }}</td>
+          <td v-if="type === 'addr'">{{ item["postalCd"] }}</td>
           <td>{{ item["partyTypCd"] }}</td>
           <td>{{ item["appointmentDt"] }}</td>
           <td>{{ item["cessationDt"] }}</td>
-          <td>{{ item["stateTypCd"] }}</td>
+          <td v-if="type === 'active'">{{ item["stateTypCd"] }}</td>
           <td>{{ item["corpNme"] }}</td>
           <td @click.prevent.stop="handleCorpClick(item['corpNum'])">
             <span class="anchor-text cursor-pointer">{{
@@ -212,26 +216,64 @@ export default {
       window.open(`/corpparty/${id}`);
     },
     filterHeaders(headers, type) {
-      return headers.filter(h => {
-        const val = h.value;
-        if (
-          val === "corpPartyId" ||
-          val === "lastNme" ||
-          val === "middleNme" ||
-          val === "firstNme" ||
-          val === "partyTypCd" ||
-          val === "appointmentDt" ||
-          val === "cessationDt" ||
-          val === "corpNum" ||
-          val === "corpNme" ||
-          val === "stateTypCd" ||
-          val === "addr" ||
-          val === "postalCd"
-        ) {
-          return true;
-        }
-        return false;
-      });
+      if (type === "none") {
+        return headers.filter(h => {
+          const val = h.value;
+          if (
+            val === "corpPartyId" ||
+            val === "lastNme" ||
+            val === "middleNme" ||
+            val === "firstNme" ||
+            val === "partyTypCd" ||
+            val === "appointmentDt" ||
+            val === "cessationDt" ||
+            val === "corpNme" ||
+            val === "corpNum"
+          ) {
+            return true;
+          }
+          return false;
+        });
+      } else if (type === "addr") {
+        return headers.filter(h => {
+          const val = h.value;
+          if (
+            val === "corpPartyId" ||
+            val === "lastNme" ||
+            val === "middleNme" ||
+            val === "firstNme" ||
+            val === "partyTypCd" ||
+            val === "appointmentDt" ||
+            val === "cessationDt" ||
+            val === "corpNum" ||
+            val === "corpNme" ||
+            val === "addr" ||
+            val === "postalCd"
+          ) {
+            return true;
+          }
+          return false;
+        });
+      } else if (type === "active") {
+        return headers.filter(h => {
+          const val = h.value;
+          if (
+            val === "corpPartyId" ||
+            val === "lastNme" ||
+            val === "middleNme" ||
+            val === "firstNme" ||
+            val === "partyTypCd" ||
+            val === "appointmentDt" ||
+            val === "cessationDt" ||
+            val === "corpNum" ||
+            val === "corpNme" ||
+            val === "stateTypCd"
+          ) {
+            return true;
+          }
+          return false;
+        });
+      }
     },
     fetchData() {
       if (!this.qs) {

@@ -66,6 +66,7 @@ describe("CorpPartySearch", () => {
           operator: ["exact", "contains"],
           value: ["Clark", "Van Oyen"],
           mode: "ALL",
+          additional_cols: "none",
           page: "1",
           sort_type: "dsc",
           sort_value: "lastNme"
@@ -114,6 +115,7 @@ describe("CorpPartySearch", () => {
         operator: ["exact", "contains"],
         value: ["Clark", "Van Oyen"],
         mode: "ALL",
+        additional_cols: "none",
         page: "1",
         sort_type: "dsc",
         sort_value: "lastNme"
