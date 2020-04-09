@@ -11,6 +11,8 @@
 import SbcSignin from "sbc-common-components/src/components/SbcSignin.vue";
 import KeyCloakService from "sbc-common-components/src/services/keycloak.services";
 import ApiService from "@/api/ApiService.js";
+import TokenService from "sbc-common-components/src/services/token.services";
+const tokenService = new TokenService();
 
 export default {
   components: {
@@ -37,6 +39,8 @@ export default {
         ApiService.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${KEYCLOACK_TOKEN}`;
+        await tokenService.init();
+        tokenService.scheduleRefreshTimer();
       }
       this.$router.push({
         name: "corpPartySearch"

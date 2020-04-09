@@ -19,9 +19,7 @@
       <div class="content">
         <div class="content-header">
           <SbcHeader idpHint="bcros">
-            <template v-slot:login-button-text>
-              Log In
-            </template>
+            <template v-slot:login-button-text>Log In</template>
           </SbcHeader>
         </div>
         <div class="content-body">
@@ -45,6 +43,8 @@ import KeyCloakService from "sbc-common-components/src/services/keycloak.service
 import BackToTop from "vue-backtotop";
 import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
 import SbcFooter from "sbc-common-components/src/components/SbcFooter.vue";
+import TokenService from "sbc-common-components/src/services/token.services";
+const tokenService = new TokenService();
 
 export default Vue.extend({
   components: {
@@ -56,6 +56,12 @@ export default Vue.extend({
     await KeyCloakService.setKeycloakConfigUrl(
       `${process.env.BASE_URL}config/kc/keycloak.json`
     );
+
+    const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
+    if (KEYCLOACK_TOKEN) {
+      await tokenService.init();
+      tokenService.scheduleRefreshTimer();
+    }
   },
   methods: {}
 });
@@ -97,8 +103,16 @@ export default Vue.extend({
   color: $COLOR_GREY;
 }
 
+.color-dark-grey {
+  color: $COLOR_DARK_GREY !important;
+}
+
 .color-black {
   color: black;
+}
+
+.border-gray {
+  border: 1px solid $COLOR_GREY !important;
 }
 
 .main-wrapper {

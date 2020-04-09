@@ -7,6 +7,7 @@
       placeholder="Enter Folio Number"
     ></v-text-field>
     <v-btn
+      :elevation="0"
       height="50"
       color="primary"
       class="folio-pay-btn"

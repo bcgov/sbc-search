@@ -305,6 +305,7 @@ def populate():
             corp_num=CORP_NUMS[index],
             corp_name_seq_num=2,
             corp_nme=CORP_NAMES[index],
+            corp_name_typ_cd="CO"
         )
         db.session.add(corp_name2)
 

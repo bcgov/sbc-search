@@ -26,7 +26,7 @@ import groovy.json.*
 def APP_NAME = 'search-web'
 // def APP_BUILDER_NAME = "${APP_NAME}-builder"
 // def APP_RUNTIME_NAME = "${APP_NAME}-runtime"
-def DESTINATION_TAG = 'dev'
+// def DESTINATION_TAG = 'dev'
 def TOOLS_TAG = 'tools'
 def NAMESPACE_APP = '1rdehl'
 def NAMESPACE_SHARED = 'd7eovc'

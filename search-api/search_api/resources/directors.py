@@ -14,9 +14,10 @@
 
 import datetime
 from http import HTTPStatus
+import logging
 from tempfile import NamedTemporaryFile
 
-from flask import Blueprint, request, jsonify, send_from_directory
+from flask import Blueprint, current_app, request, jsonify, send_from_directory
 from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
@@ -31,25 +32,40 @@ from search_api.utils.model_utils import (
 )
 from search_api.utils.utils import convert_to_snake_case
 
+
+logger = logging.getLogger(__name__)
 API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
 @jwt.requires_auth
 def corpparty_search():
+    current_app.logger.info("Starting director search")
+
     account_id = request.headers.get("X-Account-Id", None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
+    current_app.logger.info("Authorization check finished; starting query {query}".format(query=request.url))
+
     args = request.args
     results = CorpParty.search_corp_parties(args)
 
+    current_app.logger.info("Before query")
+
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
-    results = results.paginate(int(page), 50, False)
+
+    per_page = 50
+    # Manually paginate results, because flask-sqlalchemy's paginate() method counts the total,
+    # which is slow for large tables. This has been addressed in flask-sqlalchemy but is unreleased.
+    # Ref: https://github.com/pallets/flask-sqlalchemy/pull/613
+    results = results.limit(per_page).offset((page - 1) * per_page).all()
+
+    current_app.logger.info("After query")
 
     corp_parties = []
-    for row in results.items:
+    for row in results:
         result_fields = [
             'corpPartyId', 'firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt',
             'corpNum', 'corpNme', 'partyTypCd', 'stateTypCd', 'postalCd']
@@ -58,6 +74,8 @@ def corpparty_search():
         result_dict['addr'] = _merge_addr_fields(row)
 
         corp_parties.append(result_dict)
+
+    current_app.logger.info("Returning JSON results")
 
     return jsonify({'results': corp_parties})
 

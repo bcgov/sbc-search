@@ -47,7 +47,7 @@
             :logic.sync="logic"
           ></SearchLogic>
           <SbcButton
-            class="d-inline-block"
+            class="d-inline-block font-weight-bold"
             type="submit"
             title="Search"
             @click.native.prevent="handleNewSearch"
@@ -58,7 +58,11 @@
     <div class="mt-10">
       <div v-if="qs" class="d-flex justify-space-between align-center mb-5">
         <h4 class="headline">Search Results</h4>
-        <v-btn class="export-btn" height="50" @click="handleExport"
+        <v-btn
+          class="export-btn"
+          height="50"
+          @click="handleExport"
+          :elevation="0"
           >Export to .xlsx</v-btn
         >
       </div>
