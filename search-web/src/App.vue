@@ -68,9 +68,6 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-* {
-  font-family: "BCSans", "Verdana", "Arial", "sans-serif" !important;
-}
 .material-icons {
   font-family: "Material Icons" !important;
 }
@@ -134,12 +131,6 @@ body {
 }
 .footer {
   flex-shrink: 0;
-}
-
-.theme--light.v-data-table
-  tbody
-  tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
-  background-color: $COLOR_LAVENDER !important;
 }
 
 @media (max-width: 1600px) {

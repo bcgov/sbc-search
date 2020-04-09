@@ -68,6 +68,7 @@
         >
       </div>
       <CorpPartyTable
+        ref="corpPartyTable"
         :page="page"
         @pageUpdate="handlePageUpdate"
         @sortUpdate="handleSortUpdate"
@@ -172,9 +173,15 @@ export default {
       this.sort_type = "dsc";
       const queryString = this.generateQueryString(1);
 
-      this.$router.push({
-        query: qs.parse(queryString)
-      });
+      this.$router
+        .push({
+          query: qs.parse(queryString)
+        })
+        .catch(e => {
+          if (e && e.name && e.name === "NavigationDuplicated") {
+            this.$refs.corpPartyTable.fetchData();
+          }
+        });
     },
     handleSearch() {
       const queryString = this.generateQueryString();
@@ -197,6 +204,7 @@ export default {
       return queryString;
     },
     init() {
+      console.log("Got here");
       const mode = this.$route.query.mode;
       const page = this.$route.query.page;
       const sort_value = this.$route.query.sort_value;
