@@ -23,7 +23,7 @@
       <div class="d-flex justify-space-between align-center mb-5">
         <h4 class="headline">Search Results</h4>
         <v-btn
-          class="export-btn"
+          class="export-btn body-1 color-dark-grey border-gray"
           height="50"
           @click="handleExport"
           :elevation="0"
