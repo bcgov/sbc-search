@@ -44,7 +44,7 @@ def _get_model_by_field(field_name):
         return eval('Corporation')
     elif field_name in ['corpNme']:  # CorpName fields
         return eval('CorpName')
-    elif field_name in ['addrLine_1', 'addrLine_2', 'addrLine_3', 'postalCd', 'city', 'province']:  # Address fields
+    elif field_name in ['addrLine1', 'addrLine2', 'addrLine3', 'postalCd', 'city', 'province']:  # Address fields
         return eval('Address')
     elif field_name in ['stateTypCd']:
         return eval('CorpOpState')
@@ -71,9 +71,9 @@ def _get_filter(field, operator, value):
         # Snake case converter doesn't add the underscores indicated below, so add it here so
         # the db field is correctly named after conversion.
         return (
-            _get_filter('addrLine_1', operator, value) |
-            _get_filter('addrLine_2', operator, value) |
-            _get_filter('addrLine_3', operator, value))
+            _get_filter('addrLine1', operator, value) |
+            _get_filter('addrLine2', operator, value) |
+            _get_filter('addrLine3', operator, value))
 
     if field == 'stateTypCd':
         # state_typ_cd is either "ACT", or displayed as "HIS" for any other value
