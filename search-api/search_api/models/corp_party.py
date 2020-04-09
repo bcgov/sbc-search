@@ -13,9 +13,11 @@
 # limitations under the License.
 
 from functools import reduce
+import logging
 
 from sqlalchemy import func
 
+from search_api.constants import ADDITIONAL_COLS_ACTIVE, ADDITIONAL_COLS_ADDRESS
 from search_api.models.base import BaseModel, db
 from search_api.models.corp_name import CorpName
 from search_api.models.corp_state import CorpState
@@ -26,7 +28,10 @@ from search_api.models.filing import Filing
 from search_api.models.filing_type import FilingType
 from search_api.models.offices_held import OfficesHeld
 from search_api.models.officer_type import OfficerType
-from search_api.utils.model_utils import _get_filter, _sort_by_field
+from search_api.utils.model_utils import _get_filter, _sort_by_field, _is_addr_search, _merge_addr_fields
+
+
+logger = logging.getLogger(__name__)
 
 
 class CorpParty(BaseModel):
@@ -185,6 +190,7 @@ class CorpParty(BaseModel):
         &value=<string>
         &sort_type=asc|desc
         &sort_value=ANY_NME|first_nme|last_nme|<any column name>
+        &additional_cols=address|active|none
 
         For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
         curl "http://localhost/api/v1/directors/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"  # noqa
@@ -198,6 +204,7 @@ class CorpParty(BaseModel):
         mode = args.get('mode')
         sort_type = args.get('sort_type')
         sort_value = args.get('sort_value')
+        additional_cols = args.get('additional_cols')
 
         if query and len(fields) > 0:
             raise Exception("use simple query or advanced. don't mix")
@@ -213,12 +220,12 @@ class CorpParty(BaseModel):
         #  (('last_nme', 'contains', 'Sky'), ('first_nme', 'exact', 'Apple'))
         clauses = list(zip(fields, operators, values))
 
-        results = CorpParty.query_corp_parties(clauses, mode, sort_type, sort_value)
+        results = CorpParty.query_corp_parties(clauses, mode, sort_type, sort_value, fields, additional_cols)
 
         return results
 
     @staticmethod
-    def query_corp_parties(clauses, mode, sort_type, sort_value):
+    def query_corp_parties(clauses, mode, sort_type, sort_value, fields, additional_cols):
         # local import to prevent circular import
         from search_api.models.corporation import Corporation
 
@@ -226,9 +233,7 @@ class CorpParty(BaseModel):
             CorpParty.query
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
             .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
-            .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
             .outerjoin(CorpName, Corporation.corp_num == CorpName.corp_num)
-            .outerjoin(Address, CorpParty.mailing_addr_id == Address.addr_id)
             .add_columns(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
@@ -239,11 +244,6 @@ class CorpParty(BaseModel):
                 CorpParty.corp_num,
                 CorpParty.party_typ_cd,
                 CorpName.corp_nme,
-                Address.addr_line_1,
-                Address.addr_line_2,
-                Address.addr_line_3,
-                Address.postal_cd,
-                CorpOpState.state_typ_cd,
             )).filter(
                 CorpParty.end_event_id == None,  # noqa
                 CorpState.end_event_id == None,
@@ -251,6 +251,8 @@ class CorpParty(BaseModel):
                 # CorpName should be "Corporation" or "Number BC Company"
                 CorpName.corp_name_typ_cd.in_(("CO", "NB"))
             )
+
+        results = CorpParty.add_additional_cols_to_search_query(additional_cols, fields, results)
 
         # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
         if mode == 'ALL':
@@ -277,3 +279,26 @@ class CorpParty(BaseModel):
             results = results.order_by(eval(sort_field_str))
 
         return results
+
+    @staticmethod
+    def add_additional_cols_to_search_query(additional_cols, fields, query):
+        if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+            query = query.join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+            query = query.add_columns(
+                Address.addr_line_1,
+                Address.addr_line_2,
+                Address.addr_line_3,
+                Address.postal_cd)
+        elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+            query = query.join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+            query = query.add_columns(CorpOpState.state_typ_cd)
+
+        return query
+
+    @staticmethod
+    def add_additional_cols_to_search_results(additional_cols, fields, row, result_dict):
+        if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
+            result_dict['addr'] = _merge_addr_fields(row)
+            result_dict['postalCd'] = row.postal_cd
+        elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+            result_dict['stateTypCd'] = row.state_typ_cd
