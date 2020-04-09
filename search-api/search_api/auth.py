@@ -15,7 +15,6 @@
 from flask import current_app
 from flask_jwt_oidc import JwtManager
 import requests
-import os
 import json
 
 jwt = JwtManager()
@@ -47,7 +46,7 @@ def authorized(jwt, account_id):
 
     try:
         response_json = response.json()
-    except json.decoder.JSONDecodeError as e:
+    except json.decoder.JSONDecodeError:
         raise Exception("Invalid JSON in auth rsp: `{}`".format(response.text))
 
     if "orgMembership" in response_json:
