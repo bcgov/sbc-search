@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-select
+      background-color="#e5e8ec"
       filled
       class="operator-select"
       v-model="select"

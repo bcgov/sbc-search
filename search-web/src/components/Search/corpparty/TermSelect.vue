@@ -1,5 +1,6 @@
 <template>
   <v-select
+    background-color="#e5e8ec"
     class="term-select"
     filled
     v-model="select"

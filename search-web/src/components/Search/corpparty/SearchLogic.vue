@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-select
+      background-color="#e5e8ec"
       class="search-logic"
       :height="height"
       v-model="select"

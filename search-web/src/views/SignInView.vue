@@ -39,7 +39,7 @@ export default {
         ApiService.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${KEYCLOACK_TOKEN}`;
-        tokenService.init();
+        await tokenService.init();
         tokenService.scheduleRefreshTimer();
       }
       this.$router.push({

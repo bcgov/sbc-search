@@ -1,7 +1,12 @@
 <template>
-  <v-btn :type="type" color="primary outline" height="50" class="sbc-button">{{
-    title
-  }}</v-btn>
+  <v-btn
+    :type="type"
+    color="primary outline"
+    height="56"
+    class="sbc-button"
+    :elevation="0"
+    >{{ title }}</v-btn
+  >
 </template>
 
 <script>

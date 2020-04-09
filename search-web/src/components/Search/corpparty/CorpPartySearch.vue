@@ -37,6 +37,7 @@
     ></SearchInput>
 
     <v-btn
+      class="text-capitalize body-1 color-dark-grey border-gray"
       tabindex="-1"
       v-if="remove"
       :block="$vuetify.breakpoint.smAndDown"
@@ -48,7 +49,7 @@
       height="56"
       outlined
       @click="handleRemove"
-      >Remove</v-btn
+      >Remove Filter</v-btn
     >
   </div>
 </template>
