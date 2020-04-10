@@ -40,17 +40,17 @@ jobs:
       - name: Lint with pylint
         working-directory: ./search-api
         run: |
-          docker exec -it sbc-search_search-api_1 pylint --rcfile=setup.cfg --load-plugins=pylint_flask --disable=C0301,W0511 search_api
+          docker exec -i sbc-search_search-api_1 pylint --rcfile=setup.cfg --load-plugins=pylint_flask --disable=C0301,W0511 search_api
       - name: Lint with flake8
         working-directory: ./search-api
         run: |
-          docker exec -it sbc-search_search-api_1 flake8 search_api tests
+          docker exec -i sbc-search_search-api_1 flake8 search_api tests
       - name: Test with pytest
         working-directory: ./search-api
         run: |
           pip install .
           export PYTHONPATH=./src/
-          docker exec -it sbc-search_search-api_1 pytest
+          docker exec -i sbc-search_search-api_1 pytest
       - name: Shutdown docker-compose
         working-directory: ./search-api
         run: |
