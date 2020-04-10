@@ -156,8 +156,10 @@ export default {
           this.corporations = result.data.results;
           this.totalItems = this.corporations.length;
           this.loading = false;
+          this.$emit("success", result);
         })
         .catch(e => {
+          this.$emit("error", e);
           this.corporations = [];
           this.totalItems = 0;
           this.loading = false;

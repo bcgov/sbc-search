@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <Snackbar></Snackbar>
     <div v-if="$vuetify.breakpoint.smAndDown">
       <BackToTop bottom="10px" right="10px" visibleoffset="600">
         <v-btn class="mx-2" fab dark small color="primary">
@@ -44,13 +45,15 @@ import BackToTop from "vue-backtotop";
 import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
 import SbcFooter from "sbc-common-components/src/components/SbcFooter.vue";
 import TokenService from "sbc-common-components/src/services/token.services";
+import Snackbar from "@/components/Snackbar.vue";
 const tokenService = new TokenService();
 
 export default Vue.extend({
   components: {
     SbcHeader,
     SbcFooter,
-    BackToTop
+    BackToTop,
+    Snackbar
   },
   async mounted() {
     await KeyCloakService.setKeycloakConfigUrl(

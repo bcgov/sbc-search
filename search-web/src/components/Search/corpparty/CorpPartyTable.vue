@@ -300,8 +300,10 @@ export default {
           this.totalItems = this.items.length;
           this.loading = false;
           this.disableSorting = false;
+          this.$emit("success", result);
         })
         .catch(e => {
+          this.$emit("error", e);
           this.items = [];
           this.totalItems = 0;
           this.loading = false;

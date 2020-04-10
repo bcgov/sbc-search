@@ -18,6 +18,18 @@
           'mb-n6': $vuetify.breakpoint.smAndUp
         }"
       ></CorporationSearch>
+
+      <v-alert
+        v-model="error"
+        text
+        dense
+        type="error"
+        icon="error"
+        class="mt-5 pl-6"
+        border="left"
+      >
+        {{ errorMessage }}
+      </v-alert>
     </div>
 
     <div
@@ -39,6 +51,8 @@
       :query="query"
       @pageUpdate="handlePageUpdate"
       @sortUpdate="handleSortUpdate"
+      @error="handleError"
+      @success="handleSuccess"
     ></CorporationTable>
   </div>
 </template>
@@ -72,6 +86,8 @@ export default {
   },
   data() {
     return {
+      error: false,
+      errorMessage: null,
       query: null,
       page: "1",
       sort_value: "corpNme",
@@ -79,6 +95,15 @@ export default {
     };
   },
   methods: {
+    handleError(error) {
+      this.errorMessage = `${error.toString()} ${(error.response &&
+        error.response.data.message) ||
+        ""}`;
+      this.error = true;
+    },
+    handleSuccess() {
+      this.error = false;
+    },
     handleSearch(searchQuery) {
       this.page = "1";
       const query = {

@@ -54,6 +54,17 @@
           ></SbcButton>
         </div>
       </v-form>
+      <v-alert
+        v-model="error"
+        text
+        dense
+        type="error"
+        icon="error"
+        class="mt-5 pl-6"
+        border="left"
+      >
+        {{ errorMessage }}
+      </v-alert>
     </div>
     <div class="mt-10">
       <div v-if="qs" class="mb-5">
@@ -76,6 +87,8 @@
         >
       </div>
       <CorpPartyTable
+        @error="handleError"
+        @success="handleSuccess"
         ref="corpPartyTable"
         :page="page"
         @pageUpdate="handlePageUpdate"
@@ -133,7 +146,9 @@ export default {
       additional_cols: "none",
       page: "1",
       sort_value: "lastNme",
-      sort_type: "dsc"
+      sort_type: "dsc",
+      error: false,
+      errorMessage: null
     };
   },
   mounted() {
@@ -145,6 +160,15 @@ export default {
     }
   },
   methods: {
+    handleError(error) {
+      this.errorMessage = `${error.toString()} ${(error.response &&
+        error.response.data.message) ||
+        ""}`;
+      this.error = true;
+    },
+    handleSuccess() {
+      this.error = false;
+    },
     handleExport() {
       const queryString = this.generateQueryString();
       const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
