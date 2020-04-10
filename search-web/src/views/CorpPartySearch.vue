@@ -67,14 +67,16 @@
         ></SearchColumn>
 
         <v-btn
-          class="export-btn"
+          class="export-btn body-1 color-dark-grey border-gray"
           height="50"
+          outlined
           @click="handleExport"
           :elevation="0"
           >Export to .xlsx</v-btn
         >
       </div>
       <CorpPartyTable
+        ref="corpPartyTable"
         :page="page"
         @pageUpdate="handlePageUpdate"
         @sortUpdate="handleSortUpdate"
@@ -191,9 +193,15 @@ export default {
       this.sort_type = "dsc";
       const queryString = this.generateQueryString(1);
 
-      this.$router.push({
-        query: qs.parse(queryString)
-      });
+      this.$router
+        .push({
+          query: qs.parse(queryString)
+        })
+        .catch(e => {
+          if (e && e.name && e.name === "NavigationDuplicated") {
+            this.$refs.corpPartyTable.fetchData();
+          }
+        });
     },
     handleSearch() {
       const queryString = this.generateQueryString();

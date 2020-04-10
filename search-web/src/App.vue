@@ -68,9 +68,6 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
-* {
-  font-family: "BCSans", "Verdana", "Arial", "sans-serif" !important;
-}
 .material-icons {
   font-family: "Material Icons" !important;
 }
@@ -88,6 +85,7 @@ export default Vue.extend({
   letter-spacing: 0 !important;
   text-transform: none !important;
   padding: 0 2em !important;
+  background-color: white !important;
 }
 
 .anchor-text {

@@ -19,24 +19,27 @@
         }"
       ></CorporationSearch>
     </div>
-    <div v-if="!isQueryEmpty">
-      <div class="d-flex justify-space-between align-center mb-5">
-        <h4 class="headline">Search Results</h4>
-        <v-btn
-          class="export-btn"
-          height="50"
-          @click="handleExport"
-          :elevation="0"
-          >Export to .xlsx</v-btn
-        >
-      </div>
-      <CorporationTable
-        :page="page"
-        :query="query"
-        @pageUpdate="handlePageUpdate"
-        @sortUpdate="handleSortUpdate"
-      ></CorporationTable>
+
+    <div
+      v-if="!isQueryEmpty"
+      class="d-flex justify-space-between align-center mb-5"
+    >
+      <h4 class="headline">Search Results</h4>
+      <v-btn
+        class="export-btn body-1 color-dark-grey border-gray"
+        height="50"
+        @click="handleExport"
+        :elevation="0"
+        >Export to .xlsx</v-btn
+      >
     </div>
+    <CorporationTable
+      ref="corporationTable"
+      :page="page"
+      :query="query"
+      @pageUpdate="handlePageUpdate"
+      @sortUpdate="handleSortUpdate"
+    ></CorporationTable>
   </div>
 </template>
 
@@ -78,13 +81,22 @@ export default {
   methods: {
     handleSearch(searchQuery) {
       this.page = "1";
-      this.$router.push({
-        query: {
-          query: searchQuery,
-          page: 1,
-          sort_type: "dsc",
-          sort_value: "corpNme"
-        }
+      const query = {
+        query: searchQuery,
+        page: 1,
+        sort_type: "dsc",
+        sort_value: "corpNme"
+      };
+      this.$nextTick(() => {
+        this.$router
+          .push({
+            query
+          })
+          .catch(e => {
+            if (e && e.name && e.name === "NavigationDuplicated") {
+              this.$refs.corporationTable.fetchData(query);
+            }
+          });
       });
     },
     handlePageUpdate(page) {

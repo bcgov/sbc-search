@@ -6,6 +6,9 @@
     :height="height"
     v-model="searchQuery"
     :placeholder="getPlaceHolder()"
+    :class="{
+      'corp-search-input-md': $vuetify.breakpoint.mdOnly
+    }"
     filled
   >
     <template v-slot:append>
@@ -82,8 +85,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.search-input {
-  width: 268px;
-}
-</style>
+<style lang="scss"></style>
