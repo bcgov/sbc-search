@@ -55,7 +55,7 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
     app.register_blueprint(DIRECTORS_API)
     app.register_blueprint(BUSINESSES_API)
 
-    #setup_jwt_manager(app, jwt)
+    setup_jwt_manager(app, jwt)
 
     @app.route("/ops/readyz")
     def readyz():
