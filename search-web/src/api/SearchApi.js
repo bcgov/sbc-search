@@ -27,3 +27,21 @@ export function corporationSearch(params) {
     params
   });
 }
+
+export function exportCorpPartySearch(queryString) {
+  return ApiService({
+    url: `${EXPORT_CORPPARTY_URL}/?${queryString}`,
+    method: "GET",
+    responseType: "blob",
+    headers: { Accept: "application/vnd.ms-excel" }
+  });
+}
+
+export function exportCorporationSearch(queryString) {
+  return ApiService({
+    url: `${EXPORT_CORPORATION_URL}/?${queryString}`,
+    method: "GET",
+    responseType: "blob",
+    headers: { Accept: "application/vnd.ms-excel" }
+  });
+}

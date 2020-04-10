@@ -110,7 +110,11 @@ import { downloadFile } from "@/util/index.ts";
 import omit from "lodash-es/omit";
 import isEmpty from "lodash-es/isEmpty";
 const qs = require("qs");
-import { searchApi, EXPORT_CORPPARTY_URL } from "@/api/SearchApi";
+import {
+  searchApi,
+  EXPORT_CORPPARTY_URL,
+  exportCorpPartySearch
+} from "@/api/SearchApi";
 import CorpPartyTable from "@/components/Search/corpparty/CorpPartyTable.vue";
 import { buildQueryString } from "@/util/index.ts";
 import SearchLogic from "@/components/Search/corpparty/SearchLogic.vue";
@@ -172,10 +176,19 @@ export default {
     handleExport() {
       const queryString = this.generateQueryString();
       const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
-      downloadFile(
-        `${process.env.VUE_APP_BACKEND_HOST}${EXPORT_CORPPARTY_URL}/?${queryString}`,
-        `Director Search Results ${datetime}.xlsx`
-      );
+      exportCorpPartySearch(queryString)
+        .then(result => {
+          downloadFile(result.data, `Director Search Results ${datetime}.xlsx`);
+        })
+        .catch(error => {
+          this.$root.$emit("openSnack", {
+            text: `${error.toString()} ${(error.response &&
+              error.response.data.message) ||
+              ""}`,
+            btnColor: "white",
+            timeout: 2000
+          });
+        });
     },
     handlePageUpdate(page) {
       this.page = page;

@@ -27,15 +27,9 @@ export function getDeepLink(corpNum) {
   return `https://tst.corponline.gov.bc.ca/corporateonline/colin/search/searchAction.do?corpNum=${corpNum}&_flowExecutionKey=e4s2`;
 }
 
-export async function downloadFile(url, fileName) {
-  const response = await ApiService({
-    url: url,
-    method: "GET",
-    responseType: "blob",
-    headers: { Accept: "application/vnd.ms-excel" }
-  });
-  fileDownload(
-    response.data,
+export async function downloadFile(data, fileName) {
+  return fileDownload(
+    data,
     fileName || "DS-Results.xlsx",
     "application/vnd.ms-excel"
   );

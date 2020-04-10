@@ -60,7 +60,11 @@
 <script>
 import CorporationSearch from "@/components/Search/corporation/CorporationSearch.vue";
 import CorporationTable from "@/components/Search/corporation/CorporationTable.vue";
-import { corporationSearch, EXPORT_CORPORATION_URL } from "@/api/SearchApi.js";
+import {
+  corporationSearch,
+  EXPORT_CORPORATION_URL,
+  exportCorporationSearch
+} from "@/api/SearchApi.js";
 import isEmpty from "lodash-es/isEmpty";
 import { downloadFile } from "@/util/index.ts";
 import { BACKEND_URL } from "@/config/index.ts";
@@ -150,12 +154,22 @@ export default {
     },
     handleExport() {
       const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
-      downloadFile(
-        `${
-          process.env.VUE_APP_BACKEND_HOST
-        }${EXPORT_CORPORATION_URL}/?${qs.stringify(this.$route.query)}`,
-        `Corporation Search Results ${datetime}.xlsx`
-      );
+      exportCorporationSearch(queryString)
+        .then(result => {
+          downloadFile(
+            result.data,
+            `Corporation Search Results ${datetime}.xlsx`
+          );
+        })
+        .catch(error => {
+          this.$root.$emit("openSnack", {
+            text: `${error.toString()} ${(error.response &&
+              error.response.data.message) ||
+              ""}`,
+            btnColor: "white",
+            timeout: 2000
+          });
+        });
     }
   },
   mounted() {
