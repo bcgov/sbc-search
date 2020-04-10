@@ -33,6 +33,10 @@ jobs:
         working-directory: ./search-api
         run: |
           docker-compose build
+      - name: Start docker with docker-compose
+        working-directory: ./search-api
+        run: |
+          docker-compose up
       - name: Lint with pylint
         working-directory: ./search-api
         run: |
@@ -41,10 +45,6 @@ jobs:
         working-directory: ./search-api
         run: |
           docker exec -it sbc-search_search-api_1 flake8 search_api tests
-      - name: Start docker with docker-compose
-        working-directory: ./search-api
-        run: |
-          docker-compose up
       - name: Test with pytest
         working-directory: ./search-api
         run: |
