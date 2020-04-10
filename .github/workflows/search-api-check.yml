@@ -1,6 +1,11 @@
-name: Auth API CHECK CI
+name: Search API CHECK CI
 
 on:
+  push:
+    branches:
+      - master
+    paths:
+      - "search-api/**"
   pull_request:
     branches:
       - master
