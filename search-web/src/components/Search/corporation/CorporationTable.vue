@@ -42,7 +42,7 @@
           <td class="anchor-text">{{ item["corpNum"] }}</td>
           <td>{{ item["corpTypCd"] }}</td>
           <td>{{ item["corpNme"] }}</td>
-          <td>{{ item["recognitionDts"] }}</td>
+          <td>{{ formatDate(item["recognitionDts"]) }}</td>
           <td>{{ item["stateTypCd"] }}</td>
           <td>{{ item["addr"] }}</td>
           <td>{{ item["postalCd"] }}</td>
@@ -88,6 +88,8 @@
 <script>
 import { CORPORATION_HEADERS } from "@/config/index.ts";
 import { corporationSearch } from "@/api/SearchApi";
+import dayjs from "dayjs";
+import { formatDate } from "@/util/index.ts";
 import pick from "lodash-es/pick";
 
 export default {
@@ -114,6 +116,7 @@ export default {
     };
   },
   methods: {
+    formatDate,
     orderItems(items) {
       return pick(items, [
         "corpNum",

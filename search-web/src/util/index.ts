@@ -2,6 +2,7 @@ const qs = require("qs");
 import omit from "lodash-es/omit";
 import ApiService from "@/api/ApiService.js";
 const fileDownload = require("js-file-download");
+import dayjs from "dayjs";
 
 export function getTextFromValues(values, value) {
   const result = values.find(v => v.value === value);
@@ -38,4 +39,8 @@ export async function downloadFile(url, fileName) {
     fileName || "DS-Results.xlsx",
     "application/vnd.ms-excel"
   );
+}
+
+export function formatDate(d) {
+  return d ? dayjs(d).format("YYYY-MM-DD") : "-";
 }
