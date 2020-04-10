@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from dotenv import load_dotenv
 import logging
 import os
 
@@ -28,9 +27,6 @@ from search_api.auth import jwt
 from search_api.resources import DIRECTORS_API, BUSINESSES_API
 from search_api.models.base import db
 from search_api.utils.util_logging import setup_logging
-
-
-load_dotenv(verbose=True)
 
 
 setup_logging(os.path.join(config._Config.PROJECT_ROOT, 'logging.conf'))  # important to do this first
@@ -59,7 +55,7 @@ def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
     app.register_blueprint(DIRECTORS_API)
     app.register_blueprint(BUSINESSES_API)
 
-    setup_jwt_manager(app, jwt)
+    #setup_jwt_manager(app, jwt)
 
     @app.route("/ops/readyz")
     def readyz():

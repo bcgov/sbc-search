@@ -26,7 +26,6 @@ import sys
 
 from dotenv import find_dotenv, load_dotenv
 
-
 # this will load all the envars from a .env file located in the project root (api)
 load_dotenv(find_dotenv())
 
@@ -69,7 +68,6 @@ class _Config:  # pylint: disable=too-few-public-methods
 
     # ORACLE - CDEV/CTST/CPRD/db
     SQLALCHEMY_DATABASE_URI = os.getenv('DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres')
-
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
     JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', None)

@@ -39,13 +39,13 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
-@jwt.requires_auth
+#@jwt.requires_auth
 def corpparty_search():
     current_app.logger.info("Starting director search")
 
     account_id = request.headers.get("X-Account-Id", None)
-    if not authorized(jwt, account_id):
-        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+    #if not authorized(jwt, account_id):
+    #    return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     current_app.logger.info("Authorization check finished; starting query {query}".format(query=request.url))
 
@@ -63,7 +63,17 @@ def corpparty_search():
     # Manually paginate results, because flask-sqlalchemy's paginate() method counts the total,
     # which is slow for large tables. This has been addressed in flask-sqlalchemy but is unreleased.
     # Ref: https://github.com/pallets/flask-sqlalchemy/pull/613
-    results = results.limit(per_page).offset((page - 1) * per_page).all()
+    #results = results.limit(per_page).offset((page - 1) * per_page)
+    results = results.where(text("ROWNUM <= 1000"))
+    from sqlalchemy.dialects import oracle
+    oracle_dialect = oracle.dialect(max_identifier_length=30)
+    # for benchmarking, dump the query here and copy to benchmark.py
+    raise Exception(results.statement.compile(dialect=oracle_dialect))
+    import time
+    t=time.time()
+    results = results.all()
+    raise Exception(time.time()-t)
+
 
     current_app.logger.info("After query")
 

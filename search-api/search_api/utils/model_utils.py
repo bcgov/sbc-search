@@ -14,6 +14,7 @@
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 from search_api.utils.utils import convert_to_snake_case
+from sqlalchemy import func
 
 
 def _merge_addr_fields(row):
@@ -88,24 +89,25 @@ def _get_filter(field, operator, value):
 
     model = _get_model_by_field(field)
 
-    value = value.lower()
+    # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
+    value = value.upper()
     if model:
         Field = getattr(model, convert_to_snake_case(field))
         # TODO: we should sanitize the values
         if operator == 'contains':
-            return Field.ilike('%' + value + '%')
+            return func.upper(Field).like('%' + value + '%')
         elif operator == 'exact':
-            return Field.ilike(value)
+            return func.upper(Field) == value
         elif operator == 'endswith':
-            return Field.ilike('%' + value)
+            return func.upper(Field).like('%' + value)
         elif operator == 'startswith':
-            return Field.ilike(value + '%')
+            return func.upper(Field).like(value + '%')
         elif operator == 'wildcard':
             # We support entering * or % as wildcards, but the actual wildcard is %
             value = value.replace("*", "%")
-            return Field.ilike(value)
+            return func.upper(Field).like(value)
         elif operator == 'excludes':
-            return ~Field.ilike(value)
+            return func.upper(Field) != value
         else:
             raise Exception('invalid operator: {}'.format(operator))
     else:
@@ -127,7 +129,8 @@ def _sort_by_field(sort_type, sort_value):
     sort_field_str = "{field}".format(field=field)
 
     if _is_field_string(sort_value):
-        sort_field_str = "func.lower({field})".format(field=sort_field_str)
+        # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
+        sort_field_str = "func.upper({field})".format(field=sort_field_str)
 
     if sort_type == 'dsc':
         sort_field_str += ".desc()"
