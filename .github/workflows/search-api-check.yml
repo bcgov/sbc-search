@@ -36,7 +36,7 @@ jobs:
       - name: Start docker with docker-compose
         working-directory: ./search-api
         run: |
-          docker-compose up
+          docker-compose up search-api -d
       - name: Lint with pylint
         working-directory: ./search-api
         run: |
