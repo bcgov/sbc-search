@@ -129,6 +129,10 @@ class Corporation(BaseModel):
         results = results.filter(
             (Corporation.corp_num == query) |
             (CorpName.corp_nme.ilike('%' + query + '%'))
+        ).filter(
+            CorpName.corp_name_typ_cd.in_(("CO", "NB")),
+            CorpState.end_event_id == None,
+            CorpName.end_event_id == None,
         )
 
         # Sorting

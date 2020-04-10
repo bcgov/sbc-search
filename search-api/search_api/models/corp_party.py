@@ -196,8 +196,6 @@ class CorpParty(BaseModel):
         curl "http://localhost/api/v1/directors/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"  # noqa
         """
 
-        query = args.get("query")
-
         fields = args.getlist('field')
         operators = args.getlist('operator')
         values = args.getlist('value')
@@ -205,9 +203,6 @@ class CorpParty(BaseModel):
         sort_type = args.get('sort_type')
         sort_value = args.get('sort_value')
         additional_cols = args.get('additional_cols')
-
-        if query and len(fields) > 0:
-            raise Exception("use simple query or advanced. don't mix")
 
         # Only triples of clauses are allowed. So, the same number of fields, ops and values.
         if len(fields) != len(operators) or len(operators) != len(values):
@@ -234,7 +229,7 @@ class CorpParty(BaseModel):
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
             .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
             .outerjoin(CorpName, Corporation.corp_num == CorpName.corp_num)
-            .add_columns(
+            .with_entities(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
                 CorpParty.middle_nme,

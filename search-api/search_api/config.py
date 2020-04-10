@@ -57,6 +57,10 @@ class _Config:  # pylint: disable=too-few-public-methods
     """Base class configuration that should set reasonable defaults for all the other configurations."""
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'optimize_limits': True,
+        'use_binds_for_limits': False
+    }
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
