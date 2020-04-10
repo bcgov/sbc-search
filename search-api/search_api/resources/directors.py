@@ -45,7 +45,7 @@ def corpparty_search():
 
     account_id = request.headers.get("X-Account-Id", None)
     if not authorized(jwt, account_id):
-       return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     current_app.logger.info("Authorization check finished; starting query {query}".format(query=request.url))
 
