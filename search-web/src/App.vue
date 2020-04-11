@@ -61,23 +61,16 @@ export default Vue.extend({
         `${process.env.BASE_URL}config/kc/keycloak.json`
       );
 
-      this.$root.$on("signin-complete", async cb => {
-        await this.setup;
-        cb && cb();
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  },
-  methods: {
-    async setup() {
       const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
       if (KEYCLOACK_TOKEN) {
         await tokenService.init();
         tokenService.scheduleRefreshTimer();
       }
+    } catch (e) {
+      console.error(e);
     }
-  }
+  },
+  methods: {}
 });
 </script>
 

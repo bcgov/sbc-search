@@ -33,12 +33,18 @@ export default {
   },
   methods: {
     async syncUserProfile() {
-      this.$root.$emit("signin-complete", () => {
-        const query = Object.assign({}, this.$route.query);
-        this.$router.push({
-          name: "corpPartySearch",
-          query
-        });
+      const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
+      if (KEYCLOACK_TOKEN) {
+        ApiService.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${KEYCLOACK_TOKEN}`;
+        await tokenService.init();
+        tokenService.scheduleRefreshTimer();
+      }
+      const query = Object.assign({}, this.$route.query);
+      this.$router.push({
+        name: "corpPartySearch",
+        query
       });
     }
   }
