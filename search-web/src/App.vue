@@ -56,14 +56,18 @@ export default Vue.extend({
     Snackbar
   },
   async mounted() {
-    await KeyCloakService.setKeycloakConfigUrl(
-      `${process.env.BASE_URL}config/kc/keycloak.json`
-    );
+    try {
+      await KeyCloakService.setKeycloakConfigUrl(
+        `${process.env.BASE_URL}config/kc/keycloak.json`
+      );
 
-    const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
-    if (KEYCLOACK_TOKEN) {
-      await tokenService.init();
-      tokenService.scheduleRefreshTimer();
+      const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
+      if (KEYCLOACK_TOKEN) {
+        await tokenService.init();
+        tokenService.scheduleRefreshTimer();
+      }
+    } catch (e) {
+      console.error(e);
     }
   },
   methods: {}

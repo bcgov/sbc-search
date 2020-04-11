@@ -42,8 +42,10 @@ export default {
         await tokenService.init();
         tokenService.scheduleRefreshTimer();
       }
+      const query = Object.assign({}, this.$route.query);
       this.$router.push({
-        name: "corpPartySearch"
+        name: "corpPartySearch",
+        query
       });
     },
     syncUserProfile() {}
