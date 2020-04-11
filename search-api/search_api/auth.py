@@ -11,34 +11,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Authorization service for the Search API."""
+
+import json
 
 from flask import current_app
 from flask_jwt_oidc import JwtManager
 import requests
-import json
 
-jwt = JwtManager()
+jwt = JwtManager()  # pylint: disable=invalid-name
 
 
-def authorized(jwt, account_id):
+def authorized(jwt_instance, account_id):
     """
-    Assert that the user is authorized to access Director Search. The user should have an orgMembership in
-    the Director Search (DIR_SEARCH) application.
-    """
+    Assert that the user is authorized to access Director Search.
 
+    The user should have an orgMembership in the Director Search (DIR_SEARCH) application.
+    """
     # When running tests, just mock out this entire user membership authorization check as it requires
     # an external service.
-    is_testing = current_app.config['TESTING']
 
-    if is_testing:
+    if current_app.config['DEBUG'] or current_app.config['TESTING']:
         return True
 
-    if not jwt or not account_id:
+    if not jwt_instance or not account_id:
         return False
 
-    token = jwt.get_token_auth_header()
+    token = jwt_instance.get_token_auth_header()
     auth_api_url_base = current_app.config['AUTH_API_URL']
-    auth_api_url = "{auth_api_url_base}/api/v1/accounts/{account_id}/products/DIR_SEARCH/authorizations".format(
+    auth_api_url = '{auth_api_url_base}/api/v1/accounts/{account_id}/products/DIR_SEARCH/authorizations'.format(
         auth_api_url_base=auth_api_url_base, account_id=account_id)
 
     headers = {'Authorization': 'Bearer {token}'.format(token=token)}
@@ -47,9 +48,9 @@ def authorized(jwt, account_id):
     try:
         response_json = response.json()
     except json.decoder.JSONDecodeError:
-        raise Exception("Invalid JSON in auth rsp: `{}`".format(response.text))
+        raise Exception('Invalid JSON in auth rsp: `{}`'.format(response.text))
 
-    if "orgMembership" in response_json:
+    if 'orgMembership' in response_json:
         return True
 
     return False

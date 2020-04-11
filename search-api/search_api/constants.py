@@ -11,9 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Constants used in search_api."""
 
-STATE_TYP_CD_ACT = "ACT"
-STATE_TYP_CD_HIS = "HIS"
+STATE_TYP_CD_ACT = 'ACT'
+STATE_TYP_CD_HIS = 'HIS'
 
 ADDITIONAL_COLS_ADDRESS = 'addr'
 ADDITIONAL_COLS_ACTIVE = 'active'

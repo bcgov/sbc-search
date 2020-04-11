@@ -11,73 +11,54 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Search API service."""
 
-from dotenv import load_dotenv
 import logging
 import os
 
-from flask import Flask, current_app
+from dotenv import load_dotenv
+from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
-from sqlalchemy import exc
 
-from search_api import config
+from search_api.config import _Config, CONFIGURATION
 from search_api.auth import jwt
-from search_api.resources import DIRECTORS_API, BUSINESSES_API
+from search_api.resources import DIRECTORS_API, BUSINESSES_API, OPS_API
 from search_api.models.base import db
 from search_api.utils.util_logging import setup_logging
-
 
 load_dotenv(verbose=True)
 
 
-setup_logging(os.path.join(config._Config.PROJECT_ROOT, 'logging.conf'))  # important to do this first
+setup_logging(os.path.join(_Config.PROJECT_ROOT, 'logging.conf'))  # important to do this first
 
 
-def create_app(run_mode=os.getenv("FLASK_ENV", "production")):
+def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     """Return a configured Flask App using the Factory method."""
-
     app = Flask(__name__)
-    app.config.from_object(config.CONFIGURATION[run_mode])
-    app.logger.setLevel(logging.INFO)
+    app.config.from_object(CONFIGURATION[run_mode])
+    app.logger.setLevel(logging.INFO)  # pylint: disable=no-member
 
     db.init_app(app)
 
     if app.debug:
-        migrate = Migrate(app, db)  # noqa
+        migrate = Migrate(app, db)  # noqa # pylint: disable=unused-variable
 
     CORS(app)
 
     # Configure Sentry
-    if app.config.get("SENTRY_DSN", None):
+    if app.config.get('SENTRY_DSN', None):
         sentry_sdk.init(
-            dsn=app.config.get("SENTRY_DSN"), integrations=[FlaskIntegration()]
+            dsn=app.config.get('SENTRY_DSN'), integrations=[FlaskIntegration()]
         )
 
     app.register_blueprint(DIRECTORS_API)
     app.register_blueprint(BUSINESSES_API)
+    app.register_blueprint(OPS_API)
 
     setup_jwt_manager(app, jwt)
-
-    @app.route("/ops/readyz")
-    def readyz():
-        return {'message': 'api is ready'}, 200
-
-    @app.route("/ops/healthz")
-    def healthz():
-        """Return a JSON object stating the health of the Service and dependencies."""
-
-        current_app.logger.info("Starting healthz")
-        try:
-            db.engine.execute('SELECT 1 FROM CORP_PARTY')
-        except exc.SQLAlchemyError:
-            return {'message': 'api is down'}, 500
-
-        current_app.logger.info("Finished healthz")
-        # made it here, so all checks passed
-        return {'message': 'api is healthy'}, 200
 
     return app
 
