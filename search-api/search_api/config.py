@@ -57,10 +57,6 @@ class _Config:  # pylint: disable=too-few-public-methods
     """Base class configuration that should set reasonable defaults for all the other configurations."""
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'optimize_limits': True,
-        'use_binds_for_limits': False
-    }
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -72,6 +68,15 @@ class _Config:  # pylint: disable=too-few-public-methods
 
     # ORACLE - CDEV/CTST/CPRD/db
     SQLALCHEMY_DATABASE_URI = os.getenv('DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres')
+
+    # Oracle optimizations. For the type of queries we do, we want to avoid the default pagination
+    # which uses subqueries.
+    if SQLALCHEMY_DATABASE_URI.startswith('oracle://'):
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            'optimize_limits': True,
+            'use_binds_for_limits': False
+        }
+
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
     JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', None)
