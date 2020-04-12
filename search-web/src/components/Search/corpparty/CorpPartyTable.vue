@@ -18,6 +18,41 @@
         'items-per-page-options': [50]
       }"
     >
+      <template v-slot:top="{ pagination }">
+        <div>
+          <div v-if="loading || items.length === 0"></div>
+          <div
+            v-else
+            class="w-100 custom-footer d-flex justify-end align-center caption "
+          >
+            <div class="letter-spacing-none">
+              Showing {{ pagination.itemsLength }} results
+            </div>
+            <div class="d-flex ml-5 mr-9 align-center">
+              <v-btn v-if="page > '1' && !loading" icon @click="pagePrev" small>
+                <v-icon>arrow_back</v-icon>
+              </v-btn>
+              <v-btn v-else disabled icon small>
+                <v-icon>arrow_back</v-icon>
+              </v-btn>
+              <div class="d-inline-block mr-3 ml-3 letter-spacing-none">
+                Page {{ page }}
+              </div>
+              <v-btn
+                icon
+                v-if="results.length > 49 && !loading"
+                @click="pageNext"
+                small
+              >
+                <v-icon>arrow_forward</v-icon>
+              </v-btn>
+              <v-btn icon v-else disabled small>
+                <v-icon>arrow_forward</v-icon>
+              </v-btn>
+            </div>
+          </div>
+        </div>
+      </template>
       <template v-slot:item="{ item, index, headers }">
         <!-- Mobile View Begin -->
         <tr
@@ -327,6 +362,7 @@ export default {
 
 .corp-party-table .custom-footer {
   padding: 1em 0;
+  letter-spacing: 0 !important;
 }
 
 .corp-party-table .v-data-footer__icons-after,

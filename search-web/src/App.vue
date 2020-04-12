@@ -55,6 +55,7 @@ export default Vue.extend({
     BackToTop,
     Snackbar
   },
+
   async mounted() {
     try {
       await KeyCloakService.setKeycloakConfigUrl(
@@ -75,6 +76,9 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+.letter-spacing-none {
+  letter-spacing: 0 !important;
+}
 .material-icons {
   font-family: "Material Icons" !important;
 }
@@ -117,7 +121,11 @@ export default Vue.extend({
 }
 
 .border-gray {
-  border: 1px solid $COLOR_GREY !important;
+  border: 1px solid $BORDER_GREY !important;
+}
+
+.theme--light.v-text-field > .v-input__control > .v-input__slot:before {
+  border-color: $BORDER_GREY !important;
 }
 
 .main-wrapper {
