@@ -54,6 +54,17 @@
           ></SbcButton>
         </div>
       </v-form>
+      <v-alert
+        v-model="error"
+        text
+        dense
+        type="error"
+        icon="error"
+        class="mt-5 pl-6"
+        border="left"
+      >
+        {{ errorMessage }}
+      </v-alert>
     </div>
     <div class="mt-10">
       <div v-if="qs" class="mb-5">
@@ -67,14 +78,18 @@
         ></SearchColumn>
 
         <v-btn
-          class="export-btn"
+          class="export-btn body-1 color-dark-grey border-gray"
           height="50"
+          outlined
           @click="handleExport"
           :elevation="0"
           >Export to .xlsx</v-btn
         >
       </div>
       <CorpPartyTable
+        @error="handleError"
+        @success="handleSuccess"
+        ref="corpPartyTable"
         :page="page"
         @pageUpdate="handlePageUpdate"
         @sortUpdate="handleSortUpdate"
@@ -95,7 +110,11 @@ import { downloadFile } from "@/util/index.ts";
 import omit from "lodash-es/omit";
 import isEmpty from "lodash-es/isEmpty";
 const qs = require("qs");
-import { searchApi, EXPORT_CORPPARTY_URL } from "@/api/SearchApi";
+import {
+  searchApi,
+  EXPORT_CORPPARTY_URL,
+  exportCorpPartySearch
+} from "@/api/SearchApi";
 import CorpPartyTable from "@/components/Search/corpparty/CorpPartyTable.vue";
 import { buildQueryString } from "@/util/index.ts";
 import SearchLogic from "@/components/Search/corpparty/SearchLogic.vue";
@@ -131,7 +150,9 @@ export default {
       additional_cols: "none",
       page: "1",
       sort_value: "lastNme",
-      sort_type: "dsc"
+      sort_type: "dsc",
+      error: false,
+      errorMessage: null
     };
   },
   mounted() {
@@ -143,13 +164,31 @@ export default {
     }
   },
   methods: {
+    handleError(error) {
+      this.errorMessage = `${error.toString()} ${(error.response &&
+        error.response.data.message) ||
+        ""}`;
+      this.error = true;
+    },
+    handleSuccess() {
+      this.error = false;
+    },
     handleExport() {
       const queryString = this.generateQueryString();
       const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
-      downloadFile(
-        `${process.env.VUE_APP_BACKEND_HOST}${EXPORT_CORPPARTY_URL}/?${queryString}`,
-        `Director Search Results ${datetime}.xlsx`
-      );
+      exportCorpPartySearch(queryString)
+        .then(result => {
+          downloadFile(result.data, `Director Search Results ${datetime}.xlsx`);
+        })
+        .catch(error => {
+          this.$root.$emit("openSnack", {
+            text: `${error.toString()} ${(error.response &&
+              error.response.data.message) ||
+              ""}`,
+            btnColor: "white",
+            timeout: 2000
+          });
+        });
     },
     handlePageUpdate(page) {
       this.page = page;
@@ -191,9 +230,15 @@ export default {
       this.sort_type = "dsc";
       const queryString = this.generateQueryString(1);
 
-      this.$router.push({
-        query: qs.parse(queryString)
-      });
+      this.$router
+        .push({
+          query: qs.parse(queryString)
+        })
+        .catch(e => {
+          if (e && e.name && e.name === "NavigationDuplicated") {
+            this.$refs.corpPartyTable.fetchData();
+          }
+        });
     },
     handleSearch() {
       const queryString = this.generateQueryString();

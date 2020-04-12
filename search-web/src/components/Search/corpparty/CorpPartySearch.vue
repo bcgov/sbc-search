@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-top cps-container">
+  <div class="d-flex align-top flex-wrap cps-container">
     <FieldSelect
       class="field-select"
       :items="FIELDS"
@@ -22,7 +22,6 @@
         'mr-3': $vuetify.breakpoint.mdAndUp
       }"
     ></OperatorSelect>
-
     <TermSelect
       v-if="selectedField === 'stateTypCd'"
       :items="TERMS"
@@ -188,6 +187,12 @@ export default {
 }
 .field-select {
   width: 200px;
+}
+
+@media (max-width: 1497px) {
+  .search-input {
+    width: 150px;
+  }
 }
 
 @media (max-width: 1264px) {

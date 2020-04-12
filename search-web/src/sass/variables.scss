@@ -1,0 +1,11 @@
+// This is to overrite vuetify sass variables on compile time.
+
+// Globals
+$body-font-family: "BCSans", "Verdana", "Arial", "sans-serif";
+$material-light: (
+    'table': (
+      hover: #e3e7eb !important
+    )
+);
+@import '~vuetify/src/styles/settings/_variables.scss';
+

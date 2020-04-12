@@ -18,32 +18,53 @@
           'mb-n6': $vuetify.breakpoint.smAndUp
         }"
       ></CorporationSearch>
+
+      <v-alert
+        v-model="error"
+        text
+        dense
+        type="error"
+        icon="error"
+        class="mt-5 pl-6"
+        border="left"
+      >
+        {{ errorMessage }}
+      </v-alert>
     </div>
-    <div v-if="!isQueryEmpty">
-      <div class="d-flex justify-space-between align-center mb-5">
-        <h4 class="headline">Search Results</h4>
-        <v-btn
-          class="export-btn"
-          height="50"
-          @click="handleExport"
-          :elevation="0"
-          >Export to .xlsx</v-btn
-        >
-      </div>
-      <CorporationTable
-        :page="page"
-        :query="query"
-        @pageUpdate="handlePageUpdate"
-        @sortUpdate="handleSortUpdate"
-      ></CorporationTable>
+
+    <div
+      v-if="!isQueryEmpty"
+      class="d-flex justify-space-between align-center mb-5"
+    >
+      <h4 class="headline">Search Results</h4>
+      <v-btn
+        class="export-btn body-1 color-dark-grey border-gray"
+        height="50"
+        @click="handleExport"
+        :elevation="0"
+        >Export to .xlsx</v-btn
+      >
     </div>
+    <CorporationTable
+      ref="corporationTable"
+      :page="page"
+      :query="query"
+      @pageUpdate="handlePageUpdate"
+      @sortUpdate="handleSortUpdate"
+      @error="handleError"
+      @success="handleSuccess"
+    ></CorporationTable>
   </div>
 </template>
 
 <script>
 import CorporationSearch from "@/components/Search/corporation/CorporationSearch.vue";
 import CorporationTable from "@/components/Search/corporation/CorporationTable.vue";
-import { corporationSearch, EXPORT_CORPORATION_URL } from "@/api/SearchApi.js";
+import {
+  corporationSearch,
+  EXPORT_CORPORATION_URL,
+  exportCorporationSearch
+} from "@/api/SearchApi.js";
 import isEmpty from "lodash-es/isEmpty";
 import { downloadFile } from "@/util/index.ts";
 import { BACKEND_URL } from "@/config/index.ts";
@@ -69,6 +90,8 @@ export default {
   },
   data() {
     return {
+      error: false,
+      errorMessage: null,
       query: null,
       page: "1",
       sort_value: "corpNme",
@@ -76,15 +99,33 @@ export default {
     };
   },
   methods: {
+    handleError(error) {
+      this.errorMessage = `${error.toString()} ${(error.response &&
+        error.response.data.message) ||
+        ""}`;
+      this.error = true;
+    },
+    handleSuccess() {
+      this.error = false;
+    },
     handleSearch(searchQuery) {
       this.page = "1";
-      this.$router.push({
-        query: {
-          query: searchQuery,
-          page: 1,
-          sort_type: "dsc",
-          sort_value: "corpNme"
-        }
+      const query = {
+        query: searchQuery,
+        page: 1,
+        sort_type: "dsc",
+        sort_value: "corpNme"
+      };
+      this.$nextTick(() => {
+        this.$router
+          .push({
+            query
+          })
+          .catch(e => {
+            if (e && e.name && e.name === "NavigationDuplicated") {
+              this.$refs.corporationTable.fetchData(query);
+            }
+          });
       });
     },
     handlePageUpdate(page) {
@@ -113,12 +154,22 @@ export default {
     },
     handleExport() {
       const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
-      downloadFile(
-        `${
-          process.env.VUE_APP_BACKEND_HOST
-        }${EXPORT_CORPORATION_URL}/?${qs.stringify(this.$route.query)}`,
-        `Corporation Search Results ${datetime}.xlsx`
-      );
+      exportCorporationSearch(queryString)
+        .then(result => {
+          downloadFile(
+            result.data,
+            `Corporation Search Results ${datetime}.xlsx`
+          );
+        })
+        .catch(error => {
+          this.$root.$emit("openSnack", {
+            text: `${error.toString()} ${(error.response &&
+              error.response.data.message) ||
+              ""}`,
+            btnColor: "white",
+            timeout: 2000
+          });
+        });
     }
   },
   mounted() {
