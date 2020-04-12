@@ -6,6 +6,7 @@
       class="elevation-1 corp-party-table"
       :headers="headers"
       :items="results"
+      :fixed-header="true"
       :options.sync="options"
       :server-items-length="totalItems"
       :loading="loading"
@@ -63,7 +64,7 @@
           <td
             v-if="headers[i] && headers[i].value === 'corpNum'"
             class="d-table-cell"
-            @click.prevent.stop="handleCorpClick(item['corpNum'])"
+            @click.prevent.stop="handleCorpClick(item['corpNum'], $event)"
           >
             <div class="d-flex w-100 justify-space-between">
               <div class="color-black">
@@ -77,7 +78,7 @@
           <td
             v-else
             class="d-table-cell"
-            @click="handleCellClick(item['corpPartyId'])"
+            @click="handleCellClick(item['corpPartyId'], $event)"
           >
             <div class="d-flex w-100 justify-space-between">
               <div class="color-black">
@@ -91,8 +92,8 @@
         <!-- Mobile View End -->
 
         <tr
-          class="cursor-pointer d-none d-md-table-row"
-          @click="handleCellClick(item['corpPartyId'])"
+          class="cursor-pointer d-none d-md-table-row desktop-tr-rowz"
+          @click="handleCellClick(item['corpPartyId'], $event)"
         >
           <td class="color-gray">{{ item["corpPartyId"] }}</td>
           <td>{{ item["lastNme"] }}</td>
@@ -105,7 +106,7 @@
           <td>{{ item["cessationDt"] }}</td>
           <td v-if="type === 'active'">{{ item["stateTypCd"] }}</td>
           <td>{{ item["corpNme"] }}</td>
-          <td @click.prevent.stop="handleCorpClick(item['corpNum'])">
+          <td @click.prevent.stop="handleCorpClick(item['corpNum'], $event)">
             <span class="anchor-text cursor-pointer">{{
               item["corpNum"]
             }}</span>
@@ -241,10 +242,15 @@ export default {
         sortDesc: this.options.sortDesc
       });
     },
-    handleCorpClick(id) {
+    handleCorpClick(id, e) {
+      e.target.closest("tr").classList.add("row-clicked");
+      if (window.getSelection().toString()) {
+        return;
+      }
       window.open(`/corporation/${id}`);
     },
-    handleCellClick(id) {
+    handleCellClick(id, e) {
+      e.target.closest("tr").classList.add("row-clicked");
       if (window.getSelection().toString()) {
         return;
       }
@@ -373,5 +379,14 @@ export default {
 .mobile-tr-row,
 .mobile-tr-row td {
   border-bottom: 0 !important;
+}
+
+.row-clicked {
+  background-color: $COLOR_LAVENDER !important;
+}
+
+.corp-party-table th:first-of-type,
+.corp-party-table tr td:first-of-type {
+  padding-left: 3em;
 }
 </style>

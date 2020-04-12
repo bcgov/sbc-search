@@ -39,13 +39,12 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
-@jwt.requires_auth
+
 def corpparty_search():
     current_app.logger.info("Starting director search")
 
     account_id = request.headers.get("X-Account-Id", None)
-    if not authorized(jwt, account_id):
-        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+    
 
     current_app.logger.info("Authorization check finished; starting query {query}".format(query=request.url))
 
