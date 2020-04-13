@@ -1,0 +1,16 @@
+Businesses Resource
+
+/api/v1/businesses/?{query}&page={page}&sort_type={sort_type}&sort_value={sort_field_name}
+    GET
+    Description: Search for corporations by name or org number. sort_value can be any field except address.
+    Permissions: Must be authenticated
+
+/api/v1/businesses/export/?{query}&page={page}&sort_type={sort_type}&sort_value={sort_field_name}
+    GET
+    Description: Export corporation search results to Excel (.xlsx) based on query
+    Permissions: Must be authenticated
+
+/api/v1/businesses/{corporation_id}/
+    GET
+    Description: Get a corporation by id
+    Permissions: Must be authenticated

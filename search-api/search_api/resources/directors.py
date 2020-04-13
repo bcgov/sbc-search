@@ -1,16 +1,18 @@
 # Copyright © 2020 Province of British Columbia
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
+# distributed under the License is distributed on an 'AS IS' BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""API endpoints for searching for and retrieving information about directors (CorpParties)."""
 
 import datetime
 from http import HTTPStatus
@@ -21,15 +23,14 @@ from flask import Blueprint, current_app, request, jsonify, send_from_directory
 from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
-from search_api.constants import ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE, STATE_TYP_CD_ACT, STATE_TYP_CD_HIS
 from search_api.models.address import Address
 from search_api.models.corp_state import CorpState
 from search_api.models.corp_party import CorpParty
 from search_api.models.corp_name import CorpName
 from search_api.models.office import Office
 from search_api.utils.model_utils import (
-    _merge_addr_fields,
-    _is_addr_search
+    _get_corp_party_export_column_headers,
+    _get_corp_party_export_column_values
 )
 from search_api.utils.utils import convert_to_snake_case
 
@@ -39,14 +40,31 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
-
+@jwt.requires_auth
 def corpparty_search():
-    current_app.logger.info("Starting director search")
+    """Search for CorpParty entities.
 
-    account_id = request.headers.get("X-Account-Id", None)
-    
+    This function takes any number of field triples in the following format:
+    - field={field name}
+    - operator={'any' or 'all'}
+    - value={search keyword}
 
-    current_app.logger.info("Authorization check finished; starting query {query}".format(query=request.url))
+    To include Address or CorpOpState info in the search results, set the additional_cols
+    field to 'addr' or 'active', respectively.
+    - additional_cols={'none', 'addr', or 'active'}
+
+    In addition, the following arguments are provided:
+    - page={page number}
+    - sort_type={'asc' or 'dsc'}
+    - sort_value={field name to sort results by}
+    """
+    current_app.logger.info('Starting director search')
+
+    account_id = request.headers.get('X-Account-Id', None)
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+
+    current_app.logger.info('Authorization check finished; starting query {query}'.format(query=request.url))
 
     args = request.args
     fields = args.getlist('field')
@@ -54,10 +72,10 @@ def corpparty_search():
 
     results = CorpParty.search_corp_parties(args)
 
-    current_app.logger.info("Before query")
+    current_app.logger.info('Before query')
 
     # Pagination
-    page = int(args.get("page")) if "page" in args else 1
+    page = int(args.get('page')) if 'page' in args else 1
 
     per_page = 50
     # Manually paginate results, because flask-sqlalchemy's paginate() method counts the total,
@@ -70,7 +88,7 @@ def corpparty_search():
     # oracle_dialect = oracle.dialect(max_identifier_length=30)
     # raise Exception(results.statement.compile(dialect=oracle_dialect))
 
-    current_app.logger.info("After query")
+    current_app.logger.info('After query')
 
     corp_parties = []
     for row in results:
@@ -84,7 +102,7 @@ def corpparty_search():
 
         corp_parties.append(result_dict)
 
-    current_app.logger.info("Returning JSON results")
+    current_app.logger.info('Returning JSON results')
 
     return jsonify({'results': corp_parties})
 
@@ -92,73 +110,55 @@ def corpparty_search():
 @API.route('/export/')
 @jwt.requires_auth
 def corpparty_search_export():
-    account_id = request.headers.get("X-Account-Id", None)
+    """Export a list of CorpParty search results. Uses the same arguments as corpparty_search()."""
+    account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     # Query string arguments
     args = request.args
-    fields = args.getlist('field')
-    additional_cols = args.get('additional_cols')
 
     # Fetching results
     results = CorpParty.search_corp_parties(args)
 
     # Exporting to Excel
-    wb = Workbook()
+    workbook = Workbook()
 
-    export_dir = "/tmp"
+    export_dir = '/tmp'
     with NamedTemporaryFile(mode='w+b', dir=export_dir, delete=True):
 
-        sheet = wb.active
+        sheet = workbook.active
 
-        # Sheet headers (first row)
-        column_headers = [
-            "Filing #", "Surname", "First Name", "Middle Name",
-            "Office Held", "Appointed", "Ceased", "Company Name", "Inc/Reg #"]
-        if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-            column_headers.insert(4, "Address")
-            column_headers.insert(5, "Postal Code")
-        elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-            column_headers.insert(7, "Company Status")
-
-        for index, column_header in enumerate(column_headers, start=1):
+        for index, column_header in enumerate(
+                _get_corp_party_export_column_headers(args), start=1):
             _ = sheet.cell(column=index, row=1, value=column_header)
 
         for row_index, row in enumerate(results, start=2):
-            columns = [
-                row.corp_party_id, row.last_nme, row.first_nme, row.middle_nme, row.party_typ_cd,
-                row.appointment_dt, row.cessation_dt, row.corp_nme, row.corp_num]
-
-            if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-                columns.insert(4, _merge_addr_fields(row))
-                columns.insert(5, row.postal_cd)
-            elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-                columns.insert(7, _get_state_typ_cd_display_value(row.state_typ_cd))
-
-            for column_index, column_value in enumerate(columns, start=1):
+            for column_index, column_value in enumerate(
+                    _get_corp_party_export_column_values(row, args), start=1):
                 _ = sheet.cell(column=column_index, row=row_index, value=column_value)
 
-        current_date = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
-        filename = "Director Search Results {date}.xlsx".format(date=current_date)
-        full_filename_path = "{dir}/{filename}".format(dir=export_dir, filename=filename)
-        wb.save(filename=full_filename_path)
+        current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
+        filename = 'Director Search Results {date}.xlsx'.format(date=current_date)
+        workbook.save(filename='{dir}/{filename}'.format(dir=export_dir, filename=filename))
 
         return send_from_directory(export_dir, filename, as_attachment=True)
 
 
-@API.route('/<id>')
+@API.route('/<corp_party_id>')
+@jwt.requires_auth
+def get_corp_party_by_id(corp_party_id):
+    """Get a CorpParty by id."""
+    account_id = request.headers.get('X-Account-Id', None)
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
-def person(id):
-    account_id = request.headers.get("X-Account-Id", None)
-    
-
-    result = CorpParty.get_corporation_info_by_corp_party_id(id)
+    result = CorpParty.get_corporation_info_by_corp_party_id(corp_party_id)
 
     person = result[0]
     result_dict = {}
 
-    filing_description = CorpParty.get_filing_description_by_corp_party_id(id)
+    filing_description = CorpParty.get_filing_description_by_corp_party_id(corp_party_id)
 
     name = CorpName.get_corp_name_by_corp_id(person.corp_num)[0]
     offices = Office.get_offices_by_corp_id(person.corp_num)
@@ -194,10 +194,12 @@ def person(id):
 
 
 @API.route('/<corppartyid>/offices')
-
+@jwt.requires_auth
 def officesheld(corppartyid):
-    account_id = request.headers.get("X-Account-Id", None)
-
+    """Get OfficesHeld by a CorpParty entity."""
+    account_id = request.headers.get('X-Account-Id', None)
+    if not authorized(jwt, account_id):
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     results = CorpParty.get_offices_held_by_corp_party_id(corppartyid)
     offices = []
@@ -224,10 +226,3 @@ def officesheld(corppartyid):
             {**s[0].as_dict(), **{'year': int(s[1].year)}} for s in same_name_and_company if
             s[0].corp_party_id != int(corppartyid)],
     })
-
-
-def _get_state_typ_cd_display_value(state_typ_cd):
-    if state_typ_cd == STATE_TYP_CD_ACT:
-        return STATE_TYP_CD_ACT
-    else:
-        return STATE_TYP_CD_HIS

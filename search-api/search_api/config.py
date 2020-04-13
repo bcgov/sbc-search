@@ -79,16 +79,14 @@ class _Config:  # pylint: disable=too-few-public-methods
 
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
-    JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS', None)
+    JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS')
     JWT_OIDC_JWKS_URI = os.getenv('JWT_OIDC_JWKS_URI')
     JWT_OIDC_ISSUER = os.getenv('JWT_OIDC_ISSUER')
     JWT_OIDC_AUDIENCE = os.getenv('JWT_OIDC_AUDIENCE')
     JWT_OIDC_CLIENT_SECRET = os.getenv('JWT_OIDC_CLIENT_SECRET')
-    JWT_OIDC_CACHING_ENABLED = os.getenv('JWT_OIDC_CACHING_ENABLED', True)
+    JWT_OIDC_CACHING_ENABLED = os.getenv('JWT_OIDC_CACHING_ENABLED')
     try:
         JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT'))
-        if not JWT_OIDC_JWKS_CACHE_TIMEOUT:
-            JWT_OIDC_JWKS_CACHE_TIMEOUT = 300
     except (TypeError, ValueError):
         JWT_OIDC_JWKS_CACHE_TIMEOUT = 300
 
@@ -111,7 +109,7 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
     DEBUG = True
     TESTING = True
 
-    SQLALCHEMY_DATABASE_URI = "sqlite://"
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
     # JWT OIDC settings
     # JWT_OIDC_TEST_MODE will set jwt_manager to use

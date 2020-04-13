@@ -18,7 +18,6 @@ Test-Suite to ensure that the /entities endpoint is working as expected.
 """
 
 import json
-from unittest.mock import patch
 
 from tests.utilities.factory_utils import factory_auth_header
 from tests.utilities.factory_scenarios import TestJwtClaims
@@ -27,7 +26,10 @@ from search_api import status as http_status
 
 def _dir_search(client, jwt, session, params):
     """
-    @param params - str - ?field=lastNme&operator=exact&value=john&mode=ALL&page=1&sort_type=dsc&sort_value=lastNme&additional_cols=none
+    Director search helper function.
+
+    @param params - str - ?field=lastNme&operator=exact&value=john&mode=ALL&page=1&sort_type=dsc&
+    sort_value=lastNme&additional_cols=none
     """
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
@@ -40,7 +42,6 @@ def _dir_search(client, jwt, session, params):
 
 def test_search_directors_sort(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
-
     dictionary = _dir_search(
         client, jwt, session,
         '?field=firstNme&operator=contains&value=a&mode=ALL&page=1&sort_type=asc&'
@@ -49,9 +50,8 @@ def test_search_directors_sort(client, jwt, session):  # pylint:disable=unused-a
     assert dictionary['results'][0]['middleNme'] == 'Black'
 
 
-def test_search_directors_firstNme_exact(client, jwt, session):  # pylint:disable=unused-argument
+def test_search_directors_first_name_exact(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
-
     dictionary = _dir_search(
         client, jwt, session,
         '?field=firstNme&operator=exact&value=Lillian&mode=ALL&page=1&sort_type=asc&'
@@ -62,7 +62,6 @@ def test_search_directors_firstNme_exact(client, jwt, session):  # pylint:disabl
 
 def test_search_directors_addr(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
-
     dictionary = _dir_search(
         client, jwt, session,
         '?field=addr&operator=contains&value=131%20Rue%20North&mode=ALL&page=1&sort_type=dsc&'
@@ -71,9 +70,8 @@ def test_search_directors_addr(client, jwt, session):  # pylint:disable=unused-a
     assert 'lastNme' in dictionary['results'][0]
 
 
-def test_search_directors_anyNme(client, jwt, session):  # pylint:disable=unused-argument
+def test_search_directors_any_name(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
-
     dictionary = _dir_search(
         client, jwt, session,
         '?field=anyNme&operator=contains&value=black&mode=ALL&page=1&sort_type=dsc&'
@@ -83,7 +81,6 @@ def test_search_directors_anyNme(client, jwt, session):  # pylint:disable=unused
 
 def test_search_directors_any_postal_code(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
-
     # search for postal code with a space in the middle
     dictionary = _dir_search(
         client, jwt, session,
@@ -101,7 +98,6 @@ def test_search_directors_any_postal_code(client, jwt, session):  # pylint:disab
 
 def test_search_corporations(client, jwt, session):
     """Check the offices-held service."""
-
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
     rv = client.get('/api/v1/businesses/?query=1234567890&page=1&sort_type=dsc&sort_value=corpNme',
@@ -118,7 +114,6 @@ def test_search_corporations(client, jwt, session):
 
 def test_search_corporations_name(client, jwt, session):
     """Check the offices-held service."""
-
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
     rv = client.get('/api/v1/businesses/?query=pembina&page=1&sort_type=dsc&sort_value=corpNme',
@@ -135,7 +130,6 @@ def test_search_corporations_name(client, jwt, session):
 
 def test_get_director(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that a director can be retrieved via GET."""
-
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
     rv = client.get('/api/v1/directors/22',
                     headers=headers, content_type='application/json')
@@ -144,20 +138,20 @@ def test_get_director(client, jwt, session):  # pylint:disable=unused-argument
     dictionary = json.loads(rv.data)
     example = {
         'corpAdminEmail': None,
-        'corpDeliveryAddr': "PO Box 273, Beiseker, AB",
-        'corpMailingAddr': "PO Box 273, Beiseker, AB",
-        'corpNme': "Bank of Montreal",
-        'corpNum': "3756789012",
+        'corpDeliveryAddr': 'PO Box 273, Beiseker, AB',
+        'corpMailingAddr': 'PO Box 273, Beiseker, AB',
+        'corpNme': 'Bank of Montreal',
+        'corpNum': '3756789012',
         'corpPartyEmail': None,
         'corpPartyId': 22,
-        'corpTypCd': "A",
-        'deliveryAddr': "PO Box 273, Beiseker, AB",
-        'firstNme': "Iarslov",
-        'fullDesc': "Notice of Change of Address",
-        'lastNme': "Steele",
-        'mailingAddr': "PO Box 273, Beiseker, AB",
+        'corpTypCd': 'A',
+        'deliveryAddr': 'PO Box 273, Beiseker, AB',
+        'firstNme': 'Iarslov',
+        'fullDesc': 'Notice of Change of Address',
+        'lastNme': 'Steele',
+        'mailingAddr': 'PO Box 273, Beiseker, AB',
         'middleNme': None,
-        'partyTypCd': "DIR"}
+        'partyTypCd': 'DIR'}
 
     # The exact record above may differ depending on IDs, verify just the field names.
     for k, v in example.items():
@@ -166,7 +160,6 @@ def test_get_director(client, jwt, session):  # pylint:disable=unused-argument
 
 def test_get_director_officesheld(client, jwt, session):
     """Check the offices-held service."""
-
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
     rv = client.get('/api/v1/directors/22/offices',
@@ -183,7 +176,6 @@ def test_get_director_officesheld(client, jwt, session):
 
 def test_search_directors(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that directors can be searched via GET."""
-
     dictionary = _dir_search(
         client, jwt, session,
         '?field=firstNme&operator=contains&value=a&mode=ALL&page=1&sort_type=dsc&'
