@@ -1,11 +1,50 @@
 // This is to overrite vuetify sass variables on compile time.
 
 // Globals
-$body-font-family: "BCSans", "Verdana", "Arial", "sans-serif";
+$body-font-family: "BCSans", "Verdana", "Arial", "sans-serif" !important;
+$heading-font-family: "BCSans", "Verdana", "Arial", "sans-serif" !important;
 $material-light: (
     'table': (
       hover: #e3e7eb !important
     )
+);
+$headings: (
+  'h1': (
+    'font-family': $heading-font-family
+  ),
+  'h2': (
+    'font-family': $heading-font-family
+  ),
+  'h3': (
+    'font-family': $heading-font-family
+  ),
+  'h4': (
+    'font-family': $heading-font-family
+  ),
+  'h5': (
+    'font-family': $heading-font-family
+  ),
+  'h6': (
+    'font-family': $heading-font-family
+  ),
+  'subtitle-1': (
+    'font-family': $body-font-family
+  ),
+  'subtitle-2': (
+    'font-family': $body-font-family
+  ),
+  'body-2': (
+    'font-family': $body-font-family
+  ),
+  'body-1': (
+    'font-family': $body-font-family
+  ),
+  'caption': (
+    'font-family': $body-font-family
+  ),
+  'overline': (
+    'font-family': $body-font-family
+  )
 );
 @import '~vuetify/src/styles/settings/_variables.scss';
 
