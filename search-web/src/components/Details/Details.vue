@@ -12,7 +12,7 @@
           <h2
             :class="{
               'pl-0': $vuetify.breakpoint.xsOnly,
-              'display-1': $vuetify.breakpoint.smAndUp
+              title: $vuetify.breakpoint.smAndUp
             }"
           >
             <span class="font-weight-bold"
@@ -38,8 +38,9 @@
       </v-row>
       <v-row>
         <h2
+          class="subtitle-1"
           :class="{
-            title: $vuetify.breakpoint.smAndDown,
+            'subtitle-1': $vuetify.breakpoint.smAndDown,
             'font-weight-bold': $vuetify.breakpoint.smAndDown
           }"
         >
@@ -48,7 +49,7 @@
       </v-row>
       <v-row>
         <h2
-          class="pa-0 ma-0 mb-12 title font-weight-regular color-gray detail-filing-number"
+          class="pa-0 ma-0 mb-12 subtitle-1 font-weight-regular color-gray detail-filing-number"
         >
           Filing #{{ detail.corpPartyId }}
         </h2>
