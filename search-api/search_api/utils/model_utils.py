@@ -65,36 +65,6 @@ def _is_field_string(field_name):
 
 
 def _get_filter(field_name, operator, value):
-    operator, value = _handle_field_special_cases(field_name, operator, value)
-
-    model = _get_model_by_field(field_name)
-
-    # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
-    value = value.upper()
-    if model:
-        field = getattr(model, convert_to_snake_case(field_name))
-        # TODO: we should sanitize the values
-        if operator == 'contains':
-            return func.upper(field).ilike('%' + value + '%')
-        if operator == 'exact':
-            return func.upper(field) == value
-        if operator == 'endswith':
-            return func.upper(field).like('%' + value)
-        if operator == 'startswith':
-            return func.upper(field).like(value + '%')
-        if operator == 'wildcard':
-            # We support entering * or % as wildcards, but the actual wildcard is %
-            value = value.replace('*', '%')
-            return func.upper(field).like(value)
-        if operator == 'excludes':
-            return func.upper(field) != value
-
-        raise Exception('invalid operator: {}'.format(operator))
-
-    raise Exception('invalid field: {}'.format(field_name))
-
-
-def _handle_field_special_cases(field_name, operator, value):
     if field_name == 'anyNme':
         return (
             _get_filter('firstNme', operator, value) |
@@ -120,7 +90,35 @@ def _handle_field_special_cases(field_name, operator, value):
         value = value[0:3] + '%' + value[3:6]
         operator = 'contains'
 
-    return operator, value
+    model = _get_model_by_field(field_name)
+
+    # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
+    value = value.upper()
+    if model:
+        field = getattr(model, convert_to_snake_case(field_name))
+        return _generate_field_filter(field, operator, value)
+
+    raise Exception('invalid field: {}'.format(field_name))
+
+
+def _generate_field_filter(field, operator, value):
+    # TODO: we should sanitize the values
+    if operator == 'contains':
+        return func.upper(field).ilike('%' + value + '%')
+    if operator == 'exact':
+        return func.upper(field) == value
+    if operator == 'endswith':
+        return func.upper(field).like('%' + value)
+    if operator == 'startswith':
+        return func.upper(field).like(value + '%')
+    if operator == 'wildcard':
+        # We support entering * or % as wildcards, but the actual wildcard is %
+        value = value.replace('*', '%')
+        return func.upper(field).like(value)
+    if operator == 'excludes':
+        return func.upper(field) != value
+
+    raise Exception('invalid operator: {}'.format(operator))
 
 
 def _get_sort_field(field_name):
