@@ -79,23 +79,23 @@ ORDER BY upper(corp_party.last_nme)
 '''
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     '''
     Test performance of raw queries.
     '''
     from search_api import create_app
     import time
 
-    app = create_app("development")
+    app = create_app('development')
     with app.app_context():
 
         # Benchmark the raw, original COBRS sql for comparison
         sql = COBRS_SQL
-        sql = "\n".join([s for s in sql.split("\n") if "#" not in s])
+        sql = '\n'.join([s for s in sql.split('\n') if '#' not in s])
         t = time.time()
         rs = db.session.execute(sql)
-        print("query time", time.time() - t)
-        print("results", rs)
+        print('query time', time.time() - t)
+        print('results', rs)
 
         # print('wink', CorpParty.query.filter(func.utl_match.jaro_winkler_similarity(CorpParty.last_nme, 'JOHN') > 99).count())
 
@@ -105,14 +105,14 @@ if __name__ == "__main__":
 
             args = ImmutableMultiDict(
                 [
-                    ("field", "lastNme"),
-                    ("operator", "exact"),
-                    ("value", "john"),
-                    ("mode", "ALL"),
-                    ("page", "1"),
-                    ("sort_type", "dsc"),
-                    ("sort_value", "lastNme"),
-                    ("additional_cols", "none"),
+                    ('field', 'lastNme'),
+                    ('operator', 'exact'),
+                    ('value', 'john'),
+                    ('mode', 'ALL'),
+                    ('page', '1'),
+                    ('sort_type', 'dsc'),
+                    ('sort_value', 'lastNme'),
+                    ('additional_cols', 'none'),
                 ]
             )
             results = CorpParty.search_corp_parties(args).limit(50)
@@ -124,10 +124,10 @@ if __name__ == "__main__":
             raw_sql = str(results.statement.compile(dialect=oracle_dialect))
 
             # Inject parameters.
-            raw_sql = raw_sql.replace(":upper_1", "'JOHN'")
-            raw_sql = raw_sql.replace(":param_1", "50")
-            raw_sql = raw_sql.replace(":corp_name_typ_cd_2", "'NB'")
-            raw_sql = raw_sql.replace(":corp_name_typ_cd_1", "'CO'")
+            raw_sql = raw_sql.replace(':upper_1', "'JOHN'")
+            raw_sql = raw_sql.replace(':param_1', '50')
+            raw_sql = raw_sql.replace(':corp_name_typ_cd_2', "'NB'")
+            raw_sql = raw_sql.replace(':corp_name_typ_cd_1', "'CO'")
 
             # Check performance of ORM based query.
             t = time.time()
@@ -143,7 +143,7 @@ if __name__ == "__main__":
                     rows.append(row)
                 else:
                     break
-            print("orm query time:", time.time() - t)
+            print('orm query time:', time.time() - t)
 
             # Check the performance of the raw query which may differ from the ORM even at this point.
             t = time.time()
@@ -157,4 +157,4 @@ if __name__ == "__main__":
                     rows.append(row)
                 else:
                     break
-            print("raw query time", time.time() - t)
+            print('raw query time', time.time() - t)

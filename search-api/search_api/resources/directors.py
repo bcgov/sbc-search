@@ -36,10 +36,10 @@ from search_api.utils.model_utils import (
 from search_api.utils.utils import convert_to_snake_case
 
 logger = logging.getLogger(__name__)
-API = Blueprint("DIRECTORS_API", __name__, url_prefix="/api/v1/directors")
+API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
-@API.route("/")
+@API.route('/')
 @jwt.requires_auth
 def corpparty_search():
     '''Search for CorpParty entities.
@@ -58,31 +58,31 @@ def corpparty_search():
     - sort_type={'asc' or 'dsc'}
     - sort_value={field name to sort results by}
     '''
-    current_app.logger.info("Starting director search")
+    current_app.logger.info('Starting director search')
 
-    account_id = request.headers.get("X-Account-Id", None)
+    account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return (
-            jsonify({"message": "User is not authorized to access Director Search"}),
+            jsonify({'message': 'User is not authorized to access Director Search'}),
             HTTPStatus.UNAUTHORIZED,
         )
 
     current_app.logger.info(
-        "Authorization check finished; starting query {query}".format(query=request.url)
+        'Authorization check finished; starting query {query}'.format(query=request.url)
     )
 
     args = request.args
-    fields = args.getlist("field")
-    additional_cols = args.get("additional_cols")
+    fields = args.getlist('field')
+    additional_cols = args.get('additional_cols')
     try:
         results = CorpParty.search_corp_parties(args)
     except BadSearchValue as e:
-        return {"results": [], "error": "Invalid search: {}".format(str(e))}
+        return {'results': [], 'error': 'Invalid search: {}'.format(str(e))}
 
-    current_app.logger.info("Before query")
+    current_app.logger.info('Before query')
 
     # Pagination
-    page = int(args.get("page")) if "page" in args else 1
+    page = int(args.get('page')) if 'page' in args else 1
 
     per_page = 50
     # Manually paginate results, because flask-sqlalchemy's paginate() method counts the total,
@@ -95,25 +95,25 @@ def corpparty_search():
     # oracle_dialect = oracle.dialect(max_identifier_length=30)
     # raise Exception(results.statement.compile(dialect=oracle_dialect))
 
-    current_app.logger.info("After query")
+    current_app.logger.info('After query')
 
     corp_parties = []
     for row in results:
         result_fields = [
-            "corpPartyId",
-            "firstNme",
-            "middleNme",
-            "lastNme",
-            "appointmentDt",
-            "cessationDt",
-            "corpNum",
-            "corpNme",
-            "partyTypCd",
+            'corpPartyId',
+            'firstNme',
+            'middleNme',
+            'lastNme',
+            'appointmentDt',
+            'cessationDt',
+            'corpNum',
+            'corpNme',
+            'partyTypCd',
         ]
         result_dict = {
             key: getattr(row, convert_to_snake_case(key)) for key in result_fields
         }
-        result_dict["corpPartyId"] = int(result_dict["corpPartyId"])
+        result_dict['corpPartyId'] = int(result_dict['corpPartyId'])
 
         CorpParty.add_additional_cols_to_search_results(
             additional_cols, fields, row, result_dict
@@ -121,19 +121,19 @@ def corpparty_search():
 
         corp_parties.append(result_dict)
 
-    current_app.logger.info("Returning JSON results")
+    current_app.logger.info('Returning JSON results')
 
-    return jsonify({"results": corp_parties})
+    return jsonify({'results': corp_parties})
 
 
-@API.route("/export/")
+@API.route('/export/')
 @jwt.requires_auth
 def corpparty_search_export():
     '''Export a list of CorpParty search results. Uses the same arguments as corpparty_search().'''
-    account_id = request.headers.get("X-Account-Id", None)
+    account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return (
-            jsonify({"message": "User is not authorized to access Director Search"}),
+            jsonify({'message': 'User is not authorized to access Director Search'}),
             HTTPStatus.UNAUTHORIZED,
         )
 
@@ -146,8 +146,8 @@ def corpparty_search_export():
     # Exporting to Excel
     workbook = Workbook()
 
-    export_dir = "/tmp"
-    with NamedTemporaryFile(mode="w+b", dir=export_dir, delete=True):
+    export_dir = '/tmp'
+    with NamedTemporaryFile(mode='w+b', dir=export_dir, delete=True):
 
         sheet = workbook.active
 
@@ -163,24 +163,24 @@ def corpparty_search_export():
                 _ = sheet.cell(column=column_index, row=row_index, value=column_value)
 
         current_date = datetime.datetime.strftime(
-            datetime.datetime.now(), "%Y-%m-%d %H:%M:%S"
+            datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'
         )
-        filename = "Director Search Results {date}.xlsx".format(date=current_date)
+        filename = 'Director Search Results {date}.xlsx'.format(date=current_date)
         workbook.save(
-            filename="{dir}/{filename}".format(dir=export_dir, filename=filename)
+            filename='{dir}/{filename}'.format(dir=export_dir, filename=filename)
         )
 
         return send_from_directory(export_dir, filename, as_attachment=True)
 
 
-@API.route("/<corp_party_id>")
+@API.route('/<corp_party_id>')
 @jwt.requires_auth
 def get_corp_party_by_id(corp_party_id):
     '''Get a CorpParty by id.'''
-    account_id = request.headers.get("X-Account-Id", None)
+    account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return (
-            jsonify({"message": "User is not authorized to access Director Search"}),
+            jsonify({'message': 'User is not authorized to access Director Search'}),
             HTTPStatus.UNAUTHORIZED,
         )
 
@@ -200,46 +200,46 @@ def get_corp_party_by_id(corp_party_id):
 
     states = CorpState.get_corp_states_by_corp_id(person.corp_num)
 
-    corp_delivery_addr = ";".join(
+    corp_delivery_addr = ';'.join(
         [Address.normalize_addr(office.delivery_addr_id) for office in offices]
     )
-    corp_mailing_addr = ";".join(
+    corp_mailing_addr = ';'.join(
         [Address.normalize_addr(office.mailing_addr_id) for office in offices]
     )
 
-    result_dict["corpPartyId"] = int(person.corp_party_id)
-    result_dict["firstNme"] = person.first_nme
-    result_dict["middleNme"] = person.middle_nme
-    result_dict["lastNme"] = person.last_nme
-    result_dict["appointmentDt"] = person.appointment_dt
-    result_dict["cessationDt"] = person.cessation_dt
-    result_dict["corpNum"] = person.corp_num
-    result_dict["corpNme"] = name.corp_nme
-    result_dict["partyTypCd"] = person.party_typ_cd
-    result_dict["corpPartyEmail"] = person.email_address
-    result_dict["deliveryAddr"] = delivery_addr
-    result_dict["mailingAddr"] = mailing_addr
-    result_dict["corpDeliveryAddr"] = corp_delivery_addr
-    result_dict["corpMailingAddr"] = corp_mailing_addr
-    result_dict["corpTypCd"] = result.corp_typ_cd
-    result_dict["corpAdminEmail"] = result.admin_email
-    result_dict["fullDesc"] = (
+    result_dict['corpPartyId'] = int(person.corp_party_id)
+    result_dict['firstNme'] = person.first_nme
+    result_dict['middleNme'] = person.middle_nme
+    result_dict['lastNme'] = person.last_nme
+    result_dict['appointmentDt'] = person.appointment_dt
+    result_dict['cessationDt'] = person.cessation_dt
+    result_dict['corpNum'] = person.corp_num
+    result_dict['corpNme'] = name.corp_nme
+    result_dict['partyTypCd'] = person.party_typ_cd
+    result_dict['corpPartyEmail'] = person.email_address
+    result_dict['deliveryAddr'] = delivery_addr
+    result_dict['mailingAddr'] = mailing_addr
+    result_dict['corpDeliveryAddr'] = corp_delivery_addr
+    result_dict['corpMailingAddr'] = corp_mailing_addr
+    result_dict['corpTypCd'] = result.corp_typ_cd
+    result_dict['corpAdminEmail'] = result.admin_email
+    result_dict['fullDesc'] = (
         filing_description[0].full_desc if filing_description else None
     )
 
-    result_dict["states"] = [s.as_dict() for s in states]
+    result_dict['states'] = [s.as_dict() for s in states]
 
     return jsonify(result_dict)
 
 
-@API.route("/<corppartyid>/offices")
+@API.route('/<corppartyid>/offices')
 @jwt.requires_auth
 def officesheld(corppartyid):
     '''Get OfficesHeld by a CorpParty entity.'''
-    account_id = request.headers.get("X-Account-Id", None)
+    account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return (
-            jsonify({"message": "User is not authorized to access Director Search"}),
+            jsonify({'message': 'User is not authorized to access Director Search'}),
             HTTPStatus.UNAUTHORIZED,
         )
 
@@ -248,11 +248,11 @@ def officesheld(corppartyid):
     for row in results:
         result_dict = {}
 
-        result_dict["corpPartyId"] = int(row.corp_party_id)
-        result_dict["officerTypCd"] = row.officer_typ_cd
-        result_dict["shortDesc"] = row.short_desc
-        result_dict["appointmentDt"] = row.appointment_dt
-        result_dict["year"] = row.event_timestmp.year if row.event_timestmp else None
+        result_dict['corpPartyId'] = int(row.corp_party_id)
+        result_dict['officerTypCd'] = row.officer_typ_cd
+        result_dict['shortDesc'] = row.short_desc
+        result_dict['appointmentDt'] = row.appointment_dt
+        result_dict['year'] = row.event_timestmp.year if row.event_timestmp else None
 
         offices.append(result_dict)
 
@@ -261,14 +261,14 @@ def officesheld(corppartyid):
 
     return jsonify(
         {
-            "offices": offices,
-            "sameAddr": [
-                {**s[0].as_dict(), **{"year": int(s[1].year)}}
+            'offices': offices,
+            'sameAddr': [
+                {**s[0].as_dict(), **{'year': int(s[1].year)}}
                 for s in same_addr
                 if s[0].corp_party_id != int(corppartyid)
             ],
-            "sameNameAndCompany": [
-                {**s[0].as_dict(), **{"year": int(s[1].year)}}
+            'sameNameAndCompany': [
+                {**s[0].as_dict(), **{'year': int(s[1].year)}}
                 for s in same_name_and_company
                 if s[0].corp_party_id != int(corppartyid)
             ],

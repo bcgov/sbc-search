@@ -68,7 +68,7 @@ class CorpParty(BaseModel):
     reason_typ_cd             VARCHAR2    3      0
     '''
 
-    __tablename__ = "corp_party"
+    __tablename__ = 'corp_party'
 
     corp_party_id = db.Column(db.Integer, primary_key=True)
     mailing_addr_id = db.Column(db.Integer)
@@ -94,7 +94,7 @@ class CorpParty(BaseModel):
 
     def __repr__(self):
         '''Return string representation of a CorpParty entity.'''
-        return "corp num: {}".format(self.corp_party_id)
+        return 'corp num: {}'.format(self.corp_party_id)
 
     @staticmethod
     def get_corp_party_by_id(corp_party_id):
@@ -218,14 +218,14 @@ class CorpParty(BaseModel):
         For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
         curl "http://localhost/api/v1/directors/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"  # noqa
         '''
-        fields = args.getlist("field")
-        operators = args.getlist("operator")
-        values = args.getlist("value")
+        fields = args.getlist('field')
+        operators = args.getlist('operator')
+        values = args.getlist('value')
 
         # Only triples of clauses are allowed. So, the same number of fields, ops and values.
         if len(fields) != len(operators) or len(operators) != len(values):
             raise Exception(
-                "mismatched query param lengths: fields:{} operators:{} values:{}".format(
+                'mismatched query param lengths: fields:{} operators:{} values:{}'.format(
                     len(fields), len(operators), len(values)
                 )
             )
@@ -242,13 +242,13 @@ class CorpParty(BaseModel):
             Corporation,
         )  # pylint: disable=import-outside-toplevel, cyclic-import
 
-        fields = args.getlist("field")
-        operators = args.getlist("operator")
-        values = args.getlist("value")
-        mode = args.get("mode")
-        sort_type = args.get("sort_type")
-        sort_value = args.get("sort_value")
-        additional_cols = args.get("additional_cols")
+        fields = args.getlist('field')
+        operators = args.getlist('operator')
+        values = args.getlist('value')
+        mode = args.get('mode')
+        sort_type = args.get('sort_type')
+        sort_value = args.get('sort_value')
+        additional_cols = args.get('additional_cols')
 
         # Zip the lists, so ('last_nme', 'first_nme') , ('contains', 'exact'), ('Sky', 'Apple') =>
         #  (('last_nme', 'contains', 'Sky'), ('first_nme', 'exact', 'Apple'))
@@ -277,7 +277,7 @@ class CorpParty(BaseModel):
             CorpState.end_event_id == None,  # pylint: disable=singleton-comparison
             CorpName.end_event_id == None,  # pylint: disable=singleton-comparison
             # CorpName should be "Corporation" or "Number BC Company"
-            CorpName.corp_name_typ_cd.in_(("CO", "NB")),
+            CorpName.corp_name_typ_cd.in_(('CO', 'NB')),
         )
 
         results = CorpParty.add_additional_cols_to_search_query(
@@ -285,7 +285,7 @@ class CorpParty(BaseModel):
         )
 
         # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
-        if mode == "ALL":
+        if mode == 'ALL':
 
             def filter_reducer(accumulator, filter_value):
                 return accumulator & _get_filter(*filter_value)
@@ -342,8 +342,7 @@ class CorpParty(BaseModel):
     ):
         '''Add Address or CorpOpState columns to search results based on the additional columns toggle.'''
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-            result_dict["addr"] = _merge_addr_fields(row)
-            result_dict["postalCd"] = row.postal_cd
+            result_dict['addr'] = _merge_addr_fields(row)
+            result_dict['postalCd'] = row.postal_cd
         elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-            result_dict["stateTypCd"] = row.state_typ_cd
-
+            result_dict['stateTypCd'] = row.state_typ_cd
