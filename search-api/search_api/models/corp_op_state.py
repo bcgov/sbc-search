@@ -11,20 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This model manages a CorpOpState entity."""
+'''This model manages a CorpOpState entity.'''
 
 from search_api.models.base import BaseModel, db
 
 
 class CorpOpState(BaseModel):
-    """
+    '''
     A lookup table of states a corporation can be in.
 
     state_typ_cd       CHAR        3     31
     op_state_typ_cd    CHAR        3     31
     short_desc         VARCHAR2    15    31
     full_desc          VARCHAR2    40    31
-    """
+    '''
 
     # pylint: disable=too-few-public-methods
 

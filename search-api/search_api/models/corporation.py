@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This model manages a Corporation entity."""
+'''This model manages a Corporation entity.'''
 
 from sqlalchemy import func
 
@@ -25,7 +25,7 @@ from search_api.utils.model_utils import _sort_by_field
 
 
 class Corporation(BaseModel):
-    """Corporation entity. Corresponds to the 'corporation' table.
+    '''Corporation entity. Corresponds to the 'corporation' table.
 
     corp_num                       VARCHAR2    10     2206759
     corp_frozen_typ_cd             CHAR        1      819
@@ -51,7 +51,7 @@ class Corporation(BaseModel):
     ar_reminder_date               VARCHAR2    20     67640
     TEMP_PASSWORD                  VARCHAR2    300    3582
     TEMP_PASSWORD_EXPIRY_DATE      DATE        7      3582
-    """
+    '''
 
     __tablename__ = 'corporation'
 
@@ -77,12 +77,12 @@ class Corporation(BaseModel):
     ar_reminder_date = db.Column(db.String(20))
 
     def __repr__(self):
-        """Return string representation of a Corporation entity."""
+        '''Return string representation of a Corporation entity.'''
         return 'corp num: {}'.format(self.corp_num)
 
     @staticmethod
     def get_corporation_by_id(corp_id):
-        """Get a corporation by id."""
+        '''Get a corporation by id.'''
         return (
             Corporation.query
             .add_columns(
@@ -94,7 +94,7 @@ class Corporation(BaseModel):
 
     @staticmethod
     def search_corporations(args):
-        """Search for Corporations by query (search keyword or corpNum) and sort results."""
+        '''Search for Corporations by query (search keyword or corpNum) and sort results.'''
         query = args.get('query')
 
         sort_type = args.get('sort_type')
@@ -108,7 +108,7 @@ class Corporation(BaseModel):
 
     @staticmethod
     def query_corporations(query, sort_type, sort_value):
-        """Construct Corporation search db query."""
+        '''Construct Corporation search db query.'''
         # local import to prevent circular import
         from search_api.models.corp_party import CorpParty  # pylint: disable=import-outside-toplevel, cyclic-import
 

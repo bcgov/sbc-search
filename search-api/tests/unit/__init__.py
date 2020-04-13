@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""The Unit Test for the API.
+'''The Unit Test for the API.
 
 For our purposes this server and its Postgres Database are part of the Unit Test Suite.
-"""
+'''

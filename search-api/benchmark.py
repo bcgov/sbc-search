@@ -5,7 +5,7 @@ from sqlalchemy import func
 import sys
 
 # Compare original COBRS system performance.
-COBRS_SQL = """SELECT
+COBRS_SQL = '''SELECT
        UPPER(LAST_NME)
       ,UPPER(FIRST_NME)
       ,P.CORP_NUM
@@ -32,10 +32,10 @@ WHERE UPPER(LAST_NME) LIKE 'JOHN'
     AND ROWNUM <= 11165
 ORDER BY UPPER(LAST_NME)
 #, UPPER(FIRST_NME), STATUS,CORP_CLASS,CORP_NUM DESC
-"""
+'''
 
 # Director search sql example.
-DS_OPT = """
+DS_OPT = '''
 SELECT
     corp_party.corp_party_id,
        corp_party.mailing_addr_id,
@@ -76,13 +76,13 @@ WHERE upper(corp_party.last_nme) LIKE 'JOHN'
     and corp_name.end_event_id is null
     #AND ROWNUM <= 50
 ORDER BY upper(corp_party.last_nme)
-"""
+'''
 
 
 if __name__ == "__main__":
-    """
+    '''
     Test performance of raw queries.
-    """
+    '''
     from search_api import create_app
     import time
 

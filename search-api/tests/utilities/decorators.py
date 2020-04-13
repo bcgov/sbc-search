@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""decorators used to skip/run pytests based on local setup."""
+'''decorators used to skip/run pytests based on local setup.'''
 import os
 
 import pytest

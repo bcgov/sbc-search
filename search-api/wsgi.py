@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Provides the WSGI entry point for running the application
-"""
+'''Provides the WSGI entry point for running the application
+'''
 from search_api import create_app
 
 # Openshift s2i expects a lower case name of application

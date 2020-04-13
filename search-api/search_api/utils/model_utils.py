@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This module holds utility functions related to model fields and serialization."""
+'''This module holds utility functions related to model fields and serialization.'''
 
 from sqlalchemy import func
 
@@ -65,9 +65,9 @@ def _is_field_string(field_name):
 
 
 def _get_filter(field_name, operator, value):
-    """
+    '''
     Generate a SQL search expression given a filter specified by the user.
-    """
+    '''
     if field_name == 'anyNme':
         return (
             _get_filter('firstNme', operator, value) |

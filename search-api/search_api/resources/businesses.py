@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""API endpoints for searching for and retrieving information about Corporations."""
+'''API endpoints for searching for and retrieving information about Corporations.'''
 
 import datetime
 from http import HTTPStatus
@@ -38,12 +38,12 @@ API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 @API.route('/')
 @jwt.requires_auth
 def corporation_search():
-    """Search for Corporations by keyword or corpNum.
+    '''Search for Corporations by keyword or corpNum.
 
     This function takes the following query arguments:
     - query={search keyword}
     - page={page number}
-    """
+    '''
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
@@ -72,10 +72,10 @@ def corporation_search():
 @API.route('/export/')
 @jwt.requires_auth
 def corporation_search_export():
-    """Export a set of Corporation search results to Excel (.xlsx).
+    '''Export a set of Corporation search results to Excel (.xlsx).
 
     Uses the same parameters as corporation_search().
-    """
+    '''
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
@@ -130,7 +130,7 @@ def corporation_search_export():
 @API.route('/<corp_id>')
 @jwt.requires_auth
 def corporation(corp_id):
-    """Get a single Corporation by corpNum."""
+    '''Get a single Corporation by corpNum.'''
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED

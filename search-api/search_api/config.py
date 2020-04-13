@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""All of the configuration for the service is captured here.
+'''All of the configuration for the service is captured here.
 
 All items are loaded, or have Constants defined here that
 are loaded into the Flask configuration.
 All modules and lookups get their configuration from the
 Flask config, rather than reading environment variables directly
 or by accessing this configuration directly.
-"""
+'''
 
 import os
 import sys
@@ -38,10 +38,10 @@ CONFIGURATION = {
 
 
 def get_named_config(config_name: str = "production"):
-    """Return the configuration object based on the name.
+    '''Return the configuration object based on the name.
 
     :raise: KeyError: if an unknown configuration is requested
-    """
+    '''
     if config_name in ["production", "staging", "default"]:
         config = ProdConfig()
     elif config_name == "testing":
@@ -54,7 +54,7 @@ def get_named_config(config_name: str = "production"):
 
 
 class _Config:  # pylint: disable=too-few-public-methods
-    """Base class configuration that should set reasonable defaults for all the other configurations."""
+    '''Base class configuration that should set reasonable defaults for all the other configurations.'''
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -100,14 +100,14 @@ class _Config:  # pylint: disable=too-few-public-methods
 
 
 class DevConfig(_Config):  # pylint: disable=too-few-public-methods
-    """Creates the Development Config object."""
+    '''Creates the Development Config object.'''
 
     TESTING = False
     DEBUG = True
 
 
 class TestConfig(_Config):  # pylint: disable=too-few-public-methods
-    """In support of testing only used by the py.test suite."""
+    '''In support of testing only used by the py.test suite.'''
 
     DEBUG = True
     TESTING = True
@@ -154,7 +154,7 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
         ]
     }
 
-    JWT_OIDC_TEST_PRIVATE_KEY_PEM = """
+    JWT_OIDC_TEST_PRIVATE_KEY_PEM = '''
 -----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQDfn1nKQshOSj8xw44oC2klFWSNLmK3BnHONCJ1bZfq0EQ5gIfg
 tlvB+Px8Ya+VS3OnK7Cdi4iU1fxO9ktN6c6TjmmmFevk8wIwqLthmCSF3r+3+h4e
@@ -169,11 +169,11 @@ AePMUImAp3woFoNDRfWtlNktOqLel5PjewJBAN9kBoA5o6/Rl9zeqdsIdWFmv4DB
 W0mOp436T6ZaELBfbFNulNLOzLLi5YzNRPLppfG1SRNZjbIrvTIKVL4N/YxLvQbT
 NrQw+2OdQACBJiEHsdZzAkBcsTk7frTH4yGx0VfHxXDPjfTj4wmD6gZIlcIr9lZg
 4H8UZcVFN95vEKxJiLRjAmj6g273pu9kK4ymXNEjWWJn
------END RSA PRIVATE KEY-----"""
+-----END RSA PRIVATE KEY-----'''
 
 
 class ProdConfig(_Config):  # pylint: disable=too-few-public-methods
-    """Production environment configuration."""
+    '''Production environment configuration.'''
 
     SECRET_KEY = os.getenv("SECRET_KEY", None)
 
