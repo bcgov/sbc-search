@@ -145,7 +145,7 @@ def corpparty_search_export():
         return send_from_directory(export_dir, filename, as_attachment=True)
 
 
-@API.route('/<id>')
+@API.route('/<corp_party_id>')
 @jwt.requires_auth
 def get_corp_party_by_id(corp_party_id):
     """Get a CorpParty by id."""

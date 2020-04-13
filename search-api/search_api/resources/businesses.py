@@ -127,7 +127,7 @@ def corporation_search_export():
         return send_from_directory(export_dir, filename, as_attachment=True)
 
 
-@API.route('/<id>')
+@API.route('/<corp_id>')
 @jwt.requires_auth
 def corporation(corp_id):
     """Get a single Corporation by corpNum."""
