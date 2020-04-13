@@ -142,11 +142,10 @@ def corpparty_search_export():
 
 
 @API.route('/<id>')
-@jwt.requires_auth
+
 def person(id):
     account_id = request.headers.get("X-Account-Id", None)
-    if not authorized(jwt, account_id):
-        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+    
 
     result = CorpParty.get_corporation_info_by_corp_party_id(id)
 
@@ -189,11 +188,10 @@ def person(id):
 
 
 @API.route('/<corppartyid>/offices')
-@jwt.requires_auth
+
 def officesheld(corppartyid):
     account_id = request.headers.get("X-Account-Id", None)
-    if not authorized(jwt, account_id):
-        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+
 
     results = CorpParty.get_offices_held_by_corp_party_id(corppartyid)
     offices = []
