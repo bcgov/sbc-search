@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         working-directory: ./search-api
         run: |
-          docker-compose build
+          docker-compose build search-api
       - name: Start docker with docker-compose
         working-directory: ./search-api
         run: |
