@@ -43,10 +43,10 @@ def test_search_directors_sort(client, jwt, session):  # pylint:disable=unused-a
 
     dictionary = _dir_search(
         client, jwt, session,
-        '?field=firstNme&operator=contains&value=a&mode=ALL&page=1&sort_type=asc&'
+        '?field=firstNme&operator=contains&value=ad&mode=ALL&page=1&sort_type=asc&'
         'sort_value=middleNme&additional_cols=none')
-    assert len(dictionary['results']) == 24
-    assert dictionary['results'][0]['middleNme'] == 'Black'
+    assert len(dictionary['results']) == 3
+    assert dictionary['results'][0]['middleNme'] == 'Lewis'
 
 
 def test_search_directors_firstNme_exact(client, jwt, session):  # pylint:disable=unused-argument
@@ -186,9 +186,9 @@ def test_search_directors(client, jwt, session):  # pylint:disable=unused-argume
 
     dictionary = _dir_search(
         client, jwt, session,
-        '?field=firstNme&operator=contains&value=a&mode=ALL&page=1&sort_type=dsc&'
+        '?field=firstNme&operator=contains&value=ad&mode=ALL&page=1&sort_type=dsc&'
         'sort_value=lastNme&&additional_cols=addr')
-    assert len(dictionary['results']) == 24
+    assert len(dictionary['results']) == 3
 
     example = {
         'addr': 'PO Box 273', 'appointmentDt': 'Sun, 20 Oct 2019 00:00:00 GMT',

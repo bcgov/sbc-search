@@ -29,10 +29,10 @@ from search_api.models.corp_name import CorpName
 from search_api.models.office import Office
 from search_api.utils.model_utils import (
     _merge_addr_fields,
-    _is_addr_search
+    _is_addr_search,
+    BadSearchValue
 )
 from search_api.utils.utils import convert_to_snake_case
-
 
 logger = logging.getLogger(__name__)
 API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
@@ -45,14 +45,18 @@ def corpparty_search():
 
     account_id = request.headers.get("X-Account-Id", None)
     
-
     current_app.logger.info("Authorization check finished; starting query {query}".format(query=request.url))
 
     args = request.args
     fields = args.getlist('field')
     additional_cols = args.get('additional_cols')
-
-    results = CorpParty.search_corp_parties(args)
+    try:
+        results = CorpParty.search_corp_parties(args)
+    except BadSearchValue as e:
+        return {
+            'results': [],
+            'error': 'Invalid search: {}'.format(str(e))
+        }
 
     current_app.logger.info("Before query")
 

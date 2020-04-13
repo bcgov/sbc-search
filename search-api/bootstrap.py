@@ -27,6 +27,7 @@ from search_api.models.offices_held import OfficesHeld
 from search_api.models.event import Event
 from search_api.models.filing import Filing
 from search_api.models.filing_type import FilingType
+from search_api.models.nickname import NickName
 
 
 def reset():
@@ -137,7 +138,7 @@ CORP_PARTY_NAMES = [
     "Gregory Black Marsh",
     "Alanna Frederick",
     "Jane Shepard",
-    "Bernard Dunlap",
+    "Lily Dunlap",
     "Skye Little",
     "Aleena Reeves",
     "Johanna Burton",
@@ -193,7 +194,27 @@ ADDRESSES = [
     "4-310 6 Ave S , Creston, BC, V0B 1G3",
 ]
 
+NICKNAMES = [
+    {
+        'name_id': 1,
+        'name': 'LILLIAN'
+    }, {
+        'name_id': 1,
+        'name': 'LILY'
+    }, {
+        'name_id': 1,
+        'name': 'LILI'
+    },{
+        'name_id': 2,
+        'name': 'GEORGE'
+    }
+]
+
 def populate():
+
+    for nn in NICKNAMES:
+        db.session.add(NickName(**nn))
+
     office_type1 = OfficeType(
         office_typ_cd='BC',
         short_desc='BC',

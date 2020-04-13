@@ -61,7 +61,9 @@ def _is_field_string(field_name):
 
 
 def _get_filter(field, operator, value):
-
+    """
+    Generate a SQL search expression given a filter specified by the user.
+    """
     if field == 'anyNme':
         return (
             _get_filter('firstNme', operator, value) |
@@ -91,6 +93,10 @@ def _get_filter(field, operator, value):
 
     # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
     value = value.upper()
+
+    if len(value) < 2:
+        raise BadSearchValue('Search value must be at least 2 letters long.')
+
     if model:
         Field = getattr(model, convert_to_snake_case(field))
         # TODO: we should sanitize the values
@@ -108,10 +114,29 @@ def _get_filter(field, operator, value):
             return func.upper(Field).like(value)
         elif operator == 'excludes':
             return func.upper(Field) != value
+        # TODO: this is a relatively expensive op, we should enforce it's only used in combination with other queries.
+        # TODO: we should consider sorting by similarity (sum of any filters using it) by default, if the user chooses any similarity filter.
+        elif operator == 'similar':
+            return func.utl_match.jaro_winkler_similarity(Field, value) > 95
+        elif operator == 'nicknames':
+            return _get_nickname_search_expr(value)
         else:
             raise Exception('invalid operator: {}'.format(operator))
     else:
         raise Exception('invalid field: {}'.format(field))
+
+
+def _get_nickname_search_expr(value):
+    aliases = db.session.query(
+        NickName.name
+    ).filter(
+        NickName.name_id == db.session.query(
+            NickName.name_id
+        ).filter(NickName.name == 'WILLIAM')
+    )
+    
+    alias_list = list(a[0] for a in aliases)
+    return func.upper(CorpParty.first_nme).in_(alias_list)
 
 
 def _get_sort_field(field_name):
@@ -143,3 +168,6 @@ def _format_office_typ_cd(office_typ_cd):
         return "Registered"
     elif office_typ_cd == "RC":
         return "Records"
+
+class BadSearchValue(Exception):
+    pass

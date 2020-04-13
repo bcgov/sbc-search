@@ -28,7 +28,7 @@ from search_api.models.filing import Filing
 from search_api.models.filing_type import FilingType
 from search_api.models.offices_held import OfficesHeld
 from search_api.models.officer_type import OfficerType
-from search_api.utils.model_utils import _get_filter, _sort_by_field, _is_addr_search, _merge_addr_fields
+from search_api.utils.model_utils import _get_filter, _sort_by_field, _is_addr_search, _merge_addr_fields, BadSearchValue
 
 
 logger = logging.getLogger(__name__)
@@ -259,11 +259,13 @@ class CorpParty(BaseModel):
 
         # We use reduce here to join all the items in clauses with the & operator or the | operator.
         # Similar to if we did "|".join(clause), but calling the boolean operator instead.
+
         filter_grp = reduce(
             fn,
             clauses[1:],
             _get_filter(*clauses[0])
         )
+
         results = results.filter(filter_grp)
 
         # Sorting
