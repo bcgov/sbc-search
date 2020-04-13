@@ -196,8 +196,6 @@ class CorpParty(BaseModel):
         curl "http://localhost/api/v1/directors/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"  # noqa
         """
 
-        query = args.get("query")
-
         fields = args.getlist('field')
         operators = args.getlist('operator')
         values = args.getlist('value')
@@ -205,9 +203,6 @@ class CorpParty(BaseModel):
         sort_type = args.get('sort_type')
         sort_value = args.get('sort_value')
         additional_cols = args.get('additional_cols')
-
-        if query and len(fields) > 0:
-            raise Exception("use simple query or advanced. don't mix")
 
         # Only triples of clauses are allowed. So, the same number of fields, ops and values.
         if len(fields) != len(operators) or len(operators) != len(values):
@@ -234,7 +229,7 @@ class CorpParty(BaseModel):
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
             .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
             .outerjoin(CorpName, Corporation.corp_num == CorpName.corp_num)
-            .add_columns(
+            .with_entities(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
                 CorpParty.middle_nme,
@@ -273,7 +268,7 @@ class CorpParty(BaseModel):
 
         # Sorting
         if sort_type is None:
-            results = results.order_by(func.lower(CorpParty.last_nme), CorpParty.corp_num)
+            results = results.order_by(func.upper(CorpParty.last_nme), CorpParty.corp_num)
         else:
             sort_field_str = _sort_by_field(sort_type, sort_value)
             results = results.order_by(eval(sort_field_str))
@@ -283,7 +278,7 @@ class CorpParty(BaseModel):
     @staticmethod
     def add_additional_cols_to_search_query(additional_cols, fields, query):
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-            query = query.join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+            query = query.outerjoin(Address, CorpParty.mailing_addr_id == Address.addr_id)
             query = query.add_columns(
                 Address.addr_line_1,
                 Address.addr_line_2,

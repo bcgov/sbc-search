@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from dotenv import load_dotenv
 import logging
 import os
 
@@ -28,9 +27,6 @@ from search_api.auth import jwt
 from search_api.resources import DIRECTORS_API, BUSINESSES_API
 from search_api.models.base import db
 from search_api.utils.util_logging import setup_logging
-
-
-load_dotenv(verbose=True)
 
 
 setup_logging(os.path.join(config._Config.PROJECT_ROOT, 'logging.conf'))  # important to do this first

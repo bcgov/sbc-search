@@ -51,6 +51,7 @@ def corpparty_search():
     args = request.args
     fields = args.getlist('field')
     additional_cols = args.get('additional_cols')
+
     results = CorpParty.search_corp_parties(args)
 
     current_app.logger.info("Before query")
@@ -62,7 +63,12 @@ def corpparty_search():
     # Manually paginate results, because flask-sqlalchemy's paginate() method counts the total,
     # which is slow for large tables. This has been addressed in flask-sqlalchemy but is unreleased.
     # Ref: https://github.com/pallets/flask-sqlalchemy/pull/613
-    results = results.limit(per_page).offset((page - 1) * per_page).all()
+    results = results.limit(per_page).offset((page - 1) * per_page)
+
+    # for benchmarking, dump the query here and copy to benchmark.py
+    # from sqlalchemy.dialects import oracle
+    # oracle_dialect = oracle.dialect(max_identifier_length=30)
+    # raise Exception(results.statement.compile(dialect=oracle_dialect))
 
     current_app.logger.info("After query")
 

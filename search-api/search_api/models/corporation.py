@@ -129,11 +129,16 @@ class Corporation(BaseModel):
         results = results.filter(
             (Corporation.corp_num == query) |
             (CorpName.corp_nme.ilike('%' + query + '%'))
+        ).filter(
+            CorpName.corp_name_typ_cd.in_(("CO", "NB")),
+            CorpState.end_event_id == None,
+            CorpName.end_event_id == None,
         )
 
         # Sorting
         if sort_type is None:
-            results = results.order_by(func.lower(Corporation.corp_nme))
+            # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
+            results = results.order_by(func.upper(CorpName.corp_nme))
         else:
             sort_field_str = _sort_by_field(sort_type, sort_value)
             results = results.order_by(eval(sort_field_str))
