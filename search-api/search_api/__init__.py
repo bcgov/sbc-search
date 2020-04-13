@@ -31,7 +31,6 @@ from search_api.utils.util_logging import setup_logging
 
 load_dotenv(verbose=True)
 
-
 setup_logging(os.path.join(_Config.PROJECT_ROOT, 'logging.conf'))  # important to do this first
 
 

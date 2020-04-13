@@ -244,7 +244,7 @@ class CorpParty(BaseModel):
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
             .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
             .outerjoin(CorpName, Corporation.corp_num == CorpName.corp_num)
-            .add_columns(
+            .with_entities(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
                 CorpParty.middle_nme,
@@ -283,7 +283,7 @@ class CorpParty(BaseModel):
 
         # Sorting
         if sort_type is None:
-            results = results.order_by(func.lower(CorpParty.last_nme), CorpParty.corp_num)
+            results = results.order_by(func.upper(CorpParty.last_nme), CorpParty.corp_num)
         else:
             sort_field_str = _sort_by_field(sort_type, sort_value)
             results = results.order_by(eval(sort_field_str))  # pylint: disable=eval-used
@@ -294,7 +294,7 @@ class CorpParty(BaseModel):
     def add_additional_cols_to_search_query(additional_cols, fields, query):
         """Add Address or CorpOpState columns to query based on the additional columns toggle."""
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-            query = query.join(Address, CorpParty.mailing_addr_id == Address.addr_id)
+            query = query.outerjoin(Address, CorpParty.mailing_addr_id == Address.addr_id)
             query = query.add_columns(
                 Address.addr_line_1,
                 Address.addr_line_2,

@@ -2,7 +2,6 @@
   <SbcSignin
     :idp-hint="idpHint"
     :redirect-url-login-fail="redirectUrlLoginFail"
-    @keycloak-session-ready="updateHeader()"
     @sync-user-profile-ready="syncUserProfile()"
   ></SbcSignin>
 </template>
@@ -33,7 +32,7 @@ export default {
     }
   },
   methods: {
-    async updateHeader() {
+    async syncUserProfile() {
       const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
       if (KEYCLOACK_TOKEN) {
         ApiService.defaults.headers.common[
@@ -42,11 +41,12 @@ export default {
         await tokenService.init();
         tokenService.scheduleRefreshTimer();
       }
+      const query = Object.assign({}, this.$route.query);
       this.$router.push({
-        name: "corpPartySearch"
+        name: "corpPartySearch",
+        query
       });
-    },
-    syncUserProfile() {}
+    }
   }
 };
 </script>

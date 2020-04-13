@@ -95,6 +95,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const query = Object.assign({}, to.query);
   const { title } = to.meta;
   document.title = typeof title === "function" ? title(to) : title;
   const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
@@ -106,7 +107,8 @@ router.beforeEach((to, from, next) => {
     delete ApiService.defaults.headers.common["Authorization"];
     delete ApiService.defaults.headers.common["X-Account-Id"];
     next({
-      path: "/signin/bcros"
+      path: "/signin/bcros",
+      query
     });
   } else {
     ApiService.defaults.headers.common[

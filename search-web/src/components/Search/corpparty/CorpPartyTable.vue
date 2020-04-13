@@ -6,6 +6,7 @@
       class="elevation-1 corp-party-table"
       :headers="headers"
       :items="results"
+      :fixed-header="true"
       :options.sync="options"
       :server-items-length="totalItems"
       :loading="loading"
@@ -18,6 +19,41 @@
         'items-per-page-options': [50]
       }"
     >
+      <template v-slot:top="{ pagination }">
+        <div>
+          <div v-if="loading || items.length === 0"></div>
+          <div
+            v-else
+            class="w-100 custom-footer d-flex justify-end align-center caption "
+          >
+            <div class="letter-spacing-none">
+              Showing {{ pagination.itemsLength }} results
+            </div>
+            <div class="d-flex ml-5 mr-9 align-center">
+              <v-btn v-if="page > '1' && !loading" icon @click="pagePrev" small>
+                <v-icon>arrow_back</v-icon>
+              </v-btn>
+              <v-btn v-else disabled icon small>
+                <v-icon>arrow_back</v-icon>
+              </v-btn>
+              <div class="d-inline-block mr-3 ml-3 letter-spacing-none">
+                Page {{ page }}
+              </div>
+              <v-btn
+                icon
+                v-if="results.length > 49 && !loading"
+                @click="pageNext"
+                small
+              >
+                <v-icon>arrow_forward</v-icon>
+              </v-btn>
+              <v-btn icon v-else disabled small>
+                <v-icon>arrow_forward</v-icon>
+              </v-btn>
+            </div>
+          </div>
+        </div>
+      </template>
       <template v-slot:item="{ item, index, headers }">
         <!-- Mobile View Begin -->
         <tr
@@ -28,7 +64,7 @@
           <td
             v-if="headers[i] && headers[i].value === 'corpNum'"
             class="d-table-cell"
-            @click.prevent.stop="handleCorpClick(item['corpNum'])"
+            @click.prevent.stop="handleCorpClick(item['corpNum'], $event)"
           >
             <div class="d-flex w-100 justify-space-between">
               <div class="color-black">
@@ -42,7 +78,7 @@
           <td
             v-else
             class="d-table-cell"
-            @click="handleCellClick(item['corpPartyId'])"
+            @click="handleCellClick(item['corpPartyId'], $event)"
           >
             <div class="d-flex w-100 justify-space-between">
               <div class="color-black">
@@ -56,8 +92,8 @@
         <!-- Mobile View End -->
 
         <tr
-          class="cursor-pointer d-none d-md-table-row"
-          @click="handleCellClick(item['corpPartyId'])"
+          class="cursor-pointer d-none d-md-table-row desktop-tr-rowz"
+          @click="handleCellClick(item['corpPartyId'], $event)"
         >
           <td class="color-gray">{{ item["corpPartyId"] }}</td>
           <td>{{ item["lastNme"] }}</td>
@@ -70,7 +106,7 @@
           <td>{{ item["cessationDt"] }}</td>
           <td v-if="type === 'active'">{{ item["stateTypCd"] }}</td>
           <td>{{ item["corpNme"] }}</td>
-          <td @click.prevent.stop="handleCorpClick(item['corpNum'])">
+          <td @click.prevent.stop="handleCorpClick(item['corpNum'], $event)">
             <span class="anchor-text cursor-pointer">{{
               item["corpNum"]
             }}</span>
@@ -206,10 +242,15 @@ export default {
         sortDesc: this.options.sortDesc
       });
     },
-    handleCorpClick(id) {
+    handleCorpClick(id, e) {
+      e.target.closest("tr").classList.add("row-clicked");
+      if (window.getSelection().toString()) {
+        return;
+      }
       window.open(`/corporation/${id}`);
     },
-    handleCellClick(id) {
+    handleCellClick(id, e) {
+      e.target.closest("tr").classList.add("row-clicked");
       if (window.getSelection().toString()) {
         return;
       }
@@ -300,8 +341,10 @@ export default {
           this.totalItems = this.items.length;
           this.loading = false;
           this.disableSorting = false;
+          this.$emit("success", result);
         })
         .catch(e => {
+          this.$emit("error", e);
           this.items = [];
           this.totalItems = 0;
           this.loading = false;
@@ -325,6 +368,7 @@ export default {
 
 .corp-party-table .custom-footer {
   padding: 1em 0;
+  letter-spacing: 0 !important;
 }
 
 .corp-party-table .v-data-footer__icons-after,
@@ -335,5 +379,14 @@ export default {
 .mobile-tr-row,
 .mobile-tr-row td {
   border-bottom: 0 !important;
+}
+
+.row-clicked {
+  background-color: $COLOR_LAVENDER !important;
+}
+
+.corp-party-table th:first-of-type,
+.corp-party-table tr td:first-of-type {
+  padding-left: 3em;
 }
 </style>

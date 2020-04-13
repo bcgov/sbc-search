@@ -89,21 +89,21 @@ export const CORPPARTY_HEADERS = [
     value: "corpPartyId",
     sortable: true,
     align: "left",
-    width: 100
+    width: 125
   },
   {
     text: "Surname",
     value: "lastNme",
     sortable: true,
     align: "left",
-    width: 150
+    width: 125
   },
   {
     text: "First Name",
     value: "firstNme",
     sortable: true,
     align: "left",
-    width: 150
+    width: 125
   },
   {
     text: "Middle Name",
@@ -117,7 +117,7 @@ export const CORPPARTY_HEADERS = [
     value: "addr",
     sortable: false,
     align: "left",
-    width: 150
+    width: 250
   },
   {
     text: "Postal Code",
@@ -159,7 +159,7 @@ export const CORPPARTY_HEADERS = [
     value: "corpNme",
     sortable: true,
     align: "left",
-    width: 150
+    width: 250
   },
   {
     text: "Inc/Reg #",

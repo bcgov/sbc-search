@@ -26,6 +26,9 @@ from search_api import status as http_status
 
 
 def _dir_search(client, jwt, session, params):
+    """
+    @param params - str - ?field=lastNme&operator=exact&value=john&mode=ALL&page=1&sort_type=dsc&sort_value=lastNme&additional_cols=none
+    """
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
     rv = client.get('/api/v1/directors/{}'.format(params),

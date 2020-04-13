@@ -26,7 +26,6 @@ import sys
 
 from dotenv import find_dotenv, load_dotenv
 
-
 # this will load all the envars from a .env file located in the project root (api)
 load_dotenv(find_dotenv())
 
@@ -69,6 +68,14 @@ class _Config:  # pylint: disable=too-few-public-methods
 
     # ORACLE - CDEV/CTST/CPRD/db
     SQLALCHEMY_DATABASE_URI = os.getenv('DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres')
+
+    # Oracle optimizations. For the type of queries we do, we want to avoid the default pagination
+    # which uses subqueries.
+    if SQLALCHEMY_DATABASE_URI.startswith('oracle://'):
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            'optimize_limits': True,
+            'use_binds_for_limits': False
+        }
 
     # JWT_OIDC Settings
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')

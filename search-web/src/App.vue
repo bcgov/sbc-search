@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <Snackbar></Snackbar>
     <div v-if="$vuetify.breakpoint.smAndDown">
       <BackToTop bottom="10px" right="10px" visibleoffset="600">
         <v-btn class="mx-2" fab dark small color="primary">
@@ -44,23 +45,30 @@ import BackToTop from "vue-backtotop";
 import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
 import SbcFooter from "sbc-common-components/src/components/SbcFooter.vue";
 import TokenService from "sbc-common-components/src/services/token.services";
+import Snackbar from "@/components/Snackbar.vue";
 const tokenService = new TokenService();
 
 export default Vue.extend({
   components: {
     SbcHeader,
     SbcFooter,
-    BackToTop
+    BackToTop,
+    Snackbar
   },
-  async mounted() {
-    await KeyCloakService.setKeycloakConfigUrl(
-      `${process.env.BASE_URL}config/kc/keycloak.json`
-    );
 
-    const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
-    if (KEYCLOACK_TOKEN) {
-      await tokenService.init();
-      tokenService.scheduleRefreshTimer();
+  async mounted() {
+    try {
+      await KeyCloakService.setKeycloakConfigUrl(
+        `${process.env.BASE_URL}config/kc/keycloak.json`
+      );
+
+      const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
+      if (KEYCLOACK_TOKEN) {
+        await tokenService.init();
+        tokenService.scheduleRefreshTimer();
+      }
+    } catch (e) {
+      console.error(e);
     }
   },
   methods: {}
@@ -68,6 +76,9 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+.letter-spacing-none {
+  letter-spacing: 0 !important;
+}
 .material-icons {
   font-family: "Material Icons" !important;
 }
@@ -110,7 +121,11 @@ export default Vue.extend({
 }
 
 .border-gray {
-  border: 1px solid $COLOR_GREY !important;
+  border: 1px solid $BORDER_GREY !important;
+}
+
+.theme--light.v-text-field > .v-input__control > .v-input__slot:before {
+  border-color: $BORDER_GREY !important;
 }
 
 .main-wrapper {

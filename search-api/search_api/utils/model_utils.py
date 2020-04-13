@@ -15,6 +15,7 @@
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS, ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 from search_api.utils.utils import convert_to_snake_case
+from sqlalchemy import func
 
 
 def _merge_addr_fields(row):
@@ -67,24 +68,25 @@ def _get_filter(field_name, operator, value):
 
     model = _get_model_by_field(field_name)
 
-    value = value.lower()
+    # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
+    value = value.upper()
     if model:
         field = getattr(model, convert_to_snake_case(field_name))
         # TODO: we should sanitize the values
         if operator == 'contains':
-            return field.ilike('%' + value + '%')
+            return func.upper(field).ilike('%' + value + '%')
         if operator == 'exact':
-            return field.ilike(value)
+            return func.upper(field) == value
         if operator == 'endswith':
-            return field.ilike('%' + value)
+            return func.upper(field).like('%' + value)
         if operator == 'startswith':
-            return field.ilike(value + '%')
+            return func.upper(field).like(value + '%')
         if operator == 'wildcard':
             # We support entering * or % as wildcards, but the actual wildcard is %
-            value = value.replace('*', '%')
-            return field.ilike(value)
+            value = value.replace("*", "%")
+            return func.upper(field).like(value)
         if operator == 'excludes':
-            return ~field.ilike(value)
+            return func.upper(field) != value
 
         raise Exception('invalid operator: {}'.format(operator))
 
@@ -135,7 +137,8 @@ def _sort_by_field(sort_type, sort_value):
     sort_field_str = '{field}'.format(field=field)
 
     if _is_field_string(sort_value):
-        sort_field_str = 'func.lower({field})'.format(field=sort_field_str)
+        # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
+        sort_field_str = 'func.upper({field})'.format(field=sort_field_str)
 
     if sort_type == 'dsc':
         sort_field_str += '.desc()'
