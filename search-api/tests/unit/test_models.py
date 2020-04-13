@@ -29,17 +29,20 @@ def test_corporation(session):
     assert corporation.corp_typ_cd == "C"
 
 
+
 def test_corporation_search(session):
-    results = Corporation.query_corporations("Pembina Pipeline", None, "corp_num")
+
+    """Assert that Corporations can be found by name or number."""
+    results = Corporation.query_corporations('Pembina Pipeline', None, 'corp_num')
     assert results.count() == 1
 
-    results = Corporation.query_corporations("Pembina", None, "corp_num")
+    results = Corporation.query_corporations('Pembina', None, 'corp_num')
     assert results.count() == 1
 
-    results = Corporation.query_corporations("Pipeline", None, "corp_num")
+    results = Corporation.query_corporations('Pipeline', None, 'corp_num')
     assert results.count() == 1
 
-    results = Corporation.query_corporations("1234567890", None, "corp_num")
+    results = Corporation.query_corporations('1234567890', None, 'corp_num')
     assert results.count() == 1
 
 
@@ -62,12 +65,15 @@ def test_corp_party_search(session):
     assert results[1].last_nme == "Patterson"
 
 
-def test_corp_party_sameaddr(session):
+
+def test_corp_party_same_addr(session):
+    """Assert that CorpParty entities at same address can be found."""
     results = CorpParty.get_corp_party_at_same_addr(1)
     assert results.count() == 1
 
 
 def test_corp_party_offices(session):
+    """Assert that offices held by CorpParty can be found."""
     offices = CorpParty.get_offices_held_by_corp_party_id(1)
     assert offices.count() == 2
 

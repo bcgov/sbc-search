@@ -18,10 +18,6 @@ async function saveConfigToSessionStorage() {
   sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(authConfig.data));
 }
 
-Vue.config.errorHandler = function(err, vm, info) {
-  console.log("Error Handler", err);
-};
-
 function renderVue() {
   new Vue({
     router,

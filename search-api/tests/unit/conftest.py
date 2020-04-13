@@ -26,9 +26,7 @@ from bootstrap import populate
 
 @pytest.fixture(scope='session')
 def app():
-    '''
-    Create a Flask app context for the tests.
-    '''
+    """Create a Flask app context for the tests."""
     _app = create_app('testing')
 
     return _app

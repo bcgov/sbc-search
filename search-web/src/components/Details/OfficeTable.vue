@@ -1,9 +1,9 @@
 <template>
   <div>
     <h5 class="font-weight-regular body-1 mb-3">
-      <i>Other offices held at</i> {{ details.corpNme }}
+      <span>Other offices held at</span> {{ details.corpNme }}
     </h5>
-    <div v-if="offices && offices.length > 0">
+    <div>
       <v-simple-table class="office-table">
         <template v-slot:default>
           <thead>
@@ -13,7 +13,7 @@
               <th>Year</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody v-if="offices && offices.length > 0">
             <tr v-for="(o, index) in offices" :key="index">
               <td class="office-held-desc">
                 {{ o.shortDesc }}
@@ -28,22 +28,22 @@
               </td>
             </tr>
           </tbody>
+          <tbody v-else>
+            <tr>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          </tbody>
         </template>
       </v-simple-table>
     </div>
-    <div v-else>
-      <h5>No offices found</h5>
-    </div>
+
     <h5 class="font-weight-regular body-1 mb-3 mt-6">
-      <i>Other</i> {{ details.lastNme }}, {{ details.firstNme }}
-      {{ details.middleNme }} <i>at company</i> {{ details.corpNme }}
+      <span>Other</span> {{ details.lastNme }}, {{ details.firstNme }}
+      {{ details.middleNme }} <span>at company</span> {{ details.corpNme }}
     </h5>
-    <div
-      v-if="
-        officesheld.same_name_and_company &&
-          officesheld.same_name_and_company.length > 0
-      "
-    >
+    <div>
       <v-simple-table class="office-table">
         <template v-slot:default>
           <thead>
@@ -53,9 +53,10 @@
               <th>Year</th>
             </tr>
           </thead>
-          <tbody>
+
+          <tbody v-if="officesheld.sameNameAndCompany.length > 0">
             <tr
-              v-for="(o, index) in officesheld.same_name_and_company"
+              v-for="(o, index) in officesheld.sameNameAndCompany"
               :key="index"
             >
               <td>
@@ -71,18 +72,21 @@
               </td>
             </tr>
           </tbody>
+          <tbody v-else>
+            <tr>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          </tbody>
         </template>
       </v-simple-table>
     </div>
-    <div v-else>
-      <h5>None found</h5>
-    </div>
-
     <h5 class="font-weight-regular body-1 mb-3 mt-6">
-      <i>Other</i> {{ details.lastNme }}, {{ details.firstNme }}
-      {{ details.middleNme }} <i>at address</i> {{ details.addr }}
+      <span>Other</span> {{ details.lastNme }}, {{ details.firstNme }}
+      {{ details.middleNme }} <span>at address</span> {{ details.addr }}
     </h5>
-    <div v-if="officesheld.same_addr && officesheld.same_addr.length > 0">
+    <div>
       <v-simple-table class="office-table">
         <template v-slot:default>
           <thead>
@@ -92,7 +96,7 @@
               <th>Year</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody v-if="officesheld.sameAddr && officesheld.sameAddr.length > 0">
             <tr v-for="(o, index) in officesheld.same_addr" :key="index">
               <td>
                 {{ o.partyTypCd }}
@@ -107,11 +111,15 @@
               </td>
             </tr>
           </tbody>
+          <tbody v-else>
+            <tr>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          </tbody>
         </template>
       </v-simple-table>
-    </div>
-    <div v-else>
-      <h5>None found</h5>
     </div>
   </div>
 </template>
@@ -157,5 +165,6 @@ export default {
 .office-table {
   border: 1px solid $COLOR_GREY;
   color: $COLOR_GREY;
+  max-width: 640px;
 }
 </style>

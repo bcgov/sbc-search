@@ -1,0 +1,21 @@
+Directors Resource
+
+/api/v1/directors/?field={field_name}&operator={operator}&value={field_value}&mode={mode}&page={page}&sort_type={sort_type}&sort_value={sort_field_name}&additional_cols={additional_cols}
+    GET
+    Description: Search for directors by field. Any number of field triple (&field={field_name}&operator={operator}&value={field_value}) can be added. sort_value can be any field except address.  additional_cols is either "none", "addr", or "active", and optionally joins the Address or CorpOpState tables.
+    Permissions: Must be authenticated
+
+/api/v1/directors/export/?field={field_name}&operator={operator}&value={field_value}&mode={mode}&page={page}&sort_type={sort_type}&sort_value={sort_field_name}&additional_cols={additional_cols}
+    GET
+    Description: Export the results from a Director Search query to Excel file (.xlsx)
+    Permissions: Must be authenticated
+
+/api/v1/directors/{corpparty_id}
+    GET
+    Description: Get details for a director by CorpParty id.
+    Permissions: Must be authenticated
+
+/api/v1/directors/{corpparty_id}/offices
+    GET
+    Description:Get offices held for a director by CorpParty id.
+    Permissions: Must be authenticated
