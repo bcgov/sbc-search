@@ -84,7 +84,7 @@ def _get_filter(field_name, operator, value):
             return func.upper(field).like(value + '%')
         if operator == 'wildcard':
             # We support entering * or % as wildcards, but the actual wildcard is %
-            value = value.replace("*", "%")
+            value = value.replace('*', '%')
             return func.upper(field).like(value)
         if operator == 'excludes':
             return func.upper(field) != value

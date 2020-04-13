@@ -15,13 +15,11 @@
 
 Test Utility for creating model factory.
 """
-import datetime
-
 
 from tests.utilities.factory_scenarios import (
     JWT_HEADER)
 
+
 def factory_auth_header(jwt, claims):
     """Produce JWT tokens for use in tests."""
     return {'Authorization': 'Bearer ' + jwt.create_jwt(claims=claims, header=JWT_HEADER)}
-
