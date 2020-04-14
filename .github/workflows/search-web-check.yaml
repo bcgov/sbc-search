@@ -18,7 +18,7 @@ jobs:
     if: github.repository == 'countable-web/sbc-search'
 
     env:
-      NODE_ENV: "test"
+      NODE_ENV: "development"
 
     strategy:
       matrix:
