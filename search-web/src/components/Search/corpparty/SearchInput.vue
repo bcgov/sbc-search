@@ -53,6 +53,9 @@ export default {
       this.searchQuery = this.query;
     });
   },
+  beforeUpdate() {
+    this.searchQuery = this.query;
+  },
   methods: {
     clear() {
       this.searchQuery = "";
