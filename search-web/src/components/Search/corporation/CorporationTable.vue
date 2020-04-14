@@ -17,6 +17,46 @@
         'items-per-page-options': [50]
       }"
     >
+      <template v-slot:top="{ pagination }">
+        <div class="v-data-footer v-data-custom-header">
+          <div
+            v-if="corporations.length === 0"
+            class="v-data-footer__pagination"
+          >
+            -
+          </div>
+          <div v-else class="v-data-footer__pagination">
+            <div class="custom-footer d-flex align-center">
+              <div>Showing {{ pagination.itemsLength }} results</div>
+              <div class="d-flex ml-5 align-center">
+                <v-btn
+                  v-if="page > '1' && !loading"
+                  icon
+                  @click="pagePrev"
+                  small
+                >
+                  <v-icon>arrow_back</v-icon>
+                </v-btn>
+                <v-btn v-else disabled icon small>
+                  <v-icon>arrow_back</v-icon>
+                </v-btn>
+                <div class="d-inline-block mr-3 ml-3">Page {{ page }}</div>
+                <v-btn
+                  icon
+                  v-if="corporations.length > 49 && !loading"
+                  @click="pageNext"
+                  small
+                >
+                  <v-icon>arrow_forward</v-icon>
+                </v-btn>
+                <v-btn icon v-else disabled small>
+                  <v-icon>arrow_forward</v-icon>
+                </v-btn>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
       <template v-slot:item="{ item, index, headers }">
         <!-- Mobile View Begin -->
         <tr
@@ -145,7 +185,7 @@ export default {
     handleTableRowClick(item) {
       window.open(`/corporation/${item["corpNum"]}`);
     },
-    fetchData(query) {
+    async fetchData(query) {
       const { sort_type, sort_value } = query;
       this.sortBy = [sort_value];
       if (sort_type === "asc") {
@@ -153,18 +193,23 @@ export default {
       } else if (sort_type === "dsc") {
         this.sortDesc = [true];
       }
+
       this.loading = true;
+      this.disableSorting = true;
+
       corporationSearch(query)
         .then(result => {
           this.corporations = result.data.results;
           this.totalItems = this.corporations.length;
           this.loading = false;
+          this.disableSorting = false;
           this.$emit("success", result);
         })
         .catch(e => {
           this.$emit("error", e);
           this.corporations = [];
           this.totalItems = 0;
+          this.disableSorting = false;
           this.loading = false;
         });
     }
@@ -184,5 +229,9 @@ export default {
 .corporation-table .v-data-footer__icons-after,
 .corporation-table .v-data-footer__icons-before {
   display: none;
+}
+
+.v-data-custom-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 </style>
