@@ -5,6 +5,7 @@
     height="56"
     class="sbc-button"
     :elevation="0"
+    :disabled="disabled"
     >{{ title }}</v-btn
   >
 </template>
@@ -19,6 +20,10 @@ export default {
     type: {
       default: null,
       type: String
+    },
+    disabled: {
+      default: false,
+      type: Boolean
     }
   }
 };

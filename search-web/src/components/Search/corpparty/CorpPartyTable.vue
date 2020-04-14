@@ -21,8 +21,13 @@
     >
       <template v-slot:top="{ pagination }">
         <div>
-          <div v-if="loading || items.length === 0"></div>
-          <div v-else class="v-data-footer">
+          <div
+            v-if="items.length === 0"
+            class="v-data-footer v-data-custom-header"
+          >
+            <div class="v-data-footer__pagination">-</div>
+          </div>
+          <div v-else class="v-data-footer v-data-custom-header">
             <div class="v-data-footer__pagination">
               <div
                 class="w-100 custom-footer d-flex justify-end align-center caption"
@@ -324,7 +329,7 @@ export default {
         });
       }
     },
-    fetchData() {
+    async fetchData() {
       if (!this.qs) {
         return;
       }
@@ -343,6 +348,11 @@ export default {
         }
       }
 
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(true);
+        }, 2000);
+      });
       corpPartySearch(queryString)
         .then(result => {
           this.items = result.data.results;
@@ -395,6 +405,13 @@ export default {
 
 .corp-party-table th:first-of-type,
 .corp-party-table tr td:first-of-type {
-  padding-left: 3em;
+}
+
+.v-application--is-ltr .v-data-table--fixed-header .v-data-footer {
+  margin-right: 0px !important;
+}
+
+.v-data-custom-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 </style>
