@@ -348,11 +348,6 @@ export default {
         }
       }
 
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(true);
-        }, 2000);
-      });
       corpPartySearch(queryString)
         .then(result => {
           this.items = result.data.results;
