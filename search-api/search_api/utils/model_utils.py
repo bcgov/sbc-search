@@ -29,7 +29,7 @@ def _merge_addr_fields(row):
 
 
 def _is_addr_search(fields):
-    return 'addr_line_1' in fields or 'postal_cd' in fields
+    return 'addrLine1' in fields or 'postalCd' in fields
 
 
 def _get_model_by_field(field_name):
@@ -110,7 +110,7 @@ def _get_filter(field_name, operator, value):
 
 def _generate_field_filter(field, operator, value):
     if operator == 'contains':
-        expr = func.upper(field).ilike('%' + value + '%')
+        expr = func.upper(field).like('%' + value + '%')
     elif operator == 'exact':
         expr = func.upper(field) == value
     elif operator == 'endswith':

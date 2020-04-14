@@ -36,7 +36,6 @@ API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 
 @API.route('/')
-
 def corporation_search():
     '''Search for Corporations by keyword or corpNum.
 
@@ -45,7 +44,6 @@ def corporation_search():
     - page={page number}
     '''
     account_id = request.headers.get('X-Account-Id', None)
-
 
     args = request.args
     results = Corporation.search_corporations(args)

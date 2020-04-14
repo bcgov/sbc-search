@@ -78,6 +78,33 @@ WHERE upper(corp_party.last_nme) LIKE 'JOHN'
 ORDER BY upper(corp_party.last_nme)
 '''
 
+ADDR_SQL = '''
+SELECT corp_party.corp_party_id  AS corp_party_id,
+        corp_party.first_nme      AS first_nme,
+        corp_party.middle_nme     AS middle_nme,
+        corp_party.last_nme       AS last_nme,
+        corp_party.appointment_dt AS appointment_dt,
+        corp_party.cessation_dt   AS cessation_dt,
+        corp_party.corp_num       AS corp_num,
+        corp_party.party_typ_cd   AS party_typ_cd,
+        corp_name.corp_nme        AS corp_nme
+FROM
+        corp_party
+        JOIN corporation
+            ON corporation.corp_num = corp_party.corp_num
+        JOIN corp_state
+            ON corp_state.corp_num = corp_party.corp_num
+        LEFT OUTER JOIN corp_name
+            ON corporation.corp_num = corp_name.corp_num
+        left join address on address.addr_id = corp_party.delivery_addr_id
+WHERE  corp_party.end_event_id IS NULL
+        AND corp_state.end_event_id IS NULL
+        AND corp_name.end_event_id IS NULL
+        AND corp_name.corp_name_typ_cd IN ( 'CO', 'NB' )
+        AND Upper(address.addr_line_1) LIKE '%1552 REGAN%'
+ORDER  BY Upper(corp_party.last_nme) DESC
+'''
+
 
 if __name__ == '__main__':
     '''
@@ -89,13 +116,18 @@ if __name__ == '__main__':
     app = create_app('development')
     with app.app_context():
 
-        # Benchmark the raw, original COBRS sql for comparison
-        sql = COBRS_SQL
-        sql = '\n'.join([s for s in sql.split('\n') if '#' not in s])
-        t = time.time()
-        rs = db.session.execute(sql)
-        print('query time', time.time() - t)
-        print('results', rs)
+        # for i in range(3):
+        #     #Benchmark the raw, original COBRS sql for comparison
+        #     sql = ADDR_SQL
+        #     sql = '\n'.join([s for s in sql.split('\n') if '#' not in s])
+        #     t = time.time()
+        #     rs = db.session.execute(sql)
+        #     count = 0
+        #     for row in rs:
+        #         count+=1
+        #     print('query time', time.time() - t)
+        #     print('results', count)
+        # sys.exit()
 
         # print('wink', CorpParty.query.filter(func.utl_match.jaro_winkler_similarity(CorpParty.last_nme, 'JOHN') > 99).count())
 
@@ -115,20 +147,21 @@ if __name__ == '__main__':
                     ('additional_cols', 'none'),
                 ]
             )
+
+            # args = ImmutableMultiDict(
+            #     [
+            #         ('field', 'addrLine1'),
+            #         ('operator', 'contains'),
+            #         ('value', '1551 Regan'),
+            #         ('mode', 'ALL'),
+            #         ('page', '1'),
+            #         ('sort_type', 'dsc'),
+            #         ('sort_value', 'lastNme'),
+            #         ('additional_cols', 'none'),
+            #     ]
+            # )
+
             results = CorpParty.search_corp_parties(args).limit(50)
-
-            # Use oracle dialect for rendering the query.
-            from sqlalchemy.dialects import oracle
-
-            oracle_dialect = oracle.dialect(max_identifier_length=30)
-            raw_sql = str(results.statement.compile(dialect=oracle_dialect))
-
-            # Inject parameters.
-            raw_sql = raw_sql.replace(':upper_1', "'JOHN'")
-            raw_sql = raw_sql.replace(':param_1', '50')
-            raw_sql = raw_sql.replace(':corp_name_typ_cd_2', "'NB'")
-            raw_sql = raw_sql.replace(':corp_name_typ_cd_1', "'CO'")
-
             # Check performance of ORM based query.
             t = time.time()
             count = 0
@@ -144,6 +177,23 @@ if __name__ == '__main__':
                 else:
                     break
             print('orm query time:', time.time() - t)
+
+
+            # Use oracle dialect for rendering the query.
+            from sqlalchemy.dialects import oracle
+
+            oracle_dialect = oracle.dialect(max_identifier_length=30)
+            raw_sql = str(results.statement.compile(dialect=oracle_dialect))
+
+            # Inject parameters.
+            raw_sql = raw_sql.replace(':upper_1', "'JOHN'")
+            raw_sql = raw_sql.replace(':param_1', '50')
+            raw_sql = raw_sql.replace(':corp_name_typ_cd_2', "'NB'")
+            raw_sql = raw_sql.replace(':corp_name_typ_cd_1', "'CO'")
+
+            print(raw_sql)
+
+            continue
 
             # Check the performance of the raw query which may differ from the ORM even at this point.
             t = time.time()
