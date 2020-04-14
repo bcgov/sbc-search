@@ -54,6 +54,9 @@ export default {
     });
   },
   methods: {
+    clear() {
+      this.searchQuery = "";
+    },
     getPlaceHolder() {
       switch (this.selectField) {
         case "anyNme":
