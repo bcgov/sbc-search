@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This module holds utility functions related to model fields and serialization."""
+'''This module holds utility functions related to model fields and serialization.'''
 
 from sqlalchemy import func
 
@@ -65,6 +65,9 @@ def _is_field_string(field_name):
 
 
 def _get_filter(field_name, operator, value):
+    '''
+    Generate a SQL search expression given a filter specified by the user.
+    '''
     if field_name == 'anyNme':
         return (
             _get_filter('firstNme', operator, value) |
@@ -94,6 +97,10 @@ def _get_filter(field_name, operator, value):
 
     # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
     value = value.upper()
+
+    if len(value) < 2:
+        raise BadSearchValue('Search value must be at least 2 letters long.')
+
     if model:
         field = getattr(model, convert_to_snake_case(field_name))
         return _generate_field_filter(field, operator, value)
@@ -104,20 +111,39 @@ def _get_filter(field_name, operator, value):
 def _generate_field_filter(field, operator, value):
     if operator == 'contains':
         return func.upper(field).ilike('%' + value + '%')
-    if operator == 'exact':
+    elif operator == 'exact':
         return func.upper(field) == value
-    if operator == 'endswith':
+    elif operator == 'endswith':
         return func.upper(field).like('%' + value)
-    if operator == 'startswith':
+    elif operator == 'startswith':
         return func.upper(field).like(value + '%')
-    if operator == 'wildcard':
+    elif operator == 'wildcard':
         # We support entering * or % as wildcards, but the actual wildcard is %
         value = value.replace('*', '%')
         return func.upper(field).like(value)
-    if operator == 'excludes':
+    elif operator == 'excludes':
         return func.upper(field) != value
+    # TODO: this is a relatively expensive op, we should enforce it's only used in combination with other queries.
+    # TODO: we should consider sorting by similarity (sum of any filters using it) by default, if the user chooses any similarity filter.
+    elif operator == 'similar':
+        return func.utl_match.jaro_winkler_similarity(Field, value) > 95
+    elif operator == 'nicknames':
+        return _get_nickname_search_expr(value)
+    else:
+        raise Exception('invalid operator: {}'.format(operator))
 
-    raise Exception('invalid operator: {}'.format(operator))
+
+def _get_nickname_search_expr(value):
+    aliases = db.session.query(
+        NickName.name
+    ).filter(
+        NickName.name_id == db.session.query(
+            NickName.name_id
+        ).filter(NickName.name == 'WILLIAM')
+    )
+    
+    alias_list = list(a[0] for a in aliases)
+    return func.upper(CorpParty.first_nme).in_(alias_list)
 
 
 def _get_sort_field(field_name):
@@ -151,6 +177,9 @@ def _format_office_typ_cd(office_typ_cd):
         return 'Records'
 
     return ''
+
+class BadSearchValue(Exception):
+    pass
 
 
 def _get_state_typ_cd_display_value(state_typ_cd):

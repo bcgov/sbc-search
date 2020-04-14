@@ -11,18 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This model manages an OfficeType entity."""
+'''This model manages an OfficeType entity.'''
 
 from search_api.models.base import BaseModel, db
 
 
 class OfficeType(BaseModel):  # pylint: disable=too-few-public-methods
-    """OfficeType entity. Corresponds to the 'office_type' table.
+    '''OfficeType entity. Corresponds to the 'office_type' table.
 
     office_typ_cd    CHAR        2     9
     short_desc       VARCHAR2    15    9
     full_desc        VARCHAR2    40    9
-    """
+    '''
 
     __tablename__ = 'office_type'
 

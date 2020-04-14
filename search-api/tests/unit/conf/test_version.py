@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Tests to assure the version utilities.
+'''Tests to assure the version utilities.
 
 Test-Suite to ensure that the version utilities are working as expected.
-"""
+'''
 # from search_api import utils
 # from search_api.version import __version__
 # from tests import skip_in_pod
@@ -23,6 +23,6 @@ Test-Suite to ensure that the version utilities are working as expected.
 
 # @skip_in_pod
 # def test_get_version():
-#     """Assert thatThe version is returned correctly."""
+#     '''Assert thatThe version is returned correctly.'''
 #     rv = utils.run_version.get_run_version()
 #     assert rv == __version__

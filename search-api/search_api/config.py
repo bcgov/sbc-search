@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""All of the configuration for the service is captured here.
+'''All of the configuration for the service is captured here.
 
 All items are loaded, or have Constants defined here that
 are loaded into the Flask configuration.
 All modules and lookups get their configuration from the
 Flask config, rather than reading environment variables directly
 or by accessing this configuration directly.
-"""
+'''
 
 import os
 import sys
@@ -33,16 +33,16 @@ CONFIGURATION = {
     'development': 'search_api.config.DevConfig',
     'testing': 'search_api.config.TestConfig',
     'production': 'search_api.config.ProdConfig',
-    'default': 'search_api.config.ProdConfig'
+    'default': 'search_api.config.ProdConfig',
 }
 
 
 def get_named_config(config_name: str = 'production'):
-    """Return the configuration object based on the name.
+    '''Return the configuration object based on the name.
 
     :raise: KeyError: if an unknown configuration is requested
-    """
-    if config_name in['production', 'staging', 'default']:
+    '''
+    if config_name in ['production', 'staging', 'default']:
         config = ProdConfig()
     elif config_name == 'testing':
         config = TestConfig()
@@ -54,7 +54,7 @@ def get_named_config(config_name: str = 'production'):
 
 
 class _Config:  # pylint: disable=too-few-public-methods
-    """Base class configuration that should set reasonable defaults for all the other configurations."""
+    '''Base class configuration that should set reasonable defaults for all the other configurations.'''
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -67,17 +67,20 @@ class _Config:  # pylint: disable=too-few-public-methods
     SENTRY_DSN = os.getenv('SENTRY_DSN', '')
 
     # ORACLE - CDEV/CTST/CPRD/db
-    SQLALCHEMY_DATABASE_URI = os.getenv('DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres')
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        'DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres'
+    )
 
     # Oracle optimizations. For the type of queries we do, we want to avoid the default pagination
     # which uses subqueries.
     if SQLALCHEMY_DATABASE_URI.startswith('oracle://'):
         SQLALCHEMY_ENGINE_OPTIONS = {
             'optimize_limits': True,
-            'use_binds_for_limits': False
+            'use_binds_for_limits': False,
         }
 
     # JWT_OIDC Settings
+
     JWT_OIDC_WELL_KNOWN_CONFIG = os.getenv('JWT_OIDC_WELL_KNOWN_CONFIG')
     JWT_OIDC_ALGORITHMS = os.getenv('JWT_OIDC_ALGORITHMS')
     JWT_OIDC_JWKS_URI = os.getenv('JWT_OIDC_JWKS_URI')
@@ -86,7 +89,9 @@ class _Config:  # pylint: disable=too-few-public-methods
     JWT_OIDC_CLIENT_SECRET = os.getenv('JWT_OIDC_CLIENT_SECRET')
     JWT_OIDC_CACHING_ENABLED = os.getenv('JWT_OIDC_CACHING_ENABLED')
     try:
-        JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT'))
+        JWT_OIDC_JWKS_CACHE_TIMEOUT = int(
+            os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT', '300')
+        )
     except (TypeError, ValueError):
         JWT_OIDC_JWKS_CACHE_TIMEOUT = 300
 
@@ -97,14 +102,14 @@ class _Config:  # pylint: disable=too-few-public-methods
 
 
 class DevConfig(_Config):  # pylint: disable=too-few-public-methods
-    """Creates the Development Config object."""
+    '''Creates the Development Config object.'''
 
     TESTING = False
     DEBUG = True
 
 
 class TestConfig(_Config):  # pylint: disable=too-few-public-methods
-    """In support of testing only used by the py.test suite."""
+    '''In support of testing only used by the py.test suite.'''
 
     DEBUG = True
     TESTING = True
@@ -127,7 +132,7 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
                 'alg': 'RS256',
                 'use': 'sig',
                 'n': 'AN-fWcpCyE5KPzHDjigLaSUVZI0uYrcGcc40InVtl-rQRDmAh-C2W8H4_Hxhr5VLc6crsJ2LiJTV_E72S03pzpOOaaYV6-TzAjCou2GYJIXev7f6Hh512PuG5wyxda_TlBSsI-gvphRTPsKCnPutrbiukCYrnPuWxX5_cES9eStR',  # noqa: E501
-                'e': 'AQAB'
+                'e': 'AQAB',
             }
         ]
     }
@@ -146,12 +151,12 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
                 'q': 'AOjX3OnPJnk0ZFUQBwhduCweRi37I6DAdLTnhDvcPTrrNWuKPg9uGwHjzFCJgKd8KBaDQ0X1rZTZLTqi3peT43s',
                 'dp': 'AN9kBoA5o6_Rl9zeqdsIdWFmv4DB5lEqlEnC7HlAP-3oo3jWFO9KQqArQL1V8w2D4aCd0uJULiC9pCP7aTHvBhc',
                 'dq': 'ANtbSY6njfpPploQsF9sU26U0s7MsuLljM1E8uml8bVJE1mNsiu9MgpUvg39jEu9BtM2tDD7Y51AAIEmIQex1nM',
-                'qi': 'XLE5O360x-MhsdFXx8Vwz4304-MJg-oGSJXCK_ZWYOB_FGXFRTfebxCsSYi0YwJo-oNu96bvZCuMplzRI1liZw'
+                'qi': 'XLE5O360x-MhsdFXx8Vwz4304-MJg-oGSJXCK_ZWYOB_FGXFRTfebxCsSYi0YwJo-oNu96bvZCuMplzRI1liZw',
             }
         ]
     }
 
-    JWT_OIDC_TEST_PRIVATE_KEY_PEM = """
+    JWT_OIDC_TEST_PRIVATE_KEY_PEM = '''
 -----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQDfn1nKQshOSj8xw44oC2klFWSNLmK3BnHONCJ1bZfq0EQ5gIfg
 tlvB+Px8Ya+VS3OnK7Cdi4iU1fxO9ktN6c6TjmmmFevk8wIwqLthmCSF3r+3+h4e
@@ -166,11 +171,11 @@ AePMUImAp3woFoNDRfWtlNktOqLel5PjewJBAN9kBoA5o6/Rl9zeqdsIdWFmv4DB
 W0mOp436T6ZaELBfbFNulNLOzLLi5YzNRPLppfG1SRNZjbIrvTIKVL4N/YxLvQbT
 NrQw+2OdQACBJiEHsdZzAkBcsTk7frTH4yGx0VfHxXDPjfTj4wmD6gZIlcIr9lZg
 4H8UZcVFN95vEKxJiLRjAmj6g273pu9kK4ymXNEjWWJn
------END RSA PRIVATE KEY-----"""
+-----END RSA PRIVATE KEY-----'''
 
 
 class ProdConfig(_Config):  # pylint: disable=too-few-public-methods
-    """Production environment configuration."""
+    '''Production environment configuration.'''
 
     SECRET_KEY = os.getenv('SECRET_KEY', None)
 

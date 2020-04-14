@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""This module holds general utility functions."""
+'''This module holds general utility functions.'''
 
 import re
 
 
 def convert_to_snake_case(name):
-    """Convert a string from camelCase to snake_case."""
+    '''Convert a string from camelCase to snake_case.'''
     return re.sub(r'(?<!^)(?=[A-Z0-9])', '_', name).lower()

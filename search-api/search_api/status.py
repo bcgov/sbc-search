@@ -11,37 +11,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Descriptive HTTP status codes for readability.
+'''Descriptive HTTP status codes for readability.
 
 A set of constants built using the HTTP Code Names
 https://www.restapitutorial.com/httpstatuscodes.html
 
 Making it a little easier for those reading code, that don't have the table memorized.
-"""
+'''
 
 
 def is_informational(code):
-    """Return that the code is a provisional response."""
+    '''Return that the code is a provisional response.'''
     return 100 <= code <= 199
 
 
 def is_success(code):
-    """Return that the client's request was successfully received, understood, and accepted."""
+    '''Return that the client's request was successfully received, understood, and accepted.'''
     return 200 <= code <= 299
 
 
 def is_redirect(code):
-    """Return that further action needs to be taken by the user agent in order to fulfill the request."""
+    '''Return that further action needs to be taken by the user agent in order to fulfill the request.'''
     return 300 <= code <= 399
 
 
 def is_client_error(code):
-    """Return that the client seems to have erred."""
+    '''Return that the client seems to have erred.'''
     return 400 <= code <= 499
 
 
 def is_server_error(code):
-    """Return that the server is aware that it has erred or is incapable of performing the request."""
+    '''Return that the server is aware that it has erred or is incapable of performing the request.'''
     return 500 <= code <= 599
 
 

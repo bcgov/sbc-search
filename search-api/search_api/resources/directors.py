@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""API endpoints for searching for and retrieving information about directors (CorpParties)."""
+'''API endpoints for searching for and retrieving information about directors (CorpParties).'''
 
 import datetime
 from http import HTTPStatus
@@ -29,11 +29,11 @@ from search_api.models.corp_party import CorpParty
 from search_api.models.corp_name import CorpName
 from search_api.models.office import Office
 from search_api.utils.model_utils import (
+    BadSearchValue,
     _get_corp_party_export_column_headers,
-    _get_corp_party_export_column_values
+    _get_corp_party_export_column_values,
 )
 from search_api.utils.utils import convert_to_snake_case
-
 
 logger = logging.getLogger(__name__)
 API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
@@ -42,7 +42,7 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 @API.route('/')
 @jwt.requires_auth
 def corpparty_search():
-    """Search for CorpParty entities.
+    '''Search for CorpParty entities.
 
     This function takes any number of field triples in the following format:
     - field={field name}
@@ -57,20 +57,27 @@ def corpparty_search():
     - page={page number}
     - sort_type={'asc' or 'dsc'}
     - sort_value={field name to sort results by}
-    """
+    '''
     current_app.logger.info('Starting director search')
 
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
-        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+        return (
+            jsonify({'message': 'User is not authorized to access Director Search'}),
+            HTTPStatus.UNAUTHORIZED,
+        )
 
-    current_app.logger.info('Authorization check finished; starting query {query}'.format(query=request.url))
+    current_app.logger.info(
+        'Authorization check finished; starting query {query}'.format(query=request.url)
+    )
 
     args = request.args
     fields = args.getlist('field')
     additional_cols = args.get('additional_cols')
-
-    results = CorpParty.search_corp_parties(args)
+    try:
+        results = CorpParty.search_corp_parties(args)
+    except BadSearchValue as e:
+        return {'results': [], 'error': 'Invalid search: {}'.format(str(e))}
 
     current_app.logger.info('Before query')
 
@@ -93,12 +100,24 @@ def corpparty_search():
     corp_parties = []
     for row in results:
         result_fields = [
-            'corpPartyId', 'firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt',
-            'corpNum', 'corpNme', 'partyTypCd']
-        result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
+            'corpPartyId',
+            'firstNme',
+            'middleNme',
+            'lastNme',
+            'appointmentDt',
+            'cessationDt',
+            'corpNum',
+            'corpNme',
+            'partyTypCd',
+        ]
+        result_dict = {
+            key: getattr(row, convert_to_snake_case(key)) for key in result_fields
+        }
         result_dict['corpPartyId'] = int(result_dict['corpPartyId'])
 
-        CorpParty.add_additional_cols_to_search_results(additional_cols, fields, row, result_dict)
+        CorpParty.add_additional_cols_to_search_results(
+            additional_cols, fields, row, result_dict
+        )
 
         corp_parties.append(result_dict)
 
@@ -110,10 +129,13 @@ def corpparty_search():
 @API.route('/export/')
 @jwt.requires_auth
 def corpparty_search_export():
-    """Export a list of CorpParty search results. Uses the same arguments as corpparty_search()."""
+    '''Export a list of CorpParty search results. Uses the same arguments as corpparty_search().'''
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
-        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+        return (
+            jsonify({'message': 'User is not authorized to access Director Search'}),
+            HTTPStatus.UNAUTHORIZED,
+        )
 
     # Query string arguments
     args = request.args
@@ -130,17 +152,23 @@ def corpparty_search_export():
         sheet = workbook.active
 
         for index, column_header in enumerate(
-                _get_corp_party_export_column_headers(args), start=1):
+            _get_corp_party_export_column_headers(args), start=1
+        ):
             _ = sheet.cell(column=index, row=1, value=column_header)
 
         for row_index, row in enumerate(results, start=2):
             for column_index, column_value in enumerate(
-                    _get_corp_party_export_column_values(row, args), start=1):
+                _get_corp_party_export_column_values(row, args), start=1
+            ):
                 _ = sheet.cell(column=column_index, row=row_index, value=column_value)
 
-        current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
+        current_date = datetime.datetime.strftime(
+            datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'
+        )
         filename = 'Director Search Results {date}.xlsx'.format(date=current_date)
-        workbook.save(filename='{dir}/{filename}'.format(dir=export_dir, filename=filename))
+        workbook.save(
+            filename='{dir}/{filename}'.format(dir=export_dir, filename=filename)
+        )
 
         return send_from_directory(export_dir, filename, as_attachment=True)
 
@@ -148,10 +176,13 @@ def corpparty_search_export():
 @API.route('/<corp_party_id>')
 @jwt.requires_auth
 def get_corp_party_by_id(corp_party_id):
-    """Get a CorpParty by id."""
+    '''Get a CorpParty by id.'''
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
-        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+        return (
+            jsonify({'message': 'User is not authorized to access Director Search'}),
+            HTTPStatus.UNAUTHORIZED,
+        )
 
     result = CorpParty.get_corporation_info_by_corp_party_id(corp_party_id)
 
@@ -161,7 +192,9 @@ def get_corp_party_by_id(corp_party_id):
     person = result[0]
     result_dict = {}
 
-    filing_description = CorpParty.get_filing_description_by_corp_party_id(corp_party_id)
+    filing_description = CorpParty.get_filing_description_by_corp_party_id(
+        corp_party_id
+    )
 
     name = CorpName.get_corp_name_by_corp_id(person.corp_num)[0]
     offices = Office.get_offices_by_corp_id(person.corp_num)
@@ -170,8 +203,12 @@ def get_corp_party_by_id(corp_party_id):
 
     states = CorpState.get_corp_states_by_corp_id(person.corp_num)
 
-    corp_delivery_addr = ';'.join([Address.normalize_addr(office.delivery_addr_id) for office in offices])
-    corp_mailing_addr = ';'.join([Address.normalize_addr(office.mailing_addr_id) for office in offices])
+    corp_delivery_addr = ';'.join(
+        [Address.normalize_addr(office.delivery_addr_id) for office in offices]
+    )
+    corp_mailing_addr = ';'.join(
+        [Address.normalize_addr(office.mailing_addr_id) for office in offices]
+    )
 
     result_dict['corpPartyId'] = int(person.corp_party_id)
     result_dict['firstNme'] = person.first_nme
@@ -189,7 +226,9 @@ def get_corp_party_by_id(corp_party_id):
     result_dict['corpMailingAddr'] = corp_mailing_addr
     result_dict['corpTypCd'] = result.corp_typ_cd
     result_dict['corpAdminEmail'] = result.admin_email
-    result_dict['fullDesc'] = filing_description[0].full_desc if filing_description else None
+    result_dict['fullDesc'] = (
+        filing_description[0].full_desc if filing_description else None
+    )
 
     result_dict['states'] = [s.as_dict() for s in states]
 
@@ -202,7 +241,10 @@ def officesheld(corp_party_id):
     """Get OfficesHeld by a CorpParty entity."""
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
-        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
+        return (
+            jsonify({'message': 'User is not authorized to access Director Search'}),
+            HTTPStatus.UNAUTHORIZED,
+        )
 
     results = CorpParty.get_offices_held_by_corp_party_id(corp_party_id)
 
