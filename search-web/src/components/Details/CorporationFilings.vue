@@ -10,7 +10,7 @@
       :elevation="0"
       height="50"
       color="primary"
-      class="folio-pay-btn"
+      class="folio-pay-btn font-16"
       @click="handleClick"
       >Direct Link To Company on BC Online</v-btn
     >

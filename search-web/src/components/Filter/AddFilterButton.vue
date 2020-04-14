@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    class="add-filter-button sbc-button text-capitalize body-1 color-dark-grey border-gray"
+    class="add-filter-button sbc-button text-capitalize body-1 color-dark-grey border-gray font-16"
     outlined
     height="50"
     :elevation="0"

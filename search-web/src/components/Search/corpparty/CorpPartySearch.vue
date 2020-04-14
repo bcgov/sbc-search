@@ -38,7 +38,7 @@
     ></SearchInput>
 
     <v-btn
-      class="text-capitalize body-1 color-dark-grey border-gray"
+      class="text-capitalize body-1 color-dark-grey border-gray font-16"
       tabindex="-1"
       v-if="remove"
       :block="$vuetify.breakpoint.smAndDown"

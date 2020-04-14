@@ -54,7 +54,7 @@ export default {
         .catch(error => {
           this.error = true;
           this.errorMessage = `${
-            error.response.data && error.response.data.message
+            error.response && error.response.data && error.response.data.message
               ? error.response.data.message
               : error.toString()
           }`;

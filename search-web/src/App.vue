@@ -128,6 +128,10 @@ export default Vue.extend({
   border-color: $BORDER_GREY !important;
 }
 
+.font-16 {
+  font-size: 16px !important;
+}
+
 .main-wrapper {
   display: flex;
   flex-direction: column;

@@ -38,7 +38,7 @@
     >
       <h4 class="headline">Search Results</h4>
       <v-btn
-        class="export-btn body-1 color-dark-grey border-gray"
+        class="export-btn body-1 color-dark-grey border-gray font-16"
         height="50"
         @click="handleExport"
         :elevation="0"

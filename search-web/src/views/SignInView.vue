@@ -42,8 +42,9 @@ export default {
         tokenService.scheduleRefreshTimer();
       }
       const query = Object.assign({}, this.$route.query);
+      const path = this.$route.params.redirectUrl;
       this.$router.push({
-        name: "corpPartySearch",
+        path,
         query
       });
     }

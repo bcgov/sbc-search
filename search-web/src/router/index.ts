@@ -103,12 +103,20 @@ router.beforeEach((to, from, next) => {
   const CURRENT_ACCOUNT_ID = CURRENT_ACCOUNT
     ? JSON.parse(CURRENT_ACCOUNT).id
     : "";
-  if (!KEYCLOACK_TOKEN && to.name !== "signin") {
+  if (
+    !KEYCLOACK_TOKEN &&
+    to.name !== "signin" &&
+    to.name !== "signin-redirect"
+  ) {
     delete ApiService.defaults.headers.common["Authorization"];
     delete ApiService.defaults.headers.common["X-Account-Id"];
     next({
-      path: "/signin/bcros",
-      query
+      name: "signin-redirect",
+      query,
+      params: {
+        idpHint: "bcros",
+        redirectUrl: to.path
+      }
     });
   } else {
     ApiService.defaults.headers.common[

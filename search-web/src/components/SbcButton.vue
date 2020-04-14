@@ -1,7 +1,7 @@
 <template>
   <v-btn
     :type="type"
-    color="primary outline"
+    color="primary outline font-16"
     height="56"
     class="sbc-button"
     :elevation="0"

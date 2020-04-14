@@ -13,9 +13,9 @@
         ></SearchInput>
       </div>
       <v-btn
-        class="d-inline-block corporation-btn font-weight-regular"
+        class="d-inline-block corporation-btn font-weight-bold elevation-0 font-16"
         color="primary"
-        height="55.5"
+        height="56"
         type="submit"
         :block="$vuetify.breakpoint.xsOnly"
         @click.prevent="handleSearch"

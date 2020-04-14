@@ -79,7 +79,7 @@
         ></SearchColumn>
 
         <v-btn
-          class="export-btn body-1 color-dark-grey border-gray"
+          class="export-btn body-1 color-dark-grey border-gray font-16"
           height="50"
           outlined
           @click="handleExport"
@@ -309,11 +309,7 @@ export default {
 
         if (typeof queryFilters.field === "string") {
           queryFilters.uid = this.uid++;
-          console.log(queryFilters);
           this.$store.commit("corpParty/filters/setFilters", [queryFilters]);
-          this.$nextTick(() => {
-            console.log(this.filters);
-          });
         } else if (Array.isArray(queryFilters.field)) {
           let temp = [];
           const length = queryFilters.field.length;
