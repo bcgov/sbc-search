@@ -28,11 +28,13 @@
       :init="criteria.value || 'ACT'"
       @change="handleTermChange"
     ></TermSelect>
+
     <SearchInput
       v-else
       :uid="uid"
-      :query="initQuery"
+      :query="criteria.value"
       class="d-inline-block search-input"
+      @change="handleInputChange"
     ></SearchInput>
 
     <v-btn
@@ -135,6 +137,13 @@ export default {
       });
     },
     handleTermChange(value) {
+      this.setSearchPropValue({
+        uid: this.uid,
+        property: "value",
+        value: value
+      });
+    },
+    handleInputChange(value) {
       this.setSearchPropValue({
         uid: this.uid,
         property: "value",

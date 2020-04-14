@@ -45,6 +45,7 @@
             class="d-inline-block mr-3"
             v-if="filters.length > 1"
             :logic.sync="logic"
+            :init="initLogic"
           ></SearchLogic>
           <SbcButton
             class="d-inline-block font-weight-bold"
@@ -143,9 +144,10 @@ export default {
   data() {
     return {
       title: "Welcome to Director Search",
-      uid: 1,
+      uid: 2,
       searchQuery: null,
       logic: "ALL",
+      initLogic: "ALL",
       qs: null,
       additional_cols: "none",
       page: "1",
@@ -271,6 +273,7 @@ export default {
 
       if (mode) {
         this.logic = mode;
+        this.initLogic = mode;
       }
 
       if (additional_cols) {
@@ -292,18 +295,25 @@ export default {
       if (isEmpty(this.$route.query)) {
         this.qs = null;
       } else {
-        const queryFilters = omit(
-          this.$route.query,
-          "mode",
-          "additional_cols",
-          "page",
-          "sort_type",
-          "sort_value"
+        const queryFilters = Object.assign(
+          {},
+          omit(
+            this.$route.query,
+            "mode",
+            "additional_cols",
+            "page",
+            "sort_type",
+            "sort_value"
+          )
         );
 
         if (typeof queryFilters.field === "string") {
           queryFilters.uid = this.uid++;
+          console.log(queryFilters);
           this.$store.commit("corpParty/filters/setFilters", [queryFilters]);
+          this.$nextTick(() => {
+            console.log(this.filters);
+          });
         } else if (Array.isArray(queryFilters.field)) {
           let temp = [];
           const length = queryFilters.field.length;
