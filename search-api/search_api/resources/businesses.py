@@ -17,7 +17,7 @@ import datetime
 from http import HTTPStatus
 from tempfile import NamedTemporaryFile
 
-from flask import Blueprint, request, jsonify, send_from_directory, abort
+from flask import Blueprint, request, jsonify, send_from_directory
 from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
@@ -36,7 +36,7 @@ API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 
 @API.route('/')
-
+@jwt.requires_auth
 def corporation_search():
     '''Search for Corporations by keyword or corpNum.
 
@@ -45,7 +45,11 @@ def corporation_search():
     - page={page number}
     '''
     account_id = request.headers.get('X-Account-Id', None)
-
+    if not authorized(jwt, account_id):
+        return (
+            jsonify({'message': 'User is not authorized to access Director Search'}),
+            HTTPStatus.UNAUTHORIZED,
+        )
 
     args = request.args
     results = Corporation.search_corporations(args)
