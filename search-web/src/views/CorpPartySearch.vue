@@ -29,7 +29,7 @@
     >
       <SearchTips></SearchTips>
       <v-form>
-        <div v-for="(criteria, index) in filters" :key="index">
+        <div v-for="criteria in filters" :key="criteria.uid">
           <CorpPartySearch
             :criteria="criteria"
             :uid="criteria.uid"
