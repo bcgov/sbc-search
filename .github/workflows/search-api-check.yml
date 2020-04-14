@@ -40,7 +40,7 @@ jobs:
       - name: Lint with pylint
         working-directory: ./search-api
         run: |
-          docker exec -i sbc-search_search-api_1 pylint --rcfile=setup.cfg --load-plugins=pylint_flask --disable=C0301,W0511 search_api
+          docker exec -i sbc-search_search-api_1 pylint --rcfile=setup.cfg --load-plugins=pylint_flask --disable=C0301,W0511,R0903 search_api
       - name: Lint with flake8
         working-directory: ./search-api
         run: |

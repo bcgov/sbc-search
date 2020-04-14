@@ -34,7 +34,6 @@ from search_api.utils.model_utils import (
     _sort_by_field,
     _is_addr_search,
     _merge_addr_fields,
-    BadSearchValue,
 )
 
 
@@ -107,9 +106,7 @@ class CorpParty(BaseModel):
     def get_corporation_info_by_corp_party_id(corp_party_id):
         '''Get Corporation info by CorpParty id.'''
         # local import to prevent circular import
-        from search_api.models.corporation import (
-            Corporation,
-        )  # pylint: disable=import-outside-toplevel, cyclic-import
+        from search_api.models.corporation import Corporation  # pylint: disable=import-outside-toplevel, cyclic-import
 
         return (
             CorpParty.query.filter(CorpParty.corp_party_id == int(corp_party_id))
@@ -238,9 +235,7 @@ class CorpParty(BaseModel):
     def query_corp_parties(args):
         '''Construct db query for CorpParty search.'''
         # local import to prevent circular import
-        from search_api.models.corporation import (
-            Corporation,
-        )  # pylint: disable=import-outside-toplevel, cyclic-import
+        from search_api.models.corporation import Corporation  # pylint: disable=import-outside-toplevel, cyclic-import
 
         fields = args.getlist('field')
         operators = args.getlist('operator')
@@ -272,8 +267,7 @@ class CorpParty(BaseModel):
                 CorpName.corp_nme,
             )
         ).filter(
-            CorpParty.end_event_id
-            == None,  # noqa # pylint: disable=singleton-comparison
+            CorpParty.end_event_id == None,  # noqa # pylint: disable=singleton-comparison
             CorpState.end_event_id == None,  # pylint: disable=singleton-comparison
             CorpName.end_event_id == None,  # pylint: disable=singleton-comparison
             # CorpName should be "Corporation" or "Number BC Company"
@@ -310,8 +304,8 @@ class CorpParty(BaseModel):
         else:
             sort_field_str = _sort_by_field(sort_type, sort_value)
             results = results.order_by(
-                eval(sort_field_str)
-            )  # pylint: disable=eval-used
+                eval(sort_field_str) # pylint: disable=eval-used
+            )
 
         return results
 
@@ -337,9 +331,7 @@ class CorpParty(BaseModel):
         return query
 
     @staticmethod
-    def add_additional_cols_to_search_results(
-        additional_cols, fields, row, result_dict
-    ):
+    def add_additional_cols_to_search_results(additional_cols, fields, row, result_dict):
         '''Add Address or CorpOpState columns to search results based on the additional columns toggle.'''
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
             result_dict['addr'] = _merge_addr_fields(row)
