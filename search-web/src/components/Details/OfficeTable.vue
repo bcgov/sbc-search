@@ -16,11 +16,11 @@
           <tbody v-if="offices && offices.length > 0">
             <tr v-for="(o, index) in offices" :key="index">
               <td class="office-held-desc">
-                {{ o.shortDesc }}
+                {{ o.shortDesc || "-" }}
               </td>
               <td>
                 <a :href="`/corpparty/${o['corpPartyId']}`" target="blank">
-                  {{ o["corpPartyId"] }}
+                  {{ o["corpPartyId"] || "-" }}
                 </a>
               </td>
               <td>
@@ -60,11 +60,11 @@
               :key="index"
             >
               <td>
-                {{ o.partyTypCd }}
+                {{ o.partyTypCd || "-" }}
               </td>
               <td>
                 <a :href="`/corpparty/${o['corpPartyId']}`" target="blank">
-                  {{ o["corpPartyId"] }}
+                  {{ o["corpPartyId"] || "-" }}
                 </a>
               </td>
               <td>

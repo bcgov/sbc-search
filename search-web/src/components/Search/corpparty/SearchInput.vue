@@ -38,26 +38,20 @@ export default {
     selectField() {
       return this.getFilterProperty(this.uid, "field");
     },
-    searchQuery: {
-      get() {
-        return this.getFilterValue(this.uid);
-      },
-      set(value) {
-        this.$store.commit("corpParty/filters/setSearchValue", {
-          uid: this.uid,
-          value: value
-        });
-      }
-    },
     ...mapGetters({
-      getFilterValue: "corpParty/filters/getFilterValue",
       getFilterProperty: "corpParty/filters/getProperty"
     })
   },
   data() {
     return {
-      placeholder: "Enter term here..."
+      placeholder: "Enter term here...",
+      searchQuery: this.query
     };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.searchQuery = this.query;
+    });
   },
   methods: {
     getPlaceHolder() {
@@ -80,6 +74,11 @@ export default {
         case "postalCd":
           return "A1A 1A1";
       }
+    }
+  },
+  watch: {
+    searchQuery(nq) {
+      this.$emit("change", nq);
     }
   }
 };

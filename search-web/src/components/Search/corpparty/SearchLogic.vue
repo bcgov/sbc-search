@@ -19,13 +19,17 @@ export default {
       type: Number
     },
     logic: {
-      default: "Any",
+      default: "ANY",
+      type: String
+    },
+    init: {
+      default: "ANY",
       type: String
     }
   },
   data() {
     return {
-      select: this.logic,
+      select: this.init,
       items: [
         {
           text: "All",
@@ -37,6 +41,11 @@ export default {
         }
       ]
     };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.select = this.init;
+    });
   },
   watch: {
     select(nl) {

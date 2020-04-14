@@ -19,7 +19,7 @@ from http import HTTPStatus
 import logging
 from tempfile import NamedTemporaryFile
 
-from flask import Blueprint, current_app, request, jsonify, send_from_directory
+from flask import Blueprint, current_app, request, jsonify, send_from_directory, abort
 from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
@@ -182,6 +182,9 @@ def get_corp_party_by_id(corp_party_id):
 
     result = CorpParty.get_corporation_info_by_corp_party_id(corp_party_id)
 
+    if not result:
+        return jsonify({'message': 'Director with id {} could not be found.'.format(corp_party_id)}), 404
+
     person = result[0]
     result_dict = {}
 
@@ -228,9 +231,9 @@ def get_corp_party_by_id(corp_party_id):
     return jsonify(result_dict)
 
 
-@API.route('/<corppartyid>/offices')
+@API.route('/<corp_party_id>/offices')
 @jwt.requires_auth
-def officesheld(corppartyid):
+def officesheld(corp_party_id):
     """Get OfficesHeld by a CorpParty entity."""
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
@@ -239,7 +242,11 @@ def officesheld(corppartyid):
             HTTPStatus.UNAUTHORIZED,
         )
 
-    results = CorpParty.get_offices_held_by_corp_party_id(corppartyid)
+    results = CorpParty.get_offices_held_by_corp_party_id(corp_party_id)
+
+    if len(results) == 0:
+        return jsonify({'message': 'Director with id {} could not be found.'.format(corp_party_id)}), 404
+
     offices = []
     for row in results:
         result_dict = {}
@@ -252,21 +259,15 @@ def officesheld(corppartyid):
 
         offices.append(result_dict)
 
-    same_addr = CorpParty.get_corp_party_at_same_addr(corppartyid)
-    same_name_and_company = CorpParty.get_corp_party_same_name_at_same_addr(corppartyid)
+    same_addr = CorpParty.get_corp_party_at_same_addr(corp_party_id)
+    same_name_and_company = CorpParty.get_corp_party_same_name_at_same_addr(corp_party_id)
 
-    return jsonify(
-        {
-            'offices': offices,
-            'sameAddr': [
-                {**s[0].as_dict(), **{'year': int(s[1].year)}}
-                for s in same_addr
-                if s[0].corp_party_id != int(corppartyid)
-            ],
-            'sameNameAndCompany': [
-                {**s[0].as_dict(), **{'year': int(s[1].year)}}
-                for s in same_name_and_company
-                if s[0].corp_party_id != int(corppartyid)
-            ],
-        }
-    )
+    return jsonify({
+        'offices': offices,
+        'sameAddr': [
+            {**s[0].as_dict(), **{'year': int(s[1].year)}} for s in same_addr if
+            s[0].corp_party_id != int(corp_party_id)],
+        'sameNameAndCompany': [
+            {**s[0].as_dict(), **{'year': int(s[1].year)}} for s in same_name_and_company if
+            s[0].corp_party_id != int(corp_party_id)],
+    })

@@ -14,6 +14,7 @@
 '''This model manages a Corporation entity.'''
 
 from sqlalchemy import func
+from sqlalchemy.orm.exc import NoResultFound
 
 from search_api.models.base import BaseModel, db
 from search_api.models.corp_name import CorpName
@@ -82,15 +83,20 @@ class Corporation(BaseModel):
 
     @staticmethod
     def get_corporation_by_id(corp_id):
-        '''Get a corporation by id.'''
-        return (
+        """Get a corporation by id."""
+        query = (
             Corporation.query
             .add_columns(
                 Corporation.corp_num,
                 Corporation.transition_dt,
                 Corporation.admin_email,
             )
-            .filter(Corporation.corp_num == corp_id).one())[0]
+            .filter(Corporation.corp_num == corp_id))
+
+        try:
+            return query.one()
+        except NoResultFound:
+            return None
 
     @staticmethod
     def search_corporations(args):

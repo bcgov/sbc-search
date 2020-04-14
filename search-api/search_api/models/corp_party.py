@@ -17,6 +17,7 @@ from functools import reduce
 import logging
 
 from sqlalchemy import func
+from sqlalchemy.orm.exc import NoResultFound
 
 from search_api.constants import ADDITIONAL_COLS_ACTIVE, ADDITIONAL_COLS_ADDRESS
 from search_api.models.base import BaseModel, db
@@ -97,10 +98,12 @@ class CorpParty(BaseModel):
 
     @staticmethod
     def get_corp_party_by_id(corp_party_id):
-        '''Get a CorpParty entity by id.'''
-        return CorpParty.query.filter(
-            CorpParty.corp_party_id == int(corp_party_id)
-        ).one()
+        """Get a CorpParty entity by id."""
+        corp_party = CorpParty.query.filter(CorpParty.corp_party_id == int(corp_party_id))
+        try:
+            return corp_party.one()
+        except NoResultFound:
+            return None
 
     @staticmethod
     def get_corporation_info_by_corp_party_id(corp_party_id):
@@ -108,12 +111,18 @@ class CorpParty(BaseModel):
         # local import to prevent circular import
         from search_api.models.corporation import Corporation  # pylint: disable=import-outside-toplevel, cyclic-import
 
-        return (
+        query = (
             CorpParty.query.filter(CorpParty.corp_party_id == int(corp_party_id))
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
-            .add_columns(Corporation.corp_typ_cd, Corporation.admin_email)
-            .one()
-        )
+            .add_columns(
+                Corporation.corp_typ_cd,
+                Corporation.admin_email
+            ))
+
+        try:
+            return query.one()
+        except NoResultFound:
+            return None
 
     @staticmethod
     def get_filing_description_by_corp_party_id(corp_party_id):
@@ -143,13 +152,16 @@ class CorpParty(BaseModel):
                 CorpParty.appointment_dt,
                 Event.event_timestmp,
             )
-            .filter(CorpParty.corp_party_id == int(corp_party_id))
+            .filter(CorpParty.corp_party_id == int(corp_party_id)).all()
         )
 
     @staticmethod
     def get_corp_party_at_same_addr(corp_party_id):
         '''Get CorpParty entities at the same mailing or delivery address.'''
         person = CorpParty.get_corp_party_by_id(corp_party_id)
+
+        if not person:
+            return None
 
         # one or both addr may be null, handle each case.
         if person.delivery_addr_id or person.mailing_addr_id:
@@ -176,9 +188,15 @@ class CorpParty(BaseModel):
     def get_corp_party_same_name_at_same_addr(corp_party_id):
         '''Get CorpParty entities with the same CorpParty name and delivery or mailing address.'''
         person = CorpParty.get_corp_party_by_id(corp_party_id)
-        same_name_and_company = CorpParty.query.join(
-            Event, Event.event_id == CorpParty.start_event_id
-        ).add_columns(Event.event_timestmp)
+
+        if not person:
+            return None
+
+        same_name_and_company = (
+            CorpParty.query
+            .join(Event, Event.event_id == CorpParty.start_event_id)
+            .add_columns(Event.event_timestmp)
+        )
 
         if person.first_nme:
             same_name_and_company = same_name_and_company.filter(
