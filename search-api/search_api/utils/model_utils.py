@@ -111,7 +111,7 @@ def _get_filter(field_name, operator, value):
 
 def _generate_field_filter(field, operator, value):
     if operator == 'contains':
-        expr = func.upper(field).ilike('%' + value + '%')
+        expr = func.upper(field).like('%' + value + '%')
     elif operator == 'exact':
         expr = func.upper(field) == value
     elif operator == 'endswith':
