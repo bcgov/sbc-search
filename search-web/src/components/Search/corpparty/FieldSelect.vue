@@ -24,7 +24,6 @@ export default {
     }
   },
   beforeUpdate() {
-    console.error("Test");
     this.select = this.init;
   },
   mounted() {
