@@ -19,6 +19,7 @@ from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS, ADDITIONAL_
 from search_api.utils.utils import convert_to_snake_case
 from search_api.models.nickname import NickName
 
+
 def _merge_addr_fields(row):
     address = row.addr_line_1
     if row.addr_line_2:

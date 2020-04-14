@@ -29,7 +29,7 @@
     >
       <SearchTips></SearchTips>
       <v-form>
-        <div v-for="(criteria, index) in filters" :key="index">
+        <div v-for="criteria in filters" :key="criteria.uid">
           <CorpPartySearch
             :criteria="criteria"
             :uid="criteria.uid"
@@ -52,6 +52,7 @@
             type="submit"
             title="Search"
             @click.native.prevent="handleNewSearch"
+            :disabled="disableSearch"
           ></SbcButton>
         </div>
       </v-form>
@@ -154,7 +155,8 @@ export default {
       sort_value: "lastNme",
       sort_type: "dsc",
       error: false,
-      errorMessage: null
+      errorMessage: null,
+      disableSearch: false
     };
   },
   mounted() {
@@ -167,12 +169,14 @@ export default {
   },
   methods: {
     handleError(error) {
+      this.disableSearch = false;
       this.errorMessage = `${error.toString()} ${(error.response &&
         error.response.data.message) ||
         ""}`;
       this.error = true;
     },
     handleSuccess() {
+      this.disableSearch = false;
       this.error = false;
     },
     handleExport() {
@@ -200,9 +204,15 @@ export default {
       const query = Object.assign({}, this.$route.query);
       query.additional_cols = type;
       this.additional_cols = type;
-      this.$router.push({
-        query
-      });
+      this.$router
+        .push({
+          query
+        })
+        .catch(e => {
+          if (e && e.name && e.name !== "NavigationDuplicated") {
+            console.error(e);
+          }
+        });
     },
     handleSortUpdate(options) {
       if (options.sortBy.length === 0 && options.sortDesc.length === 0) {
@@ -228,6 +238,7 @@ export default {
       });
     },
     handleNewSearch() {
+      this.disableSearch = true;
       this.sort_value = "lastNme";
       this.sort_type = "dsc";
       const queryString = this.generateQueryString(1);
@@ -244,9 +255,15 @@ export default {
     },
     handleSearch() {
       const queryString = this.generateQueryString();
-      this.$router.push({
-        query: qs.parse(queryString)
-      });
+      this.$router
+        .push({
+          query: qs.parse(queryString)
+        })
+        .catch(e => {
+          if (e && e.name && e.name !== "NavigationDuplicated") {
+            console.error(e);
+          }
+        });
     },
     renderTable() {
       const queryString = this.generateQueryString();
@@ -323,6 +340,7 @@ export default {
           }
           this.$store.commit("corpParty/filters/setFilters", temp);
         }
+        this.disableSearch = true;
         this.renderTable();
       }
     }

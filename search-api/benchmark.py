@@ -1,5 +1,6 @@
 from search_api.models.base import db
 from search_api.models.corp_party import CorpParty
+from search_api.models.corporation import Corporation
 from search_api.models.nickname import NickName
 from sqlalchemy import func
 import sys
@@ -134,6 +135,11 @@ if __name__ == '__main__':
         # Repeat 3 times to show the effect of Oracle's microcaching.
         for i in range(3):
             from werkzeug.datastructures import ImmutableMultiDict
+
+            r = Corporation.search_corporations(ImmutableMultiDict([('query', 'countable'), ('page', '1'), ('sort_type', 'dsc'), ('sort_value', 'corpNme')]))
+
+            print(r.all())
+            continue
 
             args = ImmutableMultiDict(
                 [

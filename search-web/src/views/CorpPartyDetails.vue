@@ -28,7 +28,7 @@
       </v-alert>
     </div>
     <section v-else class="detail-section">
-      <Details :detail="detail" :officesheld="officesheld"></Details>
+      <Details :detail="detail" :officesheld="detail"></Details>
     </section>
   </div>
 </template>
@@ -45,13 +45,12 @@ export default {
   },
   computed: {
     isLoading() {
-      return this.detail === null && this.officesheld === null;
+      return this.detail === null;
     }
   },
   data() {
     return {
       detail: null,
-      officesheld: null,
       error: false,
       errorMessage: null
     };
@@ -60,20 +59,15 @@ export default {
   mounted() {
     const corp_party_id = this.$route.params["id"];
     if (corp_party_id) {
-      Promise.all([
-        corpPartySearchDetail(corp_party_id),
-        corpPartyOfficeSearch(corp_party_id)
-      ])
+      corpPartySearchDetail(corp_party_id)
         .then(results => {
-          this.detail = results[0].data;
-          this.officesheld = results[1].data;
+          this.detail = results.data;
           this.error = false;
           this.errorMessage = null;
         })
         .catch(error => {
           this.error = true;
           this.detail = {};
-          this.officesheld = {};
           this.errorMessage = `${
             error.response.data && error.response.data.message
               ? error.response.data.message

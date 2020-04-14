@@ -17,6 +17,7 @@
         :class="{
           'mb-n6': $vuetify.breakpoint.smAndUp
         }"
+        :disabled="disableSearch"
       ></CorporationSearch>
 
       <v-alert
@@ -95,7 +96,8 @@ export default {
       query: null,
       page: "1",
       sort_value: "corpNme",
-      sort_type: "dsc"
+      sort_type: "dsc",
+      disableSearch: false
     };
   },
   methods: {
@@ -104,11 +106,14 @@ export default {
         error.response.data.message) ||
         ""}`;
       this.error = true;
+      this.disableSearch = false;
     },
     handleSuccess() {
       this.error = false;
+      this.disableSearch = false;
     },
     handleSearch(searchQuery) {
+      this.disableSearch = true;
       this.page = "1";
       const query = {
         query: searchQuery,
@@ -132,7 +137,11 @@ export default {
       this.page = page;
       const query = Object.assign({}, this.$route.query);
       query.page = this.page;
-      this.$router.push({ query });
+      this.$router.push({ query }).catch(e => {
+        if (e.name !== "NavigationDuplicated") {
+          console.error(e);
+        }
+      });
     },
     handleSortUpdate(options) {
       if (options.sortBy.length === 0 && options.sortDesc.length === 0) {
@@ -174,6 +183,7 @@ export default {
   },
   mounted() {
     if (!this.isQueryEmpty && this.$route.query.query) {
+      this.disableSearch = true;
       const query = this.$route.query;
       this.$root.$emit("setCorpSearchInput", query.query);
       this.query = query;

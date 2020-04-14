@@ -16,6 +16,7 @@
         class="d-inline-block corporation-btn font-weight-bold elevation-0 font-16"
         color="primary"
         height="56"
+        :disabled="disabled"
         type="submit"
         :block="$vuetify.breakpoint.xsOnly"
         @click.prevent="handleSearch"
@@ -39,6 +40,10 @@ export default {
     initSearch: {
       default: null,
       type: String
+    },
+    disabled: {
+      default: false,
+      type: Boolean
     }
   },
   methods: {
