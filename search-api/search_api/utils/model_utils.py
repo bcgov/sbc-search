@@ -102,7 +102,6 @@ def _get_filter(field_name, operator, value):
 
 
 def _generate_field_filter(field, operator, value):
-    # TODO: we should sanitize the values
     if operator == 'contains':
         return func.upper(field).ilike('%' + value + '%')
     if operator == 'exact':

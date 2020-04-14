@@ -17,7 +17,7 @@ import datetime
 from http import HTTPStatus
 from tempfile import NamedTemporaryFile
 
-from flask import Blueprint, request, jsonify, send_from_directory
+from flask import Blueprint, request, jsonify, send_from_directory, abort
 from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
@@ -136,6 +136,9 @@ def corporation(corp_id):
         return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     corp = Corporation.get_corporation_by_id(corp_id)
+    if not corp:
+        return jsonify({'message': 'Corporation with id {} could not be found.'.format(corp_id)}), 404
+
     offices = Office.get_offices_by_corp_id(corp_id)
     names = CorpName.get_corp_name_by_corp_id(corp_id)
 
