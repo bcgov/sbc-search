@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''API endpoints for searching for and retrieving information about directors (CorpParties).'''
+"""API endpoints for searching for and retrieving information about directors (CorpParties)."""
 
 import datetime
 from http import HTTPStatus
@@ -42,7 +42,7 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 @API.route('/')
 
 def corpparty_search():
-    '''Search for CorpParty entities.
+    """Search for CorpParty entities.
 
     This function takes any number of field triples in the following format:
     - field={field name}
@@ -57,7 +57,7 @@ def corpparty_search():
     - page={page number}
     - sort_type={'asc' or 'dsc'}
     - sort_value={field name to sort results by}
-    '''
+    """
     current_app.logger.info('Starting director search')
 
     account_id = request.headers.get('X-Account-Id', None)
@@ -129,7 +129,7 @@ def corpparty_search():
 @API.route('/export/')
 @jwt.requires_auth
 def corpparty_search_export():
-    '''Export a list of CorpParty search results. Uses the same arguments as corpparty_search().'''
+    """Export a list of CorpParty search results. Uses the same arguments as corpparty_search()."""
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return (
@@ -151,15 +151,11 @@ def corpparty_search_export():
 
         sheet = workbook.active
 
-        for index, column_header in enumerate(
-            _get_corp_party_export_column_headers(args), start=1
-        ):
+        for index, column_header in enumerate(_get_corp_party_export_column_headers(args), start=1):
             _ = sheet.cell(column=index, row=1, value=column_header)
 
         for row_index, row in enumerate(results, start=2):
-            for column_index, column_value in enumerate(
-                _get_corp_party_export_column_values(row, args), start=1
-            ):
+            for column_index, column_value in enumerate(_get_corp_party_export_column_values(row, args), start=1):
                 _ = sheet.cell(column=column_index, row=row_index, value=column_value)
 
         current_date = datetime.datetime.strftime(
@@ -176,7 +172,7 @@ def corpparty_search_export():
 @API.route('/<corp_party_id>')
 
 def get_corp_party_by_id(corp_party_id):
-    '''Get a CorpParty by id.'''
+    """Get a CorpParty by id."""
     account_id = request.headers.get('X-Account-Id', None)
 
 

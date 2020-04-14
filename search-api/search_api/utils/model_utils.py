@@ -17,7 +17,7 @@ from sqlalchemy import func
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS, ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 from search_api.utils.utils import convert_to_snake_case
-
+from search_api.models.nickname import NickName
 
 def _merge_addr_fields(row):
     address = row.addr_line_1
@@ -110,40 +110,29 @@ def _get_filter(field_name, operator, value):
 
 def _generate_field_filter(field, operator, value):
     if operator == 'contains':
-        return func.upper(field).ilike('%' + value + '%')
+        expr = func.upper(field).ilike('%' + value + '%')
     elif operator == 'exact':
-        return func.upper(field) == value
+        expr = func.upper(field) == value
     elif operator == 'endswith':
-        return func.upper(field).like('%' + value)
+        expr = func.upper(field).like('%' + value)
     elif operator == 'startswith':
-        return func.upper(field).like(value + '%')
+        expr = func.upper(field).like(value + '%')
     elif operator == 'wildcard':
         # We support entering * or % as wildcards, but the actual wildcard is %
         value = value.replace('*', '%')
-        return func.upper(field).like(value)
+        expr = func.upper(field).like(value)
     elif operator == 'excludes':
-        return func.upper(field) != value
-    # TODO: this is a relatively expensive op, we should enforce it's only used in combination with other queries.
-    # TODO: we should consider sorting by similarity (sum of any filters using it) by default, if the user chooses any similarity filter.
+        expr = func.upper(field) != value
+        # TODO: this is a relatively expensive op, we may want to enforce it's only used in combination with other queries.
+        # TODO: we should consider sorting by similarity (sum of any filters using it) by default, if the user chooses any similarity filter.
     elif operator == 'similar':
-        return func.utl_match.jaro_winkler_similarity(Field, value) > 95
+        expr = func.utl_match.jaro_winkler_similarity(field, value) > 95
     elif operator == 'nicknames':
-        return _get_nickname_search_expr(value)
+        expr = NickName.get_nickname_search_expr(field, value)
     else:
         raise Exception('invalid operator: {}'.format(operator))
 
-
-def _get_nickname_search_expr(value):
-    aliases = db.session.query(
-        NickName.name
-    ).filter(
-        NickName.name_id == db.session.query(
-            NickName.name_id
-        ).filter(NickName.name == 'WILLIAM')
-    )
-    
-    alias_list = list(a[0] for a in aliases)
-    return func.upper(CorpParty.first_nme).in_(alias_list)
+    return expr
 
 
 def _get_sort_field(field_name):
