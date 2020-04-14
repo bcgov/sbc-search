@@ -19,7 +19,7 @@ from http import HTTPStatus
 import logging
 from tempfile import NamedTemporaryFile
 
-from flask import Blueprint, current_app, request, jsonify, send_from_directory, abort
+from flask import Blueprint, current_app, request, jsonify, send_from_directory
 from openpyxl import Workbook
 
 from search_api.auth import jwt, authorized
@@ -40,7 +40,7 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
-
+@jwt.requires_auth
 def corpparty_search():
     """Search for CorpParty entities.
 
@@ -88,7 +88,7 @@ def corpparty_search():
     # Manually paginate results, because flask-sqlalchemy's paginate() method counts the total,
     # which is slow for large tables. This has been addressed in flask-sqlalchemy but is unreleased.
     # Ref: https://github.com/pallets/flask-sqlalchemy/pull/613
-    results = results.limit(per_page).offset((page - 1) * per_page)
+    results = results.limit(per_page).offset((page - 1) * per_page).all()
 
     # for benchmarking, dump the query here and copy to benchmark.py
     # from sqlalchemy.dialects import oracle
@@ -170,11 +170,15 @@ def corpparty_search_export():
 
 
 @API.route('/<corp_party_id>')
-
+@jwt.requires_auth
 def get_corp_party_by_id(corp_party_id):
     """Get a CorpParty by id."""
     account_id = request.headers.get('X-Account-Id', None)
-
+    if not authorized(jwt, account_id):
+        return (
+            jsonify({'message': 'User is not authorized to access Director Search'}),
+            HTTPStatus.UNAUTHORIZED,
+        )
 
     result = CorpParty.get_corporation_info_by_corp_party_id(corp_party_id)
 
