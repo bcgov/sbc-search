@@ -206,6 +206,7 @@ def get_corp_party_by_id(corp_party_id):
     result_dict['firstNme'] = person.first_nme
     result_dict['middleNme'] = person.middle_nme
     result_dict['lastNme'] = person.last_nme
+    result_dict['businessNme'] = person.business_nme
     result_dict['appointmentDt'] = person.appointment_dt
     result_dict['cessationDt'] = person.cessation_dt
     result_dict['corpNum'] = person.corp_num
