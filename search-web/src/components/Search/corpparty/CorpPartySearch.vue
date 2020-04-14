@@ -30,6 +30,7 @@
     ></TermSelect>
 
     <SearchInput
+      ref="searchInput"
       v-else
       :uid="uid"
       :query="criteria.value"
@@ -159,21 +160,19 @@ export default {
     }
   },
   watch: {
-    selectedField(nf) {
+    selectedField(nf, of) {
       if (nf === "addrLine1") {
         this.setSearchPropValue({
           uid: this.uid,
           property: "operator",
           value: "contains"
         });
-        this.clearTerm();
       } else if (nf === "stateTypCd") {
         this.setSearchPropValue({
           uid: this.uid,
           property: "operator",
           value: "exact"
         });
-
         const value = this.criteria.value;
         if (value !== "ACT" && value !== "HIS") {
           this.setSearchPropValue({
@@ -182,7 +181,7 @@ export default {
             value: "ACT"
           });
         }
-      } else {
+      } else if (of === "stateTypCd") {
         this.clearTerm();
       }
     }
