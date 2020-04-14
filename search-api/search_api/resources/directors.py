@@ -206,6 +206,7 @@ def get_corp_party_by_id(corp_party_id):
     result_dict['firstNme'] = person.first_nme
     result_dict['middleNme'] = person.middle_nme
     result_dict['lastNme'] = person.last_nme
+    result_dict['businessNme'] = person.business_nme
     result_dict['appointmentDt'] = person.appointment_dt
     result_dict['cessationDt'] = person.cessation_dt
     result_dict['corpNum'] = person.corp_num
@@ -224,20 +225,20 @@ def get_corp_party_by_id(corp_party_id):
 
     result_dict['states'] = [s.as_dict() for s in states]
 
-    return jsonify(result_dict)
+    offices_held = _get_offices_held_by_corp_party(corp_party_id)
+
+    return jsonify({**result_dict, **offices_held})
 
 
-@API.route('/<corp_party_id>/offices')
-
-def officesheld(corp_party_id):
-    """Get OfficesHeld by a CorpParty entity."""
-    account_id = request.headers.get('X-Account-Id', None)
-
-
+def _get_offices_held_by_corp_party(corp_party_id):
     results = CorpParty.get_offices_held_by_corp_party_id(corp_party_id)
 
     if len(results) == 0:
-        return jsonify({'message': 'Director with id {} could not be found.'.format(corp_party_id)}), 404
+        return {
+            'offices': [],
+            'sameAddr': [],
+            'sameNameAndCompany': []
+        }
 
     offices = []
     for row in results:
@@ -254,7 +255,7 @@ def officesheld(corp_party_id):
     same_addr = CorpParty.get_corp_party_at_same_addr(corp_party_id)
     same_name_and_company = CorpParty.get_corp_party_same_name_at_same_addr(corp_party_id)
 
-    return jsonify({
+    results = {
         'offices': offices,
         'sameAddr': [
             {**s[0].as_dict(), **{'year': int(s[1].year)}} for s in same_addr if
@@ -262,4 +263,5 @@ def officesheld(corp_party_id):
         'sameNameAndCompany': [
             {**s[0].as_dict(), **{'year': int(s[1].year)}} for s in same_name_and_company if
             s[0].corp_party_id != int(corp_party_id)],
-    })
+    }
+    return results

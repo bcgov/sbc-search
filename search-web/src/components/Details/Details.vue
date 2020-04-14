@@ -141,6 +141,7 @@ export default {
         "mailingAddr",
         "corpPartyEmail",
         "partyTypCd",
+        "businessNme",
         "appointmentDt",
         "cessationDt",
         "stateTypCd",

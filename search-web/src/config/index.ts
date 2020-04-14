@@ -136,6 +136,13 @@ export const CORPPARTY_HEADERS = [
     width: 150
   },
   {
+    text: "Business Name",
+    value: "businessNme",
+    sortable: true,
+    align: "left",
+    width: 150
+  },
+  {
     text: "Appointed",
     value: "appointmentDt",
     sortable: true,
