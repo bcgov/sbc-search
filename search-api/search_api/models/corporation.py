@@ -11,8 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+'''This model manages a Corporation entity.'''
 
 from sqlalchemy import func
+from sqlalchemy.orm.exc import NoResultFound
 
 from search_api.models.base import BaseModel, db
 from search_api.models.corp_name import CorpName
@@ -24,8 +26,8 @@ from search_api.utils.model_utils import _sort_by_field
 
 
 class Corporation(BaseModel):
-    __tablename__ = 'corporation'
-    """
+    '''Corporation entity. Corresponds to the 'corporation' table.
+
     corp_num                       VARCHAR2    10     2206759
     corp_frozen_typ_cd             CHAR        1      819
     corp_typ_cd                    VARCHAR2    3      2206759
@@ -50,7 +52,9 @@ class Corporation(BaseModel):
     ar_reminder_date               VARCHAR2    20     67640
     TEMP_PASSWORD                  VARCHAR2    300    3582
     TEMP_PASSWORD_EXPIRY_DATE      DATE        7      3582
-    """
+    '''
+
+    __tablename__ = 'corporation'
 
     corp_num = db.Column(db.String(10), primary_key=True, unique=True)
     corp_frozen_typ_cd = db.Column(db.String(1))
@@ -74,36 +78,45 @@ class Corporation(BaseModel):
     ar_reminder_date = db.Column(db.String(20))
 
     def __repr__(self):
+        '''Return string representation of a Corporation entity.'''
         return 'corp num: {}'.format(self.corp_num)
 
     @staticmethod
-    def get_corporation_by_id(id):
-        return (
+    def get_corporation_by_id(corp_id):
+        """Get a corporation by id."""
+        query = (
             Corporation.query
             .add_columns(
                 Corporation.corp_num,
                 Corporation.transition_dt,
                 Corporation.admin_email,
             )
-            .filter(Corporation.corp_num == id).one())[0]
+            .filter(Corporation.corp_num == corp_id))
+
+        try:
+            return query.one()
+        except NoResultFound:
+            return None
 
     @staticmethod
     def search_corporations(args):
-        query = args.get("query")
+        '''Search for Corporations by query (search keyword or corpNum) and sort results.'''
+        query = args.get('query')
 
         sort_type = args.get('sort_type')
         sort_value = args.get('sort_value')
 
         if not query:
-            return "No search query was received", 400
+            return 'No search query was received', 400
 
         results = Corporation.query_corporations(query, sort_type, sort_value)
         return results
 
     @staticmethod
     def query_corporations(query, sort_type, sort_value):
+        '''Construct Corporation search db query.'''
         # local import to prevent circular import
-        from search_api.models.corp_party import CorpParty
+        from search_api.models.corp_party import CorpParty  # pylint: disable=import-outside-toplevel, cyclic-import
 
         results = (
             Corporation.query
@@ -130,9 +143,9 @@ class Corporation(BaseModel):
             (Corporation.corp_num == query) |
             (CorpName.corp_nme.ilike('%' + query + '%'))
         ).filter(
-            CorpName.corp_name_typ_cd.in_(("CO", "NB")),
-            CorpState.end_event_id == None,
-            CorpName.end_event_id == None,
+            CorpName.corp_name_typ_cd.in_(('CO', 'NB')),
+            CorpState.end_event_id == None,  # pylint: disable=singleton-comparison  # noqa
+            CorpName.end_event_id == None,  # pylint: disable=singleton-comparison
         )
 
         # Sorting
@@ -141,6 +154,6 @@ class Corporation(BaseModel):
             results = results.order_by(func.upper(CorpName.corp_nme))
         else:
             sort_field_str = _sort_by_field(sort_type, sort_value)
-            results = results.order_by(eval(sort_field_str))
+            results = results.order_by(eval(sort_field_str))  # pylint: disable=eval-used
 
         return results

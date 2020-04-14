@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+'''API endpoints for search_api.'''
 
 from .directors import API as DIRECTORS_API
 from .businesses import API as BUSINESSES_API
+from .ops import API as OPS_API

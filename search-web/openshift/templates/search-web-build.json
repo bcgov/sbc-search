@@ -35,7 +35,7 @@
             "name": "latest",
             "from": {
               "kind": "DockerImage",
-              "name": "nodeshift/centos7-s2i-web-app:10.x"
+              "name": "nodeshift/ubi8-s2i-web-app:latest"
             }
           }
         ]

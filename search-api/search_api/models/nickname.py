@@ -1,4 +1,4 @@
-# Copyright © 2019 Province of British Columbia
+# Copyright © 2020 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,6 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''The Test Suites to ensure that the service is built and operating correctly.'''
 
-from .utilities.decorators import skip_in_pod
+from search_api.models.base import BaseModel, db
+
+
+class NickName(BaseModel):
+    __tablename__ = "nickname"
+
+    name_id = db.Column(db.Integer)
+    name = db.Column(db.String(30), primary_key=True)

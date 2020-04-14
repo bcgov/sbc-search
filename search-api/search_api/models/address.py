@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+'''This model manages an Address entity.'''
 
 from functools import reduce
 
@@ -18,8 +19,8 @@ from search_api.models.base import BaseModel, db
 
 
 class Address(BaseModel):
-    __tablename__ = "address"
-    """
+    '''Address entity. Corresponds to the 'address' table.
+
     addr_id                   NUMBER      22     20233825
     province                  CHAR        2      18872463
     country_typ_cd            CHAR        2      19016927
@@ -46,7 +47,9 @@ class Address(BaseModel):
     route_service_type        VARCHAR2    10     146477
     route_service_no          VARCHAR2    4      27530
     province_state_name       VARCHAR2    30     362
-    """
+    '''
+
+    __tablename__ = 'address'
 
     addr_id = db.Column(db.Integer, primary_key=True)
     province = db.Column(db.String(2))
@@ -76,8 +79,9 @@ class Address(BaseModel):
     province_state_name = db.Column(db.String(30))
 
     @staticmethod
-    def get_address_by_id(id):
-        return Address.query.filter(Address.addr_id == id).add_columns(
+    def get_address_by_id(address_id):
+        '''Get an Address by id.'''
+        return Address.query.filter(Address.addr_id == address_id).add_columns(
             Address.addr_line_1,
             Address.addr_line_2,
             Address.addr_line_3,
@@ -88,17 +92,18 @@ class Address(BaseModel):
         ).one()[0]
 
     @staticmethod
-    def normalize_addr(id):
-        if not id:
+    def normalize_addr(address_id):
+        '''Merge Address fields into a standardized format of street address, city, province, and postal code.'''
+        if not address_id:
             return ''
 
-        address = Address.get_address_by_id(id)
+        address = Address.get_address_by_id(address_id)
 
-        def fn(accumulator, s):
-            if s:
-                return ((accumulator or '') + ', ' if accumulator else '') + (s or '')
-            else:
-                return accumulator or ''
+        def address_reducer(accumulator, address_field):
+            if address_field:
+                return ((accumulator or '') + ', ' if accumulator else '') + (address_field or '')
+            return accumulator or ''
 
-        return reduce(fn, [address.addr_line_1, address.addr_line_2, address.addr_line_3,
-                           address.city, address.province, address.country_typ_cd])
+        return reduce(
+            address_reducer, [address.addr_line_1, address.addr_line_2, address.addr_line_3,
+                              address.city, address.province, address.country_typ_cd])

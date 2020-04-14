@@ -1,10 +1,10 @@
-"""empty message
+'''empty message
 
 Revision ID: 97734424aa05
 Revises: 
 Create Date: 2020-03-12 21:42:40.667759
 
-"""
+'''
 from alembic import op
 import sqlalchemy as sa
 

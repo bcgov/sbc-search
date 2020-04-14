@@ -11,12 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test Utils.
+'''Test Utils.
 
 Test Utility for creating test scenarios.
-"""
-import os
-import uuid
+'''
 from enum import Enum
 
 
@@ -28,7 +26,7 @@ JWT_HEADER = {
 
 
 class TestJwtClaims(dict, Enum):
-    """Test scenarios of jwt claims."""
+    '''Test scenarios of jwt claims.'''
 
     no_role = {
         'iss': 'https://example.localdomain/auth/realms/example',
@@ -81,7 +79,7 @@ class TestJwtClaims(dict, Enum):
 
     @staticmethod
     def get_test_user(sub):
-        """Return test user with subject from argument."""
+        '''Return test user with subject from argument.'''
         return {
             'iss': 'https://example.localdomain/auth/realms/example',
             'aud': 'flask-jwt-oidc-test-client',
@@ -97,4 +95,3 @@ class TestJwtClaims(dict, Enum):
             },
             'loginSource': 'PASSCODE'
         }
-
