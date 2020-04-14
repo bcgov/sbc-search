@@ -17,9 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'countable-web/sbc-search'
 
-    env:
-      FLASK_ENV: "testing"
-
     strategy:
       matrix:
         node: [ '13' ]
@@ -33,14 +30,10 @@ jobs:
         working-directory: ./search-web
         run: |
           docker-compose build search-web
-      - name: Start docker with docker-compose
-        working-directory: ./search-web
-        run: |
-          docker-compose up -d search-web
       - name: Run yarn tests
         working-directory: ./search-web
         run: |
-          docker exec -i sbc-search_search-web_1 yarn test:unit
+          docker-compose run search-web yarn test:unit
       - name: Shutdown docker-compose
         working-directory: ./search-web
         run: |
