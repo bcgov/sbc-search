@@ -12,7 +12,7 @@
       color="primary"
       class="folio-pay-btn font-16"
       @click="handleClick"
-      >Direct Link To Company on BC Online</v-btn
+      >Direct Link to Corporation on Corporate Online</v-btn
     >
   </div>
 </template>

@@ -24,7 +24,7 @@ export function buildQueryString(filters) {
 }
 
 export function getDeepLink(corpNum) {
-  return `https://tst.corponline.gov.bc.ca/corporateonline/colin/search/searchAction.do?corpNum=${corpNum}&_flowExecutionKey=e4s2`;
+  return `${process.env.VUE_APP_CORP_ONLINE_ROOT_URL}/corporateonline/colin/search/searchAction.do?corpNum=${corpNum}&_flowExecutionKey=e4s2`;
 }
 
 export async function downloadFile(data, fileName) {

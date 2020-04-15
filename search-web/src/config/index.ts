@@ -136,7 +136,7 @@ export const CORPPARTY_HEADERS = [
     width: 150
   },
   {
-    text: "Business Name",
+    text: "Incorporator Name",
     value: "businessNme",
     sortable: true,
     align: "left",
