@@ -100,6 +100,10 @@
               {
                 "name": "VUE_APP_AUTH_ROOT_API",
                 "value": "${VUE_APP_AUTH_ROOT_API}"
+              },
+              {
+                "name": "VUE_APP_CORP_ONLINE_ROOT_URL",
+                "value": "${VUE_APP_CORP_ONLINE_ROOT_URL}"
               }
             ]
           }
@@ -332,6 +336,13 @@
       "description": "The root API URL of Pathfinder auth service",
       "required": true,
       "value": "https://auth-api-dev.pathfinder.gov.bc.ca/api/v1"
+    },
+    {
+      "name": "VUE_APP_CORP_ONLINE_ROOT_URL",
+      "displayName": "Corporate Online Root URL",
+      "description": "The root URL of Corporate Online",
+      "required": true,
+      "value": "https://tst.corporateonline.gov.bc.ca/"
     }
   ]
 }
