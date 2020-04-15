@@ -1,7 +1,7 @@
 <template>
   <v-text-field
     background-color="#e5e8ec"
-    class="search-input"
+    class="search-input search-input-corporation"
     label="Search Term"
     :height="height"
     v-model="searchQuery"
@@ -44,3 +44,15 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+@media (max-width: 1497px) {
+  .search-input-corporation {
+    width: auto !important;
+  }
+}
+@media (max-width: 959px) {
+  .search-input {
+    width: 100% !important;
+  }
+}
+</style>

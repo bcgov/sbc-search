@@ -33,7 +33,7 @@ API = Blueprint("BUSINESSES_API", __name__, url_prefix="/api/v1/businesses")
 
 
 @API.route("/")
-@jwt.requires_auth
+
 def corporation_search():
     """Search for Corporations by keyword or corpNum.
 
@@ -43,8 +43,7 @@ def corporation_search():
     """
     account_id = request.headers.get("X-Account-Id", None)
 
-    if not authorized(jwt, account_id):
-        return (jsonify({"message": "User is not authorized to access Director Search"}), HTTPStatus.UNAUTHORIZED)
+   
     # args <- ImmutableMultiDict([('query', 'countable'), ('page', '1'), ('sort_type', 'dsc'), ('sort_value', 'corpNme')])
 
     args = request.args

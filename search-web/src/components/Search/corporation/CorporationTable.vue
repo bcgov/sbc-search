@@ -60,7 +60,7 @@
       <template v-slot:item="{ item, index, headers }">
         <!-- Mobile View Begin -->
         <tr
-          @click="handleTableRowClick(item)"
+          @click="handleTableRowClick(item, $event)"
           class="cursor-pointer d-table-row d-md-none mobile-tr-row"
           v-for="(value, i) in Object.values(orderItems(item))"
           :key="`row${index}${value}${i}`"
@@ -77,7 +77,7 @@
 
         <tr
           class="cursor-pointer d-none d-md-table-row"
-          @click="handleTableRowClick(item)"
+          @click="handleTableRowClick(item, $event)"
         >
           <td class="anchor-text">{{ item["corpNum"] }}</td>
           <td>{{ item["corpTypCd"] }}</td>
@@ -182,7 +182,8 @@ export default {
         sortDesc: this.options.sortDesc
       });
     },
-    handleTableRowClick(item) {
+    handleTableRowClick(item, e) {
+      e.target.closest("tr").classList.add("row-clicked");
       window.open(`/corporation/${item["corpNum"]}`);
     },
     async fetchData(query) {
@@ -233,5 +234,8 @@ export default {
 
 .v-data-custom-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.row-clicked {
+  background-color: $COLOR_LAVENDER !important;
 }
 </style>
