@@ -32,13 +32,13 @@ def test_corporation(session):
 def test_corporation_search(session):
 
     '''Assert that Corporations can be found by name or number.'''
-    results = Corporation.query_corporations('Pembina Pipeline', None, 'corp_num')
+    results = Corporation.query_corporations('Pembina Pipeline', 'corpNme', None, 'corp_num')
     assert results.count() == 1
 
-    results = Corporation.query_corporations('Pembina', None, 'corp_num')
+    results = Corporation.query_corporations('Pembina', 'corpNme', None, 'corp_num')
     assert results.count() == 1
 
-    results = Corporation.query_corporations('Pipeline', None, 'corp_num')
+    results = Corporation.query_corporations('Pipeline', 'corpNme', None, 'corp_num')
     assert results.count() == 1
 
     # corp num search disabled for perf.
@@ -74,7 +74,7 @@ def test_corp_party_same_addr(session):
 def test_corp_party_offices(session):
     '''Assert that offices held by CorpParty can be found.'''
     offices = CorpParty.get_offices_held_by_corp_party_id(1)
-    assert offices.count() == 2
+    assert len(offices) == 2
 
 
 def test_corp_party_nicknames(session):

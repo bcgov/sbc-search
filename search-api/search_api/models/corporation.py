@@ -101,12 +101,13 @@ class Corporation(BaseModel):
 
         sort_type = args.get("sort_type")
         sort_value = args.get("sort_value")
+        search_field = args.get("search_field", "corpNme")
 
-        results = Corporation.query_corporations(query, sort_type, sort_value, include_addr)
+        results = Corporation.query_corporations(query, search_field, sort_type, sort_value, search_field)
         return results
 
     @staticmethod
-    def query_corporations(query, sort_type, sort_value, include_addr=False):
+    def query_corporations(query, search_field, sort_type, sort_value, include_addr=False):
         """Construct Corporation search db query."""
 
         # TODO: address join is quite expensive, consider making that column optional in the UI.
@@ -156,16 +157,24 @@ class Corporation(BaseModel):
                 Corporation.recognition_dts,
                 CorpState.state_typ_cd,
             )
-        results = results.filter(
-            # or_(
-            # TODO: This OR query leads to poor performance. We may need a UI control to choose which field to search.
-            # For now, we only support company names.
-            #    Corporation.corp_num == query.upper(),
-            CorpName.corp_name_typ_cd == literal_column("'CO'"),
-            # Doing a full CONTAINS search is quite slow. Use STARTSWITH for this reason.
-            func.upper(CorpName.corp_nme).like("%" + query.upper() + "%")
-            # )
-        )
+
+        if search_field == 'corpNme':
+            results = results.filter(
+                # or_(
+                # TODO: This OR query leads to poor performance. We may need a UI control to choose which field to search.
+                # For now, we only support company names.
+                #    Corporation.corp_num == query.upper(),
+                CorpName.corp_name_typ_cd == literal_column("'CO'"),
+                # Doing a full CONTAINS search is quite slow. Use STARTSWITH for this reason.
+                func.upper(CorpName.corp_nme).like("%" + query.upper() + "%")
+                # )
+            )
+        elif search_field == 'corpNum':
+            results = results.filter(
+                Corporation.corp_num == query.upper(),
+            )
+        else:
+            raise Exception("Invalid search field specified: `{}`".format(search_field))
 
         # Sorting
         if sort_type is None:
