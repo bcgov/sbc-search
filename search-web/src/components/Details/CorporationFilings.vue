@@ -1,18 +1,15 @@
 <template>
   <div>
+    <!--
     <h5 class="outline mb-5">Folio Number:</h5>
     <v-text-field
       solo
       class="folio-input"
       placeholder="Enter Folio Number"
     ></v-text-field>
-    <v-btn
-      :elevation="0"
-      height="50"
-      color="primary"
-      class="folio-pay-btn font-16"
-      @click="handleClick"
-      >Direct Link to Corporation on Corporate Online</v-btn
+    -->
+    <a @click.prevent="handleClick" class="body-2"
+      >Direct Link to Corporation on Corporate Online</a
     >
   </div>
 </template>

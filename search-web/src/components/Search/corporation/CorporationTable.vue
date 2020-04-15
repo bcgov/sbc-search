@@ -67,7 +67,7 @@
         >
           <td class="d-table-cell">
             <div class="d-flex w-100 justify-space-between">
-              <div class="color-black">{{ headers[i].text }}</div>
+              <div class="color-black">{{ headers[i] && headers[i].text }}</div>
               <div class="text-right">{{ value }}</div>
             </div>
           </td>
@@ -84,8 +84,6 @@
           <td>{{ item["corpNme"] }}</td>
           <td>{{ formatDate(item["recognitionDts"]) }}</td>
           <td>{{ item["stateTypCd"] }}</td>
-          <td>{{ item["addr"] }}</td>
-          <td>{{ item["postalCd"] }}</td>
         </tr>
       </template>
       <template v-slot:footer>
@@ -143,9 +141,17 @@ export default {
       type: String
     }
   },
+  computed: {
+    headers() {
+      const filter = {
+        addr: true,
+        postalCd: true
+      };
+      return CORPORATION_HEADERS.filter(ch => !filter[ch.value]);
+    }
+  },
   data() {
     return {
-      headers: CORPORATION_HEADERS,
       corporations: [],
       loading: false,
       totalItems: 0,
@@ -163,9 +169,7 @@ export default {
         "corpTypCd",
         "corpNme",
         "recognitionDts",
-        "stateTypCd",
-        "addr",
-        "postalCd"
+        "stateTypCd"
       ]);
     },
     pageNext() {

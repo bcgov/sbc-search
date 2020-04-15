@@ -1,16 +1,16 @@
 <template>
   <div>
     <v-container>
-      <v-row>
+      <v-row class="mb-10">
         <v-col cols="12">
           <div
-            class="mb-10 d-flex justify-space-between align-center"
+            class="d-flex justify-space-between align-center"
             :class="{
               'flex-wrap': $vuetify.breakpoint.smAndDown
             }"
           >
             <h2
-              class="display-1"
+              class="body-1 font-weight-bold"
               :class="{
                 'w-100': $vuetify.breakpoint.smAndDown
               }"
@@ -25,6 +25,7 @@
               }"
             ></PrintButton>
           </div>
+          <CorporationFilings :corpNum="details.corpNum"></CorporationFilings>
         </v-col>
       </v-row>
       <v-row justify="space-between">
@@ -82,9 +83,6 @@
               </div>
             </li>
           </ul>
-        </v-col>
-        <v-col xs="12" sm="12" md="6" lg="6">
-          <CorporationFilings :corpNum="details.corpNum"></CorporationFilings>
         </v-col>
       </v-row>
     </v-container>
