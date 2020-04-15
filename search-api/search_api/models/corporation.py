@@ -15,6 +15,7 @@
 
 from sqlalchemy import func
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy import or_
 
 from search_api.models.base import BaseModel, db
 from search_api.models.corp_name import CorpName
@@ -116,16 +117,16 @@ class Corporation(BaseModel):
     def query_corporations(query, sort_type, sort_value):
         '''Construct Corporation search db query.'''
         # local import to prevent circular import
-        from search_api.models.corp_party import CorpParty  # pylint: disable=import-outside-toplevel, cyclic-import
+        #from search_api.models.corp_party import CorpParty  # pylint: disable=import-outside-toplevel, cyclic-import
 
         results = (
             Corporation.query
-            .join(CorpName, Corporation.corp_num == CorpName.corp_num)
-            .join(CorpParty, Corporation.corp_num == CorpParty.corp_num)
-            .join(Office, Office.corp_num == Corporation.corp_num)
-            .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
-            .join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
-            .join(Address, Office.mailing_addr_id == Address.addr_id)
+            .outerjoin(CorpName, Corporation.corp_num == CorpName.corp_num)
+            #.outerjoin(CorpParty, Corporation.corp_num == CorpParty.corp_num)
+            .outerjoin(Office, Office.corp_num == Corporation.corp_num)
+            .outerjoin(CorpState, CorpState.corp_num == Corporation.corp_num)
+            .outerjoin(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+            .outerjoin(Address, Office.mailing_addr_id == Address.addr_id)
             .with_entities(
                 CorpName.corp_nme,
                 Corporation.corp_num,
@@ -136,16 +137,18 @@ class Corporation(BaseModel):
                 Address.addr_line_2,
                 Address.addr_line_3,
                 Address.postal_cd,
+                Office.office_typ_cd,
             )
         )
 
         results = results.filter(
-            (Corporation.corp_num == query) |
-            (CorpName.corp_nme.ilike('%' + query + '%'))
+            (Corporation.corp_num == query.upper()) |
+            (func.upper(CorpName.corp_nme).like('%' + query.upper() + '%'))
         ).filter(
-            CorpName.corp_name_typ_cd.in_(('CO', 'NB')),
-            CorpState.end_event_id == None,  # pylint: disable=singleton-comparison  # noqa
+            CorpName.corp_name_typ_cd == 'CO',
+            or_(Office.office_typ_cd == None, Office.office_typ_cd != 'RG'), # These offices always have a corresponding RC type office, and so render duplicate results.
             CorpName.end_event_id == None,  # pylint: disable=singleton-comparison
+            CorpState.end_event_id == None,  # pylint: disable=singleton-comparison  # noqa
             Office.end_event_id == None,
         )
 
