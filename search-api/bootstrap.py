@@ -415,7 +415,7 @@ def populate():
 if __name__ == '__main__':
     from search_api import create_app
 
-    app = create_app('testing')
+    app = create_app('development')
     with app.app_context():
         reset()
         populate()

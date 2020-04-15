@@ -146,6 +146,7 @@ class Corporation(BaseModel):
             CorpName.corp_name_typ_cd.in_(('CO', 'NB')),
             CorpState.end_event_id == None,  # pylint: disable=singleton-comparison  # noqa
             CorpName.end_event_id == None,  # pylint: disable=singleton-comparison
+            Office.end_event_id == None,
         )
 
         # Sorting
