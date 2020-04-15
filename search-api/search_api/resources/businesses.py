@@ -43,7 +43,7 @@ def corporation_search():
     """
     account_id = request.headers.get("X-Account-Id", None)
 
-   
+
     # args <- ImmutableMultiDict([('query', 'countable'), ('page', '1'), ('sort_type', 'dsc'), ('sort_value', 'corpNme')])
 
     args = request.args
@@ -55,10 +55,10 @@ def corporation_search():
 
     # Pagination
     page = int(args.get("page")) if "page" in args else 1
-    results = results.paginate(int(page), 50, False)
+    results = results.limit(50).offset((page - 1) * 50).all()
 
     corporations = []
-    for row in results.items:
+    for row in results:
         result_dict = {}
 
         result_fields = [
@@ -96,7 +96,7 @@ def corporation_search_export():
 
     # Fetching results
     results = Corporation.search_corporations(args, include_addr=True)
-    results = results.paginate(0, 1000, False)
+    results = results.limit(1000).all()
 
     # Exporting to Excel
     workbook = Workbook()
@@ -116,7 +116,7 @@ def corporation_search_export():
         _ = sheet.cell(column=7, row=1, value="Postal Code")
 
         index = 2
-        for row in results.items:
+        for row in results:
             # Corporation.corp_num
             _ = sheet.cell(column=1, row=index, value=row.corp_num)
             # Corporation.corp_typ_cd
