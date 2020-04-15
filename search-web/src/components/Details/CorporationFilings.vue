@@ -1,11 +1,5 @@
 <template>
   <div>
-    <h5 class="outline mb-5">Folio Number:</h5>
-    <v-text-field
-      solo
-      class="folio-input"
-      placeholder="Enter Folio Number"
-    ></v-text-field>
     <v-btn
       :elevation="0"
       height="50"
