@@ -160,7 +160,7 @@ export default {
     };
   },
   mounted() {
-    console.error("Test");
+    console.error("Action");
     this.init();
   },
   watch: {
