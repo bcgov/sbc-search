@@ -74,7 +74,7 @@ def test_corp_party_same_addr(session):
 def test_corp_party_offices(session):
     '''Assert that offices held by CorpParty can be found.'''
     offices = CorpParty.get_offices_held_by_corp_party_id(1)
-    assert offices.count() == 2
+    assert len(offices) == 2
 
 
 def test_corp_party_nicknames(session):

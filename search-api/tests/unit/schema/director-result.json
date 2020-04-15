@@ -61,7 +61,7 @@
                     },
                     "cessationDt": {
                         "$id": "#/properties/results/items/properties/cessationDt",
-                        "type": "null",
+                        "type": "string",
                         "title": "The Cessationdt Schema",
                         "description": "datetime of cessation.",
                         "default": null,
@@ -121,7 +121,7 @@
                     },
                     "middleNme": {
                         "$id": "#/properties/results/items/properties/middleNme",
-                        "type": "null",
+                        "type": "string",
                         "title": "The Middlenme Schema",
                         "description": "The director's middle name.",
                         "default": null,
