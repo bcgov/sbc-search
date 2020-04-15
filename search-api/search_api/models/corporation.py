@@ -133,23 +133,29 @@ class Corporation(BaseModel):
                 ),
             )
             .outerjoin(Address, Office.mailing_addr_id == Address.addr_id)
-            .with_entities(
+
+        )
+
+        if include_addr:
+            results = results.with_entities(
+                CorpName.corp_nme,
+                Corporation.corp_num,
+                Corporation.corp_typ_cd,
+                Corporation.recognition_dts,
+                CorpState.state_typ_cd,
+                Address.addr_line_1,
+                Address.addr_line_2,
+                Address.addr_line_3,
+                Address.postal_cd,
+            )
+        else:
+            results = results.with_entities(
                 CorpName.corp_nme,
                 Corporation.corp_num,
                 Corporation.corp_typ_cd,
                 Corporation.recognition_dts,
                 CorpState.state_typ_cd,
             )
-        )
-
-        if include_addr:
-            results = results.with_entities(
-                Address.addr_line_1,
-                Address.addr_line_2,
-                Address.addr_line_3,
-                Address.postal_cd,
-            )
-
         results = results.filter(
             # or_(
             # TODO: This OR query leads to poor performance. We may need a UI control to choose which field to search.

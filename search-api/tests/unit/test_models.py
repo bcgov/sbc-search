@@ -41,8 +41,9 @@ def test_corporation_search(session):
     results = Corporation.query_corporations('Pipeline', None, 'corp_num')
     assert results.count() == 1
 
-    results = Corporation.query_corporations('1234567890', None, 'corp_num')
-    assert results.count() == 1
+    # corp num search disabled for perf.
+    # results = Corporation.query_corporations('1234567890', None, 'corp_num')
+    # assert results.count() == 1
 
 
 def test_corp_party_search(session):

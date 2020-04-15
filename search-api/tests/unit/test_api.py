@@ -96,20 +96,21 @@ def test_search_directors_any_postal_code(client, jwt, session):  # pylint:disab
     assert len(dictionary['results']) == 2
 
 
-def test_search_corporations(client, jwt, session):
-    '''Check the offices-held service.'''
-    headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
+# Search by corp num disabled.
+# def test_search_corporations(client, jwt, session):
+#     '''Check the offices-held service.'''
+#     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
-    rv = client.get('/api/v1/businesses/?query=1234567890&page=1&sort_type=dsc&sort_value=corpNme',
-                    headers=headers, content_type='application/json')
+#     rv = client.get('/api/v1/businesses/?query=1234567890&page=1&sort_type=dsc&sort_value=corpNme',
+#                     headers=headers, content_type='application/json')
 
-    assert rv.status_code == http_status.HTTP_200_OK
+#     assert rv.status_code == http_status.HTTP_200_OK
 
-    dictionary = json.loads(rv.data)
+#     dictionary = json.loads(rv.data)
 
-    assert dictionary['results'][0]['corpNum'] == '1234567890'
+#     assert dictionary['results'][0]['corpNum'] == '1234567890'
 
-    assert len(dictionary) == 1
+#     assert len(dictionary) == 1
 
 
 def test_search_corporations_name(client, jwt, session):
@@ -126,6 +127,16 @@ def test_search_corporations_name(client, jwt, session):
     assert dictionary['results'][0]['corpNum'] == '1234567890'
 
     assert len(dictionary) == 1
+
+
+def test_search_corporations_xlsx_export(client, jwt, session):
+    '''Check the offices-held service.'''
+    headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
+
+    rv = client.get('/api/v1/businesses/export/?query=pembina&page=1&sort_type=dsc&sort_value=corpNme',
+                    headers=headers, content_type='application/json')
+
+    assert rv.status_code == http_status.HTTP_200_OK
 
 
 def test_get_director(client, jwt, session):  # pylint:disable=unused-argument
@@ -215,5 +226,3 @@ def test_search_directors(client, jwt, session):  # pylint:disable=unused-argume
 #     rv = client.get('/api/v1/entities/{}'.format(TestEntityInfo.corporation1['businessIdentifier']),
 #                     headers=None, content_type='application/json')
 #     assert rv.status_code == http_status.HTTP_401_UNAUTHORIZED
-
-

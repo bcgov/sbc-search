@@ -33,7 +33,7 @@ API = Blueprint("BUSINESSES_API", __name__, url_prefix="/api/v1/businesses")
 
 
 @API.route("/")
-# @jwt.requires_auth
+@jwt.requires_auth
 def corporation_search():
     """Search for Corporations by keyword or corpNum.
 
@@ -97,6 +97,7 @@ def corporation_search_export():
 
     # Fetching results
     results = Corporation.search_corporations(args, include_addr=True)
+    results = results.paginate(0, 1000, False)
 
     # Exporting to Excel
     workbook = Workbook()
@@ -115,7 +116,8 @@ def corporation_search_export():
         _ = sheet.cell(column=6, row=1, value="Company Address")
         _ = sheet.cell(column=7, row=1, value="Postal Code")
 
-        for index, row in enumerate(results, 2):
+        index = 2
+        for row in results.items:
             # Corporation.corp_num
             _ = sheet.cell(column=1, row=index, value=row.corp_num)
             # Corporation.corp_typ_cd
@@ -130,6 +132,7 @@ def corporation_search_export():
             _ = sheet.cell(column=6, row=index, value=_merge_addr_fields(row))
             # Address.postal_cd
             _ = sheet.cell(column=7, row=index, value=row.postal_cd)
+            index += 1
 
         current_date = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
         filename = "Corporation Search Results {date}.xlsx".format(date=current_date)
