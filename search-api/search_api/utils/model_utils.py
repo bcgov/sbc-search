@@ -14,6 +14,7 @@
 '''This module holds utility functions related to model fields and serialization.'''
 
 from sqlalchemy import func
+from sqlalchemy.sql.expression import literal_column
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS, ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 from search_api.utils.utils import convert_to_snake_case
@@ -89,15 +90,16 @@ def _get_filter(field_name, operator, value):
             operator = 'excludes'
             value = STATE_TYP_CD_ACT
 
-    if field_name == 'postalCd':
-        # Search for postal codes with or without a space in the middle
-        value = value[0:3] + '%' + value[3:6]
-        operator = 'contains'
+    if field_name == 'postalCd' and operator != 'cased':
+        return (
+            _get_filter('postalCd', 'cased', value[:3] + " " + value[3:6]) |
+            _get_filter('postalCd', 'cased', value))
 
     model = _get_model_by_field(field_name)
 
     # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
-    value = value.upper()
+    if operator != 'cased':
+        value = value.upper()
 
     if len(value) < 2:
         raise BadSearchValue('Search value must be at least 2 letters long.')
@@ -112,6 +114,8 @@ def _get_filter(field_name, operator, value):
 def _generate_field_filter(field, operator, value):
     if operator == 'contains':
         expr = func.upper(field).like('%' + value + '%')
+    elif operator == 'cased':
+        expr = field == value
     elif operator == 'exact':
         expr = func.upper(field) == value
     elif operator == 'endswith':

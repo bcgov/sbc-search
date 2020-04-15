@@ -16,8 +16,9 @@
 from functools import reduce
 import logging
 
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.sql.expression import literal_column
 
 from search_api.constants import ADDITIONAL_COLS_ACTIVE, ADDITIONAL_COLS_ADDRESS
 from search_api.models.base import BaseModel, db
@@ -271,8 +272,18 @@ class CorpParty(BaseModel):
             CorpParty.query.join(
                 Corporation, Corporation.corp_num == CorpParty.corp_num
             )
-            .join(CorpState, CorpState.corp_num == CorpParty.corp_num)
-            .outerjoin(CorpName, Corporation.corp_num == CorpName.corp_num)
+            .join(CorpState, and_(
+                    CorpState.corp_num == CorpParty.corp_num,
+                    CorpState.end_event_id == None,  # pylint: disable=singleton-comparison
+                )
+            )
+            .outerjoin(CorpName, and_(
+                    CorpName.end_event_id == None,  # pylint: disable=singleton-comparison
+                    # CorpName should be "Corporation" or "Number BC Company"
+                    CorpName.corp_name_typ_cd.in_(('CO', 'NB')),
+                    Corporation.corp_num == CorpName.corp_num,
+                )
+            )
             .with_entities(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
@@ -286,10 +297,6 @@ class CorpParty(BaseModel):
             )
         ).filter(
             CorpParty.end_event_id == None,  # noqa # pylint: disable=singleton-comparison
-            CorpState.end_event_id == None,  # pylint: disable=singleton-comparison
-            CorpName.end_event_id == None,  # pylint: disable=singleton-comparison
-            # CorpName should be "Corporation" or "Number BC Company"
-            CorpName.corp_name_typ_cd.in_(('CO', 'NB')),
         )
 
         results = CorpParty.add_additional_cols_to_search_query(
@@ -324,7 +331,6 @@ class CorpParty(BaseModel):
             results = results.order_by(
                 eval(sort_field_str) # pylint: disable=eval-used
             )
-
         return results
 
     @staticmethod

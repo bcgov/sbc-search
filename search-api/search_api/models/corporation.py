@@ -11,11 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''This model manages a Corporation entity.'''
+"""This model manages a Corporation entity."""
 
-from sqlalchemy import func
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy import or_
+from sqlalchemy import or_, and_, func
+from sqlalchemy.sql.expression import literal_column
 
 from search_api.models.base import BaseModel, db
 from search_api.models.corp_name import CorpName
@@ -27,7 +27,7 @@ from search_api.utils.model_utils import _sort_by_field
 
 
 class Corporation(BaseModel):
-    '''Corporation entity. Corresponds to the 'corporation' table.
+    """Corporation entity. Corresponds to the 'corporation' table.
 
     corp_num                       VARCHAR2    10     2206759
     corp_frozen_typ_cd             CHAR        1      819
@@ -53,9 +53,9 @@ class Corporation(BaseModel):
     ar_reminder_date               VARCHAR2    20     67640
     TEMP_PASSWORD                  VARCHAR2    300    3582
     TEMP_PASSWORD_EXPIRY_DATE      DATE        7      3582
-    '''
+    """
 
-    __tablename__ = 'corporation'
+    __tablename__ = "corporation"
 
     corp_num = db.Column(db.String(10), primary_key=True, unique=True)
     corp_frozen_typ_cd = db.Column(db.String(1))
@@ -79,20 +79,15 @@ class Corporation(BaseModel):
     ar_reminder_date = db.Column(db.String(20))
 
     def __repr__(self):
-        '''Return string representation of a Corporation entity.'''
-        return 'corp num: {}'.format(self.corp_num)
+        """Return string representation of a Corporation entity."""
+        return "corp num: {}".format(self.corp_num)
 
     @staticmethod
     def get_corporation_by_id(corp_id):
         """Get a corporation by id."""
-        query = (
-            Corporation.query
-            .add_columns(
-                Corporation.corp_num,
-                Corporation.transition_dt,
-                Corporation.admin_email,
-            )
-            .filter(Corporation.corp_num == corp_id))
+        query = Corporation.query.add_columns(
+            Corporation.corp_num, Corporation.transition_dt, Corporation.admin_email
+        ).filter(Corporation.corp_num == corp_id)
 
         try:
             return query.one()
@@ -100,56 +95,70 @@ class Corporation(BaseModel):
             return None
 
     @staticmethod
-    def search_corporations(args):
-        '''Search for Corporations by query (search keyword or corpNum) and sort results.'''
-        query = args.get('query')
+    def search_corporations(args, include_addr=False):
+        """Search for Corporations by query (search keyword or corpNum) and sort results."""
+        query = args.get("query")
 
-        sort_type = args.get('sort_type')
-        sort_value = args.get('sort_value')
+        sort_type = args.get("sort_type")
+        sort_value = args.get("sort_value")
 
-        if not query:
-            return 'No search query was received', 400
-
-        results = Corporation.query_corporations(query, sort_type, sort_value)
+        results = Corporation.query_corporations(query, sort_type, sort_value, include_addr)
         return results
 
     @staticmethod
-    def query_corporations(query, sort_type, sort_value):
-        '''Construct Corporation search db query.'''
-        # local import to prevent circular import
-        #from search_api.models.corp_party import CorpParty  # pylint: disable=import-outside-toplevel, cyclic-import
+    def query_corporations(query, sort_type, sort_value, include_addr=False):
+        """Construct Corporation search db query."""
 
+        # TODO: address join is quite expensive, consider making that column optional in the UI.
         results = (
-            Corporation.query
-            .outerjoin(CorpName, Corporation.corp_num == CorpName.corp_num)
-            #.outerjoin(CorpParty, Corporation.corp_num == CorpParty.corp_num)
-            .outerjoin(Office, Office.corp_num == Corporation.corp_num)
-            .outerjoin(CorpState, CorpState.corp_num == Corporation.corp_num)
-            .outerjoin(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
+            Corporation.query.outerjoin(
+                CorpName, and_(
+                    CorpName.end_event_id == None, # noqa
+                    Corporation.corp_num == CorpName.corp_num,
+                    CorpName.corp_name_typ_cd.in_(('CO', 'NB')),
+                ),
+            )
+            .outerjoin(CorpState, and_(
+                    CorpState.corp_num == Corporation.corp_num,
+                    CorpState.state_typ_cd == 'ACT',
+                    CorpState.end_event_id == None,
+                )
+            )
+            .outerjoin(
+                Office,
+                and_(
+                    Office.corp_num == Corporation.corp_num,
+                    Office.office_typ_cd != literal_column("'RG'"),
+                    Office.end_event_id == None,
+                ),
+            )
             .outerjoin(Address, Office.mailing_addr_id == Address.addr_id)
             .with_entities(
                 CorpName.corp_nme,
                 Corporation.corp_num,
                 Corporation.corp_typ_cd,
                 Corporation.recognition_dts,
-                CorpOpState.state_typ_cd,
+                CorpState.state_typ_cd,
+            )
+        )
+
+        if include_addr:
+            results = results.with_entities(
                 Address.addr_line_1,
                 Address.addr_line_2,
                 Address.addr_line_3,
                 Address.postal_cd,
-                Office.office_typ_cd,
             )
-        )
 
         results = results.filter(
-            (Corporation.corp_num == query.upper()) |
-            (func.upper(CorpName.corp_nme).like('%' + query.upper() + '%'))
-        ).filter(
-            CorpName.corp_name_typ_cd == 'CO',
-            or_(Office.office_typ_cd == None, Office.office_typ_cd != 'RG'), # These offices always have a corresponding RC type office, and so render duplicate results.
-            CorpName.end_event_id == None,  # pylint: disable=singleton-comparison
-            CorpState.end_event_id == None,  # pylint: disable=singleton-comparison  # noqa
-            Office.end_event_id == None,
+            # or_(
+            # TODO: This OR query leads to poor performance. We may need a UI control to choose which field to search.
+            # For now, we only support company names.
+            #    Corporation.corp_num == query.upper(),
+            CorpName.corp_name_typ_cd == literal_column("'CO'"),
+            # Doing a full CONTAINS search is quite slow. Use STARTSWITH for this reason.
+            func.upper(CorpName.corp_nme).like(query.upper() + "%")
+            # )
         )
 
         # Sorting
