@@ -342,7 +342,7 @@
       "displayName": "Corporate Online Root URL",
       "description": "The root URL of Corporate Online",
       "required": true,
-      "value": "https://tst.corporateonline.gov.bc.ca/"
+      "value": "https://tst.corporateonline.gov.bc.ca"
     }
   ]
 }
