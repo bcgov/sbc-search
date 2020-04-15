@@ -32,13 +32,13 @@ def test_corporation(session):
 def test_corporation_search(session):
 
     '''Assert that Corporations can be found by name or number.'''
-    results = Corporation.query_corporations('Pembina Pipeline', None, 'corp_num')
+    results = Corporation.query_corporations('Pembina Pipeline', 'corpNme', None, 'corp_num')
     assert results.count() == 1
 
-    results = Corporation.query_corporations('Pembina', None, 'corp_num')
+    results = Corporation.query_corporations('Pembina', 'corpNme', None, 'corp_num')
     assert results.count() == 1
 
-    results = Corporation.query_corporations('Pipeline', None, 'corp_num')
+    results = Corporation.query_corporations('Pipeline', 'corpNme', None, 'corp_num')
     assert results.count() == 1
 
     # corp num search disabled for perf.
