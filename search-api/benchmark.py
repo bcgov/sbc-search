@@ -1,9 +1,15 @@
+import time
+import sys
+
+from sqlalchemy import func
+from sqlalchemy.dialects import oracle
+from werkzeug.datastructures import ImmutableMultiDict
+
+from search_api import create_app
 from search_api.models.base import db
 from search_api.models.corp_party import CorpParty
 from search_api.models.corporation import Corporation
 from search_api.models.nickname import NickName
-from sqlalchemy import func
-import sys
 
 # Compare original COBRS system performance.
 COBRS_SQL = '''SELECT
@@ -80,137 +86,112 @@ ORDER BY upper(corp_party.last_nme)
 '''
 
 ADDR_SQL = '''
-SELECT corp_party.corp_party_id  AS corp_party_id,
-        corp_party.first_nme      AS first_nme,
-        corp_party.middle_nme     AS middle_nme,
-        corp_party.last_nme       AS last_nme,
-        corp_party.appointment_dt AS appointment_dt,
-        corp_party.cessation_dt   AS cessation_dt,
-        corp_party.corp_num       AS corp_num,
-        corp_party.party_typ_cd   AS party_typ_cd,
-        corp_name.corp_nme        AS corp_nme
-FROM
-        corp_party
-        JOIN corporation
-            ON corporation.corp_num = corp_party.corp_num
-        JOIN corp_state
-            ON corp_state.corp_num = corp_party.corp_num
-        LEFT OUTER JOIN corp_name
-            ON corporation.corp_num = corp_name.corp_num
-        left join address on address.addr_id = corp_party.delivery_addr_id
-WHERE  corp_party.end_event_id IS NULL
-        AND corp_state.end_event_id IS NULL
-        AND corp_name.end_event_id IS NULL
-        AND corp_name.corp_name_typ_cd IN ( 'CO', 'NB' )
-        AND Upper(address.addr_line_1) LIKE '%1552 REGAN%'
-ORDER  BY Upper(corp_party.last_nme) DESC
+SELECT corp_name.corp_nme, 
+       corporation.corp_num, 
+       corporation.corp_typ_cd, 
+       corporation.recognition_dts, 
+       corp_op_state.state_typ_cd, 
+       address.addr_line_1, 
+       address.addr_line_2, 
+       address.addr_line_3, 
+       address.postal_cd 
+FROM   corporation 
+       JOIN corp_name 
+         ON corporation.corp_num = corp_name.corp_num 
+       JOIN corp_party 
+         ON corporation.corp_num = corp_party.corp_num 
+       JOIN office 
+         ON office.corp_num = corporation.corp_num 
+       JOIN corp_state 
+         ON corp_state.corp_num = corp_party.corp_num 
+       JOIN corp_op_state 
+         ON corp_op_state.state_typ_cd = corp_state.state_typ_cd 
+       JOIN address 
+         ON office.mailing_addr_id = address.addr_id 
+WHERE  ( corporation.corp_num = 'countable' 
+          OR Lower(corp_name.corp_nme) LIKE Lower('countable%') ) 
+       AND corp_name.corp_name_typ_cd IN ( 
+           'NB', 'CO' ) 
+       AND corp_state.end_event_id IS NULL 
+       AND corp_name.end_event_id IS NULL 
+       AND office.end_event_id IS NULL 
+ORDER  BY Upper(corp_name.corp_nme) DESC 
 '''
+
+
+def _benchmark(t, rs):
+    '''Benchmark utility'''
+    if hasattr(rs, 'statement'):
+        oracle_dialect = oracle.dialect(max_identifier_length=30)
+        raw_sql = str(rs.statement.compile(dialect=oracle_dialect))
+        print(raw_sql)
+    count = 0
+    rows = []
+    for row in rs:
+        print(row)
+        count += 1
+    print('raw query time:', time.time() - t, ' number of results:', count)
+
+
+def corporations():
+    print("Search corporations")
+    return Corporation.search_corporations(ImmutableMultiDict([('query', 'countable'), ('page', '1'), ('sort_type', 'dsc'), ('sort_value', 'corpNme')]))
+
+
+def corp_party_search():
+    print("Search Corp Party")
+
+    args = ImmutableMultiDict(
+        [
+            ('field', 'lastNme'),
+            ('operator', 'exact'),
+            ('value', 'john'),
+            ('mode', 'ALL'),
+            ('page', '1'),
+            ('sort_type', 'dsc'),
+            ('sort_value', 'lastNme'),
+            ('additional_cols', 'none'),
+        ]
+    )
+
+    return CorpParty.search_corp_parties(args).limit(50)
+
+
+def corp_party_addr_search():
+    print("Search Corp Party by Address:")
+    t = time.time()
+
+    args = ImmutableMultiDict(
+        [
+            ('field', 'addrLine1'),
+            ('operator', 'contains'),
+            ('value', '1551 Regan'),
+            ('mode', 'ALL'),
+            ('page', '1'),
+            ('sort_type', 'dsc'),
+            ('sort_value', 'lastNme'),
+            ('additional_cols', 'none'),
+        ]
+    )
+
+    return CorpParty.search_corp_parties(args).limit(50)
+
+
+def raw_sql(sql):
+    print("Benchmark the raw, original COBRS sql for comparison")
+    sql = '\n'.join([s for s in sql.split('\n') if '#' not in s])
+    return db.session.execute(sql)
 
 
 if __name__ == '__main__':
     '''
     Test performance of raw queries.
     '''
-    from search_api import create_app
-    import time
 
     app = create_app('development')
     with app.app_context():
-
-        # for i in range(3):
-        #     #Benchmark the raw, original COBRS sql for comparison
-        #     sql = ADDR_SQL
-        #     sql = '\n'.join([s for s in sql.split('\n') if '#' not in s])
-        #     t = time.time()
-        #     rs = db.session.execute(sql)
-        #     count = 0
-        #     for row in rs:
-        #         count+=1
-        #     print('query time', time.time() - t)
-        #     print('results', count)
-        # sys.exit()
-
-        # print('wink', CorpParty.query.filter(func.utl_match.jaro_winkler_similarity(CorpParty.last_nme, 'JOHN') > 99).count())
-
-        # Repeat 3 times to show the effect of Oracle's microcaching.
         for i in range(3):
-            from werkzeug.datastructures import ImmutableMultiDict
-
-            r = Corporation.search_corporations(ImmutableMultiDict([('query', 'countable'), ('page', '1'), ('sort_type', 'dsc'), ('sort_value', 'corpNme')]))
-
-            print(r.all())
-            continue
-
-            args = ImmutableMultiDict(
-                [
-                    ('field', 'lastNme'),
-                    ('operator', 'exact'),
-                    ('value', 'john'),
-                    ('mode', 'ALL'),
-                    ('page', '1'),
-                    ('sort_type', 'dsc'),
-                    ('sort_value', 'lastNme'),
-                    ('additional_cols', 'none'),
-                ]
-            )
-
-            # args = ImmutableMultiDict(
-            #     [
-            #         ('field', 'addrLine1'),
-            #         ('operator', 'contains'),
-            #         ('value', '1551 Regan'),
-            #         ('mode', 'ALL'),
-            #         ('page', '1'),
-            #         ('sort_type', 'dsc'),
-            #         ('sort_value', 'lastNme'),
-            #         ('additional_cols', 'none'),
-            #     ]
-            # )
-
-            results = CorpParty.search_corp_parties(args).limit(50)
-            # Check performance of ORM based query.
             t = time.time()
-            count = 0
-            rows = []
-            # yield_per is not needed with current engine options, however we
-            # may consider using this in the future as it allows efficiently slicing the result set for pagination on the client.
-            # rs = results.yield_per(50)
-            rs = results
-            for row in rs:
-                count += 1
-                if count < 60:
-                    rows.append(row)
-                else:
-                    break
-            print('orm query time:', time.time() - t)
-
-
-            # Use oracle dialect for rendering the query.
-            from sqlalchemy.dialects import oracle
-
-            oracle_dialect = oracle.dialect(max_identifier_length=30)
-            raw_sql = str(results.statement.compile(dialect=oracle_dialect))
-
-            # Inject parameters.
-            raw_sql = raw_sql.replace(':upper_1', "'JOHN'")
-            raw_sql = raw_sql.replace(':param_1', '50')
-            raw_sql = raw_sql.replace(':corp_name_typ_cd_2', "'NB'")
-            raw_sql = raw_sql.replace(':corp_name_typ_cd_1', "'CO'")
-
-            print(raw_sql)
-
-            continue
-
-            # Check the performance of the raw query which may differ from the ORM even at this point.
-            t = time.time()
-            rs = db.session.execute(raw_sql)
-            print(rs)
-            count = 0
-            rows = []
-            for row in rs:
-                count += 1
-                if count < 50:
-                    rows.append(row)
-                else:
-                    break
-            print('raw query time', time.time() - t)
+            #rs = raw_sql(ADDR_SQL)
+            rs=corporations()
+            _benchmark(t, rs)
