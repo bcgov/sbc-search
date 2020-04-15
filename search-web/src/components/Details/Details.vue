@@ -133,7 +133,7 @@ export default {
       filtered["stateTypCd"] =
         filtered["states"] && filtered["states"][0]["stateTypCd"];
 
-      return pick(filtered, [
+      const includedFields = [
         "lastNme",
         "firstNme",
         "middleNme",
@@ -141,7 +141,6 @@ export default {
         "mailingAddr",
         "corpPartyEmail",
         "partyTypCd",
-        "businessNme",
         "appointmentDt",
         "cessationDt",
         "stateTypCd",
@@ -151,7 +150,13 @@ export default {
         "corpDeliveryAddr",
         "corpMailingAddr",
         "corpAdminEmail"
-      ]);
+      ];
+
+      if (this.detail.hasOwnProperty("businessNme")) {
+        includedFields.push("businessNme");
+      }
+
+      return pick(filtered, includedFields);
     }
   },
   methods: {

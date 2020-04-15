@@ -210,7 +210,6 @@ def get_corp_party_by_id(corp_party_id):
     result_dict['firstNme'] = person.first_nme
     result_dict['middleNme'] = person.middle_nme
     result_dict['lastNme'] = person.last_nme
-    result_dict['businessNme'] = person.business_nme
     result_dict['appointmentDt'] = person.appointment_dt
     result_dict['cessationDt'] = person.cessation_dt
     result_dict['corpNum'] = person.corp_num
@@ -230,6 +229,12 @@ def get_corp_party_by_id(corp_party_id):
     result_dict['states'] = [s.as_dict() for s in states]
 
     offices_held = _get_offices_held_by_corp_party(corp_party_id)
+
+    incorporator_name_types = [
+        'APP', 'ATT', 'FBO', 'FCP', 'FIO', 'INC', 'LIQ', 'PAS', 'PSA', 'RAD', 'RAF', 'RAO', 'RCC',
+        'RCM', 'TAA', 'TAP']
+    if person.party_typ_cd in incorporator_name_types:
+        result_dict['businessNme'] = person.business_nme
 
     return jsonify({**result_dict, **offices_held})
 
