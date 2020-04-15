@@ -131,6 +131,14 @@ def corp_party_search():
     return CorpParty.search_corp_parties(args).limit(50)
 
 
+def corp_party_nickname_search():
+    print("Search Corp Party")
+
+    args=ImmutableMultiDict([('field', 'firstNme'), ('field', 'lastNme'), ('operator', 'nicknames'), ('operator', 'exact'), ('value', 'john'), ('value', 'smith'), ('mode', 'ALL'), ('additional_cols', 'none'), ('page', '1'), ('sort_type', 'dsc'), ('sort_value', 'lastNme')])
+
+    return CorpParty.search_corp_parties(args).limit(50)
+
+
 def corp_party_addr_search():
     print("Search Corp Party by Address:")
 
@@ -189,6 +197,6 @@ if __name__ == "__main__":
             t = time.time()
 
             #rs = raw_sql(ADDR_SQL)
-            rs = corp_party_addr_search()
+            rs = corp_party_nickname_search()
 
             _benchmark(t, rs)

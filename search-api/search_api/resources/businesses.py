@@ -73,7 +73,8 @@ def corporation_search():
         ]
 
         result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
-        result_dict["addr"] = _merge_addr_fields(row)
+        # Due to performance issues, exclude address.
+        result_dict["addr"] = '' #_merge_addr_fields(row)
 
         corporations.append(result_dict)
 
@@ -95,7 +96,7 @@ def corporation_search_export():
     args = request.args
 
     # Fetching results
-    results = Corporation.search_corporations(args)
+    results = Corporation.search_corporations(args, include_addr=True)
 
     # Exporting to Excel
     workbook = Workbook()

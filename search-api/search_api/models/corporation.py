@@ -157,7 +157,7 @@ class Corporation(BaseModel):
             #    Corporation.corp_num == query.upper(),
             CorpName.corp_name_typ_cd == literal_column("'CO'"),
             # Doing a full CONTAINS search is quite slow. Use STARTSWITH for this reason.
-            func.upper(CorpName.corp_nme).like(query.upper() + "%")
+            func.upper(CorpName.corp_nme).like("%" + query.upper() + "%")
             # )
         )
 

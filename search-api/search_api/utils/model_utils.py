@@ -131,7 +131,7 @@ def _generate_field_filter(field, operator, value):
         # TODO: this is a relatively expensive op, we may want to enforce it's only used in combination with other queries.
         # TODO: we should consider sorting by similarity (sum of any filters using it) by default, if the user chooses any similarity filter.
     elif operator == 'similar':
-        expr = func.utl_match.jaro_winkler_similarity(field, value) > 95
+        expr = func.utl_match.jaro_winkler_similarity(field, value) > 85
     elif operator == 'nicknames':
         expr = NickName.get_nickname_search_expr(field, value)
     else:
