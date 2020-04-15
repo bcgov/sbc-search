@@ -103,7 +103,7 @@ class Corporation(BaseModel):
         sort_value = args.get("sort_value")
         search_field = args.get("search_field", "corpNme")
 
-        results = Corporation.query_corporations(query, field_name, sort_type, sort_value, search_field)
+        results = Corporation.query_corporations(query, search_field, sort_type, sort_value, search_field)
         return results
 
     @staticmethod

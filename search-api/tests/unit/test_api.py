@@ -126,20 +126,20 @@ def test_search_directors_any_postal_code(client, jwt, session):  # pylint:disab
 
 
 # Search by corp num disabled.
-# def test_search_corporations(client, jwt, session):
-#     '''Check the offices-held service.'''
-#     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
+def test_search_corporations(client, jwt, session):
+    '''Check the offices-held service.'''
+    headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
-#     rv = client.get('/api/v1/businesses/?query=1234567890&page=1&sort_type=dsc&sort_value=corpNme',
-#                     headers=headers, content_type='application/json')
+    rv = client.get('/api/v1/businesses/?query=1234567890&page=1&sort_type=dsc&search_field=corpNum&sort_value=corpNme',
+                    headers=headers, content_type='application/json')
 
-#     assert rv.status_code == http_status.HTTP_200_OK
+    assert rv.status_code == http_status.HTTP_200_OK
 
-#     dictionary = json.loads(rv.data)
+    dictionary = json.loads(rv.data)
 
-#     assert dictionary['results'][0]['corpNum'] == '1234567890'
+    assert dictionary['results'][0]['corpNum'] == '1234567890'
 
-#     assert len(dictionary) == 1
+    assert len(dictionary) == 1
 
 
 def test_search_corporations_name(client, jwt, session):
