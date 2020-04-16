@@ -20,10 +20,10 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
-from sbc_common_components.utils.camel_case_response import convert_to_camel
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
+from sbc_common_components.utils.camel_case_response import convert_to_camel
 from search_api.config import _Config, CONFIGURATION
 from search_api.auth import jwt
 from search_api.resources import DIRECTORS_API, BUSINESSES_API, OPS_API
