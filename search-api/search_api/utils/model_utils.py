@@ -14,7 +14,6 @@
 '''This module holds utility functions related to model fields and serialization.'''
 
 from sqlalchemy import func
-from sqlalchemy.sql.expression import literal_column
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS, ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 from search_api.utils.utils import convert_to_snake_case
