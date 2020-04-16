@@ -97,6 +97,8 @@ export default {
         return OPERATOR_VALUES.filter(o => o.value === "contains");
       } else if (this.selectedField === "stateTypCd") {
         return OPERATOR_VALUES.filter(o => o.value === "exact");
+      } else if (this.selectedField === "postalCd") {
+        return OPERATOR_VALUES.filter(o => o.value === "exact");
       }
       return OPERATOR_VALUES;
     },
@@ -181,6 +183,12 @@ export default {
             value: "ACT"
           });
         }
+      } else if (nf === "postalCd") {
+        this.setSearchPropValue({
+          uid: this.uid,
+          property: "operator",
+          value: "exact"
+        });
       } else if (of === "stateTypCd") {
         this.clearTerm();
       }

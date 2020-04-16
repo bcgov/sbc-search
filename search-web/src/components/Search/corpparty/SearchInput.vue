@@ -39,19 +39,31 @@ export default {
     selectField() {
       return this.getFilterProperty(this.uid, "field");
     },
+    selectOperator() {
+      return this.getFilterProperty(this.uid, "operator");
+    },
     ...mapGetters({
       getFilterProperty: "corpParty/filters/getProperty"
     }),
     rules() {
       const rules = [];
-
-      const notEmpty = v => !!v || "Input cannot be empty";
-      rules.push(notEmpty);
-
       if (this.selectField === "postalCd") {
         const sixCharacters = v =>
           v.length === 6 || "Postal Code must exactly be 6 characters";
         rules.push(sixCharacters);
+      } else if (this.selectField === "addrLine1") {
+        const startsWith = v =>
+          v.match(/^\S+\s\S+/) ||
+          "Required Format: ALPHANUMERICS SPACE ALPHANUMERICS, eg. 123 Sesame";
+        rules.push(startsWith);
+      } else if (this.selectOperator === "exact") {
+        const notEmpty = v => !!v || "Input cannot be empty";
+        rules.push(notEmpty);
+      } else {
+        const atLeastThreeChar = v =>
+          v.length >= 3 ||
+          "Input cannot be empty and must be at least 3 characters";
+        rules.push(atLeastThreeChar);
       }
 
       return rules;
