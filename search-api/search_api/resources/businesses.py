@@ -178,8 +178,8 @@ def corporation(corp_id):
 
     output['adminEmail'] = corp.admin_email
 
-    output['NAMES'] = []
+    output['names'] = []
     for row in names:
-        output['NAMES'].append({'name': row.corp_nme})
+        output['names'].append({'name': row.corp_nme})
 
     return jsonify(output)

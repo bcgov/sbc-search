@@ -290,47 +290,47 @@ components:
           items:
             type: object
             properties:
-              appointment_dt:
+              appointmentDt:
                 type: string
-              bus_company_num:
+              busCompanyNum:
                 type: string
-              business_nme:
+              businessNme:
                 type: string
-              cessation_dt:
+              cessationDt:
                 type: string
-              corp_num:
+              corpNum:
                 type: string
-              corp_party_id:
+              corpPartyId:
                 type: integer
-              corp_party_seq_num:
+              corpPartySeqNum:
                 type: string
-              corr_typ_cd:
+              corrTypCd:
                 type: string
-              delivery_addr_id:
+              deliveryAddrId:
                 type: string
-              email_address:
+              emailAddress:
                 type: string
-              end_event_id:
+              endEventId:
                 type: string
-              first_nme:
+              firstNme:
                 type: string
-              last_nme:
+              lastNme:
                 type: string
-              last_report_dt:
+              lastReportDt:
                 type: string
-              mailing_addr_id:
+              mailingAddrId:
                 type: integer
-              middle_nme:
+              middleNme:
                 type: string
-              party_typ_cd:
+              partyTypCd:
                 type: string
               phone:
                 type: string
-              prev_party_id:
+              prevPartyId:
                 type: string
-              reason_typ_cd:
+              reasonTypCd:
                 type: string
-              start_event_id:
+              startEventId:
                 type: integer
               year:
                 type: integer
@@ -339,47 +339,47 @@ components:
           items:
             type: object
             properties:
-              appointment_dt:
+              appointmentDt:
                 type: string
-              bus_company_num:
+              busCompanyNum:
                 type: string
-              business_nme:
+              businessNme:
                 type: string
-              cessation_dt:
+              cessationDt:
                 type: string
-              corp_num:
+              corpNum:
                 type: string
-              corp_party_id:
+              corpPartyId:
                 type: integer
-              corp_party_seq_num:
+              corpPartySeqNum:
                 type: string
-              corr_typ_cd:
+              corrTypCd:
                 type: string
-              delivery_addr_id:
+              deliveryAddrId:
                 type: string
-              email_address:
+              emailAddress:
                 type: string
-              end_event_id:
+              endEventId:
                 type: string
-              first_nme:
+              firstNme:
                 type: string
-              last_nme:
+              lastNme:
                 type: string
-              last_report_dt:
+              lastReportDt:
                 type: string
-              mailing_addr_id:
+              mailingAddrId:
                 type: integer
-              middle_nme:
+              middleNme:
                 type: string
-              party_typ_cd:
+              partyTypCd:
                 type: string
               phone:
                 type: string
-              prev_party_id:
+              prevPartyId:
                 type: string
-              reason_typ_cd:
+              reasonTypCd:
                 type: string
-              start_event_id:
+              startEventId:
                 type: integer
               year:
                 type: integer
@@ -388,15 +388,15 @@ components:
           items:
             type: object
             properties:
-              corp_num:
+              corpNum:
                 type: string
-              dd_corp_num:
+              ddCorpNum:
                 type: string
-              end_event_id:
+              endEventId:
                 type: string
-              start_event_id:
+              startEventId:
                 type: integer
-              state_typ_cd:
+              stateTypCd:
                 type: string
     CorporationSearchResults:
       type: object
@@ -423,7 +423,7 @@ components:
     CorporationDetail:
       type: object
       properties:
-        NAMES:
+        names:
           adminEmail:
             type: string
           corpNum:
