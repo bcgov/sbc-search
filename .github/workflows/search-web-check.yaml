@@ -22,7 +22,7 @@ jobs:
 
     strategy:
       matrix:
-        node: [ '13' ]
+        node: [ '13.12' ]
     steps:
       - uses: actions/checkout@v2
       - name: Setup node
