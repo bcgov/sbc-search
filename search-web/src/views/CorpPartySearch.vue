@@ -85,6 +85,7 @@
           outlined
           @click="handleExport"
           :elevation="0"
+          :loading="exportLoading"
           >Export to .xlsx</v-btn
         >
       </div>
@@ -156,7 +157,8 @@ export default {
       sort_type: "dsc",
       error: false,
       errorMessage: null,
-      disableSearch: false
+      disableSearch: false,
+      exportLoading: false
     };
   },
   mounted() {
@@ -180,6 +182,7 @@ export default {
       this.error = false;
     },
     handleExport() {
+      this.exportLoading = true;
       const queryString = this.generateQueryString();
       const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
       exportCorpPartySearch(queryString)
@@ -194,6 +197,9 @@ export default {
             btnColor: "white",
             timeout: 2000
           });
+        })
+        .finally(() => {
+          this.exportLoading = false;
         });
     },
     handlePageUpdate(page) {
