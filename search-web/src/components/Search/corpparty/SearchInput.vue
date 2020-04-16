@@ -10,6 +10,7 @@
       'corp-search-input-md': $vuetify.breakpoint.mdOnly
     }"
     filled
+    :rules="rules"
   >
     <template v-slot:append>
       <v-icon>search</v-icon>
@@ -40,7 +41,21 @@ export default {
     },
     ...mapGetters({
       getFilterProperty: "corpParty/filters/getProperty"
-    })
+    }),
+    rules() {
+      const rules = [];
+
+      const notEmpty = v => !!v || "Input cannot be empty";
+      rules.push(notEmpty);
+
+      if (this.selectField === "postalCd") {
+        const sixCharacters = v =>
+          v.length === 6 || "Postal Code must exactly be 6 characters";
+        rules.push(sixCharacters);
+      }
+
+      return rules;
+    }
   },
   data() {
     return {
@@ -78,7 +93,7 @@ export default {
           return "45 Sesame";
 
         case "postalCd":
-          return "A1A 1A1";
+          return "A1A1A1";
       }
     }
   },

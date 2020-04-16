@@ -28,7 +28,7 @@
       }"
     >
       <SearchTips></SearchTips>
-      <v-form>
+      <v-form ref="corpPartySearchForm">
         <div v-for="criteria in filters" :key="criteria.uid">
           <CorpPartySearch
             :criteria="criteria"
@@ -244,6 +244,9 @@ export default {
       });
     },
     handleNewSearch() {
+      if (!this.$refs.corpPartySearchForm.validate()) {
+        return false;
+      }
       this.disableSearch = true;
       this.sort_value = "lastNme";
       this.sort_type = "dsc";
