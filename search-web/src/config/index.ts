@@ -87,13 +87,6 @@ export const CORPORATION_HEADERS = [
 
 export const CORPPARTY_HEADERS = [
   {
-    text: "Filing #",
-    value: "corpPartyId",
-    sortable: true,
-    align: "left",
-    width: 125
-  },
-  {
     text: "Surname",
     value: "lastNme",
     sortable: true,
@@ -176,6 +169,13 @@ export const CORPPARTY_HEADERS = [
     sortable: true,
     align: "left",
     width: 150
+  },
+  {
+    text: "Filing #",
+    value: "corpPartyId",
+    sortable: true,
+    align: "left",
+    width: 125
   },
   {
     text: "Mailing Address",
