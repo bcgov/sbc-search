@@ -198,7 +198,6 @@ export default {
       } else if (sort_type === "dsc") {
         this.sortDesc = [true];
       }
-
       this.loading = true;
       this.disableSorting = true;
 
@@ -206,14 +205,14 @@ export default {
         .then(result => {
           this.corporations = result.data.results;
           this.totalItems = this.corporations.length;
-          this.loading = false;
-          this.disableSorting = false;
           this.$emit("success", result);
         })
         .catch(e => {
-          this.$emit("error", e);
           this.corporations = [];
           this.totalItems = 0;
+          this.$emit("error", e);
+        })
+        .finally(() => {
           this.disableSorting = false;
           this.loading = false;
         });

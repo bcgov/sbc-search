@@ -352,14 +352,14 @@ export default {
         .then(result => {
           this.items = result.data.results;
           this.totalItems = this.items.length;
-          this.loading = false;
-          this.disableSorting = false;
           this.$emit("success", result);
         })
         .catch(e => {
-          this.$emit("error", e);
           this.items = [];
           this.totalItems = 0;
+          this.$emit("error", e);
+        })
+        .finally(() => {
           this.loading = false;
           this.disableSorting = false;
         });
