@@ -127,11 +127,14 @@ def test_search_directors_any_postal_code(client, jwt, session):  # pylint:disab
 
 # Search by corp num disabled.
 def test_search_corporations(client, jwt, session):
-    '''Check the offices-held service.'''
+    """Check the offices-held service."""
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
-    rv = client.get('/api/v1/businesses/?query=1234567890&page=1&sort_type=dsc&search_field=corpNum&sort_value=corpNme',
-                    headers=headers, content_type='application/json')
+    rv = client.get(
+        '/api/v1/businesses/?query=1234567890&page=1&sort_type=dsc&search_field=corpNum&sort_value=corpNme',
+        headers=headers,
+        content_type='application/json',
+    )
 
     assert rv.status_code == http_status.HTTP_200_OK
 
@@ -253,7 +256,7 @@ def test_search_directors(client, jwt, session):  # pylint:disable=unused-argume
 
 
 def test_get_corporation_unauthorized_user_returns_403(client, jwt, session):  # pylint:disable=unused-argument
-    '''Assert that an corporation cannot be retrieved without an authorization header.'''
+    """Assert that an corporation cannot be retrieved without an authorization header."""
     # TODO: enable this once claims are being assigned by the auth system, so we can verify them.
     # headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
     # rv = client.get('/api/v1/directors/', headers=headers, content_type='application/json')
@@ -261,7 +264,7 @@ def test_get_corporation_unauthorized_user_returns_403(client, jwt, session):  #
 
 
 def test_get_corporation_no_auth_returns_401(client, jwt, session):  # pylint:disable=unused-argument
-    '''Assert that an corporation cannot be retrieved without an authorization header.'''
+    """Assert that an corporation cannot be retrieved without an authorization header."""
 
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.invalid)
 

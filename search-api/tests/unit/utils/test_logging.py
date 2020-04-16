@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Tests to assure the logging utilities.
+"""Tests to assure the logging utilities.
 
 Test-Suite to ensure that the logging setup is working as expected.
-'''
+"""
 
 import os
 
@@ -23,7 +23,7 @@ from search_api.utils.util_logging import setup_logging
 
 
 def test_logging_with_file(capsys):
-    '''Assert that logging is setup with the configuration file.'''
+    """Assert that logging is setup with the configuration file."""
     file_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'logging.conf')
     setup_logging(file_path)  # important to do this first
 
@@ -33,7 +33,7 @@ def test_logging_with_file(capsys):
 
 
 def test_logging_with_missing_file(capsys):
-    '''Assert that a message is sent to STDERR when the configuration doesn't exist.'''
+    """Assert that a message is sent to STDERR when the configuration doesn't exist."""
     file_path = None
     setup_logging(file_path)  # important to do this first
 

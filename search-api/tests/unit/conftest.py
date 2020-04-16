@@ -1,4 +1,3 @@
-
 # Copyright © 2019 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Common setup and fixtures for the pytest suite used by this service.'''
+"""Common setup and fixtures for the pytest suite used by this service."""
 
 import pytest
 from sqlalchemy import event, text
@@ -26,7 +25,7 @@ from bootstrap import populate
 
 @pytest.fixture(scope='session')
 def app():
-    '''Create a Flask app context for the tests.'''
+    """Create a Flask app context for the tests."""
     _app = create_app('testing')
 
     return _app
@@ -34,10 +33,10 @@ def app():
 
 @pytest.fixture(scope='session')
 def db(app):  # pylint: disable=redefined-outer-name, invalid-name
-    '''Return a session-wide initialised database.
+    """Return a session-wide initialised database.
 
     Drops schema, and recreate.
-    '''
+    """
     with app.app_context():
 
         # Flask-migrate doesn't work with SQLite, so we create the database using flask-
@@ -50,7 +49,7 @@ def db(app):  # pylint: disable=redefined-outer-name, invalid-name
 
 @pytest.fixture(scope='function')
 def session(app, db):  # pylint: disable=redefined-outer-name, invalid-name
-    '''Return a function-scoped session.'''
+    """Return a function-scoped session."""
     with app.app_context():
         conn = db.engine.connect()
         txn = conn.begin()
@@ -86,7 +85,7 @@ def session(app, db):  # pylint: disable=redefined-outer-name, invalid-name
 
 @pytest.fixture(scope='function')
 def app_request():
-    '''Return a session-wide application configured in TEST mode.'''
+    """Return a session-wide application configured in TEST mode."""
     _app = create_app('testing')
 
     return _app
@@ -94,18 +93,18 @@ def app_request():
 
 @pytest.fixture(scope='session')
 def client(app):  # pylint: disable=redefined-outer-name
-    '''Return a session-wide Flask test client.'''
+    """Return a session-wide Flask test client."""
     return app.test_client()
 
 
 @pytest.fixture(scope='session')
 def jwt():
-    '''Return a session-wide jwt manager.'''
+    """Return a session-wide jwt manager."""
     return _jwt
 
 
 @pytest.fixture(scope='session')
 def client_ctx(app):  # pylint: disable=redefined-outer-name
-    '''Return session-wide Flask test client.'''
+    """Return session-wide Flask test client."""
     with app.test_client() as _client:
         yield _client

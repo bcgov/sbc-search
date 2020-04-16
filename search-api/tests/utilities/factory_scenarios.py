@@ -11,22 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Test Utils.
+"""Test Utils.
 
 Test Utility for creating test scenarios.
-'''
+"""
 from enum import Enum
 
 
-JWT_HEADER = {
-    'alg': 'RS256',
-    'typ': 'JWT',
-    'kid': 'flask-jwt-oidc-test-client'
-}
+JWT_HEADER = {'alg': 'RS256', 'typ': 'JWT', 'kid': 'flask-jwt-oidc-test-client'}
 
 
 class TestJwtClaims(dict, Enum):
-    '''Test scenarios of jwt claims.'''
+    """Test scenarios of jwt claims."""
 
     no_role = {
         'iss': 'https://example.localdomain/auth/realms/example',
@@ -35,18 +31,10 @@ class TestJwtClaims(dict, Enum):
         'firstname': 'Test',
         'lastname': 'User 2',
         'preferred_username': 'testuser2',
-        'realm_access': {
-            'roles': [
-            ]
-        }
+        'realm_access': {'roles': []},
     }
 
-    invalid = {
-        'sub': 'barfoo',
-        'firstname': 'Trouble',
-        'lastname': 'Maker',
-        'preferred_username': 'troublemaker'
-    }
+    invalid = {'sub': 'barfoo', 'firstname': 'Trouble', 'lastname': 'Maker', 'preferred_username': 'troublemaker'}
 
     staff_role = {
         'iss': 'https://example.localdomain/auth/realms/example',
@@ -55,11 +43,7 @@ class TestJwtClaims(dict, Enum):
         'firstname': 'Test',
         'lastname': 'User',
         'preferred_username': 'testuser',
-        'realm_access': {
-            'roles': [
-                'dirsearch'
-            ]
-        }
+        'realm_access': {'roles': ['dirsearch']},
     }
 
     wrong_role = {
@@ -69,17 +53,13 @@ class TestJwtClaims(dict, Enum):
         'firstname': 'Test',
         'lastname': 'User',
         'preferred_username': 'testuser',
-        'realm_access': {
-            'roles': [
-                'wrongrole'
-            ]
-        },
-        'corp_type': 'CP'
+        'realm_access': {'roles': ['wrongrole']},
+        'corp_type': 'CP',
     }
 
     @staticmethod
     def get_test_user(sub):
-        '''Return test user with subject from argument.'''
+        """Return test user with subject from argument."""
         return {
             'iss': 'https://example.localdomain/auth/realms/example',
             'aud': 'flask-jwt-oidc-test-client',
@@ -88,10 +68,6 @@ class TestJwtClaims(dict, Enum):
             'lastname': 'User',
             'preferred_username': 'CP1234567',
             'username': 'CP1234567',
-            'realm_access': {
-                'roles': [
-                    'staff'
-                ]
-            },
-            'loginSource': 'PASSCODE'
+            'realm_access': {'roles': ['staff']},
+            'loginSource': 'PASSCODE',
         }
