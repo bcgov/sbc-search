@@ -25,7 +25,7 @@
             v-if="items.length === 0"
             class="v-data-footer v-data-custom-header"
           >
-            <div class="v-data-footer__pagination">-</div>
+            <div class="v-data-footer__pagination">&ndash;</div>
           </div>
           <div v-else class="v-data-footer v-data-custom-header">
             <div class="v-data-footer__pagination">

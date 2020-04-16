@@ -23,7 +23,7 @@
             v-if="corporations.length === 0"
             class="v-data-footer__pagination"
           >
-            -
+            &ndash;
           </div>
           <div v-else class="v-data-footer__pagination">
             <div class="custom-footer d-flex align-center">
