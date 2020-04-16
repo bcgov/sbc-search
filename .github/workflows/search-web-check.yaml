@@ -32,12 +32,8 @@ jobs:
       - name: Install dependencies
         working-directory: ./search-web
         run: |
-          docker-compose build search-web
+          yarn
       - name: Run yarn tests
         working-directory: ./search-web
         run: |
-          docker-compose run search-web yarn test:unit
-      - name: Shutdown docker-compose
-        working-directory: ./search-web
-        run: |
-          docker-compose down
+          yarn test:unit
