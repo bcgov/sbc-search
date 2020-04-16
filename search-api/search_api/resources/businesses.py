@@ -147,12 +147,11 @@ def corporation_search_export():
 
 
 @API.route("/<corp_id>")
-@jwt.requires_auth
+
 def corporation(corp_id):
     """Get a single Corporation by corpNum."""
     account_id = request.headers.get("X-Account-Id", None)
-    if not authorized(jwt, account_id):
-        return jsonify({"message": "User is not authorized to access Director Search"}), HTTPStatus.UNAUTHORIZED
+
 
     corp = Corporation.get_corporation_by_id(corp_id)
     if not corp:
