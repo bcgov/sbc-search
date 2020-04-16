@@ -11,15 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Test Utils.
+"""Test Utils.
 
 Test Utility for creating model factory.
-'''
+"""
 
-from tests.utilities.factory_scenarios import (
-    JWT_HEADER)
+from tests.utilities.factory_scenarios import JWT_HEADER
 
 
 def factory_auth_header(jwt, claims):
-    '''Produce JWT tokens for use in tests.'''
+    """Produce JWT tokens for use in tests."""
     return {'Authorization': 'Bearer ' + jwt.create_jwt(claims=claims, header=JWT_HEADER)}
