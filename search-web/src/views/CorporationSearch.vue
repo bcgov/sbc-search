@@ -43,6 +43,7 @@
         height="50"
         @click="handleExport"
         :elevation="0"
+        :loading="exportLoading"
         >Export to .xlsx</v-btn
       >
     </div>
@@ -97,7 +98,8 @@ export default {
       page: "1",
       sort_value: "corpNme",
       sort_type: "dsc",
-      disableSearch: false
+      disableSearch: false,
+      exportLoading: false
     };
   },
   methods: {
@@ -161,7 +163,9 @@ export default {
         }
       });
     },
-    handleExport() {
+    async handleExport() {
+      this.exportLoading = true;
+      const queryString = qs.stringify(this.$route.query);
       const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
       exportCorporationSearch(queryString)
         .then(result => {
@@ -178,6 +182,9 @@ export default {
             btnColor: "white",
             timeout: 2000
           });
+        })
+        .finally(() => {
+          this.exportLoading = false;
         });
     }
   },

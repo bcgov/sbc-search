@@ -25,7 +25,7 @@
             v-if="items.length === 0"
             class="v-data-footer v-data-custom-header"
           >
-            <div class="v-data-footer__pagination">-</div>
+            <div class="v-data-footer__pagination">&ndash;</div>
           </div>
           <div v-else class="v-data-footer v-data-custom-header">
             <div class="v-data-footer__pagination">
@@ -108,7 +108,6 @@
           class="cursor-pointer d-none d-md-table-row desktop-tr-rowz"
           @click="handleCellClick(item['corpPartyId'], $event)"
         >
-          <td class="color-gray">{{ item["corpPartyId"] }}</td>
           <td>{{ item["lastNme"] }}</td>
           <td>{{ item["firstNme"] }}</td>
           <td>{{ item["middleNme"] }}</td>
@@ -124,6 +123,7 @@
               item["corpNum"]
             }}</span>
           </td>
+          <td class="color-gray">{{ item["corpPartyId"] }}</td>
         </tr>
       </template>
       <template v-slot:footer>
@@ -227,7 +227,6 @@ export default {
   methods: {
     orderItems(items) {
       return pick(items, [
-        "corpPartyId",
         "lastNme",
         "firstNme",
         "middleNme",
@@ -238,7 +237,8 @@ export default {
         "cessationDt",
         "stateTypCd",
         "corpNme",
-        "corpNum"
+        "corpNum",
+        "corpPartyId"
       ]);
     },
     pageNext() {
@@ -352,14 +352,14 @@ export default {
         .then(result => {
           this.items = result.data.results;
           this.totalItems = this.items.length;
-          this.loading = false;
-          this.disableSorting = false;
           this.$emit("success", result);
         })
         .catch(e => {
-          this.$emit("error", e);
           this.items = [];
           this.totalItems = 0;
+          this.$emit("error", e);
+        })
+        .finally(() => {
           this.loading = false;
           this.disableSorting = false;
         });
