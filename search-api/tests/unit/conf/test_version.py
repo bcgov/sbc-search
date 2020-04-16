@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''Tests to assure the version utilities.
+"""Tests to assure the version utilities.
 
 Test-Suite to ensure that the version utilities are working as expected.
-'''
+"""
 # from search_api import utils
 # from search_api.version import __version__
 # from tests import skip_in_pod

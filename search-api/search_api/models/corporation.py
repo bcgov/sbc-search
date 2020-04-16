@@ -14,13 +14,12 @@
 """This model manages a Corporation entity."""
 
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy import or_, and_, func
+from sqlalchemy import and_, func
 from sqlalchemy.sql.expression import literal_column
 
 from search_api.models.base import BaseModel, db
 from search_api.models.corp_name import CorpName
 from search_api.models.corp_state import CorpState
-from search_api.models.corp_op_state import CorpOpState
 from search_api.models.office import Office
 from search_api.models.address import Address
 from search_api.utils.model_utils import _sort_by_field
@@ -55,7 +54,7 @@ class Corporation(BaseModel):
     TEMP_PASSWORD_EXPIRY_DATE      DATE        7      3582
     """
 
-    __tablename__ = "corporation"
+    __tablename__ = 'corporation'
 
     corp_num = db.Column(db.String(10), primary_key=True, unique=True)
     corp_frozen_typ_cd = db.Column(db.String(1))
@@ -80,7 +79,7 @@ class Corporation(BaseModel):
 
     def __repr__(self):
         """Return string representation of a Corporation entity."""
-        return "corp num: {}".format(self.corp_num)
+        return 'corp num: {}'.format(self.corp_num)
 
     @staticmethod
     def get_corporation_by_id(corp_id):
@@ -97,13 +96,13 @@ class Corporation(BaseModel):
     @staticmethod
     def search_corporations(args, include_addr=False):
         """Search for Corporations by query (search keyword or corpNum) and sort results."""
-        query = args.get("query")
+        query = args.get('query')
 
-        sort_type = args.get("sort_type")
-        sort_value = args.get("sort_value")
-        search_field = args.get("search_field", "corpNme")
+        sort_type = args.get('sort_type')
+        sort_value = args.get('sort_value')
+        search_field = args.get('search_field', 'corpNme')
 
-        results = Corporation.query_corporations(query, search_field, sort_type, sort_value, search_field)
+        results = Corporation.query_corporations(query, search_field, sort_type, sort_value, include_addr)
         return results
 
     @staticmethod
@@ -113,28 +112,30 @@ class Corporation(BaseModel):
         # TODO: address join is quite expensive, consider making that column optional in the UI.
         results = (
             Corporation.query.outerjoin(
-                CorpName, and_(
-                    CorpName.end_event_id == None, # noqa
-                    Corporation.corp_num == CorpName.corp_num,
-                    CorpName.corp_name_typ_cd.in_(('CO', 'NB')),
+                CorpName,
+                and_(
+                    CorpName.end_event_id == None,  # noqa
+                    Corporation.corp_num == CorpName.corp_num,  # noqa
+                    CorpName.corp_name_typ_cd.in_(('CO', 'NB')),  # noqa
                 ),
             )
-            .outerjoin(CorpState, and_(
-                    CorpState.corp_num == Corporation.corp_num,
-                    CorpState.state_typ_cd == 'ACT',
-                    CorpState.end_event_id == None,
-                )
+            .outerjoin(
+                CorpState,
+                and_(
+                    CorpState.corp_num == Corporation.corp_num,  # noqa
+                    CorpState.state_typ_cd == 'ACT',  # noqa
+                    CorpState.end_event_id == None,  # noqa
+                ),
             )
             .outerjoin(
                 Office,
                 and_(
-                    Office.corp_num == Corporation.corp_num,
-                    Office.office_typ_cd != literal_column("'RG'"),
-                    Office.end_event_id == None,
+                    Office.corp_num == Corporation.corp_num,  # noqa
+                    Office.office_typ_cd != literal_column("'RG'"),  # noqa
+                    Office.end_event_id == None,  # noqa
                 ),
             )
             .outerjoin(Address, Office.mailing_addr_id == Address.addr_id)
-
         )
 
         if include_addr:
@@ -166,15 +167,13 @@ class Corporation(BaseModel):
                 #    Corporation.corp_num == query.upper(),
                 CorpName.corp_name_typ_cd == literal_column("'CO'"),
                 # Doing a full CONTAINS search is quite slow. Use STARTSWITH for this reason.
-                func.upper(CorpName.corp_nme).like("%" + query.upper() + "%")
+                func.upper(CorpName.corp_nme).like('%' + query.upper() + '%')
                 # )
             )
         elif search_field == 'corpNum':
-            results = results.filter(
-                Corporation.corp_num == query.upper(),
-            )
+            results = results.filter(Corporation.corp_num == query.upper(),)
         else:
-            raise Exception("Invalid search field specified: `{}`".format(search_field))
+            raise Exception('Invalid search field specified: `{}`'.format(search_field))
 
         # Sorting
         if sort_type is None:
