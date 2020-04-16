@@ -97,7 +97,7 @@
             </tr>
           </thead>
           <tbody v-if="officesheld.sameAddr && officesheld.sameAddr.length > 0">
-            <tr v-for="(o, index) in officesheld.same_addr" :key="index">
+            <tr v-for="(o, index) in officesheld.sameAddr" :key="index">
               <td>
                 {{ o.partyTypCd }}
               </td>

@@ -35,7 +35,7 @@
               <span class="detail-key font-weight-bold">Company Name(s)</span>
               <div class="detail-value">
                 <span
-                  v-for="(name, index) in details.NAMES"
+                  v-for="(name, index) in details.names"
                   :key="'company' + index"
                   >{{ index + 1 }}. {{ name.name }}</span
                 >

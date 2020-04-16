@@ -20,6 +20,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
+from sbc_common_components.utils.camel_case_response import convert_to_camel
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -56,6 +57,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     app.register_blueprint(DIRECTORS_API)
     app.register_blueprint(BUSINESSES_API)
     app.register_blueprint(OPS_API)
+    app.after_request(convert_to_camel)
 
     setup_jwt_manager(app, jwt)
 
