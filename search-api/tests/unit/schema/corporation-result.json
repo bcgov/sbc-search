@@ -1,0 +1,122 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The Root Schema",
+    "description": "Company search results.",
+    "default": {},
+    "additionalProperties": true,
+    "required": [
+        "results"
+    ],
+    "properties": {
+        "results": {
+            "$id": "#/properties/results",
+            "type": "array",
+            "title": "The Results Schema",
+            "description": "A list of companies matching the search criteria.",
+            "default": [],
+            "examples": [
+                [
+                    {
+                        "corpTypCd": "A",
+                        "recognitionDts": "Wed, 08 Jul 2009 00:00:00 GMT",
+                        "addr": "",
+                        "stateTypCd": null,
+                        "corpNme": "ACME INC.",
+                        "corpNum": "123456"
+                    }
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/results/items",
+                "type": "object",
+                "title": "The Items Schema",
+                "description": "A specific company result.",
+                "default": {},
+                "examples": [
+                    {
+                        "recognitionDts": "Wed, 08 Jul 2009 00:00:00 GMT",
+                        "corpTypCd": "A",
+                        "addr": "",
+                        "stateTypCd": null,
+                        "corpNme": "ACME INC.",
+                        "corpNum": "123456"
+                    }
+                ],
+                "additionalProperties": true,
+                "required": [
+                    "addr",
+                    "corpNme",
+                    "corpNum",
+                    "corpTypCd",
+                    "recognitionDts",
+                    "stateTypCd"
+                ],
+                "properties": {
+                    "addr": {
+                        "$id": "#/properties/results/items/properties/addr",
+                        "type": "string",
+                        "title": "The Addr Schema",
+                        "description": "Company Address. Currently disabled (always blank).",
+                        "default": "",
+                        "examples": [
+                            ""
+                        ]
+                    },
+                    "corpNme": {
+                        "$id": "#/properties/results/items/properties/corpNme",
+                        "type": "string",
+                        "title": "The Corpnme Schema",
+                        "description": "The name of the company.",
+                        "default": "",
+                        "examples": [
+                            "ACME INC."
+                        ]
+                    },
+                    "corpNum": {
+                        "$id": "#/properties/results/items/properties/corpNum",
+                        "type": "string",
+                        "title": "The Corpnum Schema",
+                        "description": "The corporation number.",
+                        "default": "",
+                        "examples": [
+                            "123456"
+                        ]
+                    },
+                    "corpTypCd": {
+                        "$id": "#/properties/results/items/properties/corpTypCd",
+                        "type": "string",
+                        "title": "The Corptypcd Schema",
+                        "description": "The Corporation Type Code.",
+                        "default": "",
+                        "examples": [
+                            "A"
+                        ]
+                    },
+                    "recognitionDts": {
+                        "$id": "#/properties/results/items/properties/recognitionDts",
+                        "type": "string",
+                        "title": "The Recognitiondts Schema",
+                        "description": "Date of recognition.",
+                        "default": "",
+                        "examples": [
+                            "Wed, 08 Jul 2009 00:00:00 GMT"
+                        ]
+                    },
+                    "stateTypCd": {
+                        "$id": "#/properties/results/items/properties/stateTypCd",
+                        "type": "string",
+                        "title": "The Statetypcd Schema",
+                        "description": "The operational state the company is in (ACT, HIST).",
+                        "default": null,
+                        "examples": [
+                            null
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

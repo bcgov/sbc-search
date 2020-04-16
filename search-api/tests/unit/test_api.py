@@ -25,6 +25,7 @@ from search_api import status as http_status
 from jsonschema import validate
 
 dirsearch_schema = json.loads(open('/opt/app/tests/unit/schema/director-result.json').read())
+corpsearch_schema = json.loads(open('/opt/app/tests/unit/schema/corporation-result.json').read())
 
 
 def _dir_search(client, jwt, params):
@@ -34,13 +35,12 @@ def _dir_search(client, jwt, params):
     @param params - str - ?field=lastNme&operator=exact&value=john&mode=ALL&page=1&sort_type=dsc&
     sort_value=lastNme&additional_cols=none
     """
-    headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
+    headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.staff_role)
 
     rv = client.get('/api/v1/directors/{}'.format(params), headers=headers, content_type='application/json')
 
     assert rv.status_code == http_status.HTTP_200_OK
     result = json.loads(rv.data)
-    print(result)
     validate(result, schema=dirsearch_schema)
     return result
 
@@ -137,6 +137,8 @@ def test_search_corporations(client, jwt, session):
 
     dictionary = json.loads(rv.data)
 
+    validate(dictionary, schema=corpsearch_schema)
+
     assert dictionary['results'][0]['corpNum'] == '1234567890'
 
     assert len(dictionary) == 1
@@ -155,6 +157,8 @@ def test_search_corporations_name(client, jwt, session):
     assert rv.status_code == http_status.HTTP_200_OK
 
     dictionary = json.loads(rv.data)
+
+    validate(dictionary, schema=corpsearch_schema)
 
     assert dictionary['results'][0]['corpNum'] == '1234567890'
 
@@ -248,25 +252,19 @@ def test_search_directors(client, jwt, session):  # pylint:disable=unused-argume
         assert k in dictionary['results'][0]
 
 
-# def test_get_corporation_unauthorized_user_returns_403(client, jwt, session):  # pylint:disable=unused-argument
-#     '''Assert that an corporation can be retrieved via GET.'''
-#     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.system_role)
-#     client.post('/api/v1/entities', data=json.dumps(TestEntityInfo.corporation1),
-#                 headers=headers, content_type='application/json')
-
-#     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.edit_role)
-
-#     rv = client.get('/api/v1/entities/{}'.format(TestEntityInfo.corporation1['businessIdentifier']),
-#                     headers=headers, content_type='application/json')
-
-#     assert rv.status_code == http_status.HTTP_403_FORBIDDEN
+def test_get_corporation_unauthorized_user_returns_403(client, jwt, session):  # pylint:disable=unused-argument
+    '''Assert that an corporation cannot be retrieved without an authorization header.'''
+    # TODO: enable this once claims are being assigned by the auth system, so we can verify them.
+    # headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
+    # rv = client.get('/api/v1/directors/', headers=headers, content_type='application/json')
+    # assert rv.status_code == http_status.HTTP_403_FORBIDDEN
 
 
-# def test_get_corporation_no_auth_returns_401(client, jwt, session):  # pylint:disable=unused-argument
-#     '''Assert that an corporation cannot be retrieved without an authorization header.'''
-#     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.system_role)
-#     client.post('/api/v1/entities', data=json.dumps(TestEntityInfo.corporation1),
-#                 headers=headers, content_type='application/json')
-#     rv = client.get('/api/v1/entities/{}'.format(TestEntityInfo.corporation1['businessIdentifier']),
-#                     headers=None, content_type='application/json')
-#     assert rv.status_code == http_status.HTTP_401_UNAUTHORIZED
+def test_get_corporation_no_auth_returns_401(client, jwt, session):  # pylint:disable=unused-argument
+    '''Assert that an corporation cannot be retrieved without an authorization header.'''
+
+    headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.invalid)
+
+    rv = client.get('/api/v1/directors/', headers=headers, content_type='application/json')
+
+    assert rv.status_code == http_status.HTTP_401_UNAUTHORIZED

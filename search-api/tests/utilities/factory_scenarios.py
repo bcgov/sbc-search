@@ -57,12 +57,12 @@ class TestJwtClaims(dict, Enum):
         'preferred_username': 'testuser',
         'realm_access': {
             'roles': [
-                'staff'
+                'dirsearch'
             ]
         }
     }
 
-    system_role = {
+    wrong_role = {
         'iss': 'https://example.localdomain/auth/realms/example',
         'aud': 'flask-jwt-oidc-test-client',
         'sub': 'f7a4a1d3-73a8-4cbc-a40f-bb1145302064',
@@ -71,7 +71,7 @@ class TestJwtClaims(dict, Enum):
         'preferred_username': 'testuser',
         'realm_access': {
             'roles': [
-                'system'
+                'wrongrole'
             ]
         },
         'corp_type': 'CP'
