@@ -5,7 +5,7 @@
     "scripts": {
         "serve": "yarn && vue-cli-service serve --host 0.0.0.0",
         "build": "npm i && vue-cli-service build && cp nginx.conf dist/",
-        "test:unit": "yarn && vue-cli-service test:unit --coverage",
+        "test:unit": "vue-cli-service test:unit --coverage",
         "test:e2e": "vue-cli-service test:e2e",
         "lint": "vue-cli-service lint",
         "lint:fix": "vue-cli-service lint --fix",
@@ -32,6 +32,7 @@
         "vuex-module-decorators": "^0.16.1"
     },
     "devDependencies": {
+        "@babel/compat-data": "7.9.0",
         "@types/jest": "^24.0.19",
         "@typescript-eslint/eslint-plugin": "^2.18.0",
         "@typescript-eslint/parser": "^2.18.0",

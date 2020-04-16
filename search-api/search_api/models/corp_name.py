@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''This model manages a CorpName entity.'''
+"""This model manages a CorpName entity."""
 
 from sqlalchemy import desc
 
@@ -19,7 +19,7 @@ from search_api.models.base import BaseModel, db
 
 
 class CorpName(BaseModel):
-    '''CorpName entity. Corresponds to the 'corp_name' table.
+    """CorpName entity. Corresponds to the 'corp_name' table.
 
     corp_num             VARCHAR2    10     2484908
     corp_name_typ_cd     CHAR        2      2484908
@@ -29,7 +29,7 @@ class CorpName(BaseModel):
     srch_nme             VARCHAR2    35     2484908
     corp_nme             VARCHAR2    150    2484909
     dd_corp_num          VARCHAR2    10     11929
-    '''
+    """
 
     __tablename__ = 'corp_name'
 
@@ -43,10 +43,10 @@ class CorpName(BaseModel):
     dd_corp_num = db.Column(db.String(10))
 
     def __repr__(self):
-        '''Return string representation of a CorpName entity.'''
+        """Return string representation of a CorpName entity."""
         return 'corp num: {}'.format(self.corp_num)
 
     @staticmethod
     def get_corp_name_by_corp_id(corp_id):
-        '''Get CorpName by corp_num.'''
+        """Get CorpName by corp_num."""
         return CorpName.query.filter_by(corp_num=corp_id).order_by(desc(CorpName.end_event_id))

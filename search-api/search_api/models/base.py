@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Super class to handle all operations related to base model.'''
+"""Super class to handle all operations related to base model."""
 
 
 from decimal import Decimal
@@ -21,10 +21,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 class MyJSONEncoder(flask.json.JSONEncoder):
-    '''This class extends the default Flask JSON encoder.'''
+    """This class extends the default Flask JSON encoder."""
 
     def default(self, o):  # pylint: disable=method-hidden
-        '''Extend parent method and handle Decimal instances.'''
+        """Extend parent method and handle Decimal instances."""
         if isinstance(o, Decimal):
             # Convert decimal instances to strings.
             return str(o)
@@ -36,14 +36,14 @@ db = SQLAlchemy()  # pylint: disable=invalid-name
 
 
 class BaseModel(db.Model):
-    '''This class manages all of the base model functions.'''
+    """This class manages all of the base model functions."""
 
     # pylint: disable=too-few-public-methods
 
     __abstract__ = True
 
     def as_dict(self):
-        '''Serialize a model as a dictionary.'''
+        """Serialize a model as a dictionary."""
         d = {}
         for column in self.__table__.columns:
             d[column.name] = getattr(self, column.name)

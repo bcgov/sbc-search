@@ -11,13 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''This model manages a Office entity.'''
+"""This model manages a Office entity."""
 
 from search_api.models.base import BaseModel, db
 
 
 class Office(BaseModel):
-    '''
+    """
     Office entity. Corresponds to the 'office' table.
 
     corp_num            VARCHAR2    10    4544141
@@ -28,7 +28,7 @@ class Office(BaseModel):
     delivery_addr_id    NUMBER      22    4527193
     dd_corp_num         VARCHAR2    10    23155
     email_address       VARCHAR2    75    14906
-    '''
+    """
 
     __tablename__ = 'office'
 
@@ -43,5 +43,5 @@ class Office(BaseModel):
 
     @staticmethod
     def get_offices_by_corp_id(corp_id):
-        '''Get offices by corp_num.'''
+        """Get offices by corp_num."""
         return Office.query.filter_by(corp_num=corp_id, end_event_id=None)

@@ -11,14 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Table of related NickNames. Any name with equivalent name_id is considered related.'''
+"""Table of related NickNames. Any name with equivalent name_id is considered related."""
 
 from sqlalchemy import func
 from search_api.models.base import BaseModel, db
 
 
 class NickName(BaseModel):
-    '''NickName table. Note: this table has no pkey.'''
+    """NickName table. Note: this table has no pkey."""
 
     __tablename__ = 'nickname'
 
@@ -27,10 +27,13 @@ class NickName(BaseModel):
 
     @staticmethod
     def get_nickname_search_expr(field, value):
-        '''Generate an expression to return instances where a field matches any nickname related to the provided value'''
+        """Nickname search.
+
+        Generate an expression to return instances where a field matches any nickname related to the provided value.
+        """
         aliases = db.session.query(NickName.name).filter(
-            NickName.name_id
-            == db.session.query(NickName.name_id).filter(NickName.name == value)
+            NickName.name_id ==
+            db.session.query(NickName.name_id).filter(NickName.name == value)
         )
 
         alias_list = list(a[0] for a in aliases)

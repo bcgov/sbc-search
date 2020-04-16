@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''This model manages an Address entity.'''
+"""This model manages an Address entity."""
 
 from functools import reduce
 
@@ -19,7 +19,7 @@ from search_api.models.base import BaseModel, db
 
 
 class Address(BaseModel):
-    '''Address entity. Corresponds to the 'address' table.
+    """Address entity. Corresponds to the 'address' table.
 
     addr_id                   NUMBER      22     20233825
     province                  CHAR        2      18872463
@@ -47,7 +47,7 @@ class Address(BaseModel):
     route_service_type        VARCHAR2    10     146477
     route_service_no          VARCHAR2    4      27530
     province_state_name       VARCHAR2    30     362
-    '''
+    """
 
     __tablename__ = 'address'
 
@@ -80,7 +80,7 @@ class Address(BaseModel):
 
     @staticmethod
     def get_address_by_id(address_id):
-        '''Get an Address by id.'''
+        """Get an Address by id."""
         return Address.query.filter(Address.addr_id == address_id).add_columns(
             Address.addr_line_1,
             Address.addr_line_2,
@@ -93,7 +93,7 @@ class Address(BaseModel):
 
     @staticmethod
     def normalize_addr(address_id):
-        '''Merge Address fields into a standardized format of street address, city, province, and postal code.'''
+        """Merge Address fields into a standardized format of street address, city, province, and postal code."""
         if not address_id:
             return ''
 

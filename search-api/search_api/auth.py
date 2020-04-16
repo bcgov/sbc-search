@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Authorization service for the Search API.'''
+"""Authorization service for the Search API."""
 
 import json
 
@@ -23,11 +23,11 @@ jwt = JwtManager()  # pylint: disable=invalid-name
 
 
 def authorized(jwt_instance, account_id):
-    '''
+    """
     Assert that the user is authorized to access Director Search.
 
     The user should have an orgMembership in the Director Search (DIR_SEARCH) application.
-    '''
+    """
     # When running tests, just mock out this entire user membership authorization check as it requires
     # an external service.
 

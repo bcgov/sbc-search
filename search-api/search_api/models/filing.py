@@ -11,13 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''This model manages a Filing entity.'''
+"""This model manages a Filing entity."""
 
 from search_api.models.base import BaseModel, db
 
 
 class Filing(BaseModel):  # pylint: disable=too-few-public-methods
-    '''
+    """
     Filing entity. Corresponds to the 'filing' table.
 
     EVENT_ID            NUMBER      22      13775802
@@ -38,7 +38,7 @@ class Filing(BaseModel):  # pylint: disable=too-few-public-methods
     COURT_ORDER_NUM     VARCHAR2    255     2069
     AGM_DATE            DATE        7       582818
     NEW_CORP_NUM        VARCHAR2    10      5
-    '''
+    """
 
     __tablename__ = 'filing'
 
