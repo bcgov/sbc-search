@@ -40,7 +40,7 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
-
+@jwt.requires_auth
 def corpparty_search():
     """Search for CorpParty entities.
 
