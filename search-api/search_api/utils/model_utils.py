@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''This module holds utility functions related to model fields and serialization.'''
+"""This module holds utility functions related to model fields and serialization."""
 
 from sqlalchemy import func
 
@@ -66,9 +66,7 @@ def _is_field_string(field_name):
 
 
 def _get_filter(field_name, operator, value):
-    '''
-    Generate a SQL search expression given a filter specified by the user.
-    '''
+    """Generate a SQL search expression given a filter specified by the user."""
     if field_name == 'anyNme':
         return (
             _get_filter('firstNme', operator, value) |
@@ -91,7 +89,7 @@ def _get_filter(field_name, operator, value):
 
     if field_name == 'postalCd' and operator != 'cased':
         return (
-            _get_filter('postalCd', 'cased', value[:3] + " " + value[3:6]) |
+            _get_filter('postalCd', 'cased', value[:3] + ' ' + value[3:6]) |
             _get_filter('postalCd', 'cased', value))
 
     model = _get_model_by_field(field_name)
@@ -127,8 +125,10 @@ def _generate_field_filter(field, operator, value):
         expr = func.upper(field).like(value)
     elif operator == 'excludes':
         expr = func.upper(field) != value
-        # TODO: this is a relatively expensive op, we may want to enforce it's only used in combination with other queries.
-        # TODO: we should consider sorting by similarity (sum of any filters using it) by default, if the user chooses any similarity filter.
+        # TODO: this is a relatively expensive op, we may want to enforce it's only used in
+        # combination with other queries.
+        # TODO: we should consider sorting by similarity (sum of any filters using it) by
+        # default, if the user chooses any similarity filter.
     elif operator == 'similar':
         expr = func.utl_match.jaro_winkler_similarity(field, value) > 85
     elif operator == 'nicknames':
@@ -171,7 +171,10 @@ def _format_office_typ_cd(office_typ_cd):
 
     return ''
 
+
 class BadSearchValue(Exception):
+    """Exception class for invalid search queries."""
+
     pass
 
 

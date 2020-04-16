@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Endpoints to check and manage the health of the service.'''
+"""Endpoints to check and manage the health of the service."""
 from flask import Blueprint
 from sqlalchemy import exc
 
@@ -23,13 +23,13 @@ API = Blueprint('OPS', __name__, url_prefix='/ops')
 
 @API.route('/readyz')
 def readyz():
-    '''Return a JSON object that identifies if the service is ready.'''
+    """Return a JSON object that identifies if the service is ready."""
     return {'message': 'api is ready'}, 200
 
 
 @API.route('/healthz')
 def healthz():
-    '''Return a JSON object stating the health of the Service and dependencies.'''
+    """Return a JSON object stating the health of the Service and dependencies."""
     try:
         db.engine.execute('SELECT 1 FROM CORP_PARTY')
     except exc.SQLAlchemyError:

@@ -265,7 +265,6 @@ def test_get_corporation_unauthorized_user_returns_403(client, jwt, session):  #
 
 def test_get_corporation_no_auth_returns_401(client, jwt, session):  # pylint:disable=unused-argument
     """Assert that an corporation cannot be retrieved without an authorization header."""
-
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.invalid)
 
     rv = client.get('/api/v1/directors/', headers=headers, content_type='application/json')
