@@ -175,7 +175,7 @@ def _format_office_typ_cd(office_typ_cd):
 class BadSearchValue(Exception):
     """Exception class for invalid search queries."""
 
-    pass
+    pass  # pylint: disable=unnecessary-pass
 
 
 def _get_state_typ_cd_display_value(state_typ_cd):
