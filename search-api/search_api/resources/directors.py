@@ -19,9 +19,8 @@ from http import HTTPStatus
 import logging
 from tempfile import NamedTemporaryFile
 
-from flask import Blueprint, current_app, request, jsonify, send_from_directory, current_app
+from flask import Blueprint, current_app, request, jsonify, send_from_directory
 from openpyxl import Workbook
-from sqlalchemy.sql import literal_column
 
 from search_api.auth import jwt, authorized
 from search_api.models.address import Address
@@ -41,13 +40,13 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
-
+@jwt.requires_auth
 def corpparty_search():
     """Search for CorpParty entities.
 
     This function takes any number of field triples in the following format:
     - field={field name}
-    - operator={'exact', 'contains', 'startswith', or 'endswith'}
+    - operator={'any' or 'all'}
     - value={search keyword}
 
     To include Address or CorpOpState info in the search results, set the additional_cols
@@ -55,7 +54,6 @@ def corpparty_search():
     - additional_cols={'none', 'addr', or 'active'}
 
     In addition, the following arguments are provided:
-    - mode={'any' or 'all'}
     - page={page number}
     - sort_type={'asc' or 'dsc'}
     - sort_value={field name to sort results by}
@@ -63,7 +61,11 @@ def corpparty_search():
     current_app.logger.info('Starting director search')
 
     account_id = request.headers.get('X-Account-Id', None)
-
+    if not authorized(jwt, account_id):
+        return (
+            jsonify({'message': 'User is not authorized to access Director Search'}),
+            HTTPStatus.UNAUTHORIZED,
+        )
 
     current_app.logger.info(
         'Authorization check finished; starting query {query}'.format(query=request.url)
@@ -86,52 +88,42 @@ def corpparty_search():
     # Manually paginate results, because flask-sqlalchemy's paginate() method counts the total,
     # which is slow for large tables. This has been addressed in flask-sqlalchemy but is unreleased.
     # Ref: https://github.com/pallets/flask-sqlalchemy/pull/613
+    results = results.limit(per_page).offset((page - 1) * per_page).all()
 
-    # We've switched to using ROWNUM rather than pagination, for performance reasons.
-    # This means queries with more than 500 results are invalid.
-    # results = results.limit(per_page).offset((page - 1) * per_page).all()
-    if current_app.config.get('IS_ORACLE'):
-        results = results.filter(
-            literal_column("rownum") <= 500
-        ).yield_per(per_page)
-    else:
-        results = results.limit(500)
+    # for benchmarking, dump the query here and copy to benchmark.py
+    # from sqlalchemy.dialects import oracle
+    # oracle_dialect = oracle.dialect(max_identifier_length=30)
+    # raise Exception(results.statement.compile(dialect=oracle_dialect))
 
     current_app.logger.info('After query')
 
-    result_fields = [
-        'corpPartyId',
-        'firstNme',
-        'middleNme',
-        'lastNme',
-        'appointmentDt',
-        'cessationDt',
-        'corpNum',
-        'corpNme',
-        'partyTypCd',
-    ]
     corp_parties = []
-    index = 0
     for row in results:
-        if (page-1) * per_page <= index < page * per_page:
-            result_dict = {
-                key: getattr(row, convert_to_snake_case(key)) for key in result_fields
-            }
-            result_dict['corpPartyId'] = int(result_dict['corpPartyId'])
+        result_fields = [
+            'corpPartyId',
+            'firstNme',
+            'middleNme',
+            'lastNme',
+            'appointmentDt',
+            'cessationDt',
+            'corpNum',
+            'corpNme',
+            'partyTypCd',
+        ]
+        result_dict = {
+            key: getattr(row, convert_to_snake_case(key)) for key in result_fields
+        }
+        result_dict['corpPartyId'] = int(result_dict['corpPartyId'])
 
-            CorpParty.add_additional_cols_to_search_results(
-                additional_cols, fields, row, result_dict
-            )
+        CorpParty.add_additional_cols_to_search_results(
+            additional_cols, fields, row, result_dict
+        )
 
-            corp_parties.append(result_dict)
-        index += 1
+        corp_parties.append(result_dict)
 
     current_app.logger.info('Returning JSON results')
 
-    return jsonify({
-        'results': corp_parties,
-        'num_results': index
-    })
+    return jsonify({'results': corp_parties})
 
 
 @API.route('/export/')
@@ -150,12 +142,6 @@ def corpparty_search_export():
 
     # Fetching results
     results = CorpParty.search_corp_parties(args)
-    if current_app.config.get('IS_ORACLE'):
-        results = results.filter(
-            literal_column("rownum") <= 500
-        ).yield_per(50)
-    else:
-        results = results.limit(500)
 
     # Exporting to Excel
     workbook = Workbook()
