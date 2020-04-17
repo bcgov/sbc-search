@@ -28,7 +28,7 @@
       }"
     >
       <SearchTips></SearchTips>
-      <v-form>
+      <v-form ref="corpPartySearchForm">
         <div v-for="criteria in filters" :key="criteria.uid">
           <CorpPartySearch
             :criteria="criteria"
@@ -66,6 +66,17 @@
         border="left"
       >
         {{ errorMessage }}
+      </v-alert>
+      <v-alert
+        v-model="warning"
+        text
+        dense
+        type="warning"
+        icon="warning"
+        class="mt-5 pl-6"
+        border="left"
+      >
+        {{ warningMessage }}
       </v-alert>
     </div>
     <div class="mt-10">
@@ -158,7 +169,9 @@ export default {
       error: false,
       errorMessage: null,
       disableSearch: false,
-      exportLoading: false
+      exportLoading: false,
+      warning: false,
+      warningMessage: null
     };
   },
   mounted() {
@@ -243,7 +256,34 @@ export default {
         value
       });
     },
+    isFormValid() {
+      return this.$refs.corpPartySearchForm.validate();
+    },
+    validateFilters() {
+      if (this.filters.length === 1 && this.filters[0].field === "stateTypCd") {
+        return {
+          warning: true,
+          warningMessage: "Cannot perform search by Company Status Only"
+        };
+      }
+      return {
+        warning: false,
+        warningMessage: null
+      };
+    },
     handleNewSearch() {
+      if (!this.isFormValid()) {
+        return false;
+      }
+
+      const result = this.validateFilters();
+      if (result.warning) {
+        this.warning = true;
+        this.warningMessage = result.warningMessage;
+        return false;
+      }
+
+      this.isFiltersValid();
       this.disableSearch = true;
       this.sort_value = "lastNme";
       this.sort_type = "dsc";

@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''Search API service.'''
+"""Search API service."""
 
 import logging
 import os
@@ -23,6 +23,7 @@ from flask_migrate import Migrate
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
+from sbc_common_components.utils.camel_case_response import convert_to_camel
 from search_api.config import _Config, CONFIGURATION
 from search_api.auth import jwt
 from search_api.resources import DIRECTORS_API, BUSINESSES_API, OPS_API
@@ -35,7 +36,7 @@ setup_logging(os.path.join(_Config.PROJECT_ROOT, 'logging.conf'))  # important t
 
 
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
-    '''Return a configured Flask App using the Factory method.'''
+    """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
     app.config.from_object(CONFIGURATION[run_mode])
     app.logger.setLevel(logging.INFO)  # pylint: disable=no-member
@@ -56,6 +57,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     app.register_blueprint(DIRECTORS_API)
     app.register_blueprint(BUSINESSES_API)
     app.register_blueprint(OPS_API)
+    app.after_request(convert_to_camel)
 
     setup_jwt_manager(app, jwt)
 
@@ -63,7 +65,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
 
 
 def setup_jwt_manager(app, jwt_manager):
-    '''Use flask app to configure the JWTManager to work for a particular Realm.'''
+    """Use flask app to configure the JWTManager to work for a particular Realm."""
     def get_roles(a_dict):
         return a_dict['realm_access']['roles']  # pragma: no cover
     app.config['JWT_ROLE_CALLBACK'] = get_roles

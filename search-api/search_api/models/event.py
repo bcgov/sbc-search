@@ -11,20 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-'''This model manages an Event entity.'''
+"""This model manages an Event entity."""
 
 from search_api.models.base import BaseModel, db
 
 
 class Event(BaseModel):
-    '''Event entity. Corresponds to the 'event' table.
+    """Event entity. Corresponds to the 'event' table.
 
     EVENT_ID          NUMBER      22    17616460
     CORP_NUM          VARCHAR2    10    17616460
     EVENT_TYP_CD      VARCHAR2    10    17616460
     EVENT_TIMESTMP    DATE        7     17616461
     TRIGGER_DTS       DATE        7     1126833
-    '''
+    """
 
     # pylint: disable=too-few-public-methods
 

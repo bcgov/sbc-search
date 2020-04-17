@@ -30,10 +30,10 @@ from search_api.utils.model_utils import _merge_addr_fields, _format_office_typ_
 from search_api.utils.utils import convert_to_snake_case
 
 
-API = Blueprint("BUSINESSES_API", __name__, url_prefix="/api/v1/businesses")
+API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 
-@API.route("/")
+@API.route('/')
 @jwt.requires_auth
 def corporation_search():
     """Search for Corporations by keyword or corpNum.
@@ -42,7 +42,7 @@ def corporation_search():
     - query={search keyword}
     - page={page number}
     """
-    account_id = request.headers.get("X-Account-Id", None)
+    account_id = request.headers.get('X-Account-Id', None)
 
     if not authorized(jwt, account_id):
         return (
@@ -50,11 +50,12 @@ def corporation_search():
             HTTPStatus.UNAUTHORIZED,
         )
 
-    # args <- ImmutableMultiDict([('query', 'countable'), ('page', '1'), ('sort_type', 'dsc'), ('sort_value', 'corpNme')])
+    # args <- ImmutableMultiDict([('query', 'countable'), ('page', '1'), ('sort_type', 'dsc'),
+    # ('sort_value', 'corpNme')])
 
     args = request.args
-    if not args.get("query"):
-        return "No search query was received", 400
+    if not args.get('query'):
+        return 'No search query was received', 400
 
     # Due to performance issues, exclude address.
     results = Corporation.search_corporations(args, include_addr=False)
@@ -103,16 +104,16 @@ def corporation_search():
     })
 
 
-@API.route("/export/")
+@API.route('/export/')
 @jwt.requires_auth
 def corporation_search_export():
     """Export a set of Corporation search results to Excel (.xlsx).
 
     Uses the same parameters as corporation_search().
     """
-    account_id = request.headers.get("X-Account-Id", None)
+    account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
-        return jsonify({"message": "User is not authorized to access Director Search"}), HTTPStatus.UNAUTHORIZED
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     # Query string arguments
     args = request.args
@@ -129,19 +130,19 @@ def corporation_search_export():
     # Exporting to Excel
     workbook = Workbook()
 
-    export_dir = "/tmp"
-    with NamedTemporaryFile(mode="w+b", dir=export_dir, delete=True):
+    export_dir = '/tmp'
+    with NamedTemporaryFile(mode='w+b', dir=export_dir, delete=True):
 
         sheet = workbook.active
 
         # Sheet headers (first row)
-        _ = sheet.cell(column=1, row=1, value="Inc/Reg #")
-        _ = sheet.cell(column=2, row=1, value="Entity Type")
-        _ = sheet.cell(column=3, row=1, value="Company Name")
-        _ = sheet.cell(column=4, row=1, value="Incorporated")
-        _ = sheet.cell(column=5, row=1, value="Company Status")
-        _ = sheet.cell(column=6, row=1, value="Company Address")
-        _ = sheet.cell(column=7, row=1, value="Postal Code")
+        _ = sheet.cell(column=1, row=1, value='Inc/Reg #')
+        _ = sheet.cell(column=2, row=1, value='Entity Type')
+        _ = sheet.cell(column=3, row=1, value='Company Name')
+        _ = sheet.cell(column=4, row=1, value='Incorporated')
+        _ = sheet.cell(column=5, row=1, value='Company Status')
+        _ = sheet.cell(column=6, row=1, value='Company Address')
+        _ = sheet.cell(column=7, row=1, value='Postal Code')
 
         index = 2
         for row in results:
@@ -161,47 +162,47 @@ def corporation_search_export():
             _ = sheet.cell(column=7, row=index, value=row.postal_cd)
             index += 1
 
-        current_date = datetime.datetime.strftime(datetime.datetime.now(), "%Y-%m-%d %H:%M:%S")
-        filename = "Corporation Search Results {date}.xlsx".format(date=current_date)
-        full_filename_path = "{dir}/{filename}".format(dir=export_dir, filename=filename)
+        current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
+        filename = 'Corporation Search Results {date}.xlsx'.format(date=current_date)
+        full_filename_path = '{dir}/{filename}'.format(dir=export_dir, filename=filename)
         workbook.save(filename=full_filename_path)
 
         return send_from_directory(export_dir, filename, as_attachment=True)
 
 
-@API.route("/<corp_id>")
+@API.route('/<corp_id>')
 @jwt.requires_auth
 def corporation(corp_id):
     """Get a single Corporation by corpNum."""
-    account_id = request.headers.get("X-Account-Id", None)
+    account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
-        return jsonify({"message": "User is not authorized to access Director Search"}), HTTPStatus.UNAUTHORIZED
+        return jsonify({'message': 'User is not authorized to access Director Search'}), HTTPStatus.UNAUTHORIZED
 
     corp = Corporation.get_corporation_by_id(corp_id)
     if not corp:
-        return jsonify({"message": "Corporation with id {} could not be found.".format(corp_id)}), 404
+        return jsonify({'message': 'Corporation with id {} could not be found.'.format(corp_id)}), 404
 
     offices = Office.get_offices_by_corp_id(corp_id)
     names = CorpName.get_corp_name_by_corp_id(corp_id)
 
     output = {}
-    output["corpNum"] = corp.corp_num
-    output["transitionDt"] = corp.transition_dt
-    output["offices"] = []
+    output['corpNum'] = corp.corp_num
+    output['transitionDt'] = corp.transition_dt
+    output['offices'] = []
     for office in offices:
-        output["offices"].append(
+        output['offices'].append(
             {
-                "deliveryAddr": Address.normalize_addr(office.delivery_addr_id),
-                "mailingAddr": Address.normalize_addr(office.mailing_addr_id),
-                "officeTypCd": _format_office_typ_cd(office.office_typ_cd),
-                "emailAddress": office.email_address,
+                'deliveryAddr': Address.normalize_addr(office.delivery_addr_id),
+                'mailingAddr': Address.normalize_addr(office.mailing_addr_id),
+                'officeTypCd': _format_office_typ_cd(office.office_typ_cd),
+                'emailAddress': office.email_address,
             }
         )
 
-    output["adminEmail"] = corp.admin_email
+    output['adminEmail'] = corp.admin_email
 
-    output["NAMES"] = []
+    output['names'] = []
     for row in names:
-        output["NAMES"].append({"name": row.corp_nme})
+        output['names'].append({'name': row.corp_nme})
 
     return jsonify(output)

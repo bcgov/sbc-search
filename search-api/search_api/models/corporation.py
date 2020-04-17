@@ -108,13 +108,11 @@ class Corporation(BaseModel):
     @staticmethod
     def query_corporations(query, search_field, sort_type, sort_value, include_addr=False):
         """Construct Corporation search db query."""
-
-        # TODO: address join is quite expensive, consider making that column optional in the UI.
         results = (
             Corporation.query.outerjoin(
                 CorpName,
                 and_(
-                    CorpName.end_event_id == None,  # noqa
+                    CorpName.end_event_id == None,  # noqa  # pylint: disable=singleton-comparison
                     Corporation.corp_num == CorpName.corp_num,  # noqa
                     CorpName.corp_name_typ_cd.in_(('CO', 'NB')),  # noqa
                 ),
@@ -124,7 +122,7 @@ class Corporation(BaseModel):
                 and_(
                     CorpState.corp_num == Corporation.corp_num,  # noqa
                     CorpState.state_typ_cd == 'ACT',  # noqa
-                    CorpState.end_event_id == None,  # noqa
+                    CorpState.end_event_id == None,  # noqa  # pylint: disable=singleton-comparison
                 ),
             )
             .outerjoin(
@@ -132,7 +130,7 @@ class Corporation(BaseModel):
                 and_(
                     Office.corp_num == Corporation.corp_num,  # noqa
                     Office.office_typ_cd != literal_column("'RG'"),  # noqa
-                    Office.end_event_id == None,  # noqa
+                    Office.end_event_id == None,  # noqa  # pylint: disable=singleton-comparison
                 ),
             )
             .outerjoin(Address, Office.mailing_addr_id == Address.addr_id)
@@ -162,7 +160,8 @@ class Corporation(BaseModel):
         if search_field == 'corpNme':
             results = results.filter(
                 # or_(
-                # TODO: This OR query leads to poor performance. We may need a UI control to choose which field to search.
+                # TODO: This OR query leads to poor performance. We may need a UI control to
+                # choose which field to search.
                 # For now, we only support company names.
                 #    Corporation.corp_num == query.upper(),
                 CorpName.corp_name_typ_cd == literal_column("'CO'"),

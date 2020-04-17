@@ -28,7 +28,6 @@ def test_corporation(session):
 
 
 def test_corporation_search(session):
-
     """Assert that Corporations can be found by name or number."""
     results = Corporation.query_corporations('Pembina Pipeline', 'corpNme', None, 'corp_num')
     assert results.count() == 1
@@ -45,6 +44,7 @@ def test_corporation_search(session):
 
 
 def test_corp_party_search(session):
+    """Assert that CorpParty entities can be found by name."""
     args = ImmutableMultiDict(
         [
             ('field', 'lastNme'),
@@ -76,7 +76,7 @@ def test_corp_party_offices(session):
 
 
 def test_corp_party_nicknames(session):
-
+    """Assert that CorpParty nicknames can be found."""
     aliases = session.query(NickName.name).filter(
         NickName.name_id == session.query(NickName.name_id).filter(NickName.name == 'LILI')
     )

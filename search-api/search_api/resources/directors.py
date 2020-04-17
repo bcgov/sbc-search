@@ -47,7 +47,7 @@ def corpparty_search():
 
     This function takes any number of field triples in the following format:
     - field={field name}
-    - operator={'any' or 'all'}
+    - operator={'exact', 'contains', 'startswith', or 'endswith'}
     - value={search keyword}
 
     To include Address or CorpOpState info in the search results, set the additional_cols
@@ -55,6 +55,7 @@ def corpparty_search():
     - additional_cols={'none', 'addr', or 'active'}
 
     In addition, the following arguments are provided:
+    - mode={'any' or 'all'}
     - page={page number}
     - sort_type={'asc' or 'dsc'}
     - sort_value={field name to sort results by}

@@ -10,6 +10,7 @@
       'corp-search-input-md': $vuetify.breakpoint.mdOnly
     }"
     filled
+    :rules="rules"
   >
     <template v-slot:append>
       <v-icon>search</v-icon>
@@ -38,9 +39,35 @@ export default {
     selectField() {
       return this.getFilterProperty(this.uid, "field");
     },
+    selectOperator() {
+      return this.getFilterProperty(this.uid, "operator");
+    },
     ...mapGetters({
       getFilterProperty: "corpParty/filters/getProperty"
-    })
+    }),
+    rules() {
+      const rules = [];
+      if (this.selectField === "postalCd") {
+        const sixCharacters = v =>
+          v.length === 6 || "Postal Code must exactly be 6 characters";
+        rules.push(sixCharacters);
+      } else if (this.selectField === "addrLine1") {
+        const startsWith = v =>
+          v.match(/^\S+\s\S+/) ||
+          "Required Format: ALPHANUMERICS SPACE ALPHANUMERICS, eg. 123 Sesame";
+        rules.push(startsWith);
+      } else if (this.selectOperator === "exact") {
+        const notEmpty = v => !!v || "Input cannot be empty";
+        rules.push(notEmpty);
+      } else {
+        const atLeastThreeChar = v =>
+          v.length >= 3 ||
+          "Input cannot be empty and must be at least 3 characters";
+        rules.push(atLeastThreeChar);
+      }
+
+      return rules;
+    }
   },
   data() {
     return {
@@ -78,7 +105,7 @@ export default {
           return "45 Sesame";
 
         case "postalCd":
-          return "A1A 1A1";
+          return "A1A1A1";
       }
     }
   },
