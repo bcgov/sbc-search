@@ -45,3 +45,7 @@ export function exportCorporationSearch(queryString) {
     headers: { Accept: "application/vnd.ms-excel" }
   });
 }
+
+export function warmUp() {
+  return ApiService.get(`/ops/healthz`);
+}

@@ -398,8 +398,8 @@ export default {
   background-color: $COLOR_LAVENDER !important;
 }
 
-.corp-party-table th:first-of-type,
-.corp-party-table tr td:first-of-type {
+.corp-party-table {
+  box-shadow: inset -5px 0px 5px 0px rgba(0, 0, 0, 0.75) !important;
 }
 
 .v-application--is-ltr .v-data-table--fixed-header .v-data-footer {

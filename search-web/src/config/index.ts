@@ -119,14 +119,14 @@ export const CORPPARTY_HEADERS = [
     value: "postalCd",
     sortable: true,
     align: "left",
-    width: 150
+    width: 100
   },
   {
     text: "Office Held",
     value: "partyTypCd",
     sortable: true,
     align: "left",
-    width: 150
+    width: 100
   },
   {
     text: "Incorporator Name",
@@ -140,14 +140,14 @@ export const CORPPARTY_HEADERS = [
     value: "appointmentDt",
     sortable: true,
     align: "left",
-    width: 150
+    width: 100
   },
   {
     text: "Ceased",
     value: "cessationDt",
     sortable: true,
     align: "left",
-    width: 150
+    width: 100
   },
   {
     text: "Company Status",
@@ -168,14 +168,14 @@ export const CORPPARTY_HEADERS = [
     value: "corpNum",
     sortable: true,
     align: "left",
-    width: 150
+    width: 100
   },
   {
     text: "Filing #",
     value: "corpPartyId",
     sortable: true,
     align: "left",
-    width: 125
+    width: 90
   },
   {
     text: "Mailing Address",

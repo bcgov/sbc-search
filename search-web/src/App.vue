@@ -40,6 +40,7 @@
 import Vue from "vue";
 import "@bcgov/bc-sans/css/BCSans.css";
 import { mapGetters } from "vuex";
+import { warmUp } from "@/api/SearchApi";
 import KeyCloakService from "sbc-common-components/src/services/keycloak.services";
 import BackToTop from "vue-backtotop";
 import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
@@ -67,6 +68,10 @@ export default Vue.extend({
         await tokenService.init();
         tokenService.scheduleRefreshTimer();
       }
+
+      warmUp().catch(e => {
+        console.error("Failed to warm up database", e);
+      });
     } catch (e) {
       console.error(e);
     }

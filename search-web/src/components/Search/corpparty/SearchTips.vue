@@ -25,6 +25,12 @@
         ALL will find results which are true for all filters only. ANY will find
         results which are true for any of the filters.
       </div>
+      <div class="mb-4">
+        <span class="font-weight-bold">Hyphenated Names:</span>
+        Eg. if searching for John Smith-Anderson, add the following search
+        filters: First Name, Exact Match: <i>John.</i> Last Name, Contains:
+        <i>Smith</i>. Last Name, Contains: <i>Anderson.</i>
+      </div>
     </div>
   </div>
 </template>
