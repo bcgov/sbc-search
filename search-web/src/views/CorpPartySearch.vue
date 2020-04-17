@@ -67,6 +67,17 @@
       >
         {{ errorMessage }}
       </v-alert>
+      <v-alert
+        v-model="warning"
+        text
+        dense
+        type="warning"
+        icon="warning"
+        class="mt-5 pl-6"
+        border="left"
+      >
+        {{ warningMessage }}
+      </v-alert>
     </div>
     <div class="mt-10">
       <div v-if="qs" class="mb-5">
@@ -158,7 +169,9 @@ export default {
       error: false,
       errorMessage: null,
       disableSearch: false,
-      exportLoading: false
+      exportLoading: false,
+      warning: false,
+      warningMessage: null
     };
   },
   mounted() {
@@ -243,10 +256,34 @@ export default {
         value
       });
     },
+    isFormValid() {
+      return this.$refs.corpPartySearchForm.validate();
+    },
+    validateFilters() {
+      if (this.filters.length === 1 && this.filters[0].field === "stateTypCd") {
+        return {
+          warning: true,
+          warningMessage: "Cannot perform search by Company Status Only"
+        };
+      }
+      return {
+        warning: false,
+        warningMessage: null
+      };
+    },
     handleNewSearch() {
-      if (!this.$refs.corpPartySearchForm.validate()) {
+      if (!this.isFormValid()) {
         return false;
       }
+
+      const result = this.validateFilters();
+      if (result.warning) {
+        this.warning = true;
+        this.warningMessage = result.warningMessage;
+        return false;
+      }
+
+      this.isFiltersValid();
       this.disableSearch = true;
       this.sort_value = "lastNme";
       this.sort_type = "dsc";
