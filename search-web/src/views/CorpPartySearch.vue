@@ -359,11 +359,13 @@ export default {
       return queryString;
     },
     init() {
-      const mode = this.$route.query.mode;
-      const additional_cols = this.$route.query.additional_cols;
-      const page = this.$route.query.page;
-      const sort_value = this.$route.query.sort_value;
-      const sort_type = this.$route.query.sort_type;
+      const {
+        mode,
+        additional_cols,
+        page,
+        sort_value,
+        sort_type
+      } = this.$route.query;
 
       if (mode) {
         this.logic = mode;
