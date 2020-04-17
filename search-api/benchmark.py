@@ -85,10 +85,6 @@ WHERE upper(corp_party.last_nme) LIKE 'JOHN'
 ORDER BY upper(corp_party.last_nme)
 """
 
-ADDR_SQL = """
-SELECT postal_cd from address where postal_cd like '%a%'
-"""
-
 
 def _benchmark(t, rs):
     """Benchmark utility"""
@@ -102,6 +98,7 @@ def _benchmark(t, rs):
     for row in rs:
         print(row)
         count += 1
+        if count > 50: break
     print("raw query time:", time.time() - t, " number of results:", count)
 
 
@@ -117,7 +114,7 @@ def corp_party_search():
 
     args = ImmutableMultiDict(
         [
-            ("field", "lastNme"),
+            ("field", "firstNme"),
             ("operator", "exact"),
             ("value", "john"),
             ("mode", "ALL"),
@@ -128,15 +125,49 @@ def corp_party_search():
         ]
     )
 
-    return CorpParty.search_corp_parties(args).limit(50)
+    return CorpParty.search_corp_parties(args).paginate(1, 50)  # .offset(1).limit(50)
 
 
 def corp_party_nickname_search():
     print("Search Corp Party")
 
-    args=ImmutableMultiDict([('field', 'firstNme'), ('field', 'lastNme'), ('operator', 'nicknames'), ('operator', 'exact'), ('value', 'john'), ('value', 'smith'), ('mode', 'ALL'), ('additional_cols', 'none'), ('page', '1'), ('sort_type', 'dsc'), ('sort_value', 'lastNme')])
+    args = ImmutableMultiDict(
+        [
+            ("field", "firstNme"),
+            ("field", "lastNme"),
+            ("operator", "nicknames"),
+            ("operator", "exact"),
+            ("value", "john"),
+            ("value", "smith"),
+            ("mode", "ALL"),
+            ("additional_cols", "none"),
+            ("page", "1"),
+            ("sort_type", "dsc"),
+            ("sort_value", "lastNme"),
+        ]
+    )
 
-    return CorpParty.search_corp_parties(args).limit(50)
+    return CorpParty.search_corp_parties(args).offset(1).limit(50)
+
+
+def corp_party_2param_search():
+    print("Corp party 2 params")
+    args = ImmutableMultiDict(
+        [
+            ("field", "firstNme"),
+            ("field", "lastNme"),
+            ("operator", "startswith"),
+            ("operator", "startswith"),
+            ("value", "clark"),
+            ("value", "van"),
+            ("mode", "ALL"),
+            ("additional_cols", "none"),
+            ("page", "1"),
+            ("sort_type", "dsc"),
+            ("sort_value", "lastNme"),
+        ]
+    )
+    return CorpParty.search_corp_parties(args)  # .offset(1).limit(50)
 
 
 def corp_party_addr_search():
@@ -186,6 +217,38 @@ def raw_sql(sql):
     return db.session.execute(sql)
 
 
+SQL = """
+select *
+from (
+SELECT corp_party.corp_party_id  AS corp_party_id,
+        corp_party.first_nme      AS first_nme,
+        corp_party.middle_nme     AS middle_nme,
+        corp_party.last_nme       AS last_nme,
+        corp_party.appointment_dt AS appointment_dt,
+        corp_party.cessation_dt   AS cessation_dt,
+        corp_party.corp_num       AS corp_num,
+        corp_party.party_typ_cd   AS party_typ_cd,
+        corp_name.corp_nme        AS corp_nme
+       # row_number() over (order by corp_party_id desc) rn
+FROM   corp_party
+        JOIN corporation
+            ON corporation.corp_num = corp_party.corp_num
+        JOIN corp_state
+            ON corp_state.corp_num = corp_party.corp_num
+            AND corp_state.end_event_id IS NULL
+        LEFT OUTER JOIN corp_name
+                    ON corp_name.end_event_id IS NULL
+                        AND corp_name.corp_name_typ_cd IN ( 'CO',
+                            'NB' )
+                        AND corporation.corp_num =
+                            corp_name.corp_num
+WHERE  corp_party.end_event_id IS NULL
+       AND Upper(corp_party.first_nme) = 'JOHN'
+ORDER  BY Upper(corp_party.last_nme) DESC
+) where rownum <= 50
+
+"""
+
 if __name__ == "__main__":
     """
     Test performance of raw queries.
@@ -196,7 +259,7 @@ if __name__ == "__main__":
         for i in range(1):
             t = time.time()
 
-            #rs = raw_sql(ADDR_SQL)
-            rs = corp_party_nickname_search()
-
+            rs = raw_sql(SQL)
+            #rs = corp_party_2param_search()
+            #rs = corp_party_search()
             _benchmark(t, rs)

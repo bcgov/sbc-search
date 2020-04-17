@@ -72,6 +72,7 @@ def corpparty_search():
     )
 
     args = request.args
+    raise Exception(args)
     fields = args.getlist('field')
     additional_cols = args.get('additional_cols')
     try:
