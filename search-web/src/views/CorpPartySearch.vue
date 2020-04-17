@@ -68,6 +68,7 @@
         {{ errorMessage }}
       </v-alert>
       <v-alert
+        v-if="warning && !error"
         v-model="warning"
         text
         dense
@@ -183,6 +184,14 @@ export default {
     }
   },
   methods: {
+    resetError() {
+      this.error = false;
+      this.errorMessage = "";
+    },
+    resetWarning() {
+      this.warning = false;
+      this.warningMessage = "";
+    },
     handleError(error) {
       this.disableSearch = false;
       this.errorMessage = `${error.toString()} ${(error.response &&
@@ -262,28 +271,50 @@ export default {
     validateFilters() {
       if (this.filters.length === 1 && this.filters[0].field === "stateTypCd") {
         return {
-          warning: true,
-          warningMessage: "Cannot perform search by Company Status Only"
+          error: true,
+          errorMessage: "Cannot perform search by Company Status Only"
         };
       }
+
+      if (
+        this.filters.find(
+          f =>
+            f.operator === "nicknames" ||
+            f.operator === "similar" ||
+            f.field === "postalCd" ||
+            f.field === "addrLine1"
+        )
+      ) {
+        return {
+          warning: true,
+          warningMessage:
+            "This search may return many results and be very slow. Add more filters to improve performance."
+        };
+      }
+
       return {
         warning: false,
         warningMessage: null
       };
     },
     handleNewSearch() {
+      this.resetError();
+      this.resetWarning();
+
       if (!this.isFormValid()) {
         return false;
       }
 
       const result = this.validateFilters();
-      if (result.warning) {
+      if (result.error) {
+        this.error = true;
+        this.errorMessage = result.errorMessage;
+        return false;
+      } else if (result.warning) {
         this.warning = true;
         this.warningMessage = result.warningMessage;
-        return false;
       }
 
-      this.isFiltersValid();
       this.disableSearch = true;
       this.sort_value = "lastNme";
       this.sort_type = "dsc";
