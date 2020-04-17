@@ -2,6 +2,7 @@ import time
 import sys
 
 from sqlalchemy import func
+from sqlalchemy.sql import literal_column
 from sqlalchemy.dialects import oracle
 from werkzeug.datastructures import ImmutableMultiDict
 
@@ -28,7 +29,7 @@ COBRS_SQL = """SELECT
       ,CORP_OP_STATE OS
       ,CORPORATION  C
       ,CORP_TYPE    CT
-WHERE UPPER(LAST_NME) LIKE 'JOHN'
+WHERE UPPER(FIRST_NME) LIKE 'JOHN'
     #AND PARTY_TYP_CD IN ('FIO', 'DIR','OFF')
     AND P.END_EVENT_ID IS NULL
     AND P.CORP_NUM = S.CORP_NUM
@@ -36,7 +37,7 @@ WHERE UPPER(LAST_NME) LIKE 'JOHN'
     AND S.STATE_TYP_CD = OS.STATE_TYP_CD
     AND S.CORP_NUM = C.CORP_NUM
     AND C.CORP_TYP_CD = CT.CORP_TYP_CD
-    AND ROWNUM <= 11165
+    AND ROWNUM <= 165
 ORDER BY UPPER(LAST_NME)
 #, UPPER(FIRST_NME), STATUS,CORP_CLASS,CORP_NUM DESC
 """
@@ -91,14 +92,14 @@ def _benchmark(t, rs):
     if hasattr(rs, "statement"):
         oracle_dialect = oracle.dialect(max_identifier_length=30)
         raw_sql = str(rs.statement.compile(dialect=oracle_dialect))
-        print(raw_sql)
-    else:
-        print(rs)
+        #print(raw_sql)
+
     count = 0
     for row in rs:
-        print(row)
+        if (count >= 50):
+            break
+        #print(row)
         count += 1
-        if count > 50: break
     print("raw query time:", time.time() - t, " number of results:", count)
 
 
@@ -106,7 +107,9 @@ def corporations():
     print("Search corporations")
     return Corporation.search_corporations(
         ImmutableMultiDict([("query", "countable"), ("page", "1"), ("sort_type", "dsc"), ("sort_value", "corpNme")])
-    )
+    ).filter(
+        literal_column("rownum") <= 500
+    ).yield_per(50)
 
 
 def corp_party_search():
@@ -125,11 +128,36 @@ def corp_party_search():
         ]
     )
 
-    return CorpParty.search_corp_parties(args).paginate(1, 50)  # .offset(1).limit(50)
+    return CorpParty.search_corp_parties(args).filter(
+        literal_column("rownum") <= 500
+    ).yield_per(50)
 
+
+def corp_party_similar_search():
+    print("Search Corp Party by similar")
+
+    args = ImmutableMultiDict(
+        [
+            ("field", "firstNme"),
+            ("field", "lastNme"),
+            ("operator", "similar"),
+            ("operator", "exact"),
+            ("value", "john"),
+            ("value", "smith"),
+            ("mode", "ALL"),
+            ("additional_cols", "none"),
+            ("page", "1"),
+            ("sort_type", "dsc"),
+            ("sort_value", "lastNme"),
+        ]
+    )
+
+    return CorpParty.search_corp_parties(args).filter(
+        literal_column("rownum") <= 500
+    ).yield_per(50)
 
 def corp_party_nickname_search():
-    print("Search Corp Party")
+    print("Search Corp Party by nickname")
 
     args = ImmutableMultiDict(
         [
@@ -147,7 +175,9 @@ def corp_party_nickname_search():
         ]
     )
 
-    return CorpParty.search_corp_parties(args).offset(1).limit(50)
+    return CorpParty.search_corp_parties(args).filter(
+        literal_column("rownum") <= 500
+    ).yield_per(50)
 
 
 def corp_party_2param_search():
@@ -167,7 +197,9 @@ def corp_party_2param_search():
             ("sort_value", "lastNme"),
         ]
     )
-    return CorpParty.search_corp_parties(args)  # .offset(1).limit(50)
+    return CorpParty.search_corp_parties(args).filter(
+        literal_column("rownum") <= 500
+    ).yield_per(50)
 
 
 def corp_party_addr_search():
@@ -175,9 +207,12 @@ def corp_party_addr_search():
 
     args = ImmutableMultiDict(
         [
-            ("field", "addr"),
+            ("field", "firstNme"),
             ("operator", "contains"),
-            ("value", "1551 Regan"),
+            ("value", "john"),
+            ("field", "addrLine1"),
+            ("operator", "contains"),
+            ("value", "main"),
             ("mode", "ALL"),
             ("page", "1"),
             ("sort_type", "dsc"),
@@ -186,8 +221,9 @@ def corp_party_addr_search():
         ]
     )
 
-    return CorpParty.search_corp_parties(args).offset(1).limit(50)
-
+    return CorpParty.search_corp_parties(args).filter(
+        literal_column("rownum") <= 500
+    ).yield_per(50)
 
 def corp_party_postal_cd_search():
     print("Search Corp Party by Postal Code:")
@@ -208,7 +244,9 @@ def corp_party_postal_cd_search():
         ]
     )
 
-    return CorpParty.search_corp_parties(args).offset(1).limit(50)
+    return CorpParty.search_corp_parties(args).filter(
+        literal_column("rownum") <= 500
+    ).yield_per(50)
 
 
 def raw_sql(sql):
@@ -216,38 +254,9 @@ def raw_sql(sql):
     sql = "\n".join([s for s in sql.split("\n") if "#" not in s])
     return db.session.execute(sql)
 
-
-SQL = """
-select *
-from (
-SELECT corp_party.corp_party_id  AS corp_party_id,
-        corp_party.first_nme      AS first_nme,
-        corp_party.middle_nme     AS middle_nme,
-        corp_party.last_nme       AS last_nme,
-        corp_party.appointment_dt AS appointment_dt,
-        corp_party.cessation_dt   AS cessation_dt,
-        corp_party.corp_num       AS corp_num,
-        corp_party.party_typ_cd   AS party_typ_cd,
-        corp_name.corp_nme        AS corp_nme
-       # row_number() over (order by corp_party_id desc) rn
-FROM   corp_party
-        JOIN corporation
-            ON corporation.corp_num = corp_party.corp_num
-        JOIN corp_state
-            ON corp_state.corp_num = corp_party.corp_num
-            AND corp_state.end_event_id IS NULL
-        LEFT OUTER JOIN corp_name
-                    ON corp_name.end_event_id IS NULL
-                        AND corp_name.corp_name_typ_cd IN ( 'CO',
-                            'NB' )
-                        AND corporation.corp_num =
-                            corp_name.corp_num
-WHERE  corp_party.end_event_id IS NULL
-       AND Upper(corp_party.first_nme) = 'JOHN'
-ORDER  BY Upper(corp_party.last_nme) DESC
-) where rownum <= 50
-
-"""
+SQL = '''
+select 1 from corp_party
+'''
 
 if __name__ == "__main__":
     """
@@ -257,9 +266,35 @@ if __name__ == "__main__":
     app = create_app("development")
     with app.app_context():
         for i in range(1):
-            t = time.time()
 
+            t = time.time()
             rs = raw_sql(SQL)
-            #rs = corp_party_2param_search()
-            #rs = corp_party_search()
+            _benchmark(t, rs)
+
+            t = time.time()
+            rs = raw_sql(COBRS_SQL)
+            _benchmark(t, rs)
+
+            t = time.time()
+            rs = corp_party_addr_search()
+            _benchmark(t, rs)
+            
+            t = time.time()
+            rs = corp_party_search()
+            _benchmark(t, rs)
+            
+            t = time.time()
+            rs = corp_party_postal_cd_search()
+            _benchmark(t, rs)
+            
+            t = time.time()
+            rs = corp_party_nickname_search()
+            _benchmark(t, rs)
+
+            t = time.time()
+            rs = corp_party_similar_search()
+            _benchmark(t, rs)
+
+            t = time.time()
+            rs = corporations()
             _benchmark(t, rs)

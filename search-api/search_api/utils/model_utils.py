@@ -30,7 +30,7 @@ def _merge_addr_fields(row):
 
 
 def _is_addr_search(fields):
-    return 'addrLine1' in fields or 'postalCd' in fields
+    return 'addrLine1' or 'addr' in fields or 'postalCd' in fields
 
 
 def _get_model_by_field(field_name):

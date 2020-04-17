@@ -17,8 +17,9 @@ import datetime
 from http import HTTPStatus
 from tempfile import NamedTemporaryFile
 
-from flask import Blueprint, request, jsonify, send_from_directory
+from flask import Blueprint, request, jsonify, send_from_directory, current_app
 from openpyxl import Workbook
+from sqlalchemy.sql import literal_column
 
 from search_api.auth import jwt, authorized
 from search_api.models.address import Address
@@ -59,30 +60,47 @@ def corporation_search():
     results = Corporation.search_corporations(args, include_addr=False)
 
     # Pagination
+    per_page = 50
     page = int(args.get("page")) if "page" in args else 1
-    results = results.limit(50).offset((page - 1) * 50).all()
+    # We've switched to using ROWNUM rather than pagination, for performance reasons.
+    # This means queries with more than 500 results are invalid.
+    #results = results.limit(50).offset((page - 1) * 50).all()
+    if current_app.config.get('IS_ORACLE'):
+        results = results.filter(
+            literal_column("rownum") <= 500
+        ).yield_per(50)
+    else:
+        results = results.limit(500)
+
+    result_fields = [
+        "corpNum",
+        "corpNme",
+        "recognitionDts",
+        "corpTypCd",
+        "stateTypCd",
+        # Due to performance issues, exclude address.
+        # 'postalCd'
+    ]
 
     corporations = []
+    index = 0
     for row in results:
-        result_dict = {}
+        if (page-1) * per_page <= index < page * per_page:
 
-        result_fields = [
-            "corpNum",
-            "corpNme",
-            "recognitionDts",
-            "corpTypCd",
-            "stateTypCd",
+            result_dict = {}
+
+
+            result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
             # Due to performance issues, exclude address.
-            # 'postalCd'
-        ]
+            result_dict["addr"] = '' #_merge_addr_fields(row)
 
-        result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
-        # Due to performance issues, exclude address.
-        result_dict["addr"] = '' #_merge_addr_fields(row)
+            corporations.append(result_dict)
+        index += 1
 
-        corporations.append(result_dict)
-
-    return jsonify({"results": corporations})
+    return jsonify({
+        "results": corporations,
+        "num_results": index
+    })
 
 
 @API.route("/export/")
@@ -101,7 +119,12 @@ def corporation_search_export():
 
     # Fetching results
     results = Corporation.search_corporations(args, include_addr=True)
-    results = results.limit(1000).all()
+    if current_app.config.get('IS_ORACLE'):
+        results = results.filter(
+            literal_column("rownum") <= 500
+        ).yield_per(50)
+    else:
+        results = results.limit(500)
 
     # Exporting to Excel
     workbook = Workbook()

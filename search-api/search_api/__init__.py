@@ -57,7 +57,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     app.register_blueprint(BUSINESSES_API)
     app.register_blueprint(OPS_API)
 
-    #setup_jwt_manager(app, jwt)
+    setup_jwt_manager(app, jwt)
 
     return app
 
