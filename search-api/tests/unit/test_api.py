@@ -144,7 +144,7 @@ def test_search_corporations(client, jwt, session):
 
     assert dictionary['results'][0]['corpNum'] == '1234567890'
 
-    assert len(dictionary) == 1
+    assert len(dictionary['results']) == 1
 
 
 def test_search_corporations_name(client, jwt, session):
@@ -165,7 +165,7 @@ def test_search_corporations_name(client, jwt, session):
 
     assert dictionary['results'][0]['corpNum'] == '1234567890'
 
-    assert len(dictionary) == 1
+    assert len(dictionary['results']) == 1
 
 
 def test_search_corporations_xlsx_export(client, jwt, session):

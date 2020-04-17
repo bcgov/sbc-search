@@ -73,7 +73,8 @@ class _Config:  # pylint: disable=too-few-public-methods
 
     # Oracle optimizations. For the type of queries we do, we want to avoid the default pagination
     # which uses subqueries.
-    if SQLALCHEMY_DATABASE_URI.startswith('oracle://'):
+    IS_ORACLE = SQLALCHEMY_DATABASE_URI.startswith('oracle://')
+    if IS_ORACLE:
         SQLALCHEMY_ENGINE_OPTIONS = {
             'optimize_limits': True,
             'use_binds_for_limits': False,
