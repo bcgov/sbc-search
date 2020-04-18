@@ -31,7 +31,7 @@ def readyz():
 def healthz():
     """Return a JSON object stating the health of the Service and dependencies."""
     try:
-        db.engine.execute('SELECT 1 FROM CORP_PARTY')
+        db.engine.execute('SELECT 1 FROM CORP_PARTY WHERE ROWNUM = 1')
     except exc.SQLAlchemyError:
         return {'message': 'api is down'}, 500
 
