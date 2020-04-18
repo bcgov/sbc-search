@@ -22,6 +22,7 @@ import requests
 
 jwt = JwtManager()  # pylint: disable=invalid-name
 
+
 def authorized(jwt_instance, account_id):
     """
     Assert that the user is authorized to access Director Search.
