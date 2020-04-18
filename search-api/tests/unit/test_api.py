@@ -18,14 +18,14 @@ Test-Suite to ensure that the /entities endpoint is working as expected.
 """
 
 import json
+from jsonschema import validate
 
 from tests.utilities.factory_utils import factory_auth_header
 from tests.utilities.factory_scenarios import TestJwtClaims
 from search_api import status as http_status
-from jsonschema import validate
 
-dirsearch_schema = json.loads(open('/opt/app/tests/unit/schema/director-result.json').read())
-corpsearch_schema = json.loads(open('/opt/app/tests/unit/schema/corporation-result.json').read())
+DIRSEARCH_SCHEMA = json.loads(open('/opt/app/tests/unit/schema/director-result.json').read())
+CORPSEARCH_SCHEMA = json.loads(open('/opt/app/tests/unit/schema/corporation-result.json').read())
 
 
 def _dir_search(client, jwt, params):
@@ -41,7 +41,7 @@ def _dir_search(client, jwt, params):
 
     assert rv.status_code == http_status.HTTP_200_OK
     result = json.loads(rv.data)
-    validate(result, schema=dirsearch_schema)
+    validate(result, schema=DIRSEARCH_SCHEMA)
     return result
 
 
@@ -126,7 +126,7 @@ def test_search_directors_any_postal_code(client, jwt, session):  # pylint:disab
 
 
 # Search by corp num disabled.
-def test_search_corporations(client, jwt, session):
+def test_search_corporations(client, jwt, session):  # pylint: disable=unused-argument
     """Check the offices-held service."""
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
@@ -140,14 +140,14 @@ def test_search_corporations(client, jwt, session):
 
     dictionary = json.loads(rv.data)
 
-    validate(dictionary, schema=corpsearch_schema)
+    validate(dictionary, schema=CORPSEARCH_SCHEMA)
 
     assert dictionary['results'][0]['corpNum'] == '1234567890'
 
     assert len(dictionary['results']) == 1
 
 
-def test_search_corporations_name(client, jwt, session):
+def test_search_corporations_name(client, jwt, session):  # pylint: disable=unused-argument
     """Check we can search a corp by name."""
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
@@ -161,14 +161,14 @@ def test_search_corporations_name(client, jwt, session):
 
     dictionary = json.loads(rv.data)
 
-    validate(dictionary, schema=corpsearch_schema)
+    validate(dictionary, schema=CORPSEARCH_SCHEMA)
 
     assert dictionary['results'][0]['corpNum'] == '1234567890'
 
     assert len(dictionary['results']) == 1
 
 
-def test_search_corporations_xlsx_export(client, jwt, session):
+def test_search_corporations_xlsx_export(client, jwt, session):  # pylint: disable=unused-argument
     """Check we can export corps."""
     headers = factory_auth_header(jwt=jwt, claims=TestJwtClaims.no_role)
 
@@ -207,8 +207,8 @@ def test_get_director(client, jwt, session):  # pylint:disable=unused-argument
     }
 
     # The exact record above may differ depending on IDs, verify just the field names.
-    for k, v in example.items():
-        assert k in dictionary
+    for key in example:
+        assert key in dictionary
 
 
 # This API seems to be gone.
@@ -251,8 +251,8 @@ def test_search_directors(client, jwt, session):  # pylint:disable=unused-argume
         'postalCd': 'T0M 0G0',
     }
 
-    for k, v in example.items():
-        assert k in dictionary['results'][0]
+    for key in example:
+        assert key in dictionary['results'][0]
 
 
 def test_get_corporation_unauthorized_user_returns_403(client, jwt, session):  # pylint:disable=unused-argument

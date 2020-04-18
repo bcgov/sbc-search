@@ -71,8 +71,10 @@ def session(app, db):  # pylint: disable=redefined-outer-name, invalid-name
 
         db.session = sess
 
-        sql = text('SELECT 1 FROM CORP_PARTY WHERE ROWNUM = 1')
-        sess.execute(sql)
+        if app.config.get("IS_ORACLE"):
+            db.engine.execute('SELECT 1 FROM CORP_PARTY WHERE ROWNUM = 1')
+        else:
+            db.engine.execute('SELECT 1')
 
         yield sess
 

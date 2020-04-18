@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""Insert test data into a local DB. Do not use with CDEV, etc"""
 
 import datetime
 from search_api.models.base import db
@@ -31,7 +32,8 @@ from search_api.models.nickname import NickName
 
 
 def reset():
-
+    """Clear the database"""
+    assert 'oracle' not in app.config.get("SQLALCHEMY_DATABASE_URI").lower()
     db.session.query(Corporation).delete(synchronize_session=False)
     db.session.query(CorpParty).delete(synchronize_session=False)
     db.session.query(CorpName).delete(synchronize_session=False)
@@ -202,15 +204,50 @@ NICKNAMES = [
 ]
 
 
-def populate():
+FILING_TYPES = [
+    {
+        'filing_typ_cd': 'ANNBC',
+        'filing_typ_class': 'FILING',
+        'short_desc': 'File an Annual Report - BC Company',
+        'full_desc': 'BC Annual Report',
+    },
+    {
+        'filing_typ_cd': 'TILHO',
+        'filing_typ_class': 'FILING',
+        'short_desc': 'Change TILMA HO',
+        'full_desc': 'Change of Head Office (NWPTA)',
+    },
+    {
+        'filing_typ_cd': 'NOCAS',
+        'filing_typ_class': 'SOCFIL',
+        'short_desc': 'Notice of Change of Address',
+        'full_desc': 'Notice of Change of Address',
+    },
+    {
+        'filing_typ_cd': 'COGS1',
+        'filing_typ_class': 'FILING',
+        'short_desc': 'Good Standing Certificate',
+        'full_desc': 'Certificate of Good Standing',
+    },
+]
 
-    for nn in NICKNAMES:
-        db.session.add(NickName(**nn))
+def populate():
+    """
+    Create some fake data for testing.
+    """
+    populate_base()
+    populate_corps()
+
+
+def populate_base():
+    """
+    Create enumerated types in the database.
+    """
+    for nickname in NICKNAMES:
+        db.session.add(NickName(**nickname))
 
     office_type1 = OfficeType(office_typ_cd='BC', short_desc='BC', full_desc='BC',)
     db.session.add(office_type1)
-
-    office_types = ['BC']
 
     # OfficerType
     officer_type1 = OfficerType(
@@ -228,7 +265,6 @@ def populate():
     )
     db.session.add(officer_type3)
 
-    officer_types = ['SEC', 'DIR', 'INC']
 
     # CorpOpState
     corp_op_state1 = CorpOpState(
@@ -244,37 +280,18 @@ def populate():
     )
     db.session.add(corp_op_state2)
 
-    corp_op_states = ['ACT', 'HIS']
-
-    # FilingType
-    filing_types = [
-        {
-            'filing_typ_cd': 'ANNBC',
-            'filing_typ_class': 'FILING',
-            'short_desc': 'File an Annual Report - BC Company',
-            'full_desc': 'BC Annual Report',
-        },
-        {
-            'filing_typ_cd': 'TILHO',
-            'filing_typ_class': 'FILING',
-            'short_desc': 'Change TILMA HO',
-            'full_desc': 'Change of Head Office (NWPTA)',
-        },
-        {
-            'filing_typ_cd': 'NOCAS',
-            'filing_typ_class': 'SOCFIL',
-            'short_desc': 'Notice of Change of Address',
-            'full_desc': 'Notice of Change of Address',
-        },
-        {
-            'filing_typ_cd': 'COGS1',
-            'filing_typ_class': 'FILING',
-            'short_desc': 'Good Standing Certificate',
-            'full_desc': 'Certificate of Good Standing',
-        },
-    ]
-    for filing_type in filing_types:
+    for filing_type in FILING_TYPES:
         db.session.add(FilingType(**filing_type))
+
+
+def populate_corps():  # pylint: disable=too-many-locals
+    """
+    Generate some mock corporation filings
+    """
+    office_types = ['BC']
+
+    officer_types = ['SEC', 'DIR', 'INC']
+    corp_op_states = ['ACT', 'HIS']
 
     index = 0
     while index < len(CORP_NUMS):
@@ -364,7 +381,7 @@ def populate():
         # FILING
         filing = Filing(
             event_id=index,
-            filing_typ_cd=filing_types[index % 4]['filing_typ_cd'],
+            filing_typ_cd=FILING_TYPES[index % 4]['filing_typ_cd'],
             effective_dt=None,
             change_dt=None,
             registration_dt=None,
@@ -415,7 +432,7 @@ def populate():
 if __name__ == '__main__':
     from search_api import create_app
 
-    app = create_app('development')
+    app = create_app('development')  # pylint: disable=invalid-name
     with app.app_context():
-        reset()
+        reset(app)  # pylint: disable=too-many-function-args
         populate()

@@ -7,27 +7,27 @@ Test suite to ensure that the Entity model routines are working as expected.
 """
 
 import datetime
+from sqlalchemy import func
+from werkzeug.datastructures import ImmutableMultiDict
 
 from search_api.models.corporation import Corporation
 from search_api.models.corp_party import CorpParty
 from search_api.models.nickname import NickName
-from sqlalchemy import func
 
-from werkzeug.datastructures import ImmutableMultiDict
 
-default_date = datetime.datetime.now() + datetime.timedelta(weeks=-1)
+DEFAULT_DATE = datetime.datetime.now() + datetime.timedelta(weeks=-1)
 
 
 def test_corporation(session):
     """Assert that an Entity can be stored in the service."""
-    corporation = Corporation(corp_num='BC1234567', recognition_dts=default_date, corp_typ_cd='C')
+    corporation = Corporation(corp_num='BC1234567', recognition_dts=DEFAULT_DATE, corp_typ_cd='C')
     session.add(corporation)
     session.commit()
     assert corporation.corp_num is not None
     assert corporation.corp_typ_cd == 'C'
 
 
-def test_corporation_search(session):
+def test_corporation_search(session):  # pylint: disable=unused-argument
     """Assert that Corporations can be found by name or number."""
     results = Corporation.query_corporations('Pembina Pipeline', 'corpNme', None, 'corp_num')
     assert results.count() == 1
@@ -43,7 +43,7 @@ def test_corporation_search(session):
     # assert results.count() == 1
 
 
-def test_corp_party_search(session):
+def test_corp_party_search(session):  # pylint: disable=unused-argument
     """Assert that CorpParty entities can be found by name."""
     args = ImmutableMultiDict(
         [
@@ -63,13 +63,13 @@ def test_corp_party_search(session):
     assert results[1].last_nme == 'Patterson'
 
 
-def test_corp_party_same_addr(session):
+def test_corp_party_same_addr(session):  # pylint: disable=unused-argument
     """Assert that CorpParty entities at same address can be found."""
     results = CorpParty.get_corp_party_at_same_addr(1)
     assert results.count() == 1
 
 
-def test_corp_party_offices(session):
+def test_corp_party_offices(session):  # pylint: disable=unused-argument
     """Assert that offices held by CorpParty can be found."""
     offices = CorpParty.get_offices_held_by_corp_party_id(1)
     assert len(offices) == 2
@@ -84,5 +84,5 @@ def test_corp_party_nicknames(session):
     alias_list = list(a[0] for a in aliases)
     assert len(alias_list) == 3
 
-    rs = CorpParty.query.filter(func.upper(CorpParty.first_nme).in_(alias_list))
-    assert rs.count() == 2
+    results = CorpParty.query.filter(func.upper(CorpParty.first_nme).in_(alias_list))
+    assert results.count() == 2

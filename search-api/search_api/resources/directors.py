@@ -69,9 +69,7 @@ def corpparty_search():
             HTTPStatus.UNAUTHORIZED,
         )
 
-    current_app.logger.info(
-        'Authorization check finished; starting query {query}'.format(query=request.url)
-    )
+    current_app.logger.info('Authorization check finished; starting query {query}'.format(query=request.url))
 
     args = request.args
     fields = args.getlist('field')
@@ -94,10 +92,8 @@ def corpparty_search():
     # We've switched to using ROWNUM rather than pagination, for performance reasons.	    # for benchmarking, dump the query here and copy to benchmark.py
     # This means queries with more than 500 results are invalid.	    # from sqlalchemy.dialects import oracle
     # results = results.limit(per_page).offset((page - 1) * per_page).all()	    # oracle_dialect = oracle.dialect(max_identifier_length=30)
-    if current_app.config.get('IS_ORACLE'):	    # raise Exception(results.statement.compile(dialect=oracle_dialect))
-        results = results.filter(
-            literal_column("rownum") <= 500
-        ).yield_per(per_page)
+    if current_app.config.get('IS_ORACLE'):  # raise Exception(results.statement.compile(dialect=oracle_dialect))
+        results = results.filter(literal_column('rownum') <= 500).yield_per(per_page)
     else:
         results = results.limit(500)
 
@@ -119,14 +115,10 @@ def corpparty_search():
     index = 0
     for row in results:
         if (page - 1) * per_page <= index < page * per_page:
-            result_dict = {
-                key: getattr(row, convert_to_snake_case(key)) for key in result_fields
-            }
+            result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
             result_dict['corpPartyId'] = int(result_dict['corpPartyId'])
 
-            CorpParty.add_additional_cols_to_search_results(
-                additional_cols, fields, row, result_dict
-            )
+            CorpParty.add_additional_cols_to_search_results(additional_cols, fields, row, result_dict)
 
             corp_parties.append(result_dict)
         index += 1
@@ -153,9 +145,7 @@ def corpparty_search_export():
     # Fetching results
     results = CorpParty.search_corp_parties(args)
     if current_app.config.get('IS_ORACLE'):
-        results = results.filter(
-            literal_column("rownum") <= 500
-        ).yield_per(50)
+        results = results.filter(literal_column('rownum') <= 500).yield_per(50)
     else:
         results = results.limit(500)
 
@@ -174,13 +164,9 @@ def corpparty_search_export():
             for column_index, column_value in enumerate(_get_corp_party_export_column_values(row, args), start=1):
                 _ = sheet.cell(column=column_index, row=row_index, value=column_value)
 
-        current_date = datetime.datetime.strftime(
-            datetime.datetime.now(), '%Y-%m-%d %H:%M:%S'
-        )
+        current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
         filename = 'Director Search Results {date}.xlsx'.format(date=current_date)
-        workbook.save(
-            filename='{dir}/{filename}'.format(dir=export_dir, filename=filename)
-        )
+        workbook.save(filename='{dir}/{filename}'.format(dir=export_dir, filename=filename))
 
         return send_from_directory(export_dir, filename, as_attachment=True)
 
@@ -204,9 +190,7 @@ def get_corp_party_by_id(corp_party_id):
     person = result[0]
     result_dict = {}
 
-    filing_description = CorpParty.get_filing_description_by_corp_party_id(
-        corp_party_id
-    )
+    filing_description = CorpParty.get_filing_description_by_corp_party_id(corp_party_id)
 
     name = CorpName.get_corp_name_by_corp_id(person.corp_num)[0]
     offices = Office.get_offices_by_corp_id(person.corp_num)
@@ -215,12 +199,8 @@ def get_corp_party_by_id(corp_party_id):
 
     states = CorpState.get_corp_states_by_corp_id(person.corp_num)
 
-    corp_delivery_addr = ';'.join(
-        [Address.normalize_addr(office.delivery_addr_id) for office in offices]
-    )
-    corp_mailing_addr = ';'.join(
-        [Address.normalize_addr(office.mailing_addr_id) for office in offices]
-    )
+    corp_delivery_addr = ';'.join([Address.normalize_addr(office.delivery_addr_id) for office in offices])
+    corp_mailing_addr = ';'.join([Address.normalize_addr(office.mailing_addr_id) for office in offices])
 
     result_dict['corpPartyId'] = int(person.corp_party_id)
     result_dict['firstNme'] = person.first_nme
@@ -238,17 +218,30 @@ def get_corp_party_by_id(corp_party_id):
     result_dict['corpMailingAddr'] = corp_mailing_addr
     result_dict['corpTypCd'] = result.corp_typ_cd
     result_dict['corpAdminEmail'] = result.admin_email
-    result_dict['fullDesc'] = (
-        filing_description[0].full_desc if filing_description else None
-    )
+    result_dict['fullDesc'] = filing_description[0].full_desc if filing_description else None
 
     result_dict['states'] = [s.as_dict() for s in states]
 
     offices_held = _get_offices_held_by_corp_party(corp_party_id)
 
     incorporator_name_types = [
-        'APP', 'ATT', 'FBO', 'FCP', 'FIO', 'INC', 'LIQ', 'PAS', 'PSA', 'RAD', 'RAF', 'RAO', 'RCC',
-        'RCM', 'TAA', 'TAP']
+        'APP',
+        'ATT',
+        'FBO',
+        'FCP',
+        'FIO',
+        'INC',
+        'LIQ',
+        'PAS',
+        'PSA',
+        'RAD',
+        'RAF',
+        'RAO',
+        'RCC',
+        'RCM',
+        'TAA',
+        'TAP',
+    ]
     if person.party_typ_cd in incorporator_name_types:
         result_dict['businessNme'] = person.business_nme
 
@@ -259,11 +252,7 @@ def _get_offices_held_by_corp_party(corp_party_id):
     results = CorpParty.get_offices_held_by_corp_party_id(corp_party_id)
 
     if len(results) == 0:
-        return {
-            'offices': [],
-            'sameAddr': [],
-            'sameNameAndCompany': []
-        }
+        return {'offices': [], 'sameAddr': [], 'sameNameAndCompany': []}
 
     offices = []
     for row in results:
@@ -283,10 +272,14 @@ def _get_offices_held_by_corp_party(corp_party_id):
     results = {
         'offices': offices,
         'sameAddr': [
-            {**s[0].as_dict(), **{'year': int(s[1].year)}} for s in same_addr if
-            s[0].corp_party_id != int(corp_party_id)],
+            {**s[0].as_dict(), **{'year': int(s[1].year)}}
+            for s in same_addr
+            if s[0].corp_party_id != int(corp_party_id)
+        ],
         'sameNameAndCompany': [
-            {**s[0].as_dict(), **{'year': int(s[1].year)}} for s in same_name_and_company if
-            s[0].corp_party_id != int(corp_party_id)],
+            {**s[0].as_dict(), **{'year': int(s[1].year)}}
+            for s in same_name_and_company
+            if s[0].corp_party_id != int(corp_party_id)
+        ],
     }
     return results

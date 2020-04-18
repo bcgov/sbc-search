@@ -32,7 +32,7 @@ def test_ops_healthz_fail(app_request):
     with app_request.test_client() as client:
         rv = client.get('/ops/healthz')
 
-        assert rv.status_code == 500
+        assert rv.status_code == 503
         assert rv.json == {'message': 'api is down'}
 
 
