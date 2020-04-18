@@ -29,7 +29,7 @@
     >
       <SearchTips></SearchTips>
       <v-form ref="corpPartySearchForm">
-        <div v-for="criteria in filters" :key="criteria.uid">
+        <div v-for="criteria in filters">
           <CorpPartySearch
             :criteria="criteria"
             :uid="criteria.uid"
@@ -269,27 +269,67 @@ export default {
       return this.$refs.corpPartySearchForm.validate();
     },
     validateFilters() {
-      if (this.filters.length === 1 && this.filters[0].field === "stateTypCd") {
-        return {
-          error: true,
-          errorMessage: "Cannot perform search by Company Status Only"
-        };
+      const length = this.filters.length;
+
+      if (length > 1) {
+        if (this.filters.find(f => f.field === "addrLine1")) {
+          return {
+            warning: "true",
+            warningMessage:
+              "This search may return many results and be very slow. Add more filters to improve performance"
+          };
+        }
       }
 
-      if (
-        this.filters.find(
-          f =>
-            f.operator === "nicknames" ||
-            f.operator === "similar" ||
-            f.field === "postalCd" ||
-            f.field === "addrLine1"
-        )
-      ) {
-        return {
-          warning: true,
-          warningMessage:
-            "This search may return many results and be very slow. Add more filters to improve performance."
-        };
+      //Standalone filters
+      if (length === 1) {
+        const field = this.filters[0].field;
+        const operator = this.filters[0].operator;
+
+        if (field === "stateTypCd") {
+          return {
+            error: true,
+            errorMessage: "Cannot perform search by Company Status Only"
+          };
+        }
+
+        if (field === "addrLine1")
+          return {
+            error: true,
+            errorMessage: "Cannot perform search by address Only"
+          };
+
+        if (field === "postalCd") {
+          return {
+            warning: "true",
+            warningMessage:
+              "This search may return many results and be very slow. Add more filters to improve performance"
+          };
+        }
+
+        if (
+          field.includes("Nme") &&
+          (operator === "nicknames" || operator === "similar")
+        ) {
+          return {
+            warning: "true",
+            warningMessage:
+              "This search may return many results and be very slow. Add more filters to improve performance"
+          };
+        }
+
+        if (
+          (field === "firstNme" || field === "anyNme") &&
+          (operator === "contains" ||
+            operator === "startswith" ||
+            operator === "endswith")
+        ) {
+          return {
+            warning: "true",
+            warningMessage:
+              "This search may return many results and be very slow. Add more filters to improve performance"
+          };
+        }
       }
 
       return {
