@@ -238,11 +238,11 @@ def corp_party_addr_search():
     args = ImmutableMultiDict(
         [
             ('field', 'firstNme'),
-            ('operator', 'contains'),
+            ('operator', 'exact'),
             ('value', 'john'),
             ('field', 'addrLine1'),
             ('operator', 'contains'),
-            ('value', 'main'),
+            ('value', '123 main'),
             ('mode', 'ALL'),
             ('page', '1'),
             ('sort_type', 'dsc'),
