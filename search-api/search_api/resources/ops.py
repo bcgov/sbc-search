@@ -14,6 +14,7 @@
 """Endpoints to check and manage the health of the service."""
 from flask import Blueprint
 from sqlalchemy import exc
+from http import HTTPStatus
 
 from search_api.models.base import db
 
@@ -24,7 +25,7 @@ API = Blueprint('OPS', __name__, url_prefix='/ops')
 @API.route('/readyz')
 def readyz():
     """Return a JSON object that identifies if the service is ready."""
-    return {'message': 'api is ready'}, 200
+    return {'message': 'api is ready'}, HTTPStatus.OK
 
 
 @API.route('/healthz')
@@ -33,7 +34,7 @@ def healthz():
     try:
         db.engine.execute('SELECT 1 FROM CORP_PARTY WHERE ROWNUM = 1')
     except exc.SQLAlchemyError:
-        return {'message': 'api is down'}, 500
+        return {'message': 'api is down'}, HTTPStatus.SERVICE_UNAVAILABLE
 
     # made it here, so all checks passed
-    return {'message': 'api is healthy'}, 200
+    return {'message': 'api is healthy'}, HTTPStatus.OK

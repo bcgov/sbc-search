@@ -16,3 +16,4 @@
 from .directors import API as DIRECTORS_API
 from .businesses import API as BUSINESSES_API
 from .ops import API as OPS_API
+from .auth import API as AUTH_API

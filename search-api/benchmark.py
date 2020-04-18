@@ -98,9 +98,9 @@ def _benchmark(t, rs):
     for row in rs:
         if (count >= 50):
             break
-        #print(row)
+        print(row)
         count += 1
-    print("raw query time:", time.time() - t, " number of results:", count)
+    print("raw query time:", time.time() - t, " number of results >=:", count)
 
 
 def corporations():
@@ -255,7 +255,7 @@ def raw_sql(sql):
     return db.session.execute(sql)
 
 SQL = '''
-select 1 from corp_party
+SELECT 1 FROM CORP_PARTY WHERE ROWNUM = 1
 '''
 
 if __name__ == "__main__":
@@ -267,34 +267,36 @@ if __name__ == "__main__":
     with app.app_context():
         for i in range(1):
 
+            print('warmup')
             t = time.time()
             rs = raw_sql(SQL)
             _benchmark(t, rs)
 
+            print('cobrs')
             t = time.time()
             rs = raw_sql(COBRS_SQL)
             _benchmark(t, rs)
 
-            t = time.time()
-            rs = corp_party_addr_search()
-            _benchmark(t, rs)
-            
+            # t = time.time()
+            # rs = corp_party_addr_search()
+            # _benchmark(t, rs)
+
             t = time.time()
             rs = corp_party_search()
             _benchmark(t, rs)
-            
-            t = time.time()
-            rs = corp_party_postal_cd_search()
-            _benchmark(t, rs)
-            
-            t = time.time()
-            rs = corp_party_nickname_search()
-            _benchmark(t, rs)
 
-            t = time.time()
-            rs = corp_party_similar_search()
-            _benchmark(t, rs)
+            # t = time.time()
+            # rs = corp_party_postal_cd_search()
+            # _benchmark(t, rs)
 
-            t = time.time()
-            rs = corporations()
-            _benchmark(t, rs)
+            # t = time.time()
+            # rs = corp_party_nickname_search()
+            # _benchmark(t, rs)
+
+            # t = time.time()
+            # rs = corp_party_similar_search()
+            # _benchmark(t, rs)
+
+            # t = time.time()
+            # rs = corporations()
+            # _benchmark(t, rs)

@@ -19,8 +19,8 @@ from flask import current_app
 from flask_jwt_oidc import JwtManager
 import requests
 
-jwt = JwtManager()  # pylint: disable=invalid-name
 
+jwt = JwtManager()  # pylint: disable=invalid-name
 
 def authorized(jwt_instance, account_id):
     """
