@@ -47,5 +47,5 @@ export function exportCorporationSearch(queryString) {
 }
 
 export function warmUp() {
-  return ApiService.get(`/ops/healthz`);
+  return ApiService.get(`/v1/api/auth-check`);
 }
