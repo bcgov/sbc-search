@@ -69,9 +69,17 @@ export default Vue.extend({
         tokenService.scheduleRefreshTimer();
       }
 
-      warmUp().catch(e => {
-        console.error("Failed to warm up database", e);
-      });
+      warmUp()
+        .then(result => {
+          if (result.status === 401) {
+            this.$router.push({
+              name: "signin"
+            });
+          }
+        })
+        .catch(e => {
+          console.error("Failed to warm up database", e);
+        });
     } catch (e) {
       console.error(e);
     }
