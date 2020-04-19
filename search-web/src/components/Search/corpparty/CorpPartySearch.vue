@@ -81,7 +81,7 @@ export default {
     },
     uid: {
       default: null,
-      type: Number
+      type: String
     },
     initQuery: {
       default: "",

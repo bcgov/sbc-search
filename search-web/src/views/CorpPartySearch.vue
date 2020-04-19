@@ -125,6 +125,8 @@ import { downloadFile } from "@/util/index.ts";
 import omit from "lodash-es/omit";
 import isEmpty from "lodash-es/isEmpty";
 const qs = require("qs");
+const uniqid = require("uniqid");
+
 import {
   searchApi,
   EXPORT_CORPPARTY_URL,
@@ -158,7 +160,6 @@ export default {
   data() {
     return {
       title: "Welcome to Director Search",
-      uid: 2,
       searchQuery: null,
       logic: "ALL",
       initLogic: "ALL",
@@ -257,9 +258,8 @@ export default {
       this.handleSearch();
     },
     addFilter(event, field = "firstNme", operator = "contains", value = "") {
-      this.uid++;
       this.$store.commit("corpParty/filters/addFilter", {
-        uid: this.uid,
+        uid: uniqid(),
         field,
         operator,
         value
@@ -444,14 +444,14 @@ export default {
         );
 
         if (typeof queryFilters.field === "string") {
-          queryFilters.uid = this.uid++;
+          queryFilters.uid = uniqid();
           this.$store.commit("corpParty/filters/setFilters", [queryFilters]);
         } else if (Array.isArray(queryFilters.field)) {
           let temp = [];
           const length = queryFilters.field.length;
           for (let i = 0; i < length; i++) {
             temp.push({
-              uid: this.uid++,
+              uid: uniqid(),
               field: queryFilters.field[i],
               operator: queryFilters.operator[i],
               value: queryFilters.value[i]
