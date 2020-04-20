@@ -39,7 +39,7 @@ def _get_model_by_field(field_name):
     from search_api.models.corporation import Corporation  # noqa # pylint: disable=import-outside-toplevel, unused-import, cyclic-import
     from search_api.models.corp_name import CorpName  # noqa # pylint: disable=import-outside-toplevel, unused-import
     from search_api.models.address import Address  # noqa # pylint: disable=import-outside-toplevel, unused-import
-    from search_api.models.corp_op_state import CorpOpState  # noqa # pylint: disable=import-outside-toplevel, unused-import
+    from search_api.models.corp_state import CorpState  # noqa # pylint: disable=import-outside-toplevel, unused-import
 
     if field_name in ['firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt',
                       'corpPartyId', 'partyTypCd']:  # CorpParty fields
@@ -51,7 +51,7 @@ def _get_model_by_field(field_name):
     if field_name in ['addrLine1', 'addrLine2', 'addrLine3', 'postalCd', 'city', 'province']:  # Address fields
         return eval('Address')  # pylint: disable=eval-used
     if field_name in ['stateTypCd']:
-        return eval('CorpOpState')  # pylint: disable=eval-used
+        return eval('CorpState')  # pylint: disable=eval-used
 
     raise Exception('invalid field: {}'.format(field_name))
 
