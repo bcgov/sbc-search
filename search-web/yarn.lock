@@ -9745,10 +9745,10 @@ saxes@^3.1.9:
   dependencies:
     xmlchars "^2.1.1"
 
-sbc-common-components@2.1.13:
-  version "2.1.13"
-  resolved "https://registry.yarnpkg.com/sbc-common-components/-/sbc-common-components-2.1.13.tgz#10cb3bc201f439c0d725e1f5a84bb1dacbde366d"
-  integrity sha512-tAkmDjAACD9f0veny24KN42odbgPB8ZeBmB82iCxY+i4xEoHJrgdCg0dkYq9GTDTMkXgK7Tj3uW+4h4+lac64g==
+sbc-common-components@^2.1.13:
+  version "2.1.26"
+  resolved "https://registry.yarnpkg.com/sbc-common-components/-/sbc-common-components-2.1.26.tgz#88827f4ac85660ff070ec701c7fc9d6daeb02a72"
+  integrity sha512-x/4guK4Ck9Cpqe6UXzKJjI09E6U2sWPVAwVI9HZ4HIOLRJPy0RTpFZ13r/5en0X6pYbFRei4bvF7xH41V5Cqow==
   dependencies:
     "@mdi/font" "^4.5.95"
     axios "^0.18.0"
@@ -11399,6 +11399,11 @@ vuex-module-decorators@^0.16.1:
   version "0.16.1"
   resolved "https://registry.yarnpkg.com/vuex-module-decorators/-/vuex-module-decorators-0.16.1.tgz#9e651d507057b07a1b52f0f65dfae97b9095f00f"
   integrity sha512-Zz8HF2rMoDYf78uOBbWCq8wGFFo7YyNWc10Yj2eScKxVoRMla9HnFpiqvI3Dm0cLyOnBBklCn1AFUys62BZGAw==
+
+vuex@3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.1.2.tgz#a2863f4005aa73f2587e55c3fadf3f01f69c7d4d"
+  integrity sha512-ha3jNLJqNhhrAemDXcmMJMKf1Zu4sybMPr9KxJIuOpVcsDQlTBYLLladav2U+g1AvdYDG5Gs0xBTb0M5pXXYFQ==
 
 vuex@^3.1.2:
   version "3.2.0"
