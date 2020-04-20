@@ -23,7 +23,7 @@
         "qs": "^6.9.1",
         "register-service-worker": "^1.6.2",
         "roboto-fontface": "*",
-        "sbc-common-components": "^2.0.49",
+        "sbc-common-components": "2.1.18",
         "uniqid": "^5.2.0",
         "vue": "^2.6.11",
         "vue-backtotop": "^1.6.1",
