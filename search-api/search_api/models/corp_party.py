@@ -315,11 +315,13 @@ class CorpParty(BaseModel):
         else:
             sort_field_str = _sort_by_field(sort_type, sort_value)
             results = results.order_by(eval(sort_field_str))  # pylint: disable=eval-used
+
         return results
 
     @staticmethod
     def add_additional_cols_to_search_query(additional_cols, fields, query):
         """Add Address or CorpOpState columns to query based on the additional columns toggle."""
+
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
             query = query.outerjoin(Address, CorpParty.mailing_addr_id == Address.addr_id)
             query = query.add_columns(Address.addr_line_1, Address.addr_line_2, Address.addr_line_3, Address.postal_cd,)
@@ -330,10 +332,13 @@ class CorpParty(BaseModel):
         return query
 
     @staticmethod
-    def add_additional_cols_to_search_results(additional_cols, fields, row, result_dict):
+    def add_additional_cols_to_search_results(additional_cols, fields, row):
         """Add Address or CorpOpState columns to search results based on the additional columns toggle."""
+        additional_result_columns = {}
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-            result_dict['addr'] = _merge_addr_fields(row)
-            result_dict['postalCd'] = row.postal_cd
+            additional_result_columns['addr'] = _merge_addr_fields(row)
+            additional_result_columns['postalCd'] = row.postal_cd
         elif additional_cols == ADDITIONAL_COLS_ACTIVE:
-            result_dict['stateTypCd'] = row.state_typ_cd
+            additional_result_columns['stateTypCd'] = row.state_typ_cd
+
+        return additional_result_columns

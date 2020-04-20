@@ -117,7 +117,9 @@ def corpparty_search():
             result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
             result_dict['corpPartyId'] = int(result_dict['corpPartyId'])
 
-            CorpParty.add_additional_cols_to_search_results(additional_cols, fields, row, result_dict)
+            additional_result_columns = CorpParty.add_additional_cols_to_search_results(additional_cols, fields, row)
+
+            result_dict = {**result_dict, **additional_result_columns}
 
             corp_parties.append(result_dict)
         index += 1
