@@ -79,6 +79,7 @@ export default Vue.extend({
         })
         .catch(e => {
           console.error("Failed to warm up database", e);
+          console.error(e.response);
         });
     } catch (e) {
       this.$router.push("/");
