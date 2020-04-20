@@ -195,7 +195,8 @@ def _get_corp_party_export_column_headers(args):
     if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
         column_headers.insert(4, 'Address')
         column_headers.insert(5, 'Postal Code')
-    elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+
+    if additional_cols == ADDITIONAL_COLS_ACTIVE:
         column_headers.insert(7, 'Company Status')
 
     return column_headers
@@ -212,7 +213,8 @@ def _get_corp_party_export_column_values(row, args):
     if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
         columns.insert(4, _merge_addr_fields(row))
         columns.insert(5, row.postal_cd)
-    elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+
+    if additional_cols == ADDITIONAL_COLS_ACTIVE:
         columns.insert(7, _get_state_typ_cd_display_value(row.state_typ_cd))
 
     return columns

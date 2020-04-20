@@ -325,7 +325,8 @@ class CorpParty(BaseModel):
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
             query = query.outerjoin(Address, CorpParty.mailing_addr_id == Address.addr_id)
             query = query.add_columns(Address.addr_line_1, Address.addr_line_2, Address.addr_line_3, Address.postal_cd,)
-        elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+
+        if additional_cols == ADDITIONAL_COLS_ACTIVE:
             query = query.join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
             query = query.add_columns(CorpOpState.state_typ_cd)
 
@@ -338,7 +339,8 @@ class CorpParty(BaseModel):
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
             additional_result_columns['addr'] = _merge_addr_fields(row)
             additional_result_columns['postalCd'] = row.postal_cd
-        elif additional_cols == ADDITIONAL_COLS_ACTIVE:
+
+        if additional_cols == ADDITIONAL_COLS_ACTIVE:
             additional_result_columns['stateTypCd'] = row.state_typ_cd
 
         return additional_result_columns
