@@ -14,7 +14,7 @@
 """Common setup and fixtures for the pytest suite used by this service."""
 
 import pytest
-from sqlalchemy import event, text
+from sqlalchemy import event
 
 from search_api.models.base import db as _db
 from search_api import create_app
@@ -71,7 +71,7 @@ def session(app, db):  # pylint: disable=redefined-outer-name, invalid-name
 
         db.session = sess
 
-        if app.config.get("IS_ORACLE"):
+        if app.config.get('IS_ORACLE'):
             db.engine.execute('SELECT 1 FROM CORP_PARTY WHERE ROWNUM = 1')
         else:
             db.engine.execute('SELECT 1')

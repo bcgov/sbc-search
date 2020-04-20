@@ -321,7 +321,6 @@ class CorpParty(BaseModel):
     @staticmethod
     def add_additional_cols_to_search_query(additional_cols, fields, query):
         """Add Address or CorpOpState columns to query based on the additional columns toggle."""
-
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
             query = query.outerjoin(Address, CorpParty.mailing_addr_id == Address.addr_id)
             query = query.add_columns(Address.addr_line_1, Address.addr_line_2, Address.addr_line_3, Address.postal_cd,)

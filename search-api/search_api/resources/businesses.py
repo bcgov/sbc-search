@@ -63,23 +63,23 @@ def corporation_search():
 
     # Pagination
     per_page = 50
-    page = int(args.get("page")) if "page" in args else 1
+    page = int(args.get('page')) if 'page' in args else 1
     # We've switched to using ROWNUM rather than pagination, for performance reasons.
     # This means queries with more than 500 results are invalid.
-    #results = results.limit(50).offset((page - 1) * 50).all()
+    # results = results.limit(50).offset((page - 1) * 50).all()
     if current_app.config.get('IS_ORACLE'):
         results = results.filter(
-            literal_column("rownum") <= 500
+            literal_column('rownum') <= 500
         ).yield_per(50)
     else:
         results = results.limit(500)
 
     result_fields = [
-        "corpNum",
-        "corpNme",
-        "recognitionDts",
-        "corpTypCd",
-        "stateTypCd",
+        'corpNum',
+        'corpNme',
+        'recognitionDts',
+        'corpTypCd',
+        'stateTypCd',
         # Due to performance issues, exclude address.
         # 'postalCd'
     ]
@@ -87,21 +87,20 @@ def corporation_search():
     corporations = []
     index = 0
     for row in results:
-        if (page-1) * per_page <= index < page * per_page:
+        if (page - 1) * per_page <= index < page * per_page:
 
             result_dict = {}
 
-
             result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
             # Due to performance issues, exclude address.
-            result_dict["addr"] = '' #_merge_addr_fields(row)
+            result_dict['addr'] = ''  # _merge_addr_fields(row)
 
             corporations.append(result_dict)
         index += 1
 
     return jsonify({
-        "results": corporations,
-        "num_results": index
+        'results': corporations,
+        'num_results': index
     })
 
 
@@ -123,7 +122,7 @@ def corporation_search_export():
     results = Corporation.search_corporations(args, include_addr=True)
     if current_app.config.get('IS_ORACLE'):
         results = results.filter(
-            literal_column("rownum") <= 500
+            literal_column('rownum') <= 500
         ).yield_per(50)
     else:
         results = results.limit(500)

@@ -88,9 +88,12 @@ def corpparty_search():
     # Ref: https://github.com/pallets/flask-sqlalchemy/pull/613
     # results = results.limit(per_page).offset((page - 1) * per_page).all()
     # update:
-    # We've switched to using ROWNUM rather than pagination, for performance reasons.	    # for benchmarking, dump the query here and copy to benchmark.py
-    # This means queries with more than 500 results are invalid.	    # from sqlalchemy.dialects import oracle
-    # results = results.limit(per_page).offset((page - 1) * per_page).all()	    # oracle_dialect = oracle.dialect(max_identifier_length=30)
+    # We've switched to using ROWNUM rather than pagination, for performance reasons.
+    # for benchmarking, dump the query here and copy to benchmark.py
+    # This means queries with more than 500 results are invalid.
+    # from sqlalchemy.dialects import oracle
+    # results = results.limit(per_page).offset((page - 1) * per_page).all()
+    # oracle_dialect = oracle.dialect(max_identifier_length=30)
     if current_app.config.get('IS_ORACLE'):  # raise Exception(results.statement.compile(dialect=oracle_dialect))
         results = results.filter(literal_column('rownum') <= 500).yield_per(per_page)
     else:

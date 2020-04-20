@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Endpoints to check and manage the health of the service."""
+from http import HTTPStatus
+
 from flask import Blueprint, current_app
 from sqlalchemy import exc
-from http import HTTPStatus
 
 from search_api.models.base import db
 
@@ -32,7 +33,7 @@ def readyz():
 def healthz():
     """Return a JSON object stating the health of the Service and dependencies."""
     try:
-        if current_app.config.get("IS_ORACLE"):
+        if current_app.config.get('IS_ORACLE'):
             db.engine.execute('SELECT 1 FROM CORP_PARTY WHERE ROWNUM = 1')
         else:
             db.engine.execute('SELECT 1')
