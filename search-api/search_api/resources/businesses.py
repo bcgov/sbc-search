@@ -15,6 +15,7 @@
 
 import datetime
 from http import HTTPStatus
+import logging
 from tempfile import NamedTemporaryFile
 
 from flask import Blueprint, request, jsonify, send_from_directory, current_app
@@ -29,7 +30,7 @@ from search_api.models.office import Office
 from search_api.utils.model_utils import _merge_addr_fields, _format_office_typ_cd
 from search_api.utils.utils import convert_to_snake_case
 
-
+logger = logging.getLogger(__name__)
 API = Blueprint('BUSINESSES_API', __name__, url_prefix='/api/v1/businesses')
 
 

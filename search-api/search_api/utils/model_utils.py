@@ -41,7 +41,7 @@ def _get_model_by_field(field_name):
     from search_api.models.address import Address  # noqa # pylint: disable=import-outside-toplevel, unused-import
     from search_api.models.corp_op_state import CorpOpState  # noqa # pylint: disable=import-outside-toplevel, unused-import
 
-    if field_name in ['firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt', 'corpNum',
+    if field_name in ['firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt',
                       'corpPartyId', 'partyTypCd']:  # CorpParty fields
         return eval('CorpParty')  # pylint: disable=eval-used
     if field_name in ['corpNum', 'recognitionDts', 'corpTypCd']:  # Corporation fields
