@@ -105,7 +105,7 @@
         <!-- Mobile View End -->
 
         <tr
-          class="cursor-pointer d-none d-md-table-row desktop-tr-rowz"
+          class="cursor-pointer d-none d-md-table-row desktop-tr-row"
           @click="handleCellClick(item['corpPartyId'], $event)"
         >
           <td>{{ item["lastNme"] }}</td>

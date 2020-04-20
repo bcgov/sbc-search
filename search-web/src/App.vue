@@ -78,8 +78,10 @@ export default Vue.extend({
           }
         })
         .catch(e => {
-          console.error("Failed to warm up database", e);
-          console.error(e.response);
+          console.log("Failed to warm up database", e);
+          if (e.response.status === "401") {
+            this.$router.push("/");
+          }
         });
     } catch (e) {
       this.$router.push("/");
