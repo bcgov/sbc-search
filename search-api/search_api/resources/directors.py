@@ -19,10 +19,9 @@ from http import HTTPStatus
 import logging
 from tempfile import NamedTemporaryFile
 
-from flask import Blueprint, current_app, request, jsonify, send_from_directory, current_app
+from flask import Blueprint, current_app, request, jsonify, send_from_directory
 from sqlalchemy.sql import literal_column
 from openpyxl import Workbook
-import time
 
 from search_api.auth import jwt, authorized
 from search_api.models.address import Address
