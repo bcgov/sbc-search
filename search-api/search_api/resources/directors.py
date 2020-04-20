@@ -129,7 +129,10 @@ def corpparty_search():
 
     current_app.logger.info('Returning JSON results')
 
-    return jsonify({'results': corp_parties})
+    return jsonify({
+        'results': corp_parties,
+        'num_results': index
+    })
 
 
 @API.route('/export/')
