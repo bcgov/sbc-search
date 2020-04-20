@@ -13,6 +13,8 @@
       }"
     >
       <CorporationSearch
+        ref="corporationSearch"
+        :initOperator="initOperator"
         @search="handleSearch"
         :class="{
           'mb-n6': $vuetify.breakpoint.smAndUp
@@ -90,6 +92,7 @@ export default {
       this.query = nq;
     }
   },
+
   data() {
     return {
       error: false,
@@ -99,7 +102,8 @@ export default {
       sort_value: "corpNme",
       sort_type: "dsc",
       disableSearch: false,
-      exportLoading: false
+      exportLoading: false,
+      initOperator: "corpNme"
     };
   },
   methods: {
@@ -115,13 +119,16 @@ export default {
       this.disableSearch = false;
     },
     handleSearch(searchQuery) {
+      const type = this.$refs.corporationSearch.$refs.corporationOpSelect
+        .select;
       this.disableSearch = true;
       this.page = "1";
       const query = {
         query: searchQuery,
         page: 1,
         sort_type: "dsc",
-        sort_value: "corpNme"
+        sort_value: "corpNme",
+        search_field: type || "corpNme"
       };
       this.$nextTick(() => {
         this.$router
@@ -165,6 +172,7 @@ export default {
     },
     async handleExport() {
       this.exportLoading = true;
+
       const queryString = qs.stringify(this.$route.query);
       const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
       exportCorporationSearch(queryString)
@@ -192,6 +200,7 @@ export default {
     if (!this.isQueryEmpty && this.$route.query.query) {
       this.disableSearch = true;
       const query = this.$route.query;
+      this.initOperator = query.search_field || "corpNme";
       this.$root.$emit("setCorpSearchInput", query.query);
       this.query = query;
       if (query.page) {

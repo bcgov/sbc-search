@@ -81,7 +81,7 @@ export default Vue.extend({
           console.error("Failed to warm up database", e);
         });
     } catch (e) {
-      console.error(e);
+      this.$router.push("/");
     }
   },
   methods: {}

@@ -1,6 +1,12 @@
 <template>
   <div>
     <v-form class="d-flex flex-wrap align-top">
+      <div class="mr-2">
+        <OperatorSelect
+          :initOperator="initOperator"
+          ref="corporationOpSelect"
+        ></OperatorSelect>
+      </div>
       <div
         class="search-input-container"
         :class="{
@@ -32,11 +38,17 @@
 
 <script>
 import SearchInput from "@/components/Search/corporation/SearchInput.vue";
+import OperatorSelect from "@/components/Search/corporation/OperatorSelect.vue";
 export default {
   components: {
-    SearchInput
+    SearchInput,
+    OperatorSelect
   },
   props: {
+    initOperator: {
+      default: null,
+      type: String
+    },
     initSearch: {
       default: null,
       type: String
