@@ -434,5 +434,5 @@ if __name__ == '__main__':
 
     app = create_app('development')  # pylint: disable=invalid-name
     with app.app_context():
-        reset(app)  # pylint: disable=too-many-function-args
+        reset() 
         populate()

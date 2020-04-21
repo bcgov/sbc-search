@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import CorpPartySearch from "../views/CorpPartySearch.vue";
 import ApiService from "@/api/ApiService";
+import NotFound from "@/views/NotFound.vue";
 
 Vue.use(VueRouter);
 
@@ -85,6 +86,13 @@ const routes = [
       ),
     meta: {
       title: "Corporation Search"
+    }
+  },
+  {
+    path: "*",
+    component: NotFound,
+    meta: {
+      title: "Director Search | Not Found"
     }
   }
 ];

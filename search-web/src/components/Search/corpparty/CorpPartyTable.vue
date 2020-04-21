@@ -33,7 +33,8 @@
                 class="w-100 custom-footer d-flex justify-end align-center caption"
               >
                 <div class="letter-spacing-none">
-                  Showing {{ pagination.itemsLength }} results
+                  Showing {{ pagination.itemsLength }} of
+                  {{ totalItems }} results
                 </div>
                 <div class="d-flex ml-5 align-center">
                   <v-btn
@@ -136,7 +137,7 @@
       </template>
       <template v-slot:footer.page-text="{ itemsLength }">
         <div class="custom-footer d-flex align-center">
-          <div>Showing {{ itemsLength }} results</div>
+          <div>Showing {{ itemsLength }} of {{ totalItems }} results</div>
           <div class="d-flex ml-5 align-center">
             <v-btn v-if="page > '1' && !loading" icon @click="pagePrev" small>
               <v-icon>arrow_back</v-icon>
@@ -351,7 +352,7 @@ export default {
       corpPartySearch(queryString)
         .then(result => {
           this.items = result.data.results;
-          this.totalItems = this.items.length;
+          this.totalItems = result.data.numResults;
           this.$emit("success", result);
         })
         .catch(e => {
