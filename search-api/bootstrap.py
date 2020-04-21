@@ -349,11 +349,11 @@ def populate_corps():  # pylint: disable=too-many-locals
         appointment_date = default_date
         cessation_date = default_date
 
-        party_types = ['FIO', 'DIR', 'OFF']
+        party_types = ['FIO', 'DIR']
 
         corp_party = CorpParty(
             corp_party_id=(index),
-            party_typ_cd=(party_types[index % 3]),
+            party_typ_cd=(party_types[index % 2]),
             corp_num=CORP_NUMS[index],
             first_nme=corp_party_name[0],
             middle_nme=corp_party_name[1] if len(corp_party_name) > 1 else None,
