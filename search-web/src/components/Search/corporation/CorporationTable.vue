@@ -14,10 +14,10 @@
       :sort-by="sortBy"
       :sort-desc="sortDesc"
       :footer-props="{
-        'items-per-page-options': [50]
+        'items-per-page-options': [items_per_page]
       }"
     >
-      <template v-slot:top="{ pagination }">
+      <template v-slot:top="{}">
         <div class="v-data-footer v-data-custom-header">
           <div
             v-if="corporations.length === 0"
@@ -27,7 +27,10 @@
           </div>
           <div v-else class="v-data-footer__pagination">
             <div class="custom-footer d-flex align-center">
-              <div>Showing {{ pagination.itemsLength }} results</div>
+              <div>
+                Showing {{ showingMin }}-{{ showingMax }} of
+                {{ totalItems }} results
+              </div>
               <div class="d-flex ml-5 align-center">
                 <v-btn
                   v-if="page > '1' && !loading"
@@ -43,7 +46,7 @@
                 <div class="d-inline-block mr-3 ml-3">Page {{ page }}</div>
                 <v-btn
                   icon
-                  v-if="corporations.length > 49 && !loading"
+                  v-if="showingMax < totalItems && !loading"
                   @click="pageNext"
                   small
                 >
@@ -94,9 +97,12 @@
           height="2"
         ></v-progress-linear>
       </template>
-      <template v-slot:footer.page-text="{ itemsLength }">
+      <template v-slot:footer.page-text="{}">
         <div class="custom-footer d-flex align-center">
-          <div>Showing {{ itemsLength }} results</div>
+          <div>
+            Showing {{ showingMin }}-{{ showingMax }} of
+            {{ totalItems }} results
+          </div>
           <div class="d-flex ml-5 align-center">
             <v-btn v-if="page > '1' && !loading" icon @click="pagePrev" small>
               <v-icon>arrow_back</v-icon>
@@ -107,7 +113,7 @@
             <div class="d-inline-block mr-3 ml-3">Page {{ page }}</div>
             <v-btn
               icon
-              v-if="corporations.length > 49 && !loading"
+              v-if="showingMax < totalItems && !loading"
               @click="pageNext"
               small
             >
@@ -148,6 +154,25 @@ export default {
         postalCd: true
       };
       return CORPORATION_HEADERS.filter(ch => !filter[ch.value]);
+    },
+    showingMin() {
+      if (this.page == 1) {
+        return 1;
+      }
+      let min = 0;
+      for (let i = 0; i < this.page - 1; i++) {
+        min += this.items_per_page;
+      }
+      return min;
+    },
+    showingMax() {
+      if (this.corporations.length < this.items_per_page && this.page == 1) {
+        return this.corporations.length;
+      }
+      if (this.corporations.length < this.items_per_page && this.page != 1) {
+        return this.showingMin + this.corporations.length;
+      }
+      return this.page * this.items_per_page;
     }
   },
   data() {
@@ -158,7 +183,8 @@ export default {
       options: {},
       disableSorting: false,
       sortBy: [],
-      sortDesc: []
+      sortDesc: [],
+      items_per_page: 50
     };
   },
   methods: {
@@ -204,7 +230,7 @@ export default {
       corporationSearch(query)
         .then(result => {
           this.corporations = result.data.results;
-          this.totalItems = this.corporations.length;
+          this.totalItems = result.data.numResults;
           this.$emit("success", result);
         })
         .catch(e => {
