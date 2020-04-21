@@ -19,7 +19,7 @@
         'items-per-page-options': [50]
       }"
     >
-      <template v-slot:top="{ pagination }">
+      <template v-slot:top="{}">
         <div>
           <div
             v-if="items.length === 0"
@@ -33,7 +33,7 @@
                 class="w-100 custom-footer d-flex justify-end align-center caption"
               >
                 <div class="letter-spacing-none">
-                  Showing {{ pagination.itemsLength }} of
+                  Showing {{ showingMin }}-{{ showingMax }} of
                   {{ totalItems }} results
                 </div>
                 <div class="d-flex ml-5 align-center">
@@ -53,7 +53,7 @@
                   </div>
                   <v-btn
                     icon
-                    v-if="results.length > 49 && !loading"
+                    v-if="showingMax < totalItems && !loading"
                     @click="pageNext"
                     small
                   >
@@ -135,9 +135,12 @@
           height="2"
         ></v-progress-linear>
       </template>
-      <template v-slot:footer.page-text="{ itemsLength }">
+      <template v-slot:footer.page-text="{}">
         <div class="custom-footer d-flex align-center">
-          <div>Showing {{ itemsLength }} of {{ totalItems }} results</div>
+          <div>
+            Showing {{ showingMin }}-{{ showingMax }} of
+            {{ totalItems }} results
+          </div>
           <div class="d-flex ml-5 align-center">
             <v-btn v-if="page > '1' && !loading" icon @click="pagePrev" small>
               <v-icon>arrow_back</v-icon>
@@ -148,7 +151,7 @@
             <div class="d-inline-block mr-3 ml-3">Page {{ page }}</div>
             <v-btn
               icon
-              v-if="results.length > 49 && !loading"
+              v-if="showingMax < totalItems && !loading"
               @click="pageNext"
               small
             >
@@ -192,6 +195,25 @@ export default {
     headers() {
       return this.filterHeaders(CORPPARTY_HEADERS, this.type);
     },
+    showingMin() {
+      if (this.page == 1) {
+        return 1;
+      }
+      let min = 0;
+      for (let i = 0; i < this.page - 1; i++) {
+        min += this.items_per_page;
+      }
+      return min;
+    },
+    showingMax() {
+      if (this.items.length < this.items_per_page && this.page == 1) {
+        return this.items.length;
+      }
+      if (this.items.length < this.items_per_page && this.page != 1) {
+        return this.showingMin + this.items.length;
+      }
+      return this.page * this.items_per_page;
+    },
     results() {
       return this.items.map(r => {
         if (r["appointmentDt"]) {
@@ -222,7 +244,8 @@ export default {
       totalItems: 0,
       disableSorting: false,
       sortBy: [],
-      sortDesc: []
+      sortDesc: [],
+      items_per_page: 50
     };
   },
   methods: {
