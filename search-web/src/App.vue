@@ -78,9 +78,8 @@ export default Vue.extend({
           }
         })
         .catch(e => {
-          console.log("Failed to warm up database", e);
           if (e.response.status === "401") {
-            this.$router.push("/");
+            this.$router.push("/signin/bcros");
           }
         });
     } catch (e) {
