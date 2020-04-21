@@ -232,6 +232,7 @@ export default {
           this.corporations = result.data.results;
           this.totalItems = result.data.numResults;
           this.$emit("success", result);
+          this.totalItems >= 500 ? this.$emit("overload") : "";
         })
         .catch(e => {
           this.corporations = [];

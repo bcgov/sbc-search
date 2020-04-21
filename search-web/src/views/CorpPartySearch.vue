@@ -58,7 +58,6 @@
       </v-form>
       <v-alert
         v-model="error"
-        text
         dense
         type="error"
         icon="error"
@@ -68,9 +67,8 @@
         {{ errorMessage }}
       </v-alert>
       <v-alert
-        v-if="warning && !error"
+        v-if="!error && !overload"
         v-model="warning"
-        text
         dense
         type="warning"
         icon="warning"
@@ -78,6 +76,17 @@
         border="left"
       >
         {{ warningMessage }}
+      </v-alert>
+      <v-alert
+        v-if="!error || !warning"
+        v-model="overload"
+        dense
+        type="warning"
+        icon="warning"
+        class="mt-5 pl-6"
+        border="left"
+      >
+        {{ overloadMessage }}
       </v-alert>
     </div>
     <div class="mt-10">
@@ -104,6 +113,7 @@
       <CorpPartyTable
         @error="handleError"
         @success="handleSuccess"
+        @overload="handleOverload"
         ref="corpPartyTable"
         :page="page"
         @pageUpdate="handlePageUpdate"
@@ -173,10 +183,15 @@ export default {
       disableSearch: false,
       exportLoading: false,
       warning: false,
-      warningMessage: null
+      warningMessage: null,
+      overload: false,
+      overloadMessage: null
     };
   },
   mounted() {
+    this.resetError();
+    this.resetWarning();
+    this.resetOverload();
     this.init();
   },
   watch: {
@@ -185,9 +200,18 @@ export default {
     }
   },
   methods: {
+    handleOverload() {
+      this.overload = true;
+      this.overloadMessage =
+        "Your search returned 500 or more results, which is the limit of the Corporation Search. Results will be missing at random, irrespective of sorting. Please be sure to narrow your search in order to receive a usable results list.";
+    },
     resetError() {
       this.error = false;
       this.errorMessage = "";
+    },
+    resetOverload() {
+      this.overload = false;
+      this.overloadMessage = null;
     },
     resetWarning() {
       this.warning = false;
@@ -340,7 +364,7 @@ export default {
     handleNewSearch() {
       this.resetError();
       this.resetWarning();
-
+      this.resetOverload();
       if (!this.isFormValid()) {
         return false;
       }

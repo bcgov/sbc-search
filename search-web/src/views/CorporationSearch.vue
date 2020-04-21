@@ -21,10 +21,8 @@
         }"
         :disabled="disableSearch"
       ></CorporationSearch>
-
       <v-alert
         v-model="error"
-        text
         dense
         type="error"
         icon="error"
@@ -32,6 +30,17 @@
         border="left"
       >
         {{ errorMessage }}
+      </v-alert>
+      <v-alert
+        v-if="!error"
+        v-model="overload"
+        dense
+        type="warning"
+        icon="warning"
+        class="mt-5 pl-6"
+        border="left"
+      >
+        {{ overloadMessage }}
       </v-alert>
     </div>
 
@@ -57,6 +66,7 @@
       @sortUpdate="handleSortUpdate"
       @error="handleError"
       @success="handleSuccess"
+      @overload="handleOverload"
     ></CorporationTable>
   </div>
 </template>
@@ -97,6 +107,8 @@ export default {
     return {
       error: false,
       errorMessage: null,
+      overload: false,
+      overloadMessage: null,
       query: null,
       page: "1",
       sort_value: "corpNme",
@@ -107,6 +119,11 @@ export default {
     };
   },
   methods: {
+    handleOverload() {
+      this.overload = true;
+      this.overloadMessage =
+        "Your search returned 500 or more results, which is the limit of the Corporation Search. Results will be missing at random, irrespective of sorting. Please be sure to narrow your search in order to receive a usable results list.";
+    },
     handleError(error) {
       this.errorMessage = `${error.toString()} ${(error.response &&
         error.response.data.message) ||
@@ -114,11 +131,21 @@ export default {
       this.error = true;
       this.disableSearch = false;
     },
+    resetOverload() {
+      this.overload = false;
+      this.overloadMessage = null;
+    },
+    resetError() {
+      this.error = false;
+      this.errorMessage = null;
+    },
     handleSuccess() {
       this.error = false;
       this.disableSearch = false;
     },
     handleSearch(searchQuery) {
+      this.resetError();
+      this.resetOverload();
       const type = this.$refs.corporationSearch.$refs.corporationOpSelect
         .select;
       this.disableSearch = true;
@@ -197,6 +224,8 @@ export default {
     }
   },
   mounted() {
+    this.resetError();
+    this.resetOverload();
     if (!this.isQueryEmpty && this.$route.query.query) {
       this.disableSearch = true;
       const query = this.$route.query;
