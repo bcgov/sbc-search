@@ -78,7 +78,9 @@ export default Vue.extend({
           }
         })
         .catch(e => {
-          if (e.response.status === "401") {
+          if (!e.response) {
+            console.error(e);
+          } else if (e.response.status === "401") {
             this.$router.push("/signin/bcros");
           }
         });
