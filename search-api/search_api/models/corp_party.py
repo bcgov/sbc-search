@@ -287,6 +287,7 @@ class CorpParty(BaseModel):
             )
         ).filter(
             CorpParty.end_event_id == None,  # noqa # pylint: disable=singleton-comparison
+            CorpParty.party_typ_cd != 'OFF',
         )
 
         results = CorpParty.add_additional_cols_to_search_query(additional_cols, fields, results)
