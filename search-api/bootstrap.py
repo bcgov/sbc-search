@@ -34,6 +34,7 @@ from search_api.models.nickname import NickName
 def reset():
     """Clear the database"""
     assert 'oracle' not in app.config.get("SQLALCHEMY_DATABASE_URI").lower()
+    db.session.query(NickName).delete(synchronize_session=False)
     db.session.query(Corporation).delete(synchronize_session=False)
     db.session.query(CorpParty).delete(synchronize_session=False)
     db.session.query(CorpName).delete(synchronize_session=False)
@@ -434,5 +435,5 @@ if __name__ == '__main__':
 
     app = create_app('development')  # pylint: disable=invalid-name
     with app.app_context():
-        reset() 
+        reset()
         populate()
