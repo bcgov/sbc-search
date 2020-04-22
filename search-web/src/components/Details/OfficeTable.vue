@@ -19,9 +19,14 @@
                 {{ o.shortDesc || "-" }}
               </td>
               <td>
-                <a :href="`/corpparty/${o['corpPartyId']}`" target="blank">
-                  {{ o["corpPartyId"] || "-" }}
+                <a
+                  v-if="o['corpPartyId']"
+                  :href="`/corpparty/${o['corpPartyId']}`"
+                  target="blank"
+                >
+                  {{ o["corpPartyId"] }}
                 </a>
+                <span v-else>-</span>
               </td>
               <td>
                 -
@@ -63,9 +68,14 @@
                 {{ o.partyTypCd || "-" }}
               </td>
               <td>
-                <a :href="`/corpparty/${o['corpPartyId']}`" target="blank">
-                  {{ o["corpPartyId"] || "-" }}
+                <a
+                  v-if="o['corpPartyId']"
+                  :href="`/corpparty/${o['corpPartyId']}`"
+                  target="blank"
+                >
+                  {{ o["corpPartyId"] }}
                 </a>
+                <span v-else>-</span>
               </td>
               <td>
                 {{ o.year || "-" }}
@@ -102,9 +112,14 @@
                 {{ o.partyTypCd }}
               </td>
               <td>
-                <a :href="`/corpparty/${o['corpPartyId']}`" target="blank">
+                <a
+                  v-if="o['corpPartyId']"
+                  :href="`/corpparty/${o['corpPartyId']}`"
+                  target="blank"
+                >
                   {{ o["corpPartyId"] }}
                 </a>
+                <span v-else>-</span>
               </td>
               <td>
                 {{ o.year || "-" }}
