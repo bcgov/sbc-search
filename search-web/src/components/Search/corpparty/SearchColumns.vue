@@ -33,7 +33,12 @@
         keyboard_arrow_down
       </v-icon>
     </div>
-    <div v-if="tips">
+    <div
+      v-if="tips"
+      :class="{
+        'mb-5': $vuetify.breakpoint.smAndDown
+      }"
+    >
       Table data will load faster if you select only of the above, and fastest
       if you select "None"
     </div>

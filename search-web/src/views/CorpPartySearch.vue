@@ -93,15 +93,29 @@
       <div v-if="qs" class="mb-5">
         <h4 class="headline">Search Results</h4>
       </div>
-      <div v-if="qs" class="d-flex justify-space-between align-center">
+      <div
+        v-if="qs"
+        class="sr-meta-container d-flex"
+        :class="{
+          'flex-column': $vuetify.breakpoint.smAndDown,
+          'justify-space-between': $vuetify.breakpoint.mdAndUp,
+          'align-center': $vuetify.breakpoint.mdAndUp
+        }"
+      >
         <SearchColumn
           @click="handleColumnClick"
-          class="mb-10"
+          :class="{
+            'mb-10': $vuetify.breakpoint.mdAndUp
+          }"
           :initColumn="additional_cols"
         ></SearchColumn>
 
         <v-btn
           class="export-btn body-1 color-dark-grey border-gray font-16"
+          :class="{
+            'mb-10': $vuetify.breakpoint.smAndDown
+          }"
+          max-width="200"
           height="50"
           outlined
           @click="handleExport"

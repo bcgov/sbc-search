@@ -69,7 +69,7 @@ export default {
           this.error = true;
           this.detail = {};
           this.errorMessage = `${
-            error.response.data && error.response.data.message
+            error.response && error.response.data && error.response.data.message
               ? error.response.data.message
               : error.toString()
           }`;
