@@ -54,21 +54,33 @@
           Filing #{{ detail.corpPartyId }}
         </h2>
       </v-row>
-
       <v-row>
-        <ul class="pa-0 ma-0 detail-list">
+        <ul class="pa-0 ma-0 detail-list mb-10">
           <li
-            v-for="(val, key) in filteredDetail"
+            v-for="(val, key) in generalInformation"
             :key="key"
             class="d-flex w-100 detail-list-item"
           >
-            <span
-              class="font-weight-bold mb-1 detail-key"
-              :class="{
-                'detail-big-margins': key === 'cessationDt' || key === 'addr'
-              }"
-              >{{ getText(key) }}</span
-            >
+            <span class="font-weight-bold mb-1 detail-key">{{
+              getText(key)
+            }}</span>
+            <span class="middle-border"></span>
+            <span class="detail-value">{{ val }}</span>
+          </li>
+        </ul>
+      </v-row>
+      <v-row class="mt-10 mb-10">
+        <h5 class="body-1 mb-5">Company Information</h5>
+        <ul class="pa-0 ma-0 detail-list">
+          <li
+            v-for="(val, key) in companyInformation"
+            :key="key"
+            class="d-flex w-100 detail-list-item"
+          >
+            <span class="font-weight-bold mb-1 detail-key">{{
+              getText(key)
+            }}</span>
+            <span class="middle-border"></span>
             <span class="detail-value">{{ val }}</span>
           </li>
         </ul>
@@ -157,6 +169,31 @@ export default {
       }
 
       return pick(filtered, includedFields);
+    },
+    companyInformation() {
+      return pick(this.filteredDetail, [
+        "stateTypCd",
+        "corpNme",
+        "corpNum",
+        "corpTypCd",
+        "corpDeliveryAddr",
+        "corpMailingAddr",
+        "corpAdminEmail"
+      ]);
+    },
+    generalInformation() {
+      const includedFields = {};
+      return pick(this.filteredDetail, [
+        "lastNme",
+        "firstNme",
+        "middleNme",
+        "deliveryAddr",
+        "mailingAddr",
+        "corpPartyEmail",
+        "partyTypCd",
+        "appointmentDt",
+        "cessationDt"
+      ]);
     }
   },
   methods: {
@@ -171,9 +208,6 @@ export default {
 </script>
 
 <style lang="scss">
-.detail-list-item span {
-  flex: 1 1 0;
-}
 .detail-value {
   color: $COLOR_SECONDARY;
 }
@@ -187,6 +221,48 @@ export default {
 }
 
 .detail-list {
+  max-width: 1200px;
   width: 100%;
+}
+
+.detail-value:after {
+  content: ".";
+  visibility: hidden;
+}
+.detail-key {
+  flex: 0.5 1 0;
+}
+.detail-value {
+  flex: 1 1 0;
+  padding-left: 3em;
+}
+.middle-border {
+  flex: 0.001 !important;
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+@media only screen and (max-width: 960px) {
+  .detail-key,
+  .detail-value {
+    font-size: 14px !important;
+    flex: 1 1 0;
+  }
+  .detail-value {
+    flex: 1.25 1 0;
+    padding-left: 1em;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .detail-key,
+  .detail-value {
+    font-size: 12px !important;
+    flex: 1.3 1 0;
+  }
+  .detail-value {
+    flex: 1.25 1 0;
+    padding-left: 1em;
+  }
 }
 </style>

@@ -33,6 +33,7 @@
           <ul class="pa-0 ma-0 detail-list">
             <li class="d-flex w-100 detail-list-item mb-5">
               <span class="detail-key font-weight-bold">Company Name(s)</span>
+              <span class="middle-border"></span>
               <div class="detail-value">
                 <span
                   v-for="(name, index) in details.names"
@@ -49,6 +50,7 @@
               <span class="detail-key font-weight-bold">
                 {{ getText(key) }}
               </span>
+              <span class="middle-border"></span>
               <span class="detail-value">{{ val }}</span>
             </li>
             <li class="mb-10"></li>
@@ -130,5 +132,41 @@ export default {
 
 .v-application .detail-big-margins {
   margin-bottom: 4em !important;
+}
+.detail-key {
+  flex: 0.5 1 0;
+}
+.detail-value {
+  flex: 1 1 0;
+  padding-left: 3em;
+}
+.middle-border {
+  flex: 0.001 !important;
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+@media only screen and (max-width: 960px) {
+  .detail-key,
+  .detail-value {
+    font-size: 14px !important;
+    flex: 1 1 0;
+  }
+  .detail-value {
+    flex: 1.25 1 0;
+    padding-left: 1em;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .detail-key,
+  .detail-value {
+    font-size: 12px !important;
+    flex: 1.3 1 0;
+  }
+  .detail-value {
+    flex: 1.25 1 0;
+    padding-left: 1em;
+  }
 }
 </style>
