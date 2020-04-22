@@ -1,7 +1,13 @@
 <template>
   <div>
     <v-form class="d-flex flex-wrap align-top">
-      <div class="mr-2">
+      <div
+        :class="{
+          'w-100': $vuetify.breakpoint.xsOnly,
+          'mr-2': $vuetify.breakpoint.smAndUp,
+          'mr-0': $vuetify.breakpoint.xsAndDown
+        }"
+      >
         <OperatorSelect
           :initOperator="initOperator"
           ref="corporationOpSelect"
@@ -18,6 +24,7 @@
           :query.sync="searchQuery"
         ></SearchInput>
       </div>
+      <div class="break" v-if="$vuetify.breakpoint.smAndDown"></div>
       <v-btn
         class="d-inline-block corporation-btn font-weight-bold elevation-0 font-16"
         color="primary"
@@ -27,8 +34,8 @@
         :block="$vuetify.breakpoint.xsOnly"
         @click.prevent="handleSearch"
         :class="{
-          'ml-2': $vuetify.breakpoint.smAndUp,
-          'ml-0': $vuetify.breakpoint.xsOnly
+          'ml-2': $vuetify.breakpoint.mdAndUp,
+          'ml-0': $vuetify.breakpoint.smAndDown
         }"
         >Search</v-btn
       >
@@ -76,5 +83,10 @@ export default {
   padding: 0 2.3em !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
+}
+
+.break {
+  flex-basis: 100%;
+  height: 0;
 }
 </style>

@@ -46,4 +46,11 @@ export default {
 .corp-op-select-container {
   max-width: 150px;
 }
+
+@media (max-width: 600px) {
+  .corp-op-select-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
 </style>

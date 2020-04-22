@@ -3,7 +3,7 @@
     <v-select
       background-color="#e5e8ec"
       filled
-      class="operator-select"
+      class="operator-select op-select-corporation"
       v-model="select"
       :items="items"
       label="Operator"
@@ -45,4 +45,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss"></style>

@@ -47,7 +47,7 @@ export default {
 <style lang="scss">
 @media (max-width: 1497px) {
   .search-input-corporation {
-    width: 300px !important;
+    width: 350px !important;
   }
 }
 @media (max-width: 959px) {

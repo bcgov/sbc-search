@@ -16,9 +16,6 @@
         ref="corporationSearch"
         :initOperator="initOperator"
         @search="handleSearch"
-        :class="{
-          'mb-n6': $vuetify.breakpoint.smAndUp
-        }"
         :disabled="disableSearch"
       ></CorporationSearch>
       <v-alert
@@ -26,7 +23,7 @@
         dense
         type="error"
         icon="error"
-        class="mt-5 pl-6"
+        class="mt-3 pl-6"
         border="left"
       >
         {{ errorMessage }}
@@ -37,7 +34,7 @@
         dense
         type="warning"
         icon="warning"
-        class="mt-5 pl-6"
+        class="mt-3 pl-6"
         border="left"
       >
         {{ overloadMessage }}
@@ -46,12 +43,21 @@
 
     <div
       v-if="!isQueryEmpty"
-      class="d-flex justify-space-between align-center mb-5"
+      class="d-flex mb-5"
+      :class="{
+        'flex-column': $vuetify.breakpoint.xsOnly,
+        'justify-space-between': $vuetify.breakpoint.smAndUp,
+        'align-center': $vuetify.breakpoint.smAndUp
+      }"
     >
       <h4 class="headline">Search Results</h4>
       <v-btn
         class="export-btn body-1 color-dark-grey border-gray font-16"
+        :class="{
+          'mt-3': $vuetify.breakpoint.xsOnly
+        }"
         height="50"
+        max-width="200"
         @click="handleExport"
         :elevation="0"
         :loading="exportLoading"
