@@ -127,6 +127,9 @@
           <td class="color-gray">{{ item["corpPartyId"] }}</td>
         </tr>
       </template>
+      <template v-slot:body.append>
+        <div>t</div>
+      </template>
       <template v-slot:footer>
         <v-progress-linear
           :active="loading"
@@ -433,5 +436,23 @@ export default {
 
 .v-data-custom-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.corp-party-table .v-data-table__wrapper {
+  background-image: 
+	
+    /* Shadows */ linear-gradient(to right, white, white),
+    linear-gradient(to right, white, white),
+    /* Shadow covers */
+      linear-gradient(to right, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0)),
+    linear-gradient(to left, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0));
+
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-color: white;
+  background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
+
+  /* Opera doesn't support this in the shorthand */
+  background-attachment: local, local, scroll, scroll;
 }
 </style>
