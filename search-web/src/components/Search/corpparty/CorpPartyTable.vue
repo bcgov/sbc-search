@@ -127,13 +127,10 @@
           <td class="color-gray">{{ item["corpPartyId"] }}</td>
         </tr>
       </template>
-      <template v-slot:body.append>
-        <div>t</div>
-      </template>
       <template v-slot:footer>
         <v-progress-linear
           :active="loading"
-          :indeterminate="true"
+          :indeterminatev-data-table__wrapp="true"
           color="primary"
           height="2"
         ></v-progress-linear>
