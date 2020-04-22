@@ -269,20 +269,15 @@ export default {
   background-color: $COLOR_LAVENDER !important;
 }
 .corporation-table .v-data-table__wrapper {
-  background-image: 
-	
-    /* Shadows */ linear-gradient(to right, white, white),
-    linear-gradient(to right, white, white),
-    /* Shadow covers */
-      linear-gradient(to right, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0)),
-    linear-gradient(to left, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0));
-
-  background-position: left center, right center, left center, right center;
+  overflow-x: auto;
+  background-image: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0)),
+    linear-gradient(to left, #ffffff, rgba(255, 255, 255, 0)),
+    linear-gradient(to right, #e0e0e0, rgba(0, 0, 0, 0)),
+    linear-gradient(to left, #e0e0e0, rgba(0, 0, 0, 0));
+  background-position: 0 0, 100% 0, 0 0, 100% 0;
   background-repeat: no-repeat;
   background-color: white;
-  background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
-
-  /* Opera doesn't support this in the shorthand */
+  background-size: 4em 100%, 4em 100%, 2em 100%, 2em 100%;
   background-attachment: local, local, scroll, scroll;
 }
 </style>
