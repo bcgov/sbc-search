@@ -135,10 +135,12 @@ export default {
 }
 .detail-key {
   flex: 0.5 1 0;
+  line-height: 30px;
 }
 .detail-value {
   flex: 1 1 0;
   padding-left: 3em;
+  line-height: 30px;
 }
 .middle-border {
   flex: 0.001 !important;

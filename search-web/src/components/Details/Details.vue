@@ -61,15 +61,13 @@
             :key="key"
             class="d-flex w-100 detail-list-item"
           >
-            <span class="font-weight-bold mb-1 detail-key">{{
-              getText(key)
-            }}</span>
+            <span class="font-weight-bold detail-key">{{ getText(key) }}</span>
             <span class="middle-border"></span>
             <span class="detail-value">{{ val }}</span>
           </li>
         </ul>
       </v-row>
-      <v-row class="mt-10 mb-10">
+      <v-row class="mt-10 mb-10 flex-column">
         <h5 class="body-1 mb-5">Company Information</h5>
         <ul class="pa-0 ma-0 detail-list">
           <li
@@ -77,9 +75,7 @@
             :key="key"
             class="d-flex w-100 detail-list-item"
           >
-            <span class="font-weight-bold mb-1 detail-key">{{
-              getText(key)
-            }}</span>
+            <span class="font-weight-bold  detail-key">{{ getText(key) }}</span>
             <span class="middle-border"></span>
             <span class="detail-value">{{ val }}</span>
           </li>
@@ -231,10 +227,12 @@ export default {
 }
 .detail-key {
   flex: 0.5 1 0;
+  line-height: 30px;
 }
 .detail-value {
   flex: 1 1 0;
   padding-left: 3em;
+  line-height: 30px;
 }
 .middle-border {
   flex: 0.001 !important;
