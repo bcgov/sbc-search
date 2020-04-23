@@ -5,6 +5,7 @@
       :class="{
         'display-1': $vuetify.breakpoint.smAndDown
       }"
+      @click="handleTitleClick"
     >
       {{ title }}
     </h1>
@@ -214,6 +215,13 @@ export default {
     }
   },
   methods: {
+    handleTitleClick() {
+      this.$router
+        .push({
+          path: "/"
+        })
+        .catch(e => {});
+    },
     handleOverload() {
       this.overload = true;
       this.overloadMessage =
@@ -508,5 +516,10 @@ export default {
 <style lang="scss">
 .search-form-container {
   background-color: white;
+}
+
+.home-title:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>
