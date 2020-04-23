@@ -7,6 +7,7 @@ import store from "@/store/index";
 import Vue from "vue";
 import Vuetify from "vuetify";
 import Vuex from "vuex";
+import omit from "lodash-es/omit"
 
 Vue.use(Vuetify);
 
@@ -94,14 +95,12 @@ describe("CorpPartySearch", () => {
       expect(searchInput.at(0).vm["searchQuery"]).toBe("Clark");
       expect(searchInput.at(1).vm["searchQuery"]).toBe("Van Oyen");
 
-      expect(wrapper.vm["filters"][0]).toEqual({
-        uid: 1,
+      expect(omit(wrapper.vm["filters"][0], 'uid')).toEqual({
         field: "firstNme",
         operator: "exact",
         value: "Clark"
       });
-      expect(wrapper.vm["filters"][1]).toEqual({
-        uid: 2,
+      expect(omit(wrapper.vm["filters"][1], 'uid')).toEqual({
         field: "lastNme",
         operator: "contains",
         value: "Van Oyen"

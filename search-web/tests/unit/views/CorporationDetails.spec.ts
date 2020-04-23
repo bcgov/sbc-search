@@ -17,22 +17,18 @@ describe("Corporation Details", () => {
   };
 
   const sampleData = {
-    NAMES: [
-      {
-        name: "Yamana Gold Inc."
-      }
-    ],
-    admin_email: null,
-    corp_num: "7990123456",
+    adminEmail: null,
+    corpNum: "7890123456",
+    names: [{ name: "Telus Corporation" }],
     offices: [
       {
-        delivery_addr: "28 Helene St N, Mississauga, ON",
-        email_address: null,
-        mailing_addr: "28 Helene St N, Mississauga, ON",
-        office_typ_cd: null
+        deliveryAddr: "109 Saskatchewan Blvd, Dauphin, MB",
+        emailAddress: null,
+        mailingAddr: "109 Saskatchewan Blvd, Dauphin, MB",
+        officeTypCd: ""
       }
     ],
-    transition_dt: null
+    transitionDt: null
   };
 
   it("renders a vue instance", () => {
@@ -61,7 +57,7 @@ describe("Corporation Details", () => {
     });
 
     expect(wrapper.find(".details-corp-number").text()).toBe(
-      sampleData.corp_num
+      sampleData['corpNum']
     );
   });
 });

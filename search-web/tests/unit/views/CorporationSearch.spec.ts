@@ -44,11 +44,11 @@ describe("Corporation Search", () => {
   it("children are a vue instance", () => {
     expect(wrapper.find(CorporationSearch).isVueInstance()).toBe(true);
     expect(wrapper.find(CorporationTable).isVueInstance()).toBe(true);
-    expect(wrapper.find({ name: "SearchInput" }).isVueInstance()).toBe(true);
+    expect(wrapper.find(SearchInput).isVueInstance()).toBe(true);
   });
 
   it("sets search input correctly", () => {
-    expect(wrapper.find({ name: "SearchInput" }).vm["searchQuery"]).toBe(
+    expect(wrapper.find(SearchInput).vm["searchQuery"]).toBe(
       $route.query.query
     );
   });
