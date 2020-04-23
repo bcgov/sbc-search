@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>Director Search - Details</h1>
-    <h4 class="mt-3 body-1 mb-10">
+    <h1 class="corp-party-details-title">Director Search - Details</h1>
+    <h4 class="mt-3 body-1 mb-10 corp-party-details-subtitle">
       Details for an office held at a BC Company during a specific period of
       time.
     </h4>
@@ -93,6 +93,19 @@ export default {
 @media (max-width: 599px) {
   .detail-section {
     padding: 0em 1em;
+  }
+}
+
+@media only print {
+  .v-application .corp-party-details-title {
+    font-size: 16px !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .v-application .corp-party-details-subtitle {
+    font-size: 14px !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
   }
 }
 </style>

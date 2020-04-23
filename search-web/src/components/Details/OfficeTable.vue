@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h5 class="font-weight-regular body-1 mb-3">
+    <h5 class="font-weight-regular body-1 mb-3 office-table-header">
       <span>Other offices held at</span> {{ details.corpNme }}
     </h5>
     <div>
@@ -44,7 +44,7 @@
       </v-simple-table>
     </div>
 
-    <h5 class="font-weight-regular body-1 mb-3 mt-6">
+    <h5 class="font-weight-regular body-1 mb-3 mt-6 office-table-header">
       <span>Other</span> {{ details.lastNme }}, {{ details.firstNme }}
       {{ details.middleNme }} <span>at company</span> {{ details.corpNme }}
     </h5>
@@ -92,7 +92,7 @@
         </template>
       </v-simple-table>
     </div>
-    <h5 class="font-weight-regular body-1 mb-3 mt-6">
+    <h5 class="font-weight-regular body-1 mb-3 mt-6 office-table-header">
       <span>Other</span> {{ details.lastNme }}, {{ details.firstNme }}
       {{ details.middleNme }} <span>at address</span> {{ details.addr }}
     </h5>
@@ -181,5 +181,16 @@ export default {
   border: 1px solid $COLOR_GREY;
   color: $COLOR_GREY;
   max-width: 640px;
+}
+
+@media only print {
+  .v-application .v-data-table td,
+  .v-application .v-data-table th {
+    font-size: 12px !important;
+  }
+
+  .v-application .office-table-header {
+    font-size: 12px !important;
+  }
 }
 </style>

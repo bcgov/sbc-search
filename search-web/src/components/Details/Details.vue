@@ -10,6 +10,7 @@
           }"
         >
           <h2
+            class="corp-detail-header"
             :class="{
               'pl-0': $vuetify.breakpoint.xsOnly,
               title: $vuetify.breakpoint.smAndUp
@@ -67,7 +68,7 @@
           </li>
         </ul>
       </v-row>
-      <v-row class="mt-10 mb-10 flex-column">
+      <v-row class="mt-10 mb-10 flex-column company-info-row">
         <h5 class="body-1 mb-5">Company Information</h5>
         <ul class="pa-0 ma-0 detail-list">
           <li
@@ -261,6 +262,23 @@ export default {
   .detail-value {
     flex: 1.25 1 0;
     padding-left: 1em;
+  }
+}
+
+@media only print {
+  .detail-key,
+  .detail-value {
+    line-height: 25px !important;
+    font-size: 12px !important;
+  }
+
+  .v-application .company-info-row {
+    margin-top: 0 !important;
+    margin-bottom: 8em !important;
+  }
+
+  .v-application .corp-detail-header {
+    font-size: 16px !important;
   }
 }
 </style>
