@@ -190,14 +190,14 @@ def _get_corp_party_export_column_headers(args):
     additional_cols = args.get('additional_cols')
 
     column_headers = [
-        'Filing #', 'Surname', 'First Name', 'Middle Name',
-        'Office Held', 'Appointed', 'Ceased', 'Company Name', 'Inc/Reg #']
+        'Surname', 'First Name', 'Middle Name', 'Office Held', 'Appointed', 'Ceased',
+        'Company Name', 'Inc/Reg #', 'Filing #']
     if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-        column_headers.insert(4, 'Address')
-        column_headers.insert(5, 'Postal Code')
+        column_headers.insert(3, 'Address')
+        column_headers.insert(4, 'Postal Code')
 
     if additional_cols == ADDITIONAL_COLS_ACTIVE:
-        column_headers.insert(7, 'Company Status')
+        column_headers.insert(6, 'Company Status')
 
     return column_headers
 
@@ -207,14 +207,14 @@ def _get_corp_party_export_column_values(row, args):
     additional_cols = args.get('additional_cols')
 
     columns = [
-        row.corp_party_id, row.last_nme, row.first_nme, row.middle_nme, row.party_typ_cd,
-        row.appointment_dt, row.cessation_dt, row.corp_nme, row.corp_num]
+        row.last_nme, row.first_nme, row.middle_nme, row.party_typ_cd,
+        row.appointment_dt, row.cessation_dt, row.corp_nme, row.corp_num, row.corp_party_id]
 
     if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
-        columns.insert(4, _merge_addr_fields(row))
-        columns.insert(5, row.postal_cd)
+        columns.insert(3, _merge_addr_fields(row))
+        columns.insert(4, row.postal_cd)
 
     if additional_cols == ADDITIONAL_COLS_ACTIVE:
-        columns.insert(7, _get_state_typ_cd_display_value(row.state_typ_cd))
+        columns.insert(6, _get_state_typ_cd_display_value(row.state_typ_cd))
 
     return columns
