@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="print-button-container">
     <v-icon color="#2076d2" large class="cursor-pointer" @click="handlePrint"
       >print</v-icon
     >
@@ -16,4 +16,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+@media only print {
+  .print-button-container {
+    display: none;
+  }
+}
+</style>

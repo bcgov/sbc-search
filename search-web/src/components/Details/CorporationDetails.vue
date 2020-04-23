@@ -178,9 +178,6 @@ export default {
     font-size: 12px !important;
     line-height: 20px !important;
   }
-}
-
-@media only print {
   .crp-details-header {
     font-size: 14px !important;
   }
