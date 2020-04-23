@@ -53,7 +53,7 @@ export default {
         rules.push(sixCharacters);
       } else if (this.selectField === "addrLine1") {
         const startsWith = v =>
-          !!v.match(/^\S+\s\S+/) ||
+          !!v.match(/\d+\s[0-9]*[a-zA-Z]+/) ||
           "Required Format: ALPHANUMERICS SPACE ALPHANUMERICS, eg. 123 Sesame";
         rules.push(startsWith);
       } else if (this.selectOperator === "exact") {
