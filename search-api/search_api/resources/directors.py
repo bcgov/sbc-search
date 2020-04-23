@@ -41,7 +41,7 @@ API = Blueprint('DIRECTORS_API', __name__, url_prefix='/api/v1/directors')
 
 
 @API.route('/')
-
+@jwt.requires_auth
 def corpparty_search():
     """Search for CorpParty entities.
 
@@ -62,7 +62,11 @@ def corpparty_search():
     current_app.logger.info('Starting director search')
 
     account_id = request.headers.get('X-Account-Id', None)
-
+    if not authorized(jwt, account_id):
+        return (
+            jsonify({'message': 'User is not authorized to access Director Search'}),
+            HTTPStatus.UNAUTHORIZED,
+        )
 
     current_app.logger.info('Authorization check finished; starting query {query}'.format(query=request.url))
 
@@ -175,11 +179,15 @@ def corpparty_search_export():
 
 
 @API.route('/<corp_party_id>')
-
+@jwt.requires_auth
 def get_corp_party_by_id(corp_party_id):
     """Get a CorpParty by id."""
     account_id = request.headers.get('X-Account-Id', None)
-
+    if not authorized(jwt, account_id):
+        return (
+            jsonify({'message': 'User is not authorized to access Director Search'}),
+            HTTPStatus.UNAUTHORIZED,
+        )
 
     result = CorpParty.get_corporation_info_by_corp_party_id(corp_party_id)
 
