@@ -10,7 +10,7 @@
             }"
           >
             <h2
-              class="body-1 font-weight-bold"
+              class="body-1 font-weight-bold crp-details-header"
               :class="{
                 'w-100': $vuetify.breakpoint.smAndDown
               }"
@@ -134,7 +134,7 @@ export default {
   margin-bottom: 4em !important;
 }
 .detail-key {
-  flex: 0.5 1 0;
+  flex: 0.7 1 0;
   line-height: 30px;
 }
 .detail-value {
@@ -169,6 +169,20 @@ export default {
   .detail-value {
     flex: 1.25 1 0;
     padding-left: 1em;
+  }
+}
+
+@media only print {
+  .detail-key,
+  .detail-value {
+    font-size: 12px !important;
+    line-height: 20px !important;
+  }
+}
+
+@media only print {
+  .crp-details-header {
+    font-size: 14px !important;
   }
 }
 </style>

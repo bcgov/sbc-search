@@ -1,7 +1,9 @@
 <template>
   <div>
-    <h1>Corporation Details</h1>
-    <h4 class="mt-3 body-1 mb-10">Details for a BC Corporation.</h4>
+    <h1 class="cpr-details-title">Corporation Details</h1>
+    <h4 class="mt-3 body-1 mb-10 cpr-details-subtitle">
+      Details for a BC Corporation.
+    </h4>
     <div v-if="isLoading">
       <v-skeleton-loader
         ref="skeleton"
@@ -84,6 +86,23 @@ export default {
 @media (max-width: 959px) {
   .detail-section {
     padding: 1em;
+  }
+}
+
+@media only print {
+  .v-application .cpr-details-title {
+    font-size: 16px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .v-application .cpr-details-subtitle {
+    font-size: 14px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .detail-section {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
   }
 }
 </style>
