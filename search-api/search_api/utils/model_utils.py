@@ -13,13 +13,13 @@
 # limitations under the License.
 """This module holds utility functions related to model fields and serialization."""
 
+from flask import current_app
 from sqlalchemy import func, literal_column
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS, ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 from search_api.utils.utils import convert_to_snake_case
 from search_api.models.nickname import NickName
 
-from flask import current_app
 
 def _merge_addr_fields(row):
     address = row.addr_line_1
@@ -44,26 +44,17 @@ def _get_model_by_field(field_name):
 
     if field_name in ['firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt',
                       'corpPartyId', 'partyTypCd']:  # CorpParty fields
-        return eval('CorpParty')  # pylint: disable=eval-used
+        return CorpParty
     if field_name in ['corpNum', 'recognitionDts', 'corpTypCd']:  # Corporation fields
-        return eval('Corporation')  # pylint: disable=eval-used
+        return Corporation
     if field_name in ['corpNme']:  # CorpName fields
-        return eval('CorpName')  # pylint: disable=eval-used
+        return CorpName
     if field_name in ['addrLine1', 'addrLine2', 'addrLine3', 'postalCd', 'city', 'province']:  # Address fields
-        return eval('Address')  # pylint: disable=eval-used
+        return Address
     if field_name in ['stateTypCd']:
-        return eval('CorpState')  # pylint: disable=eval-used
+        return CorpState
 
     raise Exception('invalid field: {}'.format(field_name))
-
-
-def _is_field_string(field_name):
-    if field_name in [
-            'firstNme', 'middleNme', 'lastNme', 'corpNum', 'corpPartyId', 'partyTypCd', 'corpTypCd',
-            'corpNme', 'addrLine1', 'addrLine2', 'addrLine3', 'postalCd', 'city', 'province', 'stateTypCd']:
-        return True
-
-    return False
 
 
 def _get_filter(field_name, operator, value, end_recursion=False):
@@ -162,16 +153,14 @@ def _get_sort_field(field_name):
 def _sort_by_field(sort_type, sort_value):
     field = _get_sort_field(sort_value)
 
-    sort_field_str = '{field}'.format(field=field)
-
-    if _is_field_string(sort_value):
+    # by convention, in our database, dates end with _dts or _dt (converted to snake case)
+    if not sort_value.endswith('Dt') and not sort_value.endswith('Dts'):
         # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
-        sort_field_str = 'func.upper({field})'.format(field=sort_field_str)
+        field = func.upper(field)
 
     if sort_type == 'dsc':
-        sort_field_str += '.desc()'
-
-    return sort_field_str
+        field = field.desc()
+    return field
 
 
 def _format_office_typ_cd(office_typ_cd):

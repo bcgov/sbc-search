@@ -23,11 +23,12 @@ from openpyxl import Workbook
 from sqlalchemy.sql import literal_column
 
 from search_api.auth import jwt, authorized
-from search_api.models.address import Address
+# Address removed for now, we're not permitted to show this currently.
+# from search_api.models.address import Address
 from search_api.models.corporation import Corporation
 from search_api.models.corp_name import CorpName
 from search_api.models.office import Office
-from search_api.utils.model_utils import _merge_addr_fields, _format_office_typ_cd
+from search_api.utils.model_utils import _format_office_typ_cd
 from search_api.utils.utils import convert_to_snake_case
 
 logger = logging.getLogger(__name__)
@@ -88,8 +89,6 @@ def corporation_search():
     index = 0
     for row in results:
         if (page - 1) * per_page <= index < page * per_page:
-
-            result_dict = {}
 
             result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
             # Due to performance issues, exclude address.

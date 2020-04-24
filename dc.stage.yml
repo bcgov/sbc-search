@@ -1,8 +1,0 @@
-version: "3"
-
-services:
-  search-web:
-    command: "npm run build"
-  search_api:
-    ports:
-      - 5005:5000

@@ -190,5 +190,6 @@ class ProdConfig(_Config):  # pylint: disable=too-few-public-methods
 
 
 class BenchmarkConfig(DevConfig):  # pylint: disable=too-few-public-methods
+    """Config for running benchmarks (benchmark.py)."""
 
     BENCHMARK = True

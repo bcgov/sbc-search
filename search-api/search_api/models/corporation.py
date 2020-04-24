@@ -180,6 +180,6 @@ class Corporation(BaseModel):
             results = results.order_by(func.upper(CorpName.corp_nme))
         else:
             sort_field_str = _sort_by_field(sort_type, sort_value)
-            results = results.order_by(eval(sort_field_str))  # pylint: disable=eval-used
 
+            results = results.order_by(sort_field_str)
         return results

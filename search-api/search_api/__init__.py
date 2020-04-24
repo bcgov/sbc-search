@@ -15,11 +15,13 @@
 
 import logging
 import os
+from datetime import date
 
-from dotenv import load_dotenv
+from flask.json import JSONEncoder
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
+from dotenv import load_dotenv
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -35,6 +37,22 @@ load_dotenv(verbose=True)
 setup_logging(os.path.join(_Config.PROJECT_ROOT, 'logging.conf'))  # important to do this first
 
 
+class CustomJSONEncoder(JSONEncoder):
+    """encode dates as ISO8601."""
+
+    def default(self, obj):  # pylint: disable=method-hidden, arguments-differ
+        """Override date formatting."""
+        try:
+            if isinstance(obj, date):
+                return obj.isoformat()
+            iterable = iter(obj)
+        except TypeError:
+            pass
+        else:
+            return list(iterable)
+        return JSONEncoder.default(self, obj)
+
+
 def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     """Return a configured Flask App using the Factory method."""
     app = Flask(__name__)
@@ -42,6 +60,7 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     app.logger.setLevel(logging.INFO)  # pylint: disable=no-member
 
     db.init_app(app)
+    app.json_encoder = CustomJSONEncoder
 
     if app.debug:
         migrate = Migrate(app, db)  # noqa # pylint: disable=unused-variable

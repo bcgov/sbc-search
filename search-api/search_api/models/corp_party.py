@@ -314,9 +314,8 @@ class CorpParty(BaseModel):
         if sort_type is None:
             results = results.order_by(func.upper(CorpParty.last_nme), CorpParty.corp_num)
         else:
-            sort_field_str = _sort_by_field(sort_type, sort_value)
-            results = results.order_by(eval(sort_field_str))  # pylint: disable=eval-used
-        print(results)
+            sort_field = _sort_by_field(sort_type, sort_value)
+            results = results.order_by(sort_field)
         return results
 
     @staticmethod
