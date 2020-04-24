@@ -156,8 +156,6 @@ export default {
         "corpNme",
         "corpNum",
         "corpTypCd",
-        "corpDeliveryAddr",
-        "corpMailingAddr",
         "corpAdminEmail"
       ];
 
