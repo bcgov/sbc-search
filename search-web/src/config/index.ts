@@ -197,18 +197,6 @@ export const CORPPARTY_HEADERS = [
     align: "left"
   },
   {
-    text: "Company Delivery Address",
-    value: "corpDeliveryAddr",
-    sortable: true,
-    align: "left"
-  },
-  {
-    text: "Company Mailing Address",
-    value: "corpMailingAddr",
-    sortable: true,
-    align: "left"
-  },
-  {
     text: "Company Admin Email",
     value: "corpAdminEmail",
     sortable: true,
