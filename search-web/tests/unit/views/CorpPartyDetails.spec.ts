@@ -18,55 +18,52 @@ describe("CorpParty Details", () => {
     }
   };
 
-  const sampleDetails = {
-    appointment_dt: "Tue, 25 Feb 2020 00:00:00 GMT",
-    cessation_dt: "Tue, 25 Feb 2020 00:00:00 GMT",
-    corp_admin_email: null,
-    corp_delivery_addr: "1586 Des Erables Rue, Chicoutimi, QC",
-    corp_mailing_addr: "1586 Des Erables Rue, Chicoutimi, QC",
-    corp_nme: "Loblaw Companies",
-    corp_num: "4567890123",
-    corp_party_email: null,
-    corp_party_id: 3,
-    corp_typ_cd: "C",
-    delivery_addr: "1586 Des Erables Rue, Chicoutimi, QC",
-    first_nme: "Hadley",
-    full_desc: "Certificate of Good Standing",
-    last_nme: "Sanford",
-    mailing_addr: "1586 Des Erables Rue, Chicoutimi, QC",
-    middle_nme: null,
-    party_typ_cd: "FIO",
-    states: [
+  const detail = {
+    "appointmentDt": "Mon, 06 Apr 2020 00:00:00 GMT", 
+    "cessationDt": "Mon, 06 Apr 2020 00:00:00 GMT", 
+    "corpAdminEmail": null, 
+    "corpDeliveryAddr": "106 Saint-Georges Rue, La Prairie, QC", 
+    "corpMailingAddr": "106 Saint-Georges Rue, La Prairie, QC", 
+    "corpNme": "Imperial Oil", 
+    "corpNum": "2345678901", 
+    "corpPartyEmail": null, 
+    "corpPartyId": 1, 
+    "corpTypCd": "B", 
+    "deliveryAddr": "106 Saint-Georges Rue, La Prairie, QC", 
+    "firstNme": "abc", 
+    "fullDesc": "Change of Head Office (NWPTA)", 
+    "lastNme": "test", 
+    "mailingAddr": "106 Saint-Georges Rue, La Prairie, QC", 
+    "middleNme": "Patterson", 
+    "offices": [
       {
-        corp_num: "4567890123",
-        dd_corp_num: null,
-        end_event_id: null,
-        start_event_id: 1,
-        state_typ_cd: "HIS"
+        "appointmentDt": "Mon, 06 Apr 2020 00:00:00 GMT", 
+        "corpPartyId": 1, 
+        "officerTypCd": "SEC", 
+        "shortDesc": "Secretary", 
+        "year": null
+      }, 
+      {
+        "appointmentDt": "Mon, 06 Apr 2020 00:00:00 GMT", 
+        "corpPartyId": 1, 
+        "officerTypCd": "INC", 
+        "shortDesc": "Incorporator", 
+        "year": null
+      }
+    ], 
+    "partyTypCd": "DIR", 
+    "sameAddr": [], 
+    "sameNameAndCompany": [], 
+    "states": [
+      {
+        "corpNum": "2345678901", 
+        "ddCorpNum": null, 
+        "endEventId": null, 
+        "startEventId": 1, 
+        "stateTypCd": "HIS"
       }
     ]
-  };
-
-  const sampleOffices = {
-    offices: [
-      {
-        appointment_dt: "Tue, 25 Feb 2020 00:00:00 GMT",
-        corp_party_id: 3,
-        officer_typ_cd: "SEC",
-        short_desc: "Secretary",
-        year: null
-      },
-      {
-        appointment_dt: "Tue, 25 Feb 2020 00:00:00 GMT",
-        corp_party_id: 3,
-        officer_typ_cd: "DIR",
-        short_desc: "Director",
-        year: null
-      }
-    ],
-    same_addr: [],
-    same_name_and_company: []
-  };
+  }
 
   it("renders a vue instance", () => {
     const wrapper = shallowMount(CorpPartyDetailsView, {
@@ -80,13 +77,19 @@ describe("CorpParty Details", () => {
   });
 
   it("children are vue instance", () => {
-    const wrapper = shallowMount(CorpPartyDetailsView, {
+    const wrapper = mount(CorpPartyDetailsView, {
       mocks: {
-        $route
+        $route,
+      },
+      data: function() {
+        return {
+          detail: detail
+        };
       },
       localVue,
       vuetify
     });
+
     expect(wrapper.find(Details).isVueInstance()).toBe(true);
   });
 
@@ -99,17 +102,16 @@ describe("CorpParty Details", () => {
       vuetify,
       data: function() {
         return {
-          detail: sampleDetails,
-          officesheld: sampleOffices
+          detail: detail
         };
       }
     });
 
     expect(wrapper.find(".detail-office-link").text()).toBe(
-      sampleDetails.corp_nme
+      detail.corpNme
     );
     expect(wrapper.find(".office-held-desc").text()).toBe(
-      sampleOffices.offices[0].short_desc
+      detail.offices[0].shortDesc
     );
   });
 });

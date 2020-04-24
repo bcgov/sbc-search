@@ -74,11 +74,12 @@ def test_search_directors_first_name_exact(client, jwt, session):  # pylint:disa
     dictionary = _dir_search(
         client,
         jwt,
-        '?field=firstNme&operator=exact&value=Lillian&mode=ALL&page=1&sort_type=asc&'
+        '?field=firstNme&operator=exact&value=abc&mode=ALL&page=1&sort_type=asc&'
         'sort_value=lastNme&additional_cols=none',
     )
-    assert len(dictionary['results']) == 1
-    assert dictionary['results'][0]['middleNme'] == 'Black'
+    print(dictionary)
+    assert len(dictionary['results']) == 5
+    assert dictionary['results'][0]['lastNme'].lower() == 'patten'
 
 
 def test_search_directors_addr(client, jwt, session):  # pylint:disable=unused-argument

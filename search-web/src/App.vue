@@ -181,4 +181,10 @@ body {
     margin: 0;
   }
 }
+
+@media only print {
+  .brand picture {
+    display: none;
+  }
+}
 </style>

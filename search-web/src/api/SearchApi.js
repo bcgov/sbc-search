@@ -6,8 +6,8 @@ export const CORPORATION_SEARCH_PREFIX = `${API_PREFIX}/businesses`;
 export const EXPORT_CORPPARTY_URL = `${DIRECTOR_SEARCH_PREFIX}/export`;
 export const EXPORT_CORPORATION_URL = `${CORPORATION_SEARCH_PREFIX}export`;
 
-export function corpPartySearch(query) {
-  return ApiService.get(`${DIRECTOR_SEARCH_PREFIX}/?${query}`);
+export function corpPartySearch(query, opts) {
+  return ApiService.get(`${DIRECTOR_SEARCH_PREFIX}/?${query}`, opts);
 }
 
 export function corpPartySearchDetail(id) {
@@ -22,8 +22,9 @@ export function corporationDetailSearch(id) {
   return ApiService.get(`${CORPORATION_SEARCH_PREFIX}/${id}`);
 }
 
-export function corporationSearch(params) {
+export function corporationSearch(params, cancelToken) {
   return ApiService.get(`${CORPORATION_SEARCH_PREFIX}/`, {
+    cancelToken,
     params
   });
 }

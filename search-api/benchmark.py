@@ -237,12 +237,12 @@ def corp_party_addr_search():
 
     args = ImmutableMultiDict(
         [
-            ('field', 'firstNme'),
-            ('operator', 'exact'),
-            ('value', 'john'),
+            # ('field', 'firstNme'),
+            # ('operator', 'exact'),
+            # ('value', 'donna'),
             ('field', 'addrLine1'),
             ('operator', 'contains'),
-            ('value', '123 main'),
+            ('value', '123 main st'),
             ('mode', 'ALL'),
             ('page', '1'),
             ('sort_type', 'dsc'),
@@ -253,7 +253,7 @@ def corp_party_addr_search():
 
     return (
         CorpParty.search_corp_parties(args)
-        .filter(literal_column('rownum') <= 500)
+        .filter(literal_column('rownum') <= literal_column('500'))
         .yield_per(50)
     )
 
@@ -293,30 +293,37 @@ def benchmark_raw_sql(sql):
 SQL = """
 SELECT 1 FROM CORP_PARTY WHERE ROWNUM = 1
 """
+# SQL = """
+# SELECT  *
+# FROM    all_indexes
+# WHERE   table_name = 'ADDRESS'"""
+SQL = """
+
+"""
 
 if __name__ == '__main__':
 
-    app = create_app('development')  # pylint: disable=invalid-name
+    app = create_app('benchmark')  # pylint: disable=invalid-name
     with app.app_context():
         for i in range(1):
 
             print('warmup')
-            t = time.time()
-            rs = benchmark_raw_sql(SQL)
-            _benchmark(t, rs)
-
-            print('cobrs')
-            t = time.time()
-            rs = benchmark_raw_sql(COBRS_SQL)
-            _benchmark(t, rs)
-
             # t = time.time()
-            # rs = corp_party_addr_search()
+            # rs = benchmark_raw_sql(SQL)
+            # _benchmark(t, rs)
+
+            # print('cobrs')
+            # t = time.time()
+            # rs = benchmark_raw_sql(COBRS_SQL)
             # _benchmark(t, rs)
 
             t = time.time()
-            rs = corp_party_search()
+            rs = corp_party_addr_search()
             _benchmark(t, rs)
+
+            # t = time.time()
+            # rs = corp_party_search()
+            # _benchmark(t, rs)
 
             # t = time.time()
             # rs = corp_party_postal_cd_search()
