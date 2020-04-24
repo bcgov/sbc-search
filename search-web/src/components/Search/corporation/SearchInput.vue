@@ -45,10 +45,8 @@ export default {
 };
 </script>
 <style lang="scss">
-@media (max-width: 1497px) {
-  .search-input-corporation {
-    width: 350px !important;
-  }
+.search-input-corporation {
+  width: 250px;
 }
 @media (max-width: 959px) {
   .search-input {

@@ -12,12 +12,15 @@
         'pa-2': $vuetify.breakpoint.xsOnly
       }"
     >
-      <CorporationSearch
-        ref="corporationSearch"
-        :initOperator="initOperator"
-        @search="handleSearch"
-        :disabled="disableSearch"
-      ></CorporationSearch>
+      <div>
+        <CorporationSearch
+          ref="corporationSearch"
+          :initOperator="initOperator"
+          @search="handleSearch"
+          :disabled="disableSearch"
+          @abort="abortRequest"
+        ></CorporationSearch>
+      </div>
       <v-alert
         v-model="error"
         dense
@@ -125,6 +128,9 @@ export default {
     };
   },
   methods: {
+    abortRequest() {
+      this.$refs.corporationTable.cancelRequest();
+    },
     handleOverload() {
       this.overload = true;
       this.overloadMessage =
@@ -249,5 +255,8 @@ export default {
 <style lang="scss">
 .corp-search-container {
   background-color: white;
+}
+.cpr-cancel-button {
+  vertical-align: top;
 }
 </style>

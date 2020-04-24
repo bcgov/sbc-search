@@ -169,6 +169,7 @@
 
 <script>
 import { CORPPARTY_HEADERS } from "@/config/index.ts";
+import axios from "axios";
 import { corpPartySearch } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
 import { mapGetters } from "vuex";
@@ -245,7 +246,8 @@ export default {
       disableSorting: false,
       sortBy: [],
       sortDesc: [],
-      items_per_page: 50
+      items_per_page: 50,
+      source: null
     };
   },
   methods: {
@@ -353,7 +355,10 @@ export default {
         });
       }
     },
-    async fetchData() {
+    cancelRequest() {
+      this.source && this.source.cancel("Request aborted by user");
+    },
+    fetchData() {
       if (!this.qs) {
         return;
       }
@@ -372,7 +377,12 @@ export default {
         }
       }
 
-      corpPartySearch(queryString)
+      const CancelToken = axios.CancelToken;
+      this.source = CancelToken.source();
+
+      corpPartySearch(queryString, {
+        cancelToken: this.source.token
+      })
         .then(result => {
           this.items = result.data.results;
           this.totalItems = result.data.numResults;

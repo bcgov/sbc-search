@@ -132,6 +132,7 @@
 <script>
 import { CORPORATION_HEADERS } from "@/config/index.ts";
 import { corporationSearch } from "@/api/SearchApi";
+import axios from "axios";
 import dayjs from "dayjs";
 import { formatDate } from "@/util/index.ts";
 import pick from "lodash-es/pick";
@@ -184,7 +185,8 @@ export default {
       disableSorting: false,
       sortBy: [],
       sortDesc: [],
-      items_per_page: 50
+      items_per_page: 50,
+      source: null
     };
   },
   methods: {
@@ -216,6 +218,9 @@ export default {
       e.target.closest("tr").classList.add("row-clicked");
       window.open(`/corporation/${item["corpNum"]}`);
     },
+    cancelRequest() {
+      this.source && this.source.cancel("Request aborted by user");
+    },
     async fetchData(query) {
       const { sort_type, sort_value } = query;
       this.sortBy = [sort_value];
@@ -227,7 +232,10 @@ export default {
       this.loading = true;
       this.disableSorting = true;
 
-      corporationSearch(query)
+      const CancelToken = axios.CancelToken;
+      this.source = CancelToken.source();
+
+      corporationSearch(query, this.source.token)
         .then(result => {
           this.corporations = result.data.results;
           this.totalItems = result.data.numResults;

@@ -5,7 +5,9 @@
     height="56"
     class="sbc-button"
     :elevation="0"
+    :loading="disabled"
     :disabled="disabled"
+    :block="$vuetify.breakpoint.xsOnly"
     >{{ title }}</v-btn
   >
 </template>

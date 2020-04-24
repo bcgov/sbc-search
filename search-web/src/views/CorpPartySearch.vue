@@ -55,6 +55,22 @@
             @click.native.prevent="handleNewSearch"
             :disabled="disableSearch"
           ></SbcButton>
+          <v-btn
+            v-if="disableSearch"
+            color="warning outline font-16 font-weight-bold"
+            height="56"
+            class="sbc-button"
+            :class="{
+              'ml-0': $vuetify.breakpoint.xsOnly,
+              'mt-3': $vuetify.breakpoint.xsOnly,
+              'ml-3': $vuetify.breakpoint.smAndUp
+            }"
+            :elevation="0"
+            @click="abortRequest"
+            :block="$vuetify.breakpoint.xsOnly"
+          >
+            Cancel
+          </v-btn>
         </div>
       </v-form>
       <v-alert
@@ -215,6 +231,9 @@ export default {
     }
   },
   methods: {
+    abortRequest() {
+      this.$refs.corpPartyTable.cancelRequest();
+    },
     handleTitleClick() {
       this.$router
         .push({
