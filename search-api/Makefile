@@ -83,11 +83,11 @@ pylint:
 	pylint --rcfile=setup.cfg \
 	 --load-plugins=pylint_flask \
 	 --disable=C0301,W0511,R0903 \
-	 src/auth_api
+	 search_api
 
 ## run flake8 on the package and tests
 flake8:
-	flake8 src/auth_api tests
+	flake8 search_api tests
 
 ## Verify source code license headers.
 license:

@@ -23,11 +23,12 @@ from openpyxl import Workbook
 from sqlalchemy.sql import literal_column
 
 from search_api.auth import jwt, authorized
-from search_api.models.address import Address
+# Address removed for now, we're not permitted to show this currently.
+# from search_api.models.address import Address
 from search_api.models.corporation import Corporation
 from search_api.models.corp_name import CorpName
 from search_api.models.office import Office
-from search_api.utils.model_utils import _merge_addr_fields, _format_office_typ_cd
+from search_api.utils.model_utils import _format_office_typ_cd
 from search_api.utils.utils import convert_to_snake_case
 
 logger = logging.getLogger(__name__)
@@ -89,8 +90,6 @@ def corporation_search():
     for row in results:
         if (page - 1) * per_page <= index < page * per_page:
 
-            result_dict = {}
-
             result_dict = {key: getattr(row, convert_to_snake_case(key)) for key in result_fields}
             # Due to performance issues, exclude address.
             result_dict['addr'] = ''  # _merge_addr_fields(row)
@@ -119,7 +118,7 @@ def corporation_search_export():
     args = request.args
 
     # Fetching results
-    results = Corporation.search_corporations(args, include_addr=True)
+    results = Corporation.search_corporations(args, include_addr=False)
     if current_app.config.get('IS_ORACLE'):
         results = results.filter(
             literal_column('rownum') <= 500
@@ -141,8 +140,8 @@ def corporation_search_export():
         _ = sheet.cell(column=3, row=1, value='Company Name')
         _ = sheet.cell(column=4, row=1, value='Incorporated')
         _ = sheet.cell(column=5, row=1, value='Company Status')
-        _ = sheet.cell(column=6, row=1, value='Company Address')
-        _ = sheet.cell(column=7, row=1, value='Postal Code')
+        # _ = sheet.cell(column=6, row=1, value='Company Address')
+        # _ = sheet.cell(column=7, row=1, value='Postal Code')
 
         index = 2
         for row in results:
@@ -156,10 +155,11 @@ def corporation_search_export():
             _ = sheet.cell(column=4, row=index, value=row.recognition_dts)
             # CorpOpState.state_typ_cd
             _ = sheet.cell(column=5, row=index, value=row.state_typ_cd)
+            # The company address isn't allowed to be displayed to Director Search users currently.
             # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
-            _ = sheet.cell(column=6, row=index, value=_merge_addr_fields(row))
+            # _ = sheet.cell(column=6, row=index, value=_merge_addr_fields(row))
             # Address.postal_cd
-            _ = sheet.cell(column=7, row=index, value=row.postal_cd)
+            # _ = sheet.cell(column=7, row=index, value=row.postal_cd)
             index += 1
 
         current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
@@ -192,8 +192,11 @@ def corporation(corp_id):
     for office in offices:
         output['offices'].append(
             {
-                'deliveryAddr': Address.normalize_addr(office.delivery_addr_id),
-                'mailingAddr': Address.normalize_addr(office.mailing_addr_id),
+                # The company address isn't allowed to be displayed to Director Search users currently.
+                # 'deliveryAddr': Address.normalize_addr(office.delivery_addr_id),
+                # 'mailingAddr': Address.normalize_addr(office.mailing_addr_id),
+                'deliveryAddr': '',
+                'mailingAddr': '',
                 'officeTypCd': _format_office_typ_cd(office.office_typ_cd),
                 'emailAddress': office.email_address,
             }

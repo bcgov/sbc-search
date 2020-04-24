@@ -34,6 +34,7 @@ CONFIGURATION = {
     'testing': 'search_api.config.TestConfig',
     'production': 'search_api.config.ProdConfig',
     'default': 'search_api.config.ProdConfig',
+    'benchmark': 'search_api.config.BenchmarkConfig',
 }
 
 
@@ -186,3 +187,9 @@ class ProdConfig(_Config):  # pylint: disable=too-few-public-methods
 
     TESTING = False
     DEBUG = False
+
+
+class BenchmarkConfig(DevConfig):  # pylint: disable=too-few-public-methods
+    """Config for running benchmarks (benchmark.py)."""
+
+    BENCHMARK = True

@@ -27,6 +27,7 @@ from search_api.auth import jwt, authorized
 from search_api.models.address import Address
 from search_api.models.corp_state import CorpState
 from search_api.models.corp_party import CorpParty
+from search_api.models.party_type import PartyType
 from search_api.models.corp_name import CorpName
 from search_api.models.office import Office
 from search_api.utils.model_utils import (
@@ -218,6 +219,8 @@ def get_corp_party_by_id(corp_party_id):
     result_dict['corpNum'] = person.corp_num
     result_dict['corpNme'] = name.corp_nme
     result_dict['partyTypCd'] = person.party_typ_cd
+    result_dict['partyTypeDesc'] = PartyType.query.filter(
+        PartyType.party_typ_cd == person.party_typ_cd).one().short_desc
     result_dict['corpPartyEmail'] = person.email_address
     result_dict['deliveryAddr'] = delivery_addr
     result_dict['mailingAddr'] = mailing_addr

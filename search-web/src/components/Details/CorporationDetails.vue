@@ -62,26 +62,17 @@
               v-for="(office, index) in details.offices"
               :key="'office' + index"
             >
-              <div class="d-flex w-100 detail-list-item">
-                <span class="detail-key font-weight-bold"
-                  >Delivery Address</span
-                >
-                <span class="detail-value">{{ office.deliveryAddr }}</span>
-              </div>
-
-              <div class="d-flex w-100 detail-list-item">
-                <span class="detail-key font-weight-bold">Mailing Address</span>
-                <span class="detail-value">{{ office.mailingAddr }}</span>
-              </div>
-
-              <div class="d-flex w-100 detail-list-item">
-                <span class="detail-key font-weight-bold">Type</span>
-                <span class="detail-value">{{ office.officeTypCd }}</span>
-              </div>
-
+              <p>
+                (please see Corporate Online for office location details)
+              </p>
               <div class="d-flex w-100 detail-list-item">
                 <span class="detail-key font-weight-bold">Email</span>
-                <span class="detail-value">{{ office.emailAddress }}</span>
+                <span class="detail-value">
+                  (not specified)
+                </span>
+                <span class="detail-value" v-if="office.emailAddress">
+                  {{ office.emailAddress }}
+                </span>
               </div>
             </li>
           </ul>

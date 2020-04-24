@@ -13,6 +13,7 @@
 # limitations under the License.
 """Endpoints to check and manage the health of the service."""
 from http import HTTPStatus
+import time
 
 from flask import Blueprint, current_app
 from sqlalchemy import exc
@@ -27,6 +28,21 @@ API = Blueprint('OPS', __name__, url_prefix='/ops')
 def readyz():
     """Return a JSON object that identifies if the service is ready."""
     return {'message': 'api is ready'}, HTTPStatus.OK
+
+
+@API.route('/sleepz')
+def sleepz():
+    """Sleep, for concurrency testing, etc."""
+    try:
+        if current_app.config.get('IS_ORACLE'):
+            time.sleep(100)
+        else:
+            db.engine.execute('SELECT pg_sleep(100)')
+    except exc.SQLAlchemyError:
+        return {'message': 'api is down'}, HTTPStatus.SERVICE_UNAVAILABLE
+
+    # made it here, so all checks passed
+    return {'message': 'api slept'}, HTTPStatus.OK
 
 
 @API.route('/healthz')
