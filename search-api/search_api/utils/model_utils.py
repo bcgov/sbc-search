@@ -13,12 +13,13 @@
 # limitations under the License.
 """This module holds utility functions related to model fields and serialization."""
 
-from sqlalchemy import func
+from sqlalchemy import func, literal_column
 
 from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS, ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 from search_api.utils.utils import convert_to_snake_case
 from search_api.models.nickname import NickName
 
+from flask import current_app
 
 def _merge_addr_fields(row):
     address = row.addr_line_1
@@ -65,19 +66,27 @@ def _is_field_string(field_name):
     return False
 
 
-def _get_filter(field_name, operator, value):
+def _get_filter(field_name, operator, value, end_recursion=False):
     """Generate a SQL search expression given a filter specified by the user."""
+    value = value.upper()
+
     if field_name == 'anyNme':
         return (
             _get_filter('firstNme', operator, value) |
             _get_filter('middleNme', operator, value) |
             _get_filter('lastNme', operator, value))
 
+    # This currently hangs, so we never call it from the front-end.
+    # It seems a boolean OR with multiple CONTAINS() calls in Oracle does not resolve currently.
     if field_name == 'addr':
+        # We expect the building number and street name '123 main' to be in line 1 or 2 of the address.
         return (
-            _get_filter('addrLine1', operator, value) |
-            _get_filter('addrLine2', operator, value) |
-            _get_filter('addrLine3', operator, value))
+            _get_filter('addrLine1', 'text', value) |
+            _get_filter('addrLine2', 'text', value))
+
+    # Enforce text search only on addresses.
+    if 'addrLine' in field_name:
+        operator = 'text'
 
     if field_name == 'stateTypCd':
         # state_typ_cd is either 'ACT', or displayed as 'HIS' for any other value
@@ -87,16 +96,12 @@ def _get_filter(field_name, operator, value):
             operator = 'excludes'
             value = STATE_TYP_CD_ACT
 
-    if field_name == 'postalCd' and operator != 'cased':
+    if field_name == 'postalCd' and not end_recursion:
         return (
-            _get_filter('postalCd', 'cased', value[:3] + ' ' + value[3:6]) |
-            _get_filter('postalCd', 'cased', value))
+            _get_filter('postalCd', 'exact', value[:3] + ' ' + value[3:6], True) |
+            _get_filter('postalCd', 'exact', value, True))
 
     model = _get_model_by_field(field_name)
-
-    # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
-    if operator != 'cased':
-        value = value.upper()
 
     if len(value) < 2:
         raise BadSearchValue('Search value must be at least 2 letters long.')
@@ -109,10 +114,16 @@ def _get_filter(field_name, operator, value):
 
 
 def _generate_field_filter(field, operator, value):
-    if operator == 'contains':
+
+    if operator == 'text':
+        # On Oracle, allow indexed text search.
+        if current_app.config.get('IS_ORACLE'):
+            expr = func.contains(field, value) > literal_column('0')
+        else:
+            expr = func.upper(field).like('%' + value + '%')
+    # Note: The Oracle back-end performs better with UPPER() compared to LOWER() case casting.
+    elif operator == 'contains':
         expr = func.upper(field).like('%' + value + '%')
-    elif operator == 'cased':
-        expr = field == value
     elif operator == 'exact':
         expr = func.upper(field) == value
     elif operator == 'endswith':

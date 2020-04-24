@@ -119,7 +119,7 @@ def corporation_search_export():
     args = request.args
 
     # Fetching results
-    results = Corporation.search_corporations(args, include_addr=True)
+    results = Corporation.search_corporations(args, include_addr=False)
     if current_app.config.get('IS_ORACLE'):
         results = results.filter(
             literal_column('rownum') <= 500
@@ -141,8 +141,8 @@ def corporation_search_export():
         _ = sheet.cell(column=3, row=1, value='Company Name')
         _ = sheet.cell(column=4, row=1, value='Incorporated')
         _ = sheet.cell(column=5, row=1, value='Company Status')
-        _ = sheet.cell(column=6, row=1, value='Company Address')
-        _ = sheet.cell(column=7, row=1, value='Postal Code')
+        # _ = sheet.cell(column=6, row=1, value='Company Address')
+        # _ = sheet.cell(column=7, row=1, value='Postal Code')
 
         index = 2
         for row in results:
@@ -156,10 +156,11 @@ def corporation_search_export():
             _ = sheet.cell(column=4, row=index, value=row.recognition_dts)
             # CorpOpState.state_typ_cd
             _ = sheet.cell(column=5, row=index, value=row.state_typ_cd)
+            # The company address isn't allowed to be displayed to Director Search users currently.
             # Address.addr_line_1, Address.addr_line_2, Address.addr_line_3
-            _ = sheet.cell(column=6, row=index, value=_merge_addr_fields(row))
+            # _ = sheet.cell(column=6, row=index, value=_merge_addr_fields(row))
             # Address.postal_cd
-            _ = sheet.cell(column=7, row=index, value=row.postal_cd)
+            # _ = sheet.cell(column=7, row=index, value=row.postal_cd)
             index += 1
 
         current_date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
@@ -192,8 +193,11 @@ def corporation(corp_id):
     for office in offices:
         output['offices'].append(
             {
-                'deliveryAddr': Address.normalize_addr(office.delivery_addr_id),
-                'mailingAddr': Address.normalize_addr(office.mailing_addr_id),
+                # The company address isn't allowed to be displayed to Director Search users currently.
+                # 'deliveryAddr': Address.normalize_addr(office.delivery_addr_id),
+                # 'mailingAddr': Address.normalize_addr(office.mailing_addr_id),
+                'deliveryAddr': '',
+                'mailingAddr': '',
                 'officeTypCd': _format_office_typ_cd(office.office_typ_cd),
                 'emailAddress': office.email_address,
             }

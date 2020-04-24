@@ -60,7 +60,8 @@ def create_app(run_mode=os.getenv('FLASK_ENV', 'production')):
     app.register_blueprint(AUTH_API)
     app.after_request(convert_to_camel)
 
-    setup_jwt_manager(app, jwt)
+    if not app.config.get('BENCHMARK', None):
+        setup_jwt_manager(app, jwt)
 
     return app
 

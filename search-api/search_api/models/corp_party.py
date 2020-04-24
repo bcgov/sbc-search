@@ -316,7 +316,7 @@ class CorpParty(BaseModel):
         else:
             sort_field_str = _sort_by_field(sort_type, sort_value)
             results = results.order_by(eval(sort_field_str))  # pylint: disable=eval-used
-
+        print(results)
         return results
 
     @staticmethod
