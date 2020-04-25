@@ -149,7 +149,7 @@ export default {
         "deliveryAddr",
         "mailingAddr",
         "corpPartyEmail",
-        "partyTypCd",
+        "partyTypeDesc",
         "appointmentDt",
         "cessationDt",
         "stateTypCd",
@@ -185,7 +185,7 @@ export default {
         "deliveryAddr",
         "mailingAddr",
         "corpPartyEmail",
-        "partyTypCd",
+        "partyTypeDesc",
         "appointmentDt",
         "cessationDt"
       ]);
