@@ -60,7 +60,7 @@ export default Vue.extend({
   async mounted() {
     try {
       await KeyCloakService.setKeycloakConfigUrl(
-        `${process.env.BASE_URL}config/kc/keycloak.json`
+        `${process.env.VUE_APP_PATH}config/kc/keycloak.json`
       );
 
       const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");

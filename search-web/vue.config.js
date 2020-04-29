@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require("path")
 module.exports = {
   configureWebpack: {
     devtool: "source-map",
@@ -9,6 +9,7 @@ module.exports = {
       }
     }
   },
+  publicPath: process.env.VUE_APP_PATH,
   devServer: {
     overlay: {
       warnings: true,
