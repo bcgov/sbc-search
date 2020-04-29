@@ -1,0 +1,55 @@
+name: Search API CHECK CI
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "search-api/**"
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "search-api/**"
+
+jobs:
+  search-api-check:
+    runs-on: ubuntu-latest
+    if: github.repository == 'countable-web/sbc-search'
+
+    env:
+      FLASK_ENV: "testing"
+
+    strategy:
+      matrix:
+        python-version: [3.7]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        working-directory: ./search-api
+        run: |
+          docker-compose build search-api
+      - name: Start docker with docker-compose
+        working-directory: ./search-api
+        run: |
+          docker-compose up -d search-api
+      - name: Lint with pylint
+        working-directory: ./search-api
+        run: |
+          docker exec -i sbc-search_search-api_1 pylint --rcfile=setup.cfg --load-plugins=pylint_flask --disable=C0301,W0511,R0903 search_api
+      - name: Lint with flake8
+        working-directory: ./search-api
+        run: |
+          docker exec -i sbc-search_search-api_1 flake8 search_api tests
+      - name: Test with pytest
+        working-directory: ./search-api
+        run: |
+          docker exec -i sbc-search_search-api_1 pytest
+      - name: Shutdown docker-compose
+        working-directory: ./search-api
+        run: |
+          docker-compose down

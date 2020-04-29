@@ -1,0 +1,146 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The Root Schema",
+    "description": "Director Search Results.",
+    "default": {},
+    "additionalProperties": true,
+    "required": [
+        "results"
+    ],
+    "properties": {
+        "results": {
+            "$id": "#/properties/results",
+            "type": "array",
+            "title": "The Results Schema",
+            "description": "List of search results for directors of companies.",
+            "default": [],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/results/items",
+                "type": "object",
+                "title": "The Items Schema",
+                "description": "Individual search results.",
+                "default": {},
+                "examples": [
+                    {
+                        "middleNme": null,
+                        "corpNum": "123456",
+                        "corpNme": "ACME INC.",
+                        "lastNme": "WILEY",
+                        "cessationDt": null,
+                        "firstNme": "COYOTE",
+                        "corpPartyId": 1234567,
+                        "appointmentDt": "Thu, 26 Feb 2020 00:00:00 GMT",
+                        "partyTypCd": "OFF"
+                    }
+                ],
+                "additionalProperties": true,
+                "required": [
+                    "appointmentDt",
+                    "cessationDt",
+                    "corpNme",
+                    "corpNum",
+                    "corpPartyId",
+                    "firstNme",
+                    "lastNme",
+                    "middleNme",
+                    "partyTypCd"
+                ],
+                "properties": {
+                    "appointmentDt": {
+                        "$id": "#/properties/results/items/properties/appointmentDt",
+                        "type": "string",
+                        "title": "The Appointmentdt Schema",
+                        "description": "datetime of appointment.",
+                        "default": "",
+                        "examples": [
+                            "Thu, 26 Feb 2020 00:00:00 GMT"
+                        ]
+                    },
+                    "cessationDt": {
+                        "$id": "#/properties/results/items/properties/cessationDt",
+                        "type": "string",
+                        "title": "The Cessationdt Schema",
+                        "description": "datetime of cessation.",
+                        "default": null,
+                        "examples": [
+                            null
+                        ]
+                    },
+                    "corpNme": {
+                        "$id": "#/properties/results/items/properties/corpNme",
+                        "type": "string",
+                        "title": "The Corpnme Schema",
+                        "description": "Corporation name.",
+                        "default": "",
+                        "examples": [
+                            "ACME INC."
+                        ]
+                    },
+                    "corpNum": {
+                        "$id": "#/properties/results/items/properties/corpNum",
+                        "type": "string",
+                        "title": "The Corpnum Schema",
+                        "description": "Corporation number.",
+                        "default": "",
+                        "examples": [
+                            "123456"
+                        ]
+                    },
+                    "corpPartyId": {
+                        "$id": "#/properties/results/items/properties/corpPartyId",
+                        "type": "integer",
+                        "title": "The Corppartyid Schema",
+                        "description": "Corporation Party ID.",
+                        "default": 0,
+                        "examples": [
+                            1234567
+                        ]
+                    },
+                    "firstNme": {
+                        "$id": "#/properties/results/items/properties/firstNme",
+                        "type": "string",
+                        "title": "The Firstnme Schema",
+                        "description": "The director's first name.",
+                        "default": "",
+                        "examples": [
+                            "WILEY"
+                        ]
+                    },
+                    "lastNme": {
+                        "$id": "#/properties/results/items/properties/lastNme",
+                        "type": "string",
+                        "title": "The Lastnme Schema",
+                        "description": "The director's last name.",
+                        "default": "",
+                        "examples": [
+                            "COYOTE"
+                        ]
+                    },
+                    "middleNme": {
+                        "$id": "#/properties/results/items/properties/middleNme",
+                        "type": "string",
+                        "title": "The Middlenme Schema",
+                        "description": "The director's middle name.",
+                        "default": null,
+                        "examples": [
+                            null
+                        ]
+                    },
+                    "partyTypCd": {
+                        "$id": "#/properties/results/items/properties/partyTypCd",
+                        "type": "string",
+                        "title": "The Partytypcd Schema",
+                        "description": "The party type code (officer, director, incorporator, etc).",
+                        "default": "",
+                        "examples": [
+                            "OFF"
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,3 +1,9 @@
+search-api/pytest.xml
+*.bak
+instantclient
+*/.env
+*/prod.env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -7,6 +13,7 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+.local
 .Python
 build/
 develop-eggs/
@@ -127,3 +134,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+docker-compose.override.yml
+.vscode
+
+search-web/coverage/
+search-web/dist/

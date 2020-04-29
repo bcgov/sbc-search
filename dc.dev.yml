@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  search-web:
+    command: "npm run serve"
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 8080:8080
+  search_api:
+    ports:
+      - 80:5000
+    volumes:
+      - ./instantclient:/opt/ora/instantclient
+    environment:
+      - PYTHONPATH=/opt/app/src
+      - ORACLE_HOME=/opt/ora/instantclient

@@ -1,0 +1,449 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Search API
+  license:
+    name: Apache 2.0
+  description: Search API Specs
+  contact:
+    name: BC Registries
+paths:
+  '/api/v1/directors/':
+    get:
+      summary: Search for CorpParty objects based on the query
+      operationId: searchDirectors
+      tags:
+        - directors
+      parameters:
+        - $ref: '#/components/parameters/corpPartySearchField'
+        - $ref: '#/components/parameters/corpPartySearchOperator'
+        - $ref: '#/components/parameters/corpPartySearchValue'
+        - $ref: '#/components/parameters/corpPartySearchAdditionalCols'
+        - $ref: '#/components/parameters/corpPartySearchMode'
+        - $ref: '#/components/parameters/corpPartySearchPage'
+        - $ref: '#/components/parameters/corpPartySearchSortType'
+        - $ref: '#/components/parameters/corpPartySearchSortValue'
+      responses:
+        '200':
+          description: A list of CorpParty objects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorpPartySearchResults'
+  '/api/v1/directors/export/':
+    get:
+      summary: Search for CorpParty objects based on the query
+      operationId: exportDirectorSearch
+      tags:
+        - directors
+      parameters:
+        - $ref: '#/components/parameters/corpPartySearchField'
+        - $ref: '#/components/parameters/corpPartySearchOperator'
+        - $ref: '#/components/parameters/corpPartySearchValue'
+        - $ref: '#/components/parameters/corpPartySearchAdditionalCols'
+        - $ref: '#/components/parameters/corpPartySearchMode'
+        - $ref: '#/components/parameters/corpPartySearchPage'
+        - $ref: '#/components/parameters/corpPartySearchSortType'
+        - $ref: '#/components/parameters/corpPartySearchSortValue'
+      responses:
+        '200':
+          description: An exported (.xlsx) CorpParty search
+          content:
+            application/vnd.ms-excel:
+              schema:
+                type: string
+                format: binary
+  '/api/v1/directors/{corp_party_id}':
+    get:
+      summary: A CorpParty object in detail
+      operationId: directorDetail
+      tags:
+        - directors
+      parameters:
+        - in: path
+          name: corp_party_id
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: A CorpParty object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorpPartyDetail'
+  '/api/v1/businesses/':
+    get:
+      summary: Search for Corporation objects based on the query
+      operationId: directorDetail
+      tags:
+        - directors
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of Corporation objects
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorporationSearchResults'
+  '/api/v1/businesses/export':
+    get:
+      summary: Search for Corporation objects based on the query
+      operationId: directorDetail
+      tags:
+        - directors
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: An exported (.xlsx) Corporation search
+          content:
+            application/vnd.ms-excel:
+              schema:
+                type: string
+                format: binary
+  '/api/v1/businesses/{corp_id}':
+    get:
+      summary: A Corporation object in detail
+      operationId: directorDetail
+      tags:
+        - directors
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A Corporation object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorporationDetail'
+
+
+components:
+  parameters:
+    corpPartySearchField:
+      in: query
+      name: field
+      schema:
+        type: array
+        items:
+          type: string
+    corpPartySearchOperator:
+      in: query
+      name: operator
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            exact
+            contains
+            startswith
+            endswith
+    corpPartySearchValue:
+      in: query
+      name: value
+      schema:
+        type: array
+        items:
+          type: string
+    corpPartySearchAdditionalCols:
+      in: query
+      name: additional_cols
+      schema:
+        type: string
+        enum:
+          none
+          addr
+          active
+    corpPartySearchMode:
+      in: query
+      name: mode
+      required: false
+      schema:
+        type: string
+        default: OR
+        enum:
+          ALL
+          OR
+    corpPartySearchPage:
+      in: query
+      name: page
+      required: false
+      schema:
+        type: integer
+        default: 1
+    corpPartySearchSortType:
+      in: query
+      name: sort_type
+      required: false
+      schema:
+        type: string
+        enum:
+          asc
+          dsc
+    corpPartySearchSortValue:
+      in: query
+      name: sort_value
+      required: false
+      schema:
+        type: string
+  schemas:
+    CorpPartySearchResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              appointmentDt:
+                type: string
+              cessationDt:
+                type: string
+              corpNme:
+                type: string
+              corpNum:
+                type: string
+              corpPartyId:
+                type: integer
+              firstNme:
+                type: string
+              lastNme:
+                type: string
+              middleNme:
+                type: string
+              partyTypCd:
+                type: string
+              addr:
+                type: string
+              postalCd:
+                type: string
+              stateTypCd:
+                type: string
+    CorpPartyDetail:
+      type: object
+      properties:
+        appointmentDt:
+          type: string
+        businessNme:
+          type: string
+        cessationDt:
+          type: string
+        corpAdminEmail:
+          type: string
+        corpDeliveryAddr:
+          type: string
+        corpMailingAddr:
+          type: string
+        corpNme:
+          type: string
+        corpNum:
+          type: string
+        corpPartyEmail:
+          type: string
+        corpPartyId:
+          type: integer
+        corpTypCd:
+          type: string
+        deliveryAddr:
+          type: string
+        firstNme:
+          type: string
+        fullDesc:
+          type: string
+        lastNme:
+          type: string
+        mailingAddr:
+          type: string
+        middleNme:
+          type: string
+        offices:
+          type: array
+          items:
+            type: object
+            properties:
+              appointmentDt:
+                type: string
+              corpPartyId:
+                type: integer
+              officerTypCd:
+                type: string
+              shortDesc:
+                type: string
+              year:
+                type: integer
+        partyTypCd:
+          type: string
+        sameAddr:
+          type: array
+          items:
+            type: object
+            properties:
+              appointmentDt:
+                type: string
+              busCompanyNum:
+                type: string
+              businessNme:
+                type: string
+              cessationDt:
+                type: string
+              corpNum:
+                type: string
+              corpPartyId:
+                type: integer
+              corpPartySeqNum:
+                type: string
+              corrTypCd:
+                type: string
+              deliveryAddrId:
+                type: string
+              emailAddress:
+                type: string
+              endEventId:
+                type: string
+              firstNme:
+                type: string
+              lastNme:
+                type: string
+              lastReportDt:
+                type: string
+              mailingAddrId:
+                type: integer
+              middleNme:
+                type: string
+              partyTypCd:
+                type: string
+              phone:
+                type: string
+              prevPartyId:
+                type: string
+              reasonTypCd:
+                type: string
+              startEventId:
+                type: integer
+              year:
+                type: integer
+        sameNameAndCompany:
+          type: array
+          items:
+            type: object
+            properties:
+              appointmentDt:
+                type: string
+              busCompanyNum:
+                type: string
+              businessNme:
+                type: string
+              cessationDt:
+                type: string
+              corpNum:
+                type: string
+              corpPartyId:
+                type: integer
+              corpPartySeqNum:
+                type: string
+              corrTypCd:
+                type: string
+              deliveryAddrId:
+                type: string
+              emailAddress:
+                type: string
+              endEventId:
+                type: string
+              firstNme:
+                type: string
+              lastNme:
+                type: string
+              lastReportDt:
+                type: string
+              mailingAddrId:
+                type: integer
+              middleNme:
+                type: string
+              partyTypCd:
+                type: string
+              phone:
+                type: string
+              prevPartyId:
+                type: string
+              reasonTypCd:
+                type: string
+              startEventId:
+                type: integer
+              year:
+                type: integer
+        states:
+          type: array
+          items:
+            type: object
+            properties:
+              corpNum:
+                type: string
+              ddCorpNum:
+                type: string
+              endEventId:
+                type: string
+              startEventId:
+                type: integer
+              stateTypCd:
+                type: string
+    CorporationSearchResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              addr:
+                type: string
+              corpNme:
+                type: string
+              corpNum:
+                type: string
+              corpTypCd:
+                type: string
+              postalCd:
+                type: string
+              recognitionDts:
+                type: string
+              stateTypCd:
+                type: string
+    CorporationDetail:
+      type: object
+      properties:
+        names:
+          adminEmail:
+            type: string
+          corpNum:
+            type: string
+        adminEmail:
+          type: string
+        corpNum:
+          type: string
+        offices:
+          type: array
+          items:
+            type: object
+            properties:
+              deliveryAddr:
+                type: string
+              emailAddress:
+                type: string
+              mailingAddr:
+                type: string
+              officeTypCd:
+                type: string
+      transitionDt:
+        type: string
