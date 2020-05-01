@@ -1,7 +1,7 @@
 search-api/pytest.xml
 *.bak
 instantclient
-*/.env
+#*/.env
 */prod.env
 
 # Byte-compiled / optimized / DLL files
@@ -109,7 +109,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+#.env
 .venv
 env/
 venv/
@@ -140,3 +140,5 @@ docker-compose.override.yml
 
 search-web/coverage/
 search-web/dist/
+
+.history
