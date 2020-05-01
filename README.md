@@ -20,7 +20,9 @@ Some values for the `.env` can be taken from the DEV openshift environment, for 
 
 Browse to `localhost:8080`
 
-Updating database and create mock data in a dev environment
+Please take care not to commit unintended changes to `.env` files that are specific to your dev environment.
+
+Updating database and create mock data in a dev environment:
 
 ```
 docker-compose exec search_api bash
