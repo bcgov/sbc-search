@@ -1,11 +1,6 @@
 name: Search API CHECK CI
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - "search-api/**"
   pull_request:
     branches:
       - master
@@ -15,14 +10,14 @@ on:
 jobs:
   search-api-check:
     runs-on: ubuntu-latest
-    if: github.repository == 'countable-web/sbc-search'
+    if: github.repository == 'bcgov/sbc-search'
 
     env:
       FLASK_ENV: "testing"
 
     strategy:
       matrix:
-        python-version: [3.7]
+        python-version: [3.7, 3.8]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}

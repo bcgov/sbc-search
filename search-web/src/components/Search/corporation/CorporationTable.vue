@@ -216,7 +216,8 @@ export default {
     },
     handleTableRowClick(item, e) {
       e.target.closest("tr").classList.add("row-clicked");
-      window.open(`/corporation/${item["corpNum"]}`);
+      this.$router.push("/corporation/" + item["corpNum"]);
+      return;
     },
     cancelRequest() {
       this.source && this.source.cancel("Request aborted by user");

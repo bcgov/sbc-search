@@ -94,7 +94,7 @@ properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', 
 def run_pipeline = true
 
 // build wasn't triggered by changes so check with user
-if( !triggerBuild(APP_NAME) ) {
+/*if( !triggerBuild(APP_NAME) ) {
     stage('No changes. Run pipeline?') {
         try {
             timeout(time: 1, unit: 'DAYS') {
@@ -104,7 +104,7 @@ if( !triggerBuild(APP_NAME) ) {
             run_pipeline = false;
         }
     }
-}
+}*/
 
 if( run_pipeline ) {
     node {

@@ -146,6 +146,7 @@ class Corporation(BaseModel):
                 Address.addr_line_1,
                 Address.addr_line_2,
                 Address.addr_line_3,
+                Address.city,
                 Address.postal_cd,
             )
         else:
