@@ -57,13 +57,13 @@ def get_named_config(config_name: str = 'production'):
 class _Config:  # pylint: disable=too-few-public-methods
     """Base class configuration that should set reasonable defaults for all the other configurations."""
 
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
+
+    SQLALCHEMY_ECHO = True
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
     SECRET_KEY = 'a secret'
-
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SENTRY_DSN = os.getenv('SENTRY_DSN', '')
 

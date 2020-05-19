@@ -124,7 +124,6 @@
               item["corpNum"]
             }}</span>
           </td>
-          <td class="color-gray">{{ item["corpPartyId"] }}</td>
         </tr>
       </template>
       <template v-slot:footer>
@@ -263,8 +262,7 @@ export default {
         "cessationDt",
         "stateTypCd",
         "corpNme",
-        "corpNum",
-        "corpPartyId"
+        "corpNum"
       ]);
     },
     pageNext() {
@@ -286,21 +284,22 @@ export default {
       if (window.getSelection().toString()) {
         return;
       }
-      window.open(`/corporation/${id}`);
+      this.$router.push("/corporation/" + id);
+      return;
     },
     handleCellClick(id, e) {
       e.target.closest("tr").classList.add("row-clicked");
       if (window.getSelection().toString()) {
         return;
       }
-      window.open(`/corpparty/${id}`);
+      this.$router.push("/corpparty/" + id);
+      return;
     },
     filterHeaders(headers, type) {
       if (type === "none") {
         return headers.filter(h => {
           const val = h.value;
           if (
-            val === "corpPartyId" ||
             val === "lastNme" ||
             val === "middleNme" ||
             val === "firstNme" ||
@@ -318,7 +317,6 @@ export default {
         return headers.filter(h => {
           const val = h.value;
           if (
-            val === "corpPartyId" ||
             val === "lastNme" ||
             val === "middleNme" ||
             val === "firstNme" ||
@@ -338,7 +336,6 @@ export default {
         return headers.filter(h => {
           const val = h.value;
           if (
-            val === "corpPartyId" ||
             val === "lastNme" ||
             val === "middleNme" ||
             val === "firstNme" ||

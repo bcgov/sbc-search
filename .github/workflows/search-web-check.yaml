@@ -1,11 +1,6 @@
 name: Search Web CHECK CI
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - "search-web/**"
   pull_request:
     branches:
       - master
@@ -15,14 +10,14 @@ on:
 jobs:
   search-web-check:
     runs-on: ubuntu-latest
-    if: github.repository == 'countable-web/sbc-search'
+    if: github.repository == 'bcgov/sbc-search'
 
     env:
       NODE_ENV: "development"
 
     strategy:
       matrix:
-        node: [ '13.12' ]
+        node: ["13.12"]
     steps:
       - uses: actions/checkout@v2
       - name: Setup node

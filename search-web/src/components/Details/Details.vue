@@ -196,7 +196,8 @@ export default {
       return getTextFromValues(CORPPARTY_HEADERS, data);
     },
     handleCorpClick(id) {
-      window.open(`/corporation/${id}`);
+      this.$router.push("/corporation/" + id);
+      return;
     }
   }
 };

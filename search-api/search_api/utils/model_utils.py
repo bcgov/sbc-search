@@ -27,6 +27,10 @@ def _merge_addr_fields(row):
         address += ', ' + row.addr_line_2
     if row.addr_line_3:
         address += ', ' + row.addr_line_3
+    try:
+        address += ', ' + row.city
+    except:
+        pass
     return address
 
 
@@ -191,7 +195,7 @@ def _get_corp_party_export_column_headers(args):
 
     column_headers = [
         'Surname', 'First Name', 'Middle Name', 'Office Held', 'Appointed', 'Ceased',
-        'Company Name', 'Inc/Reg #', 'Filing #']
+        'Company Name', 'Inc/Reg #']
     if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
         column_headers.insert(3, 'Address')
         column_headers.insert(4, 'Postal Code')
@@ -208,7 +212,7 @@ def _get_corp_party_export_column_values(row, args):
 
     columns = [
         row.last_nme, row.first_nme, row.middle_nme, row.party_typ_cd,
-        row.appointment_dt, row.cessation_dt, row.corp_nme, row.corp_num, row.corp_party_id]
+        row.appointment_dt, row.cessation_dt, row.corp_nme, row.corp_num]
 
     if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
         columns.insert(3, _merge_addr_fields(row))
