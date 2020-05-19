@@ -61,7 +61,6 @@ def corpparty_search():
     - sort_value={field name to sort results by}
     """
     current_app.logger.info('Starting director search')
-
     account_id = request.headers.get('X-Account-Id', None)
     if not authorized(jwt, account_id):
         return (
@@ -91,14 +90,17 @@ def corpparty_search():
     # update:
     # We've switched to using ROWNUM rather than pagination, for performance reasons.
     # for benchmarking, dump the query here and copy to benchmark.py
-    # This means queries with more than 500 results are invalid.
-    # from sqlalchemy.dialects import oracle
-    # results = results.limit(per_page).offset((page - 1) * per_page).all()
-    # oracle_dialect = oracle.dialect(max_identifier_length=30)
-    if current_app.config.get('IS_ORACLE'):  # raise Exception(results.statement.compile(dialect=oracle_dialect))
-        results = results.filter(literal_column('rownum') <= 500).yield_per(per_page)
+    # This means queries with more than 165 results are invalid.
+
+    if current_app.config.get('IS_ORACLE'):
+        results = results.filter(literal_column('rownum') <= 165) #.yield_per(per_page)
     else:
-        results = results.limit(500)
+        results = results.limit(165)
+
+    # for debugging, print out the exact query.
+    # from sqlalchemy.dialects import oracle
+    # oracle_dialect = oracle.dialect(max_identifier_length=30)
+    # raise Exception(results.statement.compile(dialect=oracle_dialect))
 
     current_app.logger.info('After query')
 
@@ -153,9 +155,9 @@ def corpparty_search_export():
     # Fetching results
     results = CorpParty.search_corp_parties(args)
     if current_app.config.get('IS_ORACLE'):
-        results = results.filter(literal_column('rownum') <= 500).yield_per(50)
+        results = results.filter(literal_column('rownum') <= 165)
     else:
-        results = results.limit(500)
+        results = results.limit(165)
 
     # Exporting to Excel
     workbook = Workbook()

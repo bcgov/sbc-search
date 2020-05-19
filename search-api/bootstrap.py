@@ -22,7 +22,6 @@ from search_api.models.corp_party import CorpParty
 from search_api.models.corp_name import CorpName
 from search_api.models.address import Address
 from search_api.models.office import Office
-#from search_api.models.office_type import OfficeType
 from search_api.models.party_type import PartyType
 from search_api.models.officer_type import OfficerType
 from search_api.models.offices_held import OfficesHeld
@@ -42,7 +41,6 @@ def reset():
     db.session.query(CorpOpState).delete(synchronize_session=False)
     db.session.query(CorpState).delete(synchronize_session=False)
     db.session.query(Address).delete(synchronize_session=False)
-    #db.session.query(OfficeType).delete(synchronize_session=False)
     db.session.query(Office).delete(synchronize_session=False)
     db.session.query(OfficerType).delete(synchronize_session=False)
     db.session.query(OfficesHeld).delete(synchronize_session=False)

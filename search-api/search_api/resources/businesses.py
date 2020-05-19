@@ -66,14 +66,14 @@ def corporation_search():
     per_page = 50
     page = int(args.get('page')) if 'page' in args else 1
     # We've switched to using ROWNUM rather than pagination, for performance reasons.
-    # This means queries with more than 500 results are invalid.
+    # This means queries with more than 165 results are invalid.
     # results = results.limit(50).offset((page - 1) * 50).all()
     if current_app.config.get('IS_ORACLE'):
         results = results.filter(
-            literal_column('rownum') <= 500
-        ).yield_per(50)
+            literal_column('rownum') <= 165
+        )
     else:
-        results = results.limit(500)
+        results = results.limit(165)
 
     result_fields = [
         'corpNum',
@@ -121,10 +121,10 @@ def corporation_search_export():
     results = Corporation.search_corporations(args, include_addr=False)
     if current_app.config.get('IS_ORACLE'):
         results = results.filter(
-            literal_column('rownum') <= 500
-        ).yield_per(50)
+            literal_column('rownum') <= 165
+        )
     else:
-        results = results.limit(500)
+        results = results.limit(165)
 
     # Exporting to Excel
     workbook = Workbook()
