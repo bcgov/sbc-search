@@ -134,7 +134,7 @@ export default {
     handleOverload() {
       this.overload = true;
       this.overloadMessage =
-        "Your search returned 500 or more results, which is the limit of the Corporation Search. Results will be missing at random, irrespective of sorting. Please be sure to narrow your search in order to receive a usable results list.";
+        "Your search returned 165 or more results, which is the limit of the Corporation Search. Results will be missing at random, irrespective of sorting. Please be sure to narrow your search in order to receive a usable results list.";
     },
     handleError(error) {
       this.errorMessage = `${error.toString()} ${(error.response &&

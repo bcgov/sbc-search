@@ -41,8 +41,10 @@ COBRS_SQL = """SELECT
       ,CORP_OP_STATE OS
       ,CORPORATION  C
       ,CORP_TYPE    CT
-WHERE UPPER(FIRST_NME) LIKE 'JOHN'
-    #AND PARTY_TYP_CD IN ('FIO', 'DIR','OFF')
+WHERE
+    UPPER(FIRST_NME) LIKE 'JOHN'
+    AND UPPER(LAST_NME) LIKE 'SMITH'
+    AND PARTY_TYP_CD != 'OFF'
     AND P.END_EVENT_ID IS NULL
     AND P.CORP_NUM = S.CORP_NUM
     AND S.END_EVENT_ID IS NULL
@@ -56,46 +58,31 @@ ORDER BY UPPER(LAST_NME)
 
 # Director search sql example.
 DS_OPT = """
-SELECT
-    corp_party.corp_party_id,
-       corp_party.mailing_addr_id,
-       corp_party.delivery_addr_id,
-       corp_party.corp_num,
-       corp_party.party_typ_cd,
-       corp_party.start_event_id,
-       corp_party.end_event_id,
-       corp_party.prev_party_id,
-       corp_party.corr_typ_cd,
-       corp_party.last_report_dt,
+SELECT corp_party.corp_party_id,
+       corp_party.first_nme,
+       corp_party.middle_nme,
+       corp_party.last_nme,
        corp_party.appointment_dt,
        corp_party.cessation_dt,
-       corp_party.last_nme,
-       corp_party.middle_nme,
-       corp_party.first_nme,
-       corp_party.business_nme,
-       corp_party.bus_company_num,
-       corp_party.email_address,
-       corp_party.corp_party_seq_num,
-       corp_party.phone,
-       corp_party.reason_typ_cd,
-       corp_name.corp_nme,
-       address.addr_line_1,
-       address.addr_line_2,
-       address.addr_line_3,
-       address.postal_cd
-FROM
-    corp_party
-    JOIN corporation ON corporation.corp_num = corp_party.corp_num
-    JOIN corp_state ON corp_state.corp_num = corp_party.corp_num
-    JOIN corp_op_state ON corp_op_state.state_typ_cd = corp_state.state_typ_cd
-    LEFT OUTER JOIN corp_name ON corporation.corp_num = corp_name.corp_num
-    LEFT OUTER JOIN address ON corp_party.mailing_addr_id = address.addr_id
-WHERE upper(corp_party.last_nme) LIKE 'JOHN'
-    AND corp_party.END_EVENT_ID IS NULL
-    and corp_state.end_event_id is null
-    and corp_name.end_event_id is null
-    #AND ROWNUM <= 50
-ORDER BY upper(corp_party.last_nme)
+       corp_party.corp_num,
+       corp_party.party_typ_cd,
+       corp_name.corp_nme
+FROM   corp_party
+       LEFT OUTER JOIN corporation
+         ON corporation.corp_num = corp_party.corp_num
+       LEFT OUTER JOIN corp_state
+         ON corp_state.corp_num = corp_party.corp_num
+            AND corp_state.end_event_id IS NULL
+       LEFT OUTER JOIN corp_name
+                    ON corp_name.end_event_id IS NULL
+                       AND corp_name.corp_name_typ_cd IN (
+                           'CO', 'NB' )
+                       AND corporation.corp_num = corp_name.corp_num
+WHERE  corp_party.party_typ_cd != 'OFF'
+       AND Upper(corp_party.first_nme) = 'JOHN'
+       AND Upper(corp_party.last_nme) = 'SMITH'
+       AND rownum <= 165
+ORDER  BY Upper(corp_party.last_nme) DESC
 """
 
 
@@ -128,8 +115,7 @@ def corporations():
                 ]
             )
         )
-        .filter(literal_column('rownum') <= 500)
-        .yield_per(50)
+        .filter(literal_column('rownum') <= 165)
     )
 
 
@@ -140,7 +126,10 @@ def corp_party_search():
         [
             ('field', 'firstNme'),
             ('operator', 'exact'),
-            ('value', 'john'),
+            ('value', 'JOHN'),
+            ('field', 'lastNme'),
+            ('operator', 'exact'),
+            ('value', 'SMITH'),
             ('mode', 'ALL'),
             ('page', '1'),
             ('sort_type', 'dsc'),
@@ -151,8 +140,7 @@ def corp_party_search():
 
     return (
         CorpParty.search_corp_parties(args)
-        .filter(literal_column('rownum') <= 500)
-        .yield_per(50)
+        .filter(literal_column('rownum') <= 165)
     )
 
 
@@ -177,8 +165,7 @@ def corp_party_similar_search():
 
     return (
         CorpParty.search_corp_parties(args)
-        .filter(literal_column('rownum') <= 500)
-        .yield_per(50)
+        .filter(literal_column('rownum') <= 165)
     )
 
 
@@ -203,8 +190,7 @@ def corp_party_nickname_search():
 
     return (
         CorpParty.search_corp_parties(args)
-        .filter(literal_column('rownum') <= 500)
-        .yield_per(50)
+        .filter(literal_column('rownum') <= 165)
     )
 
 
@@ -227,8 +213,7 @@ def corp_party_2param_search():
     )
     return (
         CorpParty.search_corp_parties(args)
-        .filter(literal_column('rownum') <= 500)
-        .yield_per(50)
+        .filter(literal_column('rownum') <= 165)
     )
 
 
@@ -253,8 +238,7 @@ def corp_party_addr_search():
 
     return (
         CorpParty.search_corp_parties(args)
-        .filter(literal_column('rownum') <= literal_column('500'))
-        .yield_per(50)
+        .filter(literal_column('rownum') <= literal_column('165'))
     )
 
 
@@ -279,8 +263,7 @@ def corp_party_postal_cd_search():
 
     return (
         CorpParty.search_corp_parties(args)
-        .filter(literal_column('rownum') <= 500)
-        .yield_per(50)
+        .filter(literal_column('rownum') <= 165)
     )
 
 
@@ -293,50 +276,47 @@ def benchmark_raw_sql(sql):
 SQL = """
 SELECT 1 FROM CORP_PARTY WHERE ROWNUM = 1
 """
-# SQL = """
-# SELECT  *
-# FROM    all_indexes
-# WHERE   table_name = 'ADDRESS'"""
-SQL = """
-
-"""
 
 if __name__ == '__main__':
 
     app = create_app('benchmark')  # pylint: disable=invalid-name
     with app.app_context():
-        for i in range(1):
 
-            print('warmup')
-            # t = time.time()
-            # rs = benchmark_raw_sql(SQL)
-            # _benchmark(t, rs)
+        # The DB performs more consistently when a query has recently been made.
+        print('warmup')
+        t = time.time()
+        rs = benchmark_raw_sql(SQL)
+        _benchmark(t, rs)
 
-            # print('cobrs')
-            # t = time.time()
-            # rs = benchmark_raw_sql(COBRS_SQL)
-            # _benchmark(t, rs)
+        print('cobrs')
+        t = time.time()
+        rs = benchmark_raw_sql(COBRS_SQL)
+        _benchmark(t, rs)
 
-            t = time.time()
-            rs = corp_party_addr_search()
-            _benchmark(t, rs)
+        # t = time.time()
+        # rs = corp_party_addr_search()
+        # _benchmark(t, rs)
 
-            # t = time.time()
-            # rs = corp_party_search()
-            # _benchmark(t, rs)
+        # t = time.time()
+        # rs = corp_party_search()
+        # _benchmark(t, rs)
 
-            # t = time.time()
-            # rs = corp_party_postal_cd_search()
-            # _benchmark(t, rs)
+        t = time.time()
+        rs = benchmark_raw_sql(DS_OPT)
+        _benchmark(t, rs)
 
-            # t = time.time()
-            # rs = corp_party_nickname_search()
-            # _benchmark(t, rs)
+        # t = time.time()
+        # rs = corp_party_postal_cd_search()
+        # _benchmark(t, rs)
 
-            # t = time.time()
-            # rs = corp_party_similar_search()
-            # _benchmark(t, rs)
+        # t = time.time()
+        # rs = corp_party_nickname_search()
+        # _benchmark(t, rs)
 
-            # t = time.time()
-            # rs = corporations()
-            # _benchmark(t, rs)
+        # t = time.time()
+        # rs = corp_party_similar_search()
+        # _benchmark(t, rs)
+
+        # t = time.time()
+        # rs = corporations()
+        # _benchmark(t, rs)

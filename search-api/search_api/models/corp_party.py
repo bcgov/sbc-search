@@ -286,7 +286,9 @@ class CorpParty(BaseModel):
                 CorpName.corp_nme,
             )
         ).filter(
-            CorpParty.end_event_id == None,  # noqa # pylint: disable=singleton-comparison
+            # This can be used to find only the active corp parties, but we use CorpStatestateTypCd instead,
+            # So it's not needed:
+            # CorpParty.end_event_id == None,  # noqa # pylint: disable=singleton-comparison
             CorpParty.party_typ_cd != 'OFF',
         )
 

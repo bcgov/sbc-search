@@ -387,7 +387,7 @@ export default {
           this.items = result.data.results;
           this.totalItems = result.data.numResults;
           this.$emit("success", result);
-          this.totalItems >= 500 ? this.$emit("overload") : "";
+          this.totalItems >= 165 ? this.$emit("overload") : "";
         })
         .catch(e => {
           this.items = [];
