@@ -89,6 +89,7 @@ class Address(BaseModel):
             Address.city,
             Address.province,
             Address.country_typ_cd,
+            Address.address_desc,
         ).one()[0]
 
     @staticmethod
@@ -106,4 +107,4 @@ class Address(BaseModel):
 
         return reduce(
             address_reducer, [address.addr_line_1, address.addr_line_2, address.addr_line_3,
-                              address.city, address.province, address.country_typ_cd])
+                              address.city, address.province, address.country_typ_cd, address.address_desc])

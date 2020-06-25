@@ -148,6 +148,7 @@ class Corporation(BaseModel):
                 Address.addr_line_3,
                 Address.city,
                 Address.postal_cd,
+                Address.address_desc,
             )
         else:
             results = results.with_entities(
