@@ -22,15 +22,27 @@ from search_api.models.nickname import NickName
 
 
 def _merge_addr_fields(row):
-    address = row.addr_line_1
-    if row.addr_line_2:
-        address += ', ' + row.addr_line_2
-    if row.addr_line_3:
-        address += ', ' + row.addr_line_3
-    try:
-        address += ', ' + row.city
-    except:
-        pass
+    address = None
+    if row.addr_line_1 or row.addr_line_2 or row.addr_line_3:
+        address = row.addr_line_1
+        if row.addr_line_2:
+            address += ', ' + row.addr_line_2
+        if row.addr_line_3:
+            address += ', ' + row.addr_line_3
+        try:
+            if row.city:
+                if address:
+                    address += ', ' + row.city
+                else:
+                    address = row.city
+        except:
+            pass
+    else:
+        try:
+            address = row.address_desc
+        except:
+            pass
+
     return address
 
 

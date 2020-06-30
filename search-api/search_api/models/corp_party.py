@@ -356,10 +356,12 @@ class CorpParty(BaseModel):
         """Add Address or CorpOpState columns to query based on the additional columns toggle."""
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
             query = query.outerjoin(Address, CorpParty.mailing_addr_id == Address.addr_id)
-            query = query.add_columns(Address.addr_line_1, Address.addr_line_2, Address.addr_line_3, Address.city, Address.postal_cd,)
+            query = query.add_columns(Address.addr_line_1, Address.addr_line_2, Address.addr_line_3,
+                                      Address.city, Address.postal_cd, Address.address_desc)
 
         if additional_cols == ADDITIONAL_COLS_ACTIVE:
-            state_type_case_stmt = case([(CorpOpState.state_typ_cd == 'ACT', 'ACTIVE'),], else_ = 'HISTORICAL').label("state_typ_cd")
+            state_type_case_stmt = case([(CorpOpState.state_typ_cd == 'ACT', 'ACTIVE'), ],
+                                        else_='HISTORICAL').label("state_typ_cd")
 
             query = query.join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
             query = query.add_columns(state_type_case_stmt)
