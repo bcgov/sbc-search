@@ -38,8 +38,7 @@ export default {
         ApiService.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${KEYCLOACK_TOKEN}`;
-        await tokenService.init();
-        tokenService.scheduleRefreshTimer();
+        await KeyCloakService.initializeToken();
       }
       const query = Object.assign({}, this.$route.query);
       const path = this.$route.params.redirectUrl;
