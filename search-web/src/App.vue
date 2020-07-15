@@ -65,8 +65,7 @@ export default Vue.extend({
 
       const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
       if (KEYCLOACK_TOKEN) {
-        await tokenService.init();
-        tokenService.scheduleRefreshTimer();
+        await KeyCloakService.initializeToken();
       }
 
       warmUp()
