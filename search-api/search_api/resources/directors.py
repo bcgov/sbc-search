@@ -93,7 +93,7 @@ def corpparty_search():
     # This means queries with more than 165 results are invalid.
 
     if current_app.config.get('IS_ORACLE'):
-        results = results.filter(literal_column('rownum') <= 165) #.yield_per(per_page)
+        results = results.filter(literal_column('rownum') <= 165)  # .yield_per(per_page)
     else:
         results = results.limit(165)
 
@@ -114,6 +114,7 @@ def corpparty_search():
         'corpNum',
         'corpNme',
         'partyTypCd',
+        'corpPartyEmail',
     ]
 
     corp_parties = []

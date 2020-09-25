@@ -89,11 +89,7 @@
               </div>
             </div>
           </td>
-          <td
-            v-else
-            class="d-table-cell"
-            @click="handleCellClick(item['corpPartyId'], $event)"
-          >
+          <td v-else class="d-table-cell">
             <div class="d-flex w-100 justify-space-between">
               <div class="color-black">
                 {{ headers[i] ? headers[i].text : "" }}
@@ -105,10 +101,7 @@
         <v-divider class="d-md-none" />
         <!-- Mobile View End -->
 
-        <tr
-          class="cursor-pointer d-none d-md-table-row desktop-tr-row"
-          @click="handleCellClick(item['corpPartyId'], $event)"
-        >
+        <tr class="cursor-pointer d-none d-md-table-row desktop-tr-row">
           <td>{{ item["lastNme"] }}</td>
           <td>{{ item["firstNme"] }}</td>
           <td>{{ item["middleNme"] }}</td>
@@ -119,6 +112,7 @@
           <td>{{ item["cessationDt"] }}</td>
           <td v-if="type === 'active'">{{ item["stateTypCd"] }}</td>
           <td>{{ item["corpNme"] }}</td>
+          <td>{{ item["corpPartyEmail"] }}</td>
           <td @click.prevent.stop="handleCorpClick(item['corpNum'], $event)">
             <span class="anchor-text cursor-pointer">{{
               item["corpNum"]
@@ -172,7 +166,7 @@ import axios from "axios";
 import { corpPartySearch } from "@/api/SearchApi.js";
 import dayjs from "dayjs";
 import { mapGetters } from "vuex";
-import { buildQueryString } from "@/util/index.ts";
+import { buildQueryString, getDeepLink } from "@/util/index.ts";
 import isEmpty from "lodash-es/isEmpty";
 import pick from "lodash-es/pick";
 const qsl = require("qs");
@@ -262,6 +256,7 @@ export default {
         "cessationDt",
         "stateTypCd",
         "corpNme",
+        "corpPartyEmail",
         "corpNum"
       ]);
     },
@@ -284,15 +279,7 @@ export default {
       if (window.getSelection().toString()) {
         return;
       }
-      this.$router.push("/corporation/" + id);
-      return;
-    },
-    handleCellClick(id, e) {
-      e.target.closest("tr").classList.add("row-clicked");
-      if (window.getSelection().toString()) {
-        return;
-      }
-      this.$router.push("/corpparty/" + id);
+      window.open(getDeepLink(id));
       return;
     },
     filterHeaders(headers, type) {
@@ -307,6 +294,7 @@ export default {
             val === "appointmentDt" ||
             val === "cessationDt" ||
             val === "corpNme" ||
+            val === "corpPartyEmail" ||
             val === "corpNum"
           ) {
             return true;
@@ -325,6 +313,7 @@ export default {
             val === "cessationDt" ||
             val === "corpNum" ||
             val === "corpNme" ||
+            val === "corpPartyEmail" ||
             val === "addr" ||
             val === "postalCd"
           ) {
@@ -344,6 +333,7 @@ export default {
             val === "cessationDt" ||
             val === "corpNum" ||
             val === "corpNme" ||
+            val === "corpPartyEmail" ||
             val === "stateTypCd"
           ) {
             return true;
