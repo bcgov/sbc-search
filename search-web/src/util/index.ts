@@ -1,8 +1,8 @@
 const qs = require("qs");
 import omit from "lodash-es/omit";
-import ApiService from "@/api/ApiService.js";
 const fileDownload = require("js-file-download");
 import dayjs from "dayjs";
+export * from "./config-helper";
 
 export function getTextFromValues(values, value) {
   const result = values.find(v => v.value === value);
@@ -24,7 +24,9 @@ export function buildQueryString(filters) {
 }
 
 export function getDeepLink(corpNum) {
-  return `${process.env.VUE_APP_CORP_ONLINE_ROOT_URL}/corporateonline/colin/search/searchAction.do?corpNum=${corpNum}&_flowExecutionKey=e4s2`;
+  return `${sessionStorage.getItem(
+    "VUE_APP_CORP_ONLINE_ROOT_URL"
+  )}/corporateonline/colin/search/searchAction.do?corpNum=${corpNum}&_flowExecutionKey=e4s2`;
 }
 
 export async function downloadFile(data, fileName) {

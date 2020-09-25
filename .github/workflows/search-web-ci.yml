@@ -1,0 +1,47 @@
+name: Search web CI
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "search-web/**"
+
+jobs:
+  search-web-ci:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: install with npm ci
+        working-directory: ./search-web
+        run: |
+          npm ci
+        env:
+          CI: true
+      - name: Run Lint
+        working-directory: ./search-web
+        run: |
+          npm run lint
+        env:
+          CI: true
+      - name: Run Unit Tests
+        working-directory: ./search-web
+        run: |
+          npm run test:unit
+        env:
+          CI: true
+      - name: Run build
+        working-directory: ./search-web
+        run: |
+          npm run build
+        env:
+          CI: true
