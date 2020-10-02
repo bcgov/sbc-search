@@ -1,0 +1,31 @@
+name: Search API CI
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "search-api/**"
+
+jobs:
+  search-api-ci:
+    runs-on: ubuntu-latest
+    if: github.repository == 'bcgov/sbc-search'
+
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        working-directory: ./search-api
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/prod.txt
+          pip install -r requirements/dev.txt
+          pip install -r requirements/repo-libraries.txt

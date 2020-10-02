@@ -5,6 +5,7 @@ import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
+import { fetchConfig } from "@/util";
 
 Vue.config.productionTip = false;
 
@@ -13,9 +14,7 @@ saveConfigToSessionStorage().then(data => {
 });
 
 async function saveConfigToSessionStorage() {
-  const authConfigPath = `${process.env.VUE_APP_PATH}config/configuration.json`;
-  const authConfig = await axios.get(authConfigPath);
-  sessionStorage.setItem("AUTH_API_CONFIG", JSON.stringify(authConfig.data));
+  await fetchConfig();
 }
 
 function renderVue() {
