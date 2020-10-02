@@ -26,11 +26,6 @@ jobs:
       - name: Set env by master branch
         if: env.TAG_NAME == '' && github.ref == 'refs/heads/master'
         run: |
-          echo "::set-env name=TAG_NAME::test"
-
-      - name: Set env by development branch
-        if: env.TAG_NAME == '' && github.ref == 'refs/heads/development'
-        run: |
           echo "::set-env name=TAG_NAME::dev"
 
       - uses: pwei1018/bcrs-cd-action@latest
