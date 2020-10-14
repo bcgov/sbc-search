@@ -24,9 +24,7 @@ export function buildQueryString(filters) {
 }
 
 export function getDeepLink(corpNum) {
-  return `${sessionStorage.getItem(
-    "VUE_APP_CORP_ONLINE_ROOT_URL"
-  )}/corporateonline/colin/search/searchAction.do?corpNum=${corpNum}&_flowExecutionKey=e4s2`;
+  return `${sessionStorage.getItem("VUE_APP_CORP_ONLINE_ROOT_URL")}`;
 }
 
 export async function downloadFile(data, fileName) {

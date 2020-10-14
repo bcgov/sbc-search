@@ -8,9 +8,7 @@
       placeholder="Enter Folio Number"
     ></v-text-field>
     -->
-    <a @click.prevent="handleClick" class="body-2"
-      >Direct Link to Corporation on Corporate Online</a
-    >
+    <a @click.prevent="handleClick" class="body-2">Link to BC Online</a>
   </div>
 </template>
 

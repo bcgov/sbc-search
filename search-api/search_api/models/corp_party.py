@@ -305,6 +305,8 @@ class CorpParty(BaseModel):
                 ),
                 full=True
             )
+            .outerjoin(OfficesHeld, OfficesHeld.corp_party_id == CorpParty.corp_party_id)
+            .outerjoin(OfficerType, OfficerType.officer_typ_cd == OfficesHeld.officer_typ_cd)
             .with_entities(
                 CorpParty.corp_party_id,
                 CorpParty.first_nme,
@@ -313,8 +315,9 @@ class CorpParty(BaseModel):
                 eventA.event_timestmp.label('appointment_dt'),
                 eventB.event_timestmp.label('cessation_dt'),
                 CorpParty.corp_num,
-                PartyType.short_desc.label('party_typ_cd'),
+                (PartyType.short_desc + " " + OfficerType.short_desc).label('party_typ_cd'),
                 CorpName.corp_nme,
+                CorpParty.email_address.label('corp_party_email'),
             )
         ).filter(
             # This can be used to find only the active corp parties, but we use CorpStatestateTypCd instead,

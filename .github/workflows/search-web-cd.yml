@@ -14,7 +14,7 @@ on:
         default: "dev"
 
 jobs:
-  search-web-dev:
+  search-web-cd:
     runs-on: ubuntu-latest
     if: github.repository == 'bcgov/sbc-search'
     steps:

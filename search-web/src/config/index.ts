@@ -164,6 +164,13 @@ export const CORPPARTY_HEADERS = [
     width: 250
   },
   {
+    text: "Email",
+    value: "corpPartyEmail",
+    sortable: true,
+    align: "left",
+    width: 150
+  },
+  {
     text: "Inc/Reg #",
     value: "corpNum",
     sortable: true,
@@ -180,12 +187,6 @@ export const CORPPARTY_HEADERS = [
   {
     text: "Delivery Address",
     value: "deliveryAddr",
-    sortable: true,
-    align: "left"
-  },
-  {
-    text: "Email",
-    value: "corpPartyEmail",
     sortable: true,
     align: "left"
   },
