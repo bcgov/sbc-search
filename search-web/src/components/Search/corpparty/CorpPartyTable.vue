@@ -112,7 +112,7 @@
           <td>{{ item["cessationDt"] }}</td>
           <td v-if="type === 'active'">{{ item["stateTypCd"] }}</td>
           <td>{{ item["corpNme"] }}</td>
-          <td>{{ item["corpPartyEmail"] }}</td>
+          <td>{{ item["corpAdminEmail"] }}</td>
           <td @click.prevent.stop="handleCorpClick(item['corpNum'], $event)">
             <span class="anchor-text cursor-pointer">{{
               item["corpNum"]
@@ -256,7 +256,7 @@ export default {
         "cessationDt",
         "stateTypCd",
         "corpNme",
-        "corpPartyEmail",
+        "corpAdminEmail",
         "corpNum"
       ]);
     },
@@ -294,7 +294,7 @@ export default {
             val === "appointmentDt" ||
             val === "cessationDt" ||
             val === "corpNme" ||
-            val === "corpPartyEmail" ||
+            val === "corpAdminEmail" ||
             val === "corpNum"
           ) {
             return true;
@@ -313,7 +313,7 @@ export default {
             val === "cessationDt" ||
             val === "corpNum" ||
             val === "corpNme" ||
-            val === "corpPartyEmail" ||
+            val === "corpAdminEmail" ||
             val === "addr" ||
             val === "postalCd"
           ) {
@@ -333,7 +333,7 @@ export default {
             val === "cessationDt" ||
             val === "corpNum" ||
             val === "corpNme" ||
-            val === "corpPartyEmail" ||
+            val === "corpAdminEmail" ||
             val === "stateTypCd"
           ) {
             return true;

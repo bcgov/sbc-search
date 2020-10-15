@@ -317,7 +317,7 @@ class CorpParty(BaseModel):
                 CorpParty.corp_num,
                 (PartyType.short_desc + " " + OfficerType.short_desc).label('party_typ_cd'),
                 CorpName.corp_nme,
-                CorpParty.email_address.label('corp_party_email'),
+                Corporation.admin_email.label('corp_admin_email'),
             )
         ).filter(
             # This can be used to find only the active corp parties, but we use CorpStatestateTypCd instead,
