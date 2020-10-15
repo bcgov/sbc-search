@@ -319,11 +319,6 @@ class CorpParty(BaseModel):
                 CorpName.corp_nme,
                 Corporation.admin_email.label('corp_admin_email'),
             )
-        ).filter(
-            # This can be used to find only the active corp parties, but we use CorpStatestateTypCd instead,
-            # So it's not needed:
-            # CorpParty.end_event_id == None,  # noqa # pylint: disable=singleton-comparison
-            CorpParty.party_typ_cd != 'OFF',
         )
 
         results = CorpParty.add_additional_cols_to_search_query(additional_cols, fields, results)
