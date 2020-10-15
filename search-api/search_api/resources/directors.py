@@ -114,7 +114,7 @@ def corpparty_search():
         'corpNum',
         'corpNme',
         'partyTypCd',
-        'corpPartyEmail',
+        'corpAdminEmail',
     ]
 
     corp_parties = []

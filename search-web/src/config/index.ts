@@ -91,21 +91,21 @@ export const CORPPARTY_HEADERS = [
     value: "lastNme",
     sortable: true,
     align: "left",
-    width: 125
+    width: 110
   },
   {
     text: "First Name",
     value: "firstNme",
     sortable: true,
     align: "left",
-    width: 125
+    width: 110
   },
   {
     text: "Middle Name",
     value: "middleNme",
     sortable: true,
     align: "left",
-    width: 150
+    width: 125
   },
   {
     text: "Address",
@@ -119,7 +119,7 @@ export const CORPPARTY_HEADERS = [
     value: "postalCd",
     sortable: true,
     align: "left",
-    width: 100
+    width: 80
   },
   {
     text: "Office Held",
@@ -147,7 +147,7 @@ export const CORPPARTY_HEADERS = [
     value: "cessationDt",
     sortable: true,
     align: "left",
-    width: 100
+    width: 120
   },
   {
     text: "Company Status",
@@ -164,8 +164,8 @@ export const CORPPARTY_HEADERS = [
     width: 250
   },
   {
-    text: "Email",
-    value: "corpPartyEmail",
+    text: "Company Email",
+    value: "corpAdminEmail",
     sortable: true,
     align: "left",
     width: 150
@@ -191,14 +191,14 @@ export const CORPPARTY_HEADERS = [
     align: "left"
   },
   {
-    text: "Company Admin Email",
-    value: "corpAdminEmail",
+    text: "Province",
+    value: "province",
     sortable: true,
     align: "left"
   },
   {
-    text: "Province",
-    value: "province",
+    text: "Email",
+    value: "corpPartyEmail",
     sortable: true,
     align: "left"
   },
