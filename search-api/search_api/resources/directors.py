@@ -230,7 +230,7 @@ def get_corp_party_by_id(corp_party_id):
     result_dict['corpDeliveryAddr'] = corp_delivery_addr
     result_dict['corpMailingAddr'] = corp_mailing_addr
     result_dict['corpTypCd'] = result.corp_typ_cd
-    result_dict['corpAdminEmail'] = result.admin_email
+    result_dict['corpAdminEmail'] = result.corp_admin_email
     result_dict['fullDesc'] = filing_description[0].full_desc if filing_description else None
 
     result_dict['states'] = [s.as_dict() for s in states]

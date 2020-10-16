@@ -65,7 +65,7 @@ class Corporation(BaseModel):
     bn_9 = db.Column(db.String(9))
     bn_15 = db.Column(db.String(15))
     accession_num = db.Column(db.String(10))
-    admin_email = db.Column(db.String(254))
+    corp_admin_email = db.Column('admin_email', db.String(254))
     send_ar_ind = db.Column(db.String(1))
     tilma_involved_ind = db.Column(db.String(1))
     tilma_cessation_dt = db.Column(db.Date)
@@ -85,7 +85,7 @@ class Corporation(BaseModel):
     def get_corporation_by_id(corp_id):
         """Get a corporation by id."""
         query = Corporation.query.add_columns(
-            Corporation.corp_num, Corporation.transition_dt, Corporation.admin_email
+            Corporation.corp_num, Corporation.transition_dt, Corporation.corp_admin_email
         ).filter(Corporation.corp_num == corp_id)
 
         try:

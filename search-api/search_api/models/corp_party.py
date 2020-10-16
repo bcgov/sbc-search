@@ -116,7 +116,7 @@ class CorpParty(BaseModel):
         query = (
             CorpParty.query.filter(CorpParty.corp_party_id == int(corp_party_id))
             .join(Corporation, Corporation.corp_num == CorpParty.corp_num)
-            .add_columns(Corporation.corp_typ_cd, Corporation.admin_email)
+            .add_columns(Corporation.corp_typ_cd, Corporation.corp_admin_email)
         )
 
         try:
@@ -317,7 +317,7 @@ class CorpParty(BaseModel):
                 CorpParty.corp_num,
                 (PartyType.short_desc + " " + OfficerType.short_desc).label('party_typ_cd'),
                 CorpName.corp_nme,
-                Corporation.admin_email.label('corp_admin_email'),
+                Corporation.corp_admin_email,
             )
         )
 

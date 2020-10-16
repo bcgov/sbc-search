@@ -202,7 +202,7 @@ def corporation(corp_id):
             }
         )
 
-    output['adminEmail'] = corp.admin_email
+    output['adminEmail'] = corp.corp_admin_email
 
     output['names'] = []
     for row in names:
