@@ -61,7 +61,7 @@ def _get_model_by_field(field_name):
     if field_name in ['firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt',
                       'corpPartyId', 'partyTypCd']:  # CorpParty fields
         return CorpParty
-    if field_name in ['corpNum', 'recognitionDts', 'corpTypCd']:  # Corporation fields
+    if field_name in ['corpNum', 'recognitionDts', 'corpTypCd', 'corpAdminEmail']:  # Corporation fields
         return Corporation
     if field_name in ['corpNme']:  # CorpName fields
         return CorpName
