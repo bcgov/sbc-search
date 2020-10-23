@@ -59,8 +59,9 @@ export default Vue.extend({
 
   async mounted() {
     try {
+      let random = new Date().toISOString().substring(0, 10);
       await KeyCloakService.setKeycloakConfigUrl(
-        `${process.env.VUE_APP_PATH}config/kc/keycloak.json`
+        `${process.env.VUE_APP_PATH}config/kc/keycloak.json?${random}`
       );
 
       const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
