@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { getDeepLink } from "@/util/index.ts";
+import { getDeepLink } from '@/util/index.ts'
 export default {
   props: {
     corp_num: {
@@ -22,11 +22,11 @@ export default {
     }
   },
   methods: {
-    handleClick() {
-      window.open(getDeepLink(this.corp_num));
+    handleClick () {
+      window.open(getDeepLink(this.corp_num))
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

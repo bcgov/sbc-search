@@ -24,25 +24,25 @@ export default {
       }
     }
   },
-  data() {
+  data () {
     return {
       searchQuery: this.query
-    };
+    }
   },
-  mounted() {
-    this.$root.$on("setCorpSearchInput", r => (this.searchQuery = r));
+  mounted () {
+    this.$root.$on('setCorpSearchInput', r => (this.searchQuery = r))
   },
   methods: {
-    clear() {
-      this.searchQuery = "";
+    clear () {
+      this.searchQuery = ''
     }
   },
   watch: {
-    searchQuery(nq) {
-      this.$emit("update:query", nq);
+    searchQuery (nq) {
+      this.$emit('update:query', nq)
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .search-input-corporation {

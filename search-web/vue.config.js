@@ -1,11 +1,11 @@
-const path = require("path")
+const path = require('path')
 module.exports = {
   configureWebpack: {
-    devtool: "source-map",
+    devtool: 'source-map',
     resolve: {
       alias: {
-        vue: path.resolve("./node_modules/vue"),
-        $assets: path.resolve("./src/assets/")
+        vue: path.resolve('./node_modules/vue'),
+        $assets: path.resolve('./src/assets/')
       }
     }
   },
@@ -24,5 +24,5 @@ module.exports = {
       }
     }
   },
-  transpileDependencies: ["vuetify", "sbc-common-components"]
-};
+  transpileDependencies: ['vuetify', 'sbc-common-components']
+}

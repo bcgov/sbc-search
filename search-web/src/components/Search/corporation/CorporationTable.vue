@@ -130,12 +130,11 @@
 </template>
 
 <script>
-import { CORPORATION_HEADERS } from "@/config/index.ts";
-import { corporationSearch } from "@/api/SearchApi";
-import axios from "axios";
-import dayjs from "dayjs";
-import { formatDate } from "@/util/index.ts";
-import pick from "lodash-es/pick";
+import { CORPORATION_HEADERS } from '@/config/index.ts'
+import { corporationSearch } from '@/api/SearchApi'
+import axios from 'axios'
+import { formatDate } from '@/util/index.ts'
+import pick from 'lodash-es/pick'
 
 export default {
   props: {
@@ -144,39 +143,39 @@ export default {
       type: Object
     },
     page: {
-      default: "1",
+      default: '1',
       type: String
     }
   },
   computed: {
-    headers() {
+    headers () {
       const filter = {
         addr: true,
         postalCd: true
-      };
-      return CORPORATION_HEADERS.filter(ch => !filter[ch.value]);
-    },
-    showingMin() {
-      if (this.page == 1) {
-        return 1;
       }
-      let min = 0;
+      return CORPORATION_HEADERS.filter(ch => !filter[ch.value])
+    },
+    showingMin () {
+      if (this.page === 1) {
+        return 1
+      }
+      let min = 0
       for (let i = 0; i < this.page - 1; i++) {
-        min += this.items_per_page;
+        min += this.items_per_page
       }
-      return min;
+      return min
     },
-    showingMax() {
-      if (this.corporations.length < this.items_per_page && this.page == 1) {
-        return this.corporations.length;
+    showingMax () {
+      if (this.corporations.length < this.items_per_page && this.page === 1) {
+        return this.corporations.length
       }
-      if (this.corporations.length < this.items_per_page && this.page != 1) {
-        return this.showingMin + this.corporations.length;
+      if (this.corporations.length < this.items_per_page && this.page !== 1) {
+        return this.showingMin + this.corporations.length
       }
-      return this.page * this.items_per_page;
+      return this.page * this.items_per_page
     }
   },
-  data() {
+  data () {
     return {
       corporations: [],
       loading: false,
@@ -187,79 +186,79 @@ export default {
       sortDesc: [],
       items_per_page: 50,
       source: null
-    };
+    }
   },
   methods: {
     formatDate,
-    orderItems(items) {
+    orderItems (items) {
       return pick(items, [
-        "corpNum",
-        "corpTypCd",
-        "corpNme",
-        "recognitionDts",
-        "stateTypCd"
-      ]);
+        'corpNum',
+        'corpTypCd',
+        'corpNme',
+        'recognitionDts',
+        'stateTypCd'
+      ])
     },
-    pageNext() {
-      this.$emit("pageUpdate", (parseInt(this.page) + 1).toString());
+    pageNext () {
+      this.$emit('pageUpdate', (parseInt(this.page) + 1).toString())
     },
-    pagePrev() {
-      if (this.page > "1") {
-        this.$emit("pageUpdate", (parseInt(this.page) - 1).toString());
+    pagePrev () {
+      if (this.page > '1') {
+        this.$emit('pageUpdate', (parseInt(this.page) - 1).toString())
       }
     },
-    updateSort() {
-      this.$emit("sortUpdate", {
+    updateSort () {
+      this.$emit('sortUpdate', {
         sortBy: this.options.sortBy,
         sortDesc: this.options.sortDesc
-      });
+      })
     },
-    handleTableRowClick(item, e) {
-      e.target.closest("tr").classList.add("row-clicked");
-      this.$router.push("/corporation/" + item["corpNum"]);
-      return;
+    handleTableRowClick (item, e) {
+      e.target.closest('tr').classList.add('row-clicked')
+      this.$router.push('/corporation/' + item['corpNum'])
     },
-    cancelRequest() {
-      this.source && this.source.cancel("Request aborted by user");
+    cancelRequest () {
+      this.source && this.source.cancel('Request aborted by user')
     },
-    async fetchData(query) {
-      const { sort_type, sort_value } = query;
-      this.sortBy = [sort_value];
-      if (sort_type === "asc") {
-        this.sortDesc = [false];
-      } else if (sort_type === "dsc") {
-        this.sortDesc = [true];
+    async fetchData (query) {
+      const { sortType, sortValue } = query
+      this.sortBy = [sortValue]
+      if (sortType === 'asc') {
+        this.sortDesc = [false]
+      } else if (sortType === 'dsc') {
+        this.sortDesc = [true]
       }
-      this.loading = true;
-      this.disableSorting = true;
+      this.loading = true
+      this.disableSorting = true
 
-      const CancelToken = axios.CancelToken;
-      this.source = CancelToken.source();
+      const CancelToken = axios.CancelToken
+      this.source = CancelToken.source()
 
       corporationSearch(query, this.source.token)
         .then(result => {
-          this.corporations = result.data.results;
-          this.totalItems = result.data.numResults;
-          this.$emit("success", result);
-          this.totalItems >= 165 ? this.$emit("overload") : "";
+          this.corporations = result.data.results
+          this.totalItems = result.data.numResults
+          this.$emit('success', result)
+          // eslint-disable-next-line no-unused-expressions
+          this.totalItems >= 165 ? this.$emit('overload') : ''
         })
         .catch(e => {
-          this.corporations = [];
-          this.totalItems = 0;
-          this.$emit("error", e);
+          this.corporations = []
+          this.totalItems = 0
+          this.$emit('error', e)
         })
         .finally(() => {
-          this.disableSorting = false;
-          this.loading = false;
-        });
+          this.disableSorting = false
+          this.loading = false
+        })
     }
   },
   watch: {
-    query(nq) {
-      this.fetchData(nq);
+    query (nq) {
+      this.fetchData(nq)
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .corporation-table .custom-footer {

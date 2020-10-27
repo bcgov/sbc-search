@@ -18,7 +18,7 @@ export default {
       type: String
     }
   }
-};
+}
 </script>
 
 <style lang="scss"></style>

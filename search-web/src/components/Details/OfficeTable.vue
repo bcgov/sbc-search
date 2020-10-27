@@ -143,37 +143,37 @@
 export default {
   props: {
     officesheld: {
-      default: function() {
+      default: function () {
         return {
           sameAddr: null,
           sameNameAndCompany: null
-        };
+        }
       },
       type: Object
     },
     details: {
-      default: function() {
+      default: function () {
         return {
           corpNme: null,
           lastNme: null,
           firstNme: null,
           middleNme: null,
           addr: null
-        };
+        }
       },
       type: Object
     }
   },
   computed: {
-    offices() {
+    offices () {
       if (this.officesheld && this.officesheld.offices) {
-        return this.officesheld.offices;
+        return this.officesheld.offices
       } else {
-        return null;
+        return null
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

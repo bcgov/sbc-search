@@ -34,49 +34,46 @@
 </template>
 
 <script>
-import Details from "@/components/Details/Details.vue";
-import {
-  corpPartySearchDetail,
-  corpPartyOfficeSearch
-} from "@/api/SearchApi.js";
+import Details from '@/components/Details/Details.vue'
+import { corpPartySearchDetail } from '@/api/SearchApi'
 export default {
   components: {
     Details
   },
   computed: {
-    isLoading() {
-      return this.detail === null;
+    isLoading () {
+      return this.detail === null
     }
   },
-  data() {
+  data () {
     return {
       detail: null,
       error: false,
       errorMessage: null
-    };
+    }
   },
 
-  mounted() {
-    const corp_party_id = this.$route.params["id"];
-    if (corp_party_id) {
-      corpPartySearchDetail(corp_party_id)
+  mounted () {
+    const corpPartyId = this.$route.params['id']
+    if (corpPartyId) {
+      corpPartySearchDetail(corpPartyId)
         .then(results => {
-          this.detail = results.data;
-          this.error = false;
-          this.errorMessage = null;
+          this.detail = results.data
+          this.error = false
+          this.errorMessage = null
         })
         .catch(error => {
-          this.error = true;
-          this.detail = {};
+          this.error = true
+          this.detail = {}
           this.errorMessage = `${
             error.response && error.response.data && error.response.data.message
               ? error.response.data.message
               : error.toString()
-          }`;
-        });
+          }`
+        })
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

@@ -2,25 +2,23 @@
   <SbcSignout :redirect-url="redirectUrl"></SbcSignout>
 </template>
 
-<script>
-import SbcSignout from "sbc-common-components/src/components/SbcSignout.vue";
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import SbcSignout from 'sbc-common-components/src/components/SbcSignout.vue'
 
-export default {
-  props: {
-    redirectUrl: {
-      default: sessionStorage.getItem("VUE_APP_FRONTEND_DOMAIN"),
-      type: String
-    }
-  },
-  data() {
-    return {
-      redUrl: null
-    };
+@Component({
+  methods: {
   },
   components: {
     SbcSignout
   }
-};
+})
+export default class SignoutView extends Vue {
+  @Prop() redirectUrl: string
+  async mounted () {
+    this.$store.replaceState({})
+  }
+}
 </script>
 
 <style></style>

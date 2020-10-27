@@ -49,22 +49,22 @@
 export default {
   props: {
     initColumn: {
-      default: "none",
+      default: 'none',
       type: String
     }
   },
-  data() {
+  data () {
     return {
       active: this.initColumn,
       tips: false
-    };
+    }
   },
   methods: {
-    handleClick(type) {
-      this.$emit("click", type);
+    handleClick (type) {
+      this.$emit('click', type)
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .search-column {

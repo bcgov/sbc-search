@@ -1,9 +1,9 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import corpParty from "./corpparty";
-import corporation from "./corporation";
+import Vue from 'vue'
+import Vuex from 'vuex'
+import corpParty from './corpparty'
+import corporation from './corporation'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {},
@@ -13,4 +13,4 @@ export default new Vuex.Store({
     corpParty,
     corporation
   }
-});
+})

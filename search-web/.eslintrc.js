@@ -3,14 +3,19 @@ module.exports = {
   env: {
     node: true
   },
-  extends: ["plugin:vue/essential", "@vue/prettier"],
+  extends: [
+    'plugin:vue/essential',
+    '@vue/standard',
+    '@vue/typescript'
+  ],
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? ["error", { allow: ["warn", "error"] }] : "off",
-    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
-    "vue/require-v-for-key": "off"
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'max-len': ['warn', { code: 120, ignoreRegExpLiterals: true }]
   },
   parserOptions: {
-    parser: "babel-eslint"
+    parser: '@typescript-eslint/parser',
+    plugins: ['@typescript-eslint']
   },
   overrides: [
     {

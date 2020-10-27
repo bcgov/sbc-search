@@ -124,7 +124,7 @@
           :class="{
             'mb-10': $vuetify.breakpoint.mdAndUp
           }"
-          :initColumn="additional_cols"
+          :initColumn="additionalCols"
         ></SearchColumn>
 
         <v-btn
@@ -150,35 +150,30 @@
         @pageUpdate="handlePageUpdate"
         @sortUpdate="handleSortUpdate"
         :qs="qs"
-        :type="additional_cols"
+        :type="additionalCols"
       ></CorpPartyTable>
     </div>
   </div>
 </template>
 
 <script>
-import SbcButton from "@/components/SbcButton.vue";
-import SearchColumn from "@/components/Search/corpparty/SearchColumns.vue";
-import AddFilterButton from "@/components/Filter/AddFilterButton.vue";
-import CorpPartySearch from "@/components/Search/corpparty/CorpPartySearch.vue";
-import { mapGetters } from "vuex";
-import { downloadFile } from "@/util/index.ts";
-import omit from "lodash-es/omit";
-import isEmpty from "lodash-es/isEmpty";
-const qs = require("qs");
-const uniqid = require("uniqid");
+import SbcButton from '@/components/SbcButton.vue'
+import SearchColumn from '@/components/Search/corpparty/SearchColumns.vue'
+import AddFilterButton from '@/components/Filter/AddFilterButton.vue'
+import CorpPartySearch from '@/components/Search/corpparty/CorpPartySearch.vue'
+import { mapGetters } from 'vuex'
+import { downloadFile, buildQueryString } from '@/util/index.ts'
+import omit from 'lodash-es/omit'
+import isEmpty from 'lodash-es/isEmpty'
 
-import {
-  searchApi,
-  EXPORT_CORPPARTY_URL,
-  exportCorpPartySearch
-} from "@/api/SearchApi";
-import CorpPartyTable from "@/components/Search/corpparty/CorpPartyTable.vue";
-import { buildQueryString } from "@/util/index.ts";
-import SearchLogic from "@/components/Search/corpparty/SearchLogic.vue";
-import SearchTips from "@/components/Search/corpparty/SearchTips.vue";
-import { BACKEND_URL } from "@/config/index.ts";
-import dayjs from "dayjs";
+import { exportCorpPartySearch } from '@/api/SearchApi'
+import CorpPartyTable from '@/components/Search/corpparty/CorpPartyTable.vue'
+
+import SearchLogic from '@/components/Search/corpparty/SearchLogic.vue'
+import SearchTips from '@/components/Search/corpparty/SearchTips.vue'
+import dayjs from 'dayjs'
+const qs = require('qs')
+const uniqid = require('uniqid')
 export default {
   components: {
     SbcButton,
@@ -190,25 +185,25 @@ export default {
     SearchColumn
   },
   computed: {
-    enableRemove() {
-      return !(this.filters && this.filters.length === 1);
+    enableRemove () {
+      return !(this.filters && this.filters.length === 1)
     },
     ...mapGetters({
-      filters: "corpParty/filters/getFilters",
-      numFilters: "corpParty/filters/getNumFilters"
+      filters: 'corpParty/filters/getFilters',
+      numFilters: 'corpParty/filters/getNumFilters'
     })
   },
-  data() {
+  data () {
     return {
-      title: "Welcome to Director Search",
+      title: 'Welcome to Director Search',
       searchQuery: null,
-      logic: "ALL",
-      initLogic: "ALL",
+      logic: 'ALL',
+      initLogic: 'ALL',
       qs: null,
-      additional_cols: "none",
-      page: "1",
-      sort_value: "lastNme",
-      sort_type: "dsc",
+      additionalCols: 'none',
+      page: '1',
+      sortValue: 'lastNme',
+      sortType: 'dsc',
       error: false,
       errorMessage: null,
       disableSearch: false,
@@ -217,319 +212,321 @@ export default {
       warningMessage: null,
       overload: false,
       overloadMessage: null
-    };
+    }
   },
-  mounted() {
-    this.resetError();
-    this.resetWarning();
-    this.resetOverload();
-    this.init();
+  mounted () {
+    this.resetError()
+    this.resetWarning()
+    this.resetOverload()
+    this.init()
   },
   watch: {
-    "$route.query"() {
-      this.init();
+    '$route.query' () {
+      this.init()
     }
   },
   methods: {
-    abortRequest() {
-      this.$refs.corpPartyTable.cancelRequest();
+    abortRequest () {
+      this.$refs.corpPartyTable.cancelRequest()
     },
-    handleTitleClick() {
+    handleTitleClick () {
       this.$router
         .push({
-          path: "/"
+          path: '/'
         })
-        .catch(e => {});
+        .catch(e => {})
     },
-    handleOverload() {
-      this.overload = true;
+    handleOverload () {
+      this.overload = true
       this.overloadMessage =
-        "Your search returned 165 or more results, which is the limit of the Director Search. Results will be missing at random, irrespective of sorting. Please be sure to narrow your search in order to receive a usable results list.";
+        // eslint-disable-next-line max-len
+        'Your search returned 165 or more results, which is the limit of the Director Search. Results will be missing at random, irrespective of sorting. Please be sure to narrow your search in order to receive a usable results list.'
     },
-    resetError() {
-      this.error = false;
-      this.errorMessage = "";
+    resetError () {
+      this.error = false
+      this.errorMessage = ''
     },
-    resetOverload() {
-      this.overload = false;
-      this.overloadMessage = null;
+    resetOverload () {
+      this.overload = false
+      this.overloadMessage = null
     },
-    resetWarning() {
-      this.warning = false;
-      this.warningMessage = "";
+    resetWarning () {
+      this.warning = false
+      this.warningMessage = ''
     },
-    handleError(error) {
-      this.disableSearch = false;
+    handleError (error) {
+      this.disableSearch = false
       this.errorMessage = `${error.toString()} ${(error.response &&
         error.response.data.message) ||
-        ""}`;
-      this.error = true;
+        ''}`
+      this.error = true
     },
-    handleSuccess() {
-      this.disableSearch = false;
-      this.error = false;
+    handleSuccess () {
+      this.disableSearch = false
+      this.error = false
     },
-    handleExport() {
-      this.exportLoading = true;
-      const queryString = this.generateQueryString();
-      const datetime = dayjs().format("YYYY-MM-DD HH:mm:ss");
+    handleExport () {
+      this.exportLoading = true
+      const queryString = this.generateQueryString()
+      const datetime = dayjs().format('YYYY-MM-DD HH:mm:ss')
       exportCorpPartySearch(queryString)
         .then(result => {
-          downloadFile(result.data, `Director Search Results ${datetime}.xlsx`);
+          downloadFile(result.data, `Director Search Results ${datetime}.xlsx`)
         })
         .catch(error => {
-          this.$root.$emit("openSnack", {
+          this.$root.$emit('openSnack', {
             text: `${error.toString()} ${(error.response &&
               error.response.data.message) ||
-              ""}`,
-            btnColor: "white",
+              ''}`,
+            btnColor: 'white',
             timeout: 2000
-          });
+          })
         })
         .finally(() => {
-          this.exportLoading = false;
-        });
+          this.exportLoading = false
+        })
     },
-    handlePageUpdate(page) {
-      this.page = page;
-      this.handleSearch();
+    handlePageUpdate (page) {
+      this.page = page
+      this.handleSearch()
     },
-    handleColumnClick(type) {
-      const query = Object.assign({}, this.$route.query);
-      query.additional_cols = type;
-      this.additional_cols = type;
+    handleColumnClick (type) {
+      const query = Object.assign({}, this.$route.query)
+      query.additionalCols = type
+      this.additionalCols = type
       this.$router
         .push({
           query
         })
         .catch(e => {
-          if (e && e.name && e.name !== "NavigationDuplicated") {
-            console.error(e);
+          if (e && e.name && e.name !== 'NavigationDuplicated') {
+            console.error(e)
           }
-        });
+        })
     },
-    handleSortUpdate(options) {
+    handleSortUpdate (options) {
       if (options.sortBy.length === 0 && options.sortDesc.length === 0) {
-        this.sort_value = "lastNme";
-        this.sort_type = "dsc";
+        this.sortValue = 'lastNme'
+        this.sortType = 'dsc'
       } else {
-        this.sort_value = options.sortBy[0];
+        this.sortValue = options.sortBy[0]
         if (options.sortDesc.length > 0) {
-          this.sort_type = options.sortDesc[0] ? "dsc" : "asc";
+          this.sortType = options.sortDesc[0] ? 'dsc' : 'asc'
         } else {
-          this.sort_type = "dsc";
+          this.sortType = 'dsc'
         }
       }
-      this.handleSearch();
+      this.handleSearch()
     },
-    addFilter(event, field = "firstNme", operator = "contains", value = "") {
-      this.$store.commit("corpParty/filters/addFilter", {
+    addFilter (event, field = 'firstNme', operator = 'contains', value = '') {
+      this.$store.commit('corpParty/filters/addFilter', {
         uid: uniqid(),
         field,
         operator,
         value
-      });
+      })
     },
-    isFormValid() {
-      return this.$refs.corpPartySearchForm.validate();
+    isFormValid () {
+      return this.$refs.corpPartySearchForm.validate()
     },
-    validateFilters() {
-      const length = this.filters.length;
+    validateFilters () {
+      const length = this.filters.length
 
       if (length > 1) {
-        if (this.filters.find(f => f.field === "addrLine1")) {
+        if (this.filters.find(f => f.field === 'addrLine1')) {
           return {
-            warning: "true",
+            warning: 'true',
             warningMessage:
-              "This search may return many results and be very slow. Add more filters to improve performance"
-          };
+              'This search may return many results and be very slow. Add more filters to improve performance'
+          }
         }
       }
 
-      //Standalone filters
+      // Standalone filters
       if (length === 1) {
-        const field = this.filters[0].field;
-        const operator = this.filters[0].operator;
+        const field = this.filters[0].field
+        const operator = this.filters[0].operator
 
-        if (field === "stateTypCd") {
+        if (field === 'stateTypCd') {
           return {
             error: true,
-            errorMessage: "Cannot perform search by Company Status Only"
-          };
+            errorMessage: 'Cannot perform search by Company Status Only'
+          }
         }
 
-        if (field === "addrLine1")
+        if (field === 'addrLine1') {
           return {
             error: true,
-            errorMessage: "Cannot perform search by address Only"
-          };
+            errorMessage: 'Cannot perform search by address Only'
+          }
+        }
 
-        if (field === "postalCd") {
+        if (field === 'postalCd') {
           return {
-            warning: "true",
+            warning: 'true',
             warningMessage:
-              "This search may return many results and be very slow. Add more filters to improve performance"
-          };
+              'This search may return many results and be very slow. Add more filters to improve performance'
+          }
         }
 
         if (
-          field.includes("Nme") &&
-          (operator === "nicknames" || operator === "similar")
+          field.includes('Nme') &&
+          (operator === 'nicknames' || operator === 'similar')
         ) {
           return {
-            warning: "true",
+            warning: 'true',
             warningMessage:
-              "This search may return many results and be very slow. Add more filters to improve performance"
-          };
+              'This search may return many results and be very slow. Add more filters to improve performance'
+          }
         }
 
         if (
-          (field === "firstNme" || field === "anyNme") &&
-          (operator === "contains" ||
-            operator === "startswith" ||
-            operator === "endswith")
+          (field === 'firstNme' || field === 'anyNme') &&
+          (operator === 'contains' ||
+            operator === 'startswith' ||
+            operator === 'endswith')
         ) {
           return {
-            warning: "true",
+            warning: 'true',
             warningMessage:
-              "This search may return many results and be very slow. Add more filters to improve performance"
-          };
+              'This search may return many results and be very slow. Add more filters to improve performance'
+          }
         }
       }
 
       return {
         warning: false,
         warningMessage: null
-      };
+      }
     },
-    handleNewSearch() {
-      this.resetError();
-      this.resetWarning();
-      this.resetOverload();
+    handleNewSearch () {
+      this.resetError()
+      this.resetWarning()
+      this.resetOverload()
       if (!this.isFormValid()) {
-        return false;
+        return false
       }
 
-      const result = this.validateFilters();
+      const result = this.validateFilters()
       if (result.error) {
-        this.error = true;
-        this.errorMessage = result.errorMessage;
-        return false;
+        this.error = true
+        this.errorMessage = result.errorMessage
+        return false
       } else if (result.warning) {
-        this.warning = true;
-        this.warningMessage = result.warningMessage;
+        this.warning = true
+        this.warningMessage = result.warningMessage
       }
 
-      this.disableSearch = true;
-      this.sort_value = "lastNme";
-      this.sort_type = "dsc";
-      const queryString = this.generateQueryString(1);
+      this.disableSearch = true
+      this.sortValue = 'lastNme'
+      this.sortType = 'dsc'
+      const queryString = this.generateQueryString(1)
 
       this.$router
         .push({
           query: qs.parse(queryString)
         })
         .catch(e => {
-          if (e && e.name && e.name === "NavigationDuplicated") {
-            this.$refs.corpPartyTable.fetchData();
+          if (e && e.name && e.name === 'NavigationDuplicated') {
+            this.$refs.corpPartyTable.fetchData()
           }
-        });
+        })
     },
-    handleSearch() {
-      const queryString = this.generateQueryString();
+    handleSearch () {
+      const queryString = this.generateQueryString()
       this.$router
         .push({
           query: qs.parse(queryString)
         })
         .catch(e => {
-          if (e && e.name && e.name !== "NavigationDuplicated") {
-            console.error(e);
+          if (e && e.name && e.name !== 'NavigationDuplicated') {
+            console.error(e)
           }
-        });
+        })
     },
-    renderTable() {
-      const queryString = this.generateQueryString();
-      this.qs = queryString;
+    renderTable () {
+      const queryString = this.generateQueryString()
+      this.qs = queryString
     },
-    generateQueryString(page) {
+    generateQueryString (page) {
       let queryString =
         buildQueryString(this.filters) +
-        `&mode=${this.logic}&additional_cols=${
-          this.additional_cols
-        }&page=${page || this.page}`;
-      if (this.sort_value && this.sort_type) {
-        queryString += `&sort_type=${this.sort_type}&sort_value=${this.sort_value}`;
+        `&mode=${this.logic}&additionalCols=${
+          this.additionalCols
+        }&page=${page || this.page}`
+      if (this.sortValue && this.sortType) {
+        queryString += `&sortType=${this.sortType}&sortValue=${this.sortValue}`
       }
 
-      return queryString;
+      return queryString
     },
-    init() {
+    init () {
       const {
         mode,
-        additional_cols,
+        additionalCols,
         page,
-        sort_value,
-        sort_type
-      } = this.$route.query;
+        sortValue,
+        sortType
+      } = this.$route.query
 
       if (mode) {
-        this.logic = mode;
-        this.initLogic = mode;
+        this.logic = mode
+        this.initLogic = mode
       }
 
-      if (additional_cols) {
-        this.additional_cols = additional_cols;
+      if (additionalCols) {
+        this.additionalCols = additionalCols
       }
 
       if (page) {
-        this.page = page;
+        this.page = page
       }
 
-      if (sort_value) {
-        this.sort_value = sort_value;
+      if (sortValue) {
+        this.sortValue = sortValue
       }
 
-      if (sort_type) {
-        this.sort_type = sort_type;
+      if (sortType) {
+        this.sortType = sortType
       }
 
       if (isEmpty(this.$route.query)) {
-        this.qs = null;
+        this.qs = null
       } else {
         const queryFilters = Object.assign(
           {},
           omit(
             this.$route.query,
-            "mode",
-            "additional_cols",
-            "page",
-            "sort_type",
-            "sort_value"
+            'mode',
+            'additionalCols',
+            'page',
+            'sortType',
+            'sortValue'
           )
-        );
+        )
 
-        if (typeof queryFilters.field === "string") {
-          queryFilters.uid = uniqid();
-          this.$store.commit("corpParty/filters/setFilters", [queryFilters]);
+        if (typeof queryFilters.field === 'string') {
+          queryFilters.uid = uniqid()
+          this.$store.commit('corpParty/filters/setFilters', [queryFilters])
         } else if (Array.isArray(queryFilters.field)) {
-          let temp = [];
-          const length = queryFilters.field.length;
+          let temp = []
+          const length = queryFilters.field.length
           for (let i = 0; i < length; i++) {
             temp.push({
               uid: uniqid(),
               field: queryFilters.field[i],
               operator: queryFilters.operator[i],
               value: queryFilters.value[i]
-            });
+            })
           }
-          this.$store.commit("corpParty/filters/setFilters", temp);
+          this.$store.commit('corpParty/filters/setFilters', temp)
         }
-        this.disableSearch = true;
-        this.renderTable();
+        this.disableSearch = true
+        this.renderTable()
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

@@ -57,13 +57,12 @@
 </template>
 
 <script>
-import SearchInput from "@/components/Search/corpparty/SearchInput.vue";
-import FieldSelect from "@/components/Search/corpparty/FieldSelect.vue";
-import OperatorSelect from "@/components/Search/corpparty/OperatorSelect.vue";
-import TermSelect from "@/components/Search/corpparty/TermSelect.vue";
-import { FIELD_VALUES, OPERATOR_VALUES, TERM_VALUES } from "@/config/index.ts";
-import { mapGetters, mapMutations } from "vuex";
-import filter from "lodash-es/filter";
+import SearchInput from '@/components/Search/corpparty/SearchInput.vue'
+import FieldSelect from '@/components/Search/corpparty/FieldSelect.vue'
+import OperatorSelect from '@/components/Search/corpparty/OperatorSelect.vue'
+import TermSelect from '@/components/Search/corpparty/TermSelect.vue'
+import { FIELD_VALUES, OPERATOR_VALUES, TERM_VALUES } from '@/config/index.ts'
+import { mapMutations } from 'vuex'
 
 export default {
   props: {
@@ -84,26 +83,26 @@ export default {
       type: String
     },
     initQuery: {
-      default: "",
+      default: '',
       type: String
     }
   },
   computed: {
-    FIELDS() {
-      return FIELD_VALUES;
+    FIELDS () {
+      return FIELD_VALUES
     },
-    OPERATORS() {
-      if (this.selectedField === "addrLine1") {
-        return OPERATOR_VALUES.filter(o => o.value === "contains");
-      } else if (this.selectedField === "stateTypCd") {
-        return OPERATOR_VALUES.filter(o => o.value === "exact");
-      } else if (this.selectedField === "postalCd") {
-        return OPERATOR_VALUES.filter(o => o.value === "exact");
+    OPERATORS () {
+      if (this.selectedField === 'addrLine1') {
+        return OPERATOR_VALUES.filter(o => o.value === 'contains')
+      } else if (this.selectedField === 'stateTypCd') {
+        return OPERATOR_VALUES.filter(o => o.value === 'exact')
+      } else if (this.selectedField === 'postalCd') {
+        return OPERATOR_VALUES.filter(o => o.value === 'exact')
       }
-      return OPERATOR_VALUES;
+      return OPERATOR_VALUES
     },
-    TERMS() {
-      return TERM_VALUES[this.selectedField];
+    TERMS () {
+      return TERM_VALUES[this.selectedField]
     }
   },
   components: {
@@ -112,89 +111,89 @@ export default {
     OperatorSelect,
     TermSelect
   },
-  data() {
+  data () {
     return {
       selectedField: this.criteria.field,
       selectedOperator: this.criteria.operator
-    };
+    }
   },
   methods: {
     ...mapMutations({
-      setSearchPropValue: "corpParty/filters/setSearchPropValue"
+      setSearchPropValue: 'corpParty/filters/setSearchPropValue'
     }),
-    handleRemove() {
-      this.$store.commit("corpParty/filters/removeFilter", this.uid);
+    handleRemove () {
+      this.$store.commit('corpParty/filters/removeFilter', this.uid)
     },
-    handleFieldChange(field) {
+    handleFieldChange (field) {
       this.setSearchPropValue({
         uid: this.uid,
-        property: "field",
+        property: 'field',
         value: field
-      });
+      })
     },
-    handleOperatorChange(operator) {
+    handleOperatorChange (operator) {
       this.setSearchPropValue({
         uid: this.uid,
-        property: "operator",
+        property: 'operator',
         value: operator
-      });
+      })
     },
-    handleTermChange(value) {
+    handleTermChange (value) {
       this.setSearchPropValue({
         uid: this.uid,
-        property: "value",
+        property: 'value',
         value: value
-      });
+      })
     },
-    handleInputChange(value) {
+    handleInputChange (value) {
       this.setSearchPropValue({
         uid: this.uid,
-        property: "value",
+        property: 'value',
         value: value
-      });
+      })
     },
-    clearTerm() {
-      this.$store.commit("corpParty/filters/setSearchPropValue", {
+    clearTerm () {
+      this.$store.commit('corpParty/filters/setSearchPropValue', {
         uid: this.uid,
-        property: "value",
-        value: ""
-      });
+        property: 'value',
+        value: ''
+      })
     }
   },
   watch: {
-    selectedField(nf, of) {
-      if (nf === "addrLine1") {
+    selectedField (nf, of) {
+      if (nf === 'addrLine1') {
         this.setSearchPropValue({
           uid: this.uid,
-          property: "operator",
-          value: "contains"
-        });
-      } else if (nf === "stateTypCd") {
+          property: 'operator',
+          value: 'contains'
+        })
+      } else if (nf === 'stateTypCd') {
         this.setSearchPropValue({
           uid: this.uid,
-          property: "operator",
-          value: "exact"
-        });
-        const value = this.criteria.value;
-        if (value !== "ACT" && value !== "HIS") {
+          property: 'operator',
+          value: 'exact'
+        })
+        const value = this.criteria.value
+        if (value !== 'ACT' && value !== 'HIS') {
           this.setSearchPropValue({
             uid: this.uid,
-            property: "value",
-            value: "ACT"
-          });
+            property: 'value',
+            value: 'ACT'
+          })
         }
-      } else if (nf === "postalCd") {
+      } else if (nf === 'postalCd') {
         this.setSearchPropValue({
           uid: this.uid,
-          property: "operator",
-          value: "exact"
-        });
-      } else if (of === "stateTypCd") {
-        this.clearTerm();
+          property: 'operator',
+          value: 'exact'
+        })
+      } else if (of === 'stateTypCd') {
+        this.clearTerm()
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

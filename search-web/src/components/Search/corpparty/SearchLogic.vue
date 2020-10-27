@@ -19,40 +19,40 @@ export default {
       type: Number
     },
     logic: {
-      default: "ANY",
+      default: 'ANY',
       type: String
     },
     init: {
-      default: "ANY",
+      default: 'ANY',
       type: String
     }
   },
-  data() {
+  data () {
     return {
       select: this.init,
       items: [
         {
-          text: "All",
-          value: "ALL"
+          text: 'All',
+          value: 'ALL'
         },
         {
-          text: "Any",
-          value: "ANY"
+          text: 'Any',
+          value: 'ANY'
         }
       ]
-    };
+    }
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
-      this.select = this.init;
-    });
+      this.select = this.init
+    })
   },
   watch: {
-    select(nl) {
-      this.$emit("update:logic", nl);
+    select (nl) {
+      this.$emit('update:logic', nl)
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .search-logic {

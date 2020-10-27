@@ -9,39 +9,39 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       snackbar: false,
       timeout: 5000,
-      color: "error",
-      btnColor: "pink",
+      color: 'error',
+      btnColor: 'pink',
       text: null
-    };
-  },
-  methods: {
-    openSnackbar() {
-      this.snackbar = true;
-    },
-    setOptions(opts) {
-      const {
-        timeout = 5000,
-        color = "error",
-        btnColor = "pink",
-        text = null
-      } = opts;
-      this.color = color;
-      this.timeout = timeout;
-      this.btnColor = btnColor;
-      this.text = text;
     }
   },
-  mounted() {
-    this.$root.$on("openSnack", opts => {
-      this.setOptions(opts);
-      this.openSnackbar();
-    });
+  methods: {
+    openSnackbar () {
+      this.snackbar = true
+    },
+    setOptions (opts) {
+      const {
+        timeout = 5000,
+        color = 'error',
+        btnColor = 'pink',
+        text = null
+      } = opts
+      this.color = color
+      this.timeout = timeout
+      this.btnColor = btnColor
+      this.text = text
+    }
+  },
+  mounted () {
+    this.$root.$on('openSnack', opts => {
+      this.setOptions(opts)
+      this.openSnackbar()
+    })
   }
-};
+}
 </script>
 
 <style></style>

@@ -94,14 +94,13 @@
 </template>
 
 <script>
-import PrintButton from "@/components/PrintButton.vue";
-import { getTextFromValues } from "@/util/index.ts";
-import { CORPPARTY_HEADERS } from "@/config/index.ts";
-import pick from "lodash-es/pick";
-import omit from "lodash-es/omit";
-import { corpPartySearch, corpPartyOfficeSearch } from "@/api/SearchApi.js";
-import dayjs from "dayjs";
-import OfficeTable from "@/components/Details/OfficeTable.vue";
+import PrintButton from '@/components/PrintButton.vue'
+import { getTextFromValues } from '@/util/index.ts'
+import { CORPPARTY_HEADERS } from '@/config/index.ts'
+import pick from 'lodash-es/pick'
+import omit from 'lodash-es/omit'
+import dayjs from 'dayjs'
+import OfficeTable from '@/components/Details/OfficeTable.vue'
 export default {
   components: {
     OfficeTable,
@@ -118,89 +117,87 @@ export default {
     }
   },
   computed: {
-    filteredDetail() {
+    filteredDetail () {
       const filtered = omit(this.detail, [
-        "postalCd",
-        "province",
-        "corpPartyId"
-      ]);
-      if (filtered["appointmentDt"]) {
-        filtered["appointmentDt"] = dayjs(filtered["appointmentDt"]).format(
-          "YYYY-MM-DD"
-        );
+        'postalCd',
+        'province',
+        'corpPartyId'
+      ])
+      if (filtered['appointmentDt']) {
+        filtered['appointmentDt'] = dayjs(filtered['appointmentDt']).format(
+          'YYYY-MM-DD'
+        )
       } else {
-        filtered["appointmentDt"] = "-";
+        filtered['appointmentDt'] = '-'
       }
-      if (filtered["cessationDt"]) {
-        filtered["cessationDt"] = dayjs(filtered["cessationDt"]).format(
-          "YYYY-MM-DD"
-        );
+      if (filtered['cessationDt']) {
+        filtered['cessationDt'] = dayjs(filtered['cessationDt']).format(
+          'YYYY-MM-DD'
+        )
       } else {
-        filtered["cessationDt"] = "-";
+        filtered['cessationDt'] = '-'
       }
 
-      filtered["stateTypCd"] =
-        filtered["states"] && filtered["states"][0]["stateTypCd"];
+      filtered['stateTypCd'] =
+        filtered['states'] && filtered['states'][0]['stateTypCd']
 
       const includedFields = [
-        "lastNme",
-        "firstNme",
-        "middleNme",
-        "deliveryAddr",
-        "mailingAddr",
-        "corpPartyEmail",
-        "partyTypeDesc",
-        "appointmentDt",
-        "cessationDt",
-        "stateTypCd",
-        "corpNme",
-        "corpNum",
-        "corpTypCd",
-        "corpAdminEmail"
-      ];
+        'lastNme',
+        'firstNme',
+        'middleNme',
+        'deliveryAddr',
+        'mailingAddr',
+        'corpPartyEmail',
+        'partyTypeDesc',
+        'appointmentDt',
+        'cessationDt',
+        'stateTypCd',
+        'corpNme',
+        'corpNum',
+        'corpTypCd',
+        'corpAdminEmail'
+      ]
 
-      if (this.detail.hasOwnProperty("businessNme")) {
-        includedFields.push("businessNme");
+      if (this.detail.hasOwnProperty('businessNme')) {
+        includedFields.push('businessNme')
       }
 
-      return pick(filtered, includedFields);
+      return pick(filtered, includedFields)
     },
-    companyInformation() {
+    companyInformation () {
       return pick(this.filteredDetail, [
-        "stateTypCd",
-        "corpNme",
-        "corpNum",
-        "corpTypCd",
-        "corpDeliveryAddr",
-        "corpMailingAddr",
-        "corpAdminEmail"
-      ]);
+        'stateTypCd',
+        'corpNme',
+        'corpNum',
+        'corpTypCd',
+        'corpDeliveryAddr',
+        'corpMailingAddr',
+        'corpAdminEmail'
+      ])
     },
-    generalInformation() {
-      const includedFields = {};
+    generalInformation () {
       return pick(this.filteredDetail, [
-        "lastNme",
-        "firstNme",
-        "middleNme",
-        "deliveryAddr",
-        "mailingAddr",
-        "corpPartyEmail",
-        "partyTypeDesc",
-        "appointmentDt",
-        "cessationDt"
-      ]);
+        'lastNme',
+        'firstNme',
+        'middleNme',
+        'deliveryAddr',
+        'mailingAddr',
+        'corpPartyEmail',
+        'partyTypeDesc',
+        'appointmentDt',
+        'cessationDt'
+      ])
     }
   },
   methods: {
-    getText(data) {
-      return getTextFromValues(CORPPARTY_HEADERS, data);
+    getText (data) {
+      return getTextFromValues(CORPPARTY_HEADERS, data)
     },
-    handleCorpClick(id) {
-      this.$router.push("/corporation/" + id);
-      return;
+    handleCorpClick (id) {
+      this.$router.push('/corporation/' + id)
     }
   }
-};
+}
 </script>
 
 <style lang="scss">
