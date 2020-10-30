@@ -83,11 +83,11 @@
 </template>
 
 <script>
-import PrintButton from "@/components/PrintButton.vue";
-import { getTextFromValues } from "@/util/index.ts";
-import { COMPANY_HEADERS } from "@/config/index.ts";
-import pick from "lodash-es/pick";
-import CorporationFilings from "@/components/Details/CorporationFilings.vue";
+import PrintButton from '@/components/PrintButton.vue'
+import { getTextFromValues } from '@/util/index.ts'
+import { COMPANY_HEADERS } from '@/config/index.ts'
+import pick from 'lodash-es/pick'
+import CorporationFilings from '@/components/Details/CorporationFilings.vue'
 export default {
   components: {
     CorporationFilings,
@@ -100,16 +100,16 @@ export default {
     }
   },
   computed: {
-    filteredDetail() {
-      return pick(this.details, ["corpNum", "stateTypCd", "adminEmail"]);
+    filteredDetail () {
+      return pick(this.details, ['corpNum', 'stateTypCd', 'adminEmail'])
     }
   },
   methods: {
-    getText(data) {
-      return getTextFromValues(COMPANY_HEADERS, data);
+    getText (data) {
+      return getTextFromValues(COMPANY_HEADERS, data)
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .detail-list {

@@ -23,26 +23,26 @@ export default {
       type: String
     }
   },
-  data() {
+  data () {
     return {
       select: this.init
-    };
+    }
   },
-  beforeUpdate() {
-    this.select = this.init;
+  beforeUpdate () {
+    this.select = this.init
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
-      this.select = this.init;
-    });
+      this.select = this.init
+    })
   },
   watch: {
-    select(ns) {
-      this.$emit("change", ns);
-      this.$emit("update:selected", ns);
+    select (ns) {
+      this.$emit('change', ns)
+      this.$emit('update:selected', ns)
     }
   }
-};
+}
 </script>
 
 <style lang="scss"></style>

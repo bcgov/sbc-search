@@ -33,48 +33,48 @@
 </template>
 
 <script>
-import { corporationDetailSearch } from "@/api/SearchApi.js";
-import CorporationDetails from "@/components/Details/CorporationDetails.vue";
+import { corporationDetailSearch } from '@/api/SearchApi'
+import CorporationDetails from '@/components/Details/CorporationDetails.vue'
 export default {
   components: {
     CorporationDetails
   },
   computed: {
-    isLoading() {
-      return this.details === null;
+    isLoading () {
+      return this.details === null
     }
   },
-  mounted() {
-    const corporation_id = this.$route.params.id;
-    if (corporation_id || corporation_id === 0) {
-      corporationDetailSearch(corporation_id)
+  mounted () {
+    const corporationId = this.$route.params.id
+    if (corporationId || corporationId === 0) {
+      corporationDetailSearch(corporationId)
         .then(result => {
-          this.error = false;
-          this.errorMessage = null;
-          this.details = result.data;
+          this.error = false
+          this.errorMessage = null
+          this.details = result.data
         })
         .catch(error => {
-          this.error = true;
+          this.error = true
           this.errorMessage = `${
             error.response && error.response.data && error.response.data.message
               ? error.response.data.message
               : error.toString()
-          }`;
-          this.details = {};
-        });
+          }`
+          this.details = {}
+        })
     } else {
-      this.error = true;
-      this.errorMessage = "Corporation ID is not provided";
+      this.error = true
+      this.errorMessage = 'Corporation ID is not provided'
     }
   },
-  data() {
+  data () {
     return {
       details: null,
       error: false,
       errorMessage: null
-    };
+    }
   }
-};
+}
 </script>
 
 <style lang="scss">

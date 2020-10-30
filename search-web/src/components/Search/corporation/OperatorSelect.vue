@@ -15,31 +15,31 @@
 export default {
   props: {
     initOperator: {
-      default: "corpNme",
+      default: 'corpNme',
       type: String
     }
   },
-  data() {
+  data () {
     return {
       select: this.initOperator,
       items: [
         {
-          text: "Name",
-          value: "corpNme"
+          text: 'Name',
+          value: 'corpNme'
         },
         {
-          text: "Number",
-          value: "corpNum"
+          text: 'Number',
+          value: 'corpNum'
         }
       ]
-    };
+    }
   },
-  mounted() {
-    this.$nextTick(function() {
-      this.select = this.initOperator;
-    });
+  mounted () {
+    this.$nextTick(function () {
+      this.select = this.initOperator
+    })
   }
-};
+}
 </script>
 
 <style lang="scss">

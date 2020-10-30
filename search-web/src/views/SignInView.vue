@@ -7,11 +7,9 @@
 </template>
 
 <script>
-import SbcSignin from "sbc-common-components/src/components/SbcSignin.vue";
-import KeyCloakService from "sbc-common-components/src/services/keycloak.services";
-import ApiService from "@/api/ApiService.js";
-import TokenService from "sbc-common-components/src/services/token.services";
-const tokenService = new TokenService();
+import SbcSignin from 'sbc-common-components/src/components/SbcSignin.vue'
+import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
+import axios from '@/util/axios-auth'
 
 export default {
   components: {
@@ -19,36 +17,37 @@ export default {
   },
   props: {
     idpHint: {
-      default: "bcros",
+      default: 'bcros',
       type: String
     },
     redirectUrlLoginFail: {
-      default: "",
+      default: '',
       type: String
     },
     redirectUrl: {
-      default: "",
+      default: '',
       type: String
     }
   },
   methods: {
-    async syncUserProfile() {
-      const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
-      if (KEYCLOACK_TOKEN) {
-        ApiService.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${KEYCLOACK_TOKEN}`;
-        await KeyCloakService.initializeToken();
-      }
-      const query = Object.assign({}, this.$route.query);
-      const path = this.$route.params.redirectUrl;
-      this.$router.push({
-        path,
-        query
-      });
+    async syncUserProfile () {
+      const KEYCLOACK_TOKEN = sessionStorage.getItem('KEYCLOAK_TOKEN')
+      axios.defaults.headers.common['Authorization'] = `Bearer ${KEYCLOACK_TOKEN}`
+      await KeyCloakService.initializeToken()
+
+      const CURRENT_ACCOUNT = sessionStorage.getItem('CURRENT_ACCOUNT')
+      const CURRENT_ACCOUNT_ID = CURRENT_ACCOUNT
+        ? JSON.parse(CURRENT_ACCOUNT).id
+        : ''
+      axios.defaults.headers['X-Account-Id'] = CURRENT_ACCOUNT_ID
+
+      // const query = Object.assign({}, this.$route.query)
+      // const path = this.$route.params.redirectUrl
+      // console.log(path)
+      this.$router.push('/')
     }
   }
-};
+}
 </script>
 
 <style></style>

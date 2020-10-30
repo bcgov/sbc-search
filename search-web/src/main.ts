@@ -1,27 +1,37 @@
-import axios from "axios";
-import Vue from "vue";
-import App from "./App.vue";
-import "./registerServiceWorker";
-import router from "./router";
-import store from "./store";
-import vuetify from "./plugins/vuetify";
-import { fetchConfig } from "@/util";
+import Vue from 'vue'
+import App from './App.vue'
+import './registerServiceWorker'
+import { getVueRouter } from '@/router'
+import store from './store'
+import vuetify from './plugins/vuetify'
+import ConfigHelper from '@/util/config-helper'
+import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
-saveConfigToSessionStorage().then(data => {
-  renderVue();
-});
+// main code
+async function start () {
+  // fetch config from environment and API
+  // must come first as inits below depend on config
+  await ConfigHelper.fetchConfig()
 
-async function saveConfigToSessionStorage() {
-  await fetchConfig();
-}
+  console.info('Starting Keycloak service...') // eslint-disable-line no-console
+  let random = new Date().toISOString().substring(0, 10)
+  await KeyCloakService.setKeycloakConfigUrl(
+    `${process.env.VUE_APP_PATH}config/kc/keycloak.json?${random}`
+  )
 
-function renderVue() {
+  // start Vue application
+  console.info('Starting app...') // eslint-disable-line no-console
   new Vue({
-    router,
+    router: getVueRouter(),
     store,
     vuetify,
     render: h => h(App)
-  }).$mount("#app");
+  }).$mount('#app')
 }
+
+// execution and error handling
+start().catch(error => {
+  console.error(error) // eslint-disable-line no-console
+})

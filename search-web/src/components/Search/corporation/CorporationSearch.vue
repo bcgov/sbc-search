@@ -58,8 +58,8 @@
 </template>
 
 <script>
-import SearchInput from "@/components/Search/corporation/SearchInput.vue";
-import OperatorSelect from "@/components/Search/corporation/OperatorSelect.vue";
+import SearchInput from '@/components/Search/corporation/SearchInput.vue'
+import OperatorSelect from '@/components/Search/corporation/OperatorSelect.vue'
 export default {
   components: {
     SearchInput,
@@ -80,19 +80,19 @@ export default {
     }
   },
   methods: {
-    handleSearch() {
-      this.$emit("search", this.searchQuery);
+    handleSearch () {
+      this.$emit('search', this.searchQuery)
     },
-    abortRequest() {
-      this.$emit("abort");
+    abortRequest () {
+      this.$emit('abort')
     }
   },
-  data() {
+  data () {
     return {
       searchQuery: null
-    };
+    }
   }
-};
+}
 </script>
 
 <style lang="scss">

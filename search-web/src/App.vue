@@ -37,17 +37,14 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import "@bcgov/bc-sans/css/BCSans.css";
-import { mapGetters } from "vuex";
-import { warmUp } from "@/api/SearchApi";
-import KeyCloakService from "sbc-common-components/src/services/keycloak.services";
-import BackToTop from "vue-backtotop";
-import SbcHeader from "sbc-common-components/src/components/SbcHeader.vue";
-import SbcFooter from "sbc-common-components/src/components/SbcFooter.vue";
-import TokenService from "sbc-common-components/src/services/token.services";
-import Snackbar from "@/components/Snackbar.vue";
-const tokenService = new TokenService();
+import Vue from 'vue'
+import '@bcgov/bc-sans/css/BCSans.css'
+import { warmUp } from './api/SearchApi'
+import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
+import BackToTop from 'vue-backtotop'
+import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
+import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
+import Snackbar from '@/components/Snackbar.vue'
 
 export default Vue.extend({
   components: {
@@ -57,39 +54,40 @@ export default Vue.extend({
     Snackbar
   },
 
-  async mounted() {
+  async mounted () {
     try {
-      let random = new Date().toISOString().substring(0, 10);
-      await KeyCloakService.setKeycloakConfigUrl(
-        `${process.env.VUE_APP_PATH}config/kc/keycloak.json?${random}`
-      );
+      let isSigninRoute = (this.$route.name === 'signin')
+      let isSigninRedirectRoute = (this.$route.name === 'signin-redirect')
+      let isSignoutRoute = (this.$route.name === 'signout')
 
-      const KEYCLOACK_TOKEN = sessionStorage.getItem("KEYCLOAK_TOKEN");
-      if (KEYCLOACK_TOKEN) {
-        await KeyCloakService.initializeToken();
+      if (!isSigninRoute && !isSigninRedirectRoute && !isSignoutRoute) {
+        const KEYCLOACK_TOKEN = sessionStorage.getItem('KEYCLOAK_TOKEN')
+        if (KEYCLOACK_TOKEN) {
+          await KeyCloakService.initializeToken()
+
+          warmUp()
+            .then(result => {
+              if (result.status === 401) {
+                this.$router.push({
+                  name: 'signin'
+                })
+              }
+            })
+            .catch(e => {
+              if (!e.response) {
+                console.error(e)
+              } else if (e.response.status === '401') {
+                this.$router.push('/signin/bcros')
+              }
+            })
+        }
       }
-
-      warmUp()
-        .then(result => {
-          if (result.status === 401) {
-            this.$router.push({
-              name: "signin"
-            });
-          }
-        })
-        .catch(e => {
-          if (!e.response) {
-            console.error(e);
-          } else if (e.response.status === "401") {
-            this.$router.push("/signin/bcros");
-          }
-        });
     } catch (e) {
-      this.$router.push("/");
+      this.$router.push('/')
     }
   },
   methods: {}
-});
+})
 </script>
 
 <style lang="scss">

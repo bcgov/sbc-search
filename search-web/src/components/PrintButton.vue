@@ -9,11 +9,11 @@
 <script>
 export default {
   methods: {
-    handlePrint() {
-      window && window.print();
+    handlePrint () {
+      window && window.print()
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

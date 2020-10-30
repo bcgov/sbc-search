@@ -1,4 +1,4 @@
-import filters from "./filters";
+import filters from './filters'
 
 export default {
   namespaced: true,
@@ -9,4 +9,4 @@ export default {
   modules: {
     filters
   }
-};
+}

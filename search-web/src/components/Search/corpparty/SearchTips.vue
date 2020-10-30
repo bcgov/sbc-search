@@ -37,12 +37,12 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       open: false
-    };
+    }
   }
-};
+}
 </script>
 
 <style lang="scss">

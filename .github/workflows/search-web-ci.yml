@@ -39,6 +39,11 @@ jobs:
           npm run test:unit
         env:
           CI: true
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          name: codecov-search-web
+          fail_ci_if_error: true
       - name: Run build
         working-directory: ./search-web
         run: |

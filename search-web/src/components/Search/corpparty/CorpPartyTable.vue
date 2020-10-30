@@ -161,15 +161,14 @@
 </template>
 
 <script>
-import { CORPPARTY_HEADERS } from "@/config/index.ts";
-import axios from "axios";
-import { corpPartySearch } from "@/api/SearchApi.js";
-import dayjs from "dayjs";
-import { mapGetters } from "vuex";
-import { buildQueryString, getDeepLink } from "@/util/index.ts";
-import isEmpty from "lodash-es/isEmpty";
-import pick from "lodash-es/pick";
-const qsl = require("qs");
+import { CORPPARTY_HEADERS } from '@/config/index.ts'
+import axios from 'axios'
+import { corpPartySearch } from '@/api/SearchApi'
+import dayjs from 'dayjs'
+import { mapGetters } from 'vuex'
+import { getDeepLink } from '@/util/index.ts'
+import pick from 'lodash-es/pick'
+const qsl = require('qs')
 export default {
   props: {
     qs: {
@@ -177,60 +176,60 @@ export default {
       type: String
     },
     type: {
-      default: "none",
+      default: 'none',
       type: String
     },
     page: {
-      default: "1",
+      default: '1',
       type: String
     }
   },
   computed: {
-    headers() {
-      return this.filterHeaders(CORPPARTY_HEADERS, this.type);
+    headers () {
+      return this.filterHeaders(CORPPARTY_HEADERS, this.type)
     },
-    showingMin() {
-      if (this.page == 1) {
-        return 1;
+    showingMin () {
+      if (this.page === 1) {
+        return 1
       }
-      let min = 0;
+      let min = 0
       for (let i = 0; i < this.page - 1; i++) {
-        min += this.items_per_page;
+        min += this.items_per_page
       }
-      return min;
+      return min
     },
-    showingMax() {
-      if (this.items.length < this.items_per_page && this.page == 1) {
-        return this.items.length;
+    showingMax () {
+      if (this.items.length < this.items_per_page && this.page === 1) {
+        return this.items.length
       }
-      if (this.items.length < this.items_per_page && this.page != 1) {
-        return this.showingMin + this.items.length;
+      if (this.items.length < this.items_per_page && this.page !== 1) {
+        return this.showingMin + this.items.length
       }
-      return this.page * this.items_per_page;
+      return this.page * this.items_per_page
     },
-    results() {
+    results () {
       return this.items.map(r => {
-        if (r["appointmentDt"]) {
-          r["appointmentDt"] = dayjs(r["appointmentDt"]).format("YYYY-MM-DD");
+        if (r['appointmentDt']) {
+          r['appointmentDt'] = dayjs(r['appointmentDt']).format('YYYY-MM-DD')
         } else {
-          r["appointmentDt"] = "-";
+          r['appointmentDt'] = '-'
         }
 
-        if (r["cessationDt"]) {
-          r["cessationDt"] = dayjs(r["cessationDt"]).format("YYYY-MM-DD");
+        if (r['cessationDt']) {
+          r['cessationDt'] = dayjs(r['cessationDt']).format('YYYY-MM-DD')
         } else {
-          r["cessationDt"] = "-";
+          r['cessationDt'] = '-'
         }
 
-        return r;
-      });
+        return r
+      })
     },
     ...mapGetters({
-      filters: "corpParty/filters/getFilters",
-      numFilters: "corpParty/filters/getNumFilters"
+      filters: 'corpParty/filters/getFilters',
+      numFilters: 'corpParty/filters/getNumFilters'
     })
   },
-  data() {
+  data () {
     return {
       items: [],
       options: {},
@@ -241,158 +240,158 @@ export default {
       sortDesc: [],
       items_per_page: 50,
       source: null
-    };
+    }
   },
   methods: {
-    orderItems(items) {
+    orderItems (items) {
       return pick(items, [
-        "lastNme",
-        "firstNme",
-        "middleNme",
-        "addr",
-        "postalCd",
-        "partyTypCd",
-        "appointmentDt",
-        "cessationDt",
-        "stateTypCd",
-        "corpNme",
-        "corpAdminEmail",
-        "corpNum"
-      ]);
+        'lastNme',
+        'firstNme',
+        'middleNme',
+        'addr',
+        'postalCd',
+        'partyTypCd',
+        'appointmentDt',
+        'cessationDt',
+        'stateTypCd',
+        'corpNme',
+        'corpAdminEmail',
+        'corpNum'
+      ])
     },
-    pageNext() {
-      this.$emit("pageUpdate", (parseInt(this.page) + 1).toString());
+    pageNext () {
+      this.$emit('pageUpdate', (parseInt(this.page) + 1).toString())
     },
-    pagePrev() {
-      if (this.page > "1") {
-        this.$emit("pageUpdate", (parseInt(this.page) - 1).toString());
+    pagePrev () {
+      if (this.page > '1') {
+        this.$emit('pageUpdate', (parseInt(this.page) - 1).toString())
       }
     },
-    updateSort() {
-      this.$emit("sortUpdate", {
+    updateSort () {
+      this.$emit('sortUpdate', {
         sortBy: this.options.sortBy,
         sortDesc: this.options.sortDesc
-      });
+      })
     },
-    handleCorpClick(id, e) {
-      e.target.closest("tr").classList.add("row-clicked");
+    handleCorpClick (id, e) {
+      e.target.closest('tr').classList.add('row-clicked')
       if (window.getSelection().toString()) {
-        return;
+        return
       }
-      window.open(getDeepLink(id));
-      return;
+      window.open(getDeepLink(id))
     },
-    filterHeaders(headers, type) {
-      if (type === "none") {
+    filterHeaders (headers, type) {
+      if (type === 'none') {
         return headers.filter(h => {
-          const val = h.value;
+          const val = h.value
           if (
-            val === "lastNme" ||
-            val === "middleNme" ||
-            val === "firstNme" ||
-            val === "partyTypCd" ||
-            val === "appointmentDt" ||
-            val === "cessationDt" ||
-            val === "corpNme" ||
-            val === "corpAdminEmail" ||
-            val === "corpNum"
+            val === 'lastNme' ||
+            val === 'middleNme' ||
+            val === 'firstNme' ||
+            val === 'partyTypCd' ||
+            val === 'appointmentDt' ||
+            val === 'cessationDt' ||
+            val === 'corpNme' ||
+            val === 'corpAdminEmail' ||
+            val === 'corpNum'
           ) {
-            return true;
+            return true
           }
-          return false;
-        });
-      } else if (type === "addr") {
+          return false
+        })
+      } else if (type === 'addr') {
         return headers.filter(h => {
-          const val = h.value;
+          const val = h.value
           if (
-            val === "lastNme" ||
-            val === "middleNme" ||
-            val === "firstNme" ||
-            val === "partyTypCd" ||
-            val === "appointmentDt" ||
-            val === "cessationDt" ||
-            val === "corpNum" ||
-            val === "corpNme" ||
-            val === "corpAdminEmail" ||
-            val === "addr" ||
-            val === "postalCd"
+            val === 'lastNme' ||
+            val === 'middleNme' ||
+            val === 'firstNme' ||
+            val === 'partyTypCd' ||
+            val === 'appointmentDt' ||
+            val === 'cessationDt' ||
+            val === 'corpNum' ||
+            val === 'corpNme' ||
+            val === 'corpAdminEmail' ||
+            val === 'addr' ||
+            val === 'postalCd'
           ) {
-            return true;
+            return true
           }
-          return false;
-        });
-      } else if (type === "active") {
+          return false
+        })
+      } else if (type === 'active') {
         return headers.filter(h => {
-          const val = h.value;
+          const val = h.value
           if (
-            val === "lastNme" ||
-            val === "middleNme" ||
-            val === "firstNme" ||
-            val === "partyTypCd" ||
-            val === "appointmentDt" ||
-            val === "cessationDt" ||
-            val === "corpNum" ||
-            val === "corpNme" ||
-            val === "corpAdminEmail" ||
-            val === "stateTypCd"
+            val === 'lastNme' ||
+            val === 'middleNme' ||
+            val === 'firstNme' ||
+            val === 'partyTypCd' ||
+            val === 'appointmentDt' ||
+            val === 'cessationDt' ||
+            val === 'corpNum' ||
+            val === 'corpNme' ||
+            val === 'corpAdminEmail' ||
+            val === 'stateTypCd'
           ) {
-            return true;
+            return true
           }
-          return false;
-        });
+          return false
+        })
       }
     },
-    cancelRequest() {
-      this.source && this.source.cancel("Request aborted by user");
+    cancelRequest () {
+      this.source && this.source.cancel('Request aborted by user')
     },
-    fetchData() {
+    fetchData () {
       if (!this.qs) {
-        return;
+        return
       }
 
-      this.loading = true;
-      this.disableSorting = true;
+      this.loading = true
+      this.disableSorting = true
 
-      let queryString = this.qs;
-      const { sort_type, sort_value } = qsl.parse(queryString);
-      if (sort_type && sort_value) {
-        this.sortBy = [sort_value];
-        if (sort_type === "asc") {
-          this.sortDesc = [false];
-        } else if (sort_type === "dsc") {
-          this.sortDesc = [true];
+      let queryString = this.qs
+      const { sortType, sortValue } = qsl.parse(queryString)
+      if (sortType && sortValue) {
+        this.sortBy = [sortValue]
+        if (sortType === 'asc') {
+          this.sortDesc = [false]
+        } else if (sortType === 'dsc') {
+          this.sortDesc = [true]
         }
       }
 
-      const CancelToken = axios.CancelToken;
-      this.source = CancelToken.source();
+      const CancelToken = axios.CancelToken
+      this.source = CancelToken.source()
 
       corpPartySearch(queryString, {
         cancelToken: this.source.token
       })
         .then(result => {
-          this.items = result.data.results;
-          this.totalItems = result.data.numResults;
-          this.$emit("success", result);
-          this.totalItems >= 165 ? this.$emit("overload") : "";
+          this.items = result.data.results
+          this.totalItems = result.data.numResults
+          this.$emit('success', result)
+          // eslint-disable-next-line no-unused-expressions
+          this.totalItems >= 165 ? this.$emit('overload') : ''
         })
         .catch(e => {
-          this.items = [];
-          this.totalItems = 0;
-          this.$emit("error", e);
+          this.items = []
+          this.totalItems = 0
+          this.$emit('error', e)
         })
         .finally(() => {
-          this.loading = false;
-          this.disableSorting = false;
-        });
+          this.loading = false
+          this.disableSorting = false
+        })
     }
   },
   watch: {
-    qs(nq) {
-      this.fetchData();
+    qs (nq) {
+      this.fetchData()
     }
   }
-};
+}
 </script>
 
 <style lang="scss">
