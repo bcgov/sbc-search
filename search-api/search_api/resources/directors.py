@@ -72,7 +72,7 @@ def corpparty_search():
 
     args = request.args
     fields = args.getlist('field')
-    additional_cols = args.get('additional_cols')
+    additional_cols = args.get('additionalCols')
     try:
         results = CorpParty.search_corp_parties(args)
     except BadSearchValue as e:
