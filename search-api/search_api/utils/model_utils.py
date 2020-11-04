@@ -203,7 +203,7 @@ def _get_state_typ_cd_display_value(state_typ_cd):
 
 def _get_corp_party_export_column_headers(args):
     fields = args.getlist('field')
-    additional_cols = args.get('additional_cols')
+    additional_cols = args.get('additionalCols')
 
     column_headers = [
         'Surname', 'First Name', 'Middle Name', 'Office Held', 'Appointed', 'Ceased',
@@ -220,7 +220,7 @@ def _get_corp_party_export_column_headers(args):
 
 def _get_corp_party_export_column_values(row, args):
     fields = args.getlist('field')
-    additional_cols = args.get('additional_cols')
+    additional_cols = args.get('additionalCols')
 
     columns = [
         row.last_nme, row.first_nme, row.middle_nme, row.party_typ_cd,
