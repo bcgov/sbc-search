@@ -138,14 +138,14 @@ export const CORPPARTY_HEADERS = [
   {
     text: 'Appointed',
     value: 'appointmentDt',
-    sortable: true,
+    sortable: false,
     align: 'left',
     width: 120
   },
   {
     text: 'Ceased',
     value: 'cessationDt',
-    sortable: true,
+    sortable: false,
     align: 'left',
     width: 120
   },
