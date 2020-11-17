@@ -250,8 +250,8 @@ class CorpParty(BaseModel):
         operators = args.getlist('operator')
         values = args.getlist('value')
         mode = args.get('mode')
-        sort_type = args.get('sort_type')
-        sort_value = args.get('sort_value')
+        sort_type = args.get('sortType')
+        sort_value = args.get('sortValue')
         additional_cols = args.get('additionalCols')
 
         # Zip the lists, so ('last_nme', 'first_nme') , ('contains', 'exact'), ('Sky', 'Apple') =>
@@ -321,7 +321,6 @@ class CorpParty(BaseModel):
             )
         )
 
-        print('query addr: ')
         results = CorpParty.add_additional_cols_to_search_query(additional_cols, fields, results)
 
         # Determine if we will combine clauses with OR or AND. mode=ALL means we use AND. Default mode is OR
@@ -353,8 +352,6 @@ class CorpParty(BaseModel):
     @staticmethod
     def add_additional_cols_to_search_query(additional_cols, fields, query):
         """Add Address or CorpOpState columns to query based on the additional columns toggle."""
-        print('add addr: ')
-        print(additional_cols)
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
             query = query.outerjoin(Address, CorpParty.mailing_addr_id == Address.addr_id)
             query = query.add_columns(Address.addr_line_1, Address.addr_line_2, Address.addr_line_3,
@@ -372,7 +369,6 @@ class CorpParty(BaseModel):
     @staticmethod
     def add_additional_cols_to_search_results(additional_cols, fields, row):
         """Add Address or CorpOpState columns to search results based on the additional columns toggle."""
-        print('addr:   ')
         additional_result_columns = {}
         if _is_addr_search(fields) or additional_cols == ADDITIONAL_COLS_ADDRESS:
             additional_result_columns['addr'] = _merge_addr_fields(row)
