@@ -9,11 +9,15 @@ on:
 
 jobs:
   search-web-ci:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./search-web
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [14.15.1]
 
     steps:
       - uses: actions/checkout@v2
@@ -21,22 +25,19 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: install with npm ci
-        working-directory: ./search-web
+      - name: Install
         run: |
-          npm ci
+          make setup
         env:
           CI: true
       - name: Run Lint
-        working-directory: ./search-web
         run: |
-          npm run lint
+          make lint
         env:
           CI: true
       - name: Run Unit Tests
-        working-directory: ./search-web
         run: |
-          npm run test:unit
+          make test
         env:
           CI: true
       - name: Upload coverage to Codecov
@@ -45,8 +46,7 @@ jobs:
           name: codecov-search-web
           fail_ci_if_error: true
       - name: Run build
-        working-directory: ./search-web
         run: |
-          npm run build
+          make build-nc
         env:
           CI: true
