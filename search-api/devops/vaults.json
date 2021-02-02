@@ -8,7 +8,6 @@
     {
         "vault": "keycloak",
         "application": [
-            "base",
             "jwt-base"
         ]
     },

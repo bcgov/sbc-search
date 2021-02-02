@@ -40,7 +40,7 @@ def authorized(jwt_instance, account_id):
 
     token = jwt_instance.get_token_auth_header()
     auth_api_url_base = current_app.config['AUTH_API_URL']
-    auth_api_url = '{auth_api_url_base}/api/v1/accounts/{account_id}/products/DIR_SEARCH/authorizations'.format(
+    auth_api_url = '{auth_api_url_base}/accounts/{account_id}/products/DIR_SEARCH/authorizations'.format(
         auth_api_url_base=auth_api_url_base, account_id=account_id)
 
     headers = {'Authorization': 'Bearer {token}'.format(token=token)}
