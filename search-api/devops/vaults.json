@@ -1,0 +1,23 @@
+[
+    {
+        "vault": "shared",
+        "application": [
+            "api-endpoints"
+        ]
+    },
+    {
+        "vault": "keycloak",
+        "application": [
+            "base",
+            "jwt-base"
+        ]
+    },
+    {
+        "vault": "relationship",
+        "application": [
+            "search-api",
+            "sentry",
+            "jwt"
+        ]
+    }
+]

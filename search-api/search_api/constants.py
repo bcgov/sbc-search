@@ -14,6 +14,7 @@
 """Constants used in search_api."""
 
 STATE_TYP_CD_ACT = 'ACT'
+STATE_TYP_CD_ACTIVE = 'ACTIVE'
 STATE_TYP_CD_HIS = 'HIS'
 
 ADDITIONAL_COLS_ADDRESS = 'addr'

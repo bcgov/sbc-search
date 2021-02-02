@@ -16,7 +16,7 @@
 from flask import current_app
 from sqlalchemy import func, literal_column
 
-from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_HIS, ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
+from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_ACTIVE, STATE_TYP_CD_HIS, ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
 from search_api.utils.utils import convert_to_snake_case
 from search_api.models.nickname import NickName
 
@@ -195,7 +195,7 @@ class BadSearchValue(Exception):
 
 
 def _get_state_typ_cd_display_value(state_typ_cd):
-    if state_typ_cd == STATE_TYP_CD_ACT:
+    if state_typ_cd == STATE_TYP_CD_ACT or state_typ_cd == STATE_TYP_CD_ACTIVE:
         return STATE_TYP_CD_ACT
 
     return STATE_TYP_CD_HIS
