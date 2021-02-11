@@ -1,6 +1,5 @@
 #!/usr/bin/env groovy
-
-// Copyright © 2020 Province of British Columbia
+// Copyright © 2018 Province of British Columbia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,22 +23,18 @@ import groovy.json.*
 
 // define constants - values sent in as env vars from whatever calls this pipeline
 def APP_NAME = 'search-web'
-// def APP_BUILDER_NAME = "${APP_NAME}-builder"
-// def APP_RUNTIME_NAME = "${APP_NAME}-runtime"
-// def DESTINATION_TAG = 'dev'
+def DESTINATION_TAG = 'dev'
 def TOOLS_TAG = 'tools'
-def NAMESPACE_APP = '1rdehl'
-def NAMESPACE_SHARED = 'd7eovc'
+def NAMESPACE_APP = '3b2420'
 def NAMESPACE_BUILD = "${NAMESPACE_APP}"  + '-' + "${TOOLS_TAG}"
 def NAMESPACE_DEPLOY = "${NAMESPACE_APP}" + '-' + "${DESTINATION_TAG}"
-def NAMESPACE_UNITTEST = "${NAMESPACE_SHARED}" + '-'+ "${TOOLS_TAG}"
 
-def ROCKETCHAT_DEVELOPER_CHANNEL='#registries-search'
+def ROCKETCHAT_DEVELOPER_CHANNEL='#relationship-bot'
 
 // post a notification to rocketchat
 def rocketChatNotification(token, channel, comments) {
   def payload = JsonOutput.toJson([text: comments, channel: channel])
-  def rocketChatUrl = "https://chat.pathfinder.gov.bc.ca/hooks/" + "${token}"
+  def rocketChatUrl = "https://chat.developer.gov.bc.ca/hooks/" + "${token}"
 
   sh(returnStdout: true,
      script: "curl -X POST -H 'Content-Type: application/json' --data \'${payload}\' ${rocketChatUrl}")
@@ -112,45 +107,23 @@ if( run_pipeline ) {
         def build_ok = true
         def old_version
 
-        try {
-            stage("Build ${APP_NAME}") {
-                script {
-                    openshift.withCluster() {
-                        openshift.withProject("${NAMESPACE_BUILD}") {
-                            echo "Building ${APP_BUILDER_NAME} ..."
-                            def build = openshift.selector("bc", "${APP_BUILDER_NAME}").startBuild()
+        stage("Build ${APP_NAME}") {
+            script {
+                openshift.withCluster() {
+                    openshift.withProject("${NAMESPACE_BUILD}") {
+                        try {
+                            echo "Building ${APP_NAME} ..."
+                            def build = openshift.selector("bc", "${APP_NAME}").startBuild()
                             build.untilEach {
                                 return it.object().status.phase == "Running"
                             }
                             build.logs('-f')
-                        }
+                        } catch (Exception e) {
+                            echo e.getMessage()
+                            build_ok = false
+                         }
                     }
                 }
-            }
-        } catch (Exception e) {
-            echo e.getMessage()
-            build_ok = false
-        }
-
-        if (build_ok) {
-            try{
-                stage("Build ${APP_RUNTIME_NAME}") {
-                    script {
-                        openshift.withCluster() {
-                            openshift.withProject("${NAMESPACE_BUILD}") {
-                                echo "Building the ${APP_RUNTIME_NAME} image ..."
-                                def build = openshift.selector("bc", "${APP_RUNTIME_NAME}").startBuild()
-                                build.untilEach {
-                                    return it.object().status.phase == "Running"
-                                }
-                                build.logs('-f')
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                echo e.getMessage()
-                build_ok = false
             }
         }
 
@@ -160,18 +133,19 @@ if( run_pipeline ) {
                     openshift.withCluster() {
                         openshift.withProject("${NAMESPACE_DEPLOY}") {
                             old_version = openshift.selector('dc', "${APP_NAME}-${DESTINATION_TAG}").object().status.latestVersion
+                            echo "Existing Version: ${old_version} ..."
                         }
                     }
                     openshift.withCluster() {
                         openshift.withProject("${NAMESPACE_BUILD}") {
                             try {
-                                echo "Tagging ${APP_RUNTIME_NAME} for deployment to ${DESTINATION_TAG} ..."
+                                echo "Tagging ${APP_NAME} for deployment to ${DESTINATION_TAG} ..."
 
                                 // Don't tag with BUILD_ID so the pruner can do it's job; it won't delete tagged images.
                                 // Tag the images for deployment based on the image's hash
-                                def IMAGE_HASH = getImageTagHash("${APP_RUNTIME_NAME}")
+                                def IMAGE_HASH = getImageTagHash("${APP_NAME}")
                                 echo "IMAGE_HASH: ${IMAGE_HASH}"
-                                openshift.tag("${APP_RUNTIME_NAME}@${IMAGE_HASH}", "${APP_RUNTIME_NAME}:${DESTINATION_TAG}")
+                                openshift.tag("${APP_NAME}@${IMAGE_HASH}", "${APP_NAME}:${DESTINATION_TAG}")
                             } catch (Exception e) {
                                 echo e.getMessage()
                                 build_ok = false
@@ -190,14 +164,15 @@ if( run_pipeline ) {
                         openshift.withProject("${NAMESPACE_DEPLOY}") {
                             try {
                                 def new_version = openshift.selector('dc', "${APP_NAME}-${DESTINATION_TAG}").object().status.latestVersion
+                                echo "New Version: ${new_version} ..."
                                 if (new_version == old_version) {
                                     echo "New deployment was not triggered."
                                 }
-
-                                def pod_selector = openshift.selector('pod', [ app:"${APP_NAME}-${DESTINATION_TAG}" ])
+                                def pod_selector = openshift.selector('pod', [ app:"${APP_NAME}" ])
+                                echo "${pod_selector} ..."
                                 pod_selector.untilEach {
                                     deployment = it.objects()[0].metadata.labels.deployment
-                                    echo deployment
+                                    echo "${deployment} ..."
                                     if (deployment == "${APP_NAME}-${DESTINATION_TAG}-${new_version}" && it.objects()[0].status.phase == 'Running' && it.objects()[0].status.containerStatuses[0].ready) {
                                         return true
                                     } else {
@@ -216,24 +191,17 @@ if( run_pipeline ) {
             }
         }
 
-        if (build_ok) {
-            stage("Run E2E tests") {
-
-            }
-        }
-
         stage("Notify on RocketChat") {
             if(build_ok) {
                 currentBuild.result = "SUCCESS"
             } else {
                 currentBuild.result = "FAILURE"
-            }
-
-            ROCKETCHAT_TOKEN = sh (
-                    script: '''oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode''',
+                ROCKETCHAT_TOKEN = sh (
+                    script: """oc get secret/rocketcaht-secret -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
                         returnStdout: true).trim()
 
-            // rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
+                rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
+            }
         }
     }
 }

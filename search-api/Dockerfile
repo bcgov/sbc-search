@@ -34,6 +34,6 @@ RUN pip install .
 
 USER 1001
 
-EXPOSE 5000
+EXPOSE 8080
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000",  "--config", "/opt/app/gunicorn_config.py", "wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080",  "--config", "/opt/app/gunicorn_config.py", "wsgi:application"]
