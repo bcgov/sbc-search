@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import './registerServiceWorker'
+import Hotjar from 'vue-hotjar'
 import { getVueRouter } from '@/router'
 import store from './store'
 import vuetify from './plugins/vuetify'
@@ -8,6 +9,13 @@ import ConfigHelper from '@/util/config-helper'
 import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
 
 Vue.config.productionTip = false
+
+// Setup Hotjar
+Vue.use(Hotjar, {
+  id: `${ process.env.HOTJAR_ID }`,
+  isProduction: true,
+  snippetVersion: 6
+})
 
 // main code
 async function start () {
