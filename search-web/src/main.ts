@@ -12,7 +12,7 @@ Vue.config.productionTip = false
 
 // Setup Hotjar
 Vue.use(Hotjar, {
-  id: `${ process.env.HOTJAR_ID }`,
+  id: `${process.env.HOTJAR_ID}`,
   isProduction: true,
   snippetVersion: 6
 })
