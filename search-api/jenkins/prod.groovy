@@ -1,6 +1,5 @@
 #!/usr/bin/env groovy
-
-// Copyright © 2020 Province of British Columbia
+// Copyright © 2018 Province of British Columbia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,11 +27,11 @@ def SOURCE_TAG = 'test'
 def DESTINATION_TAG = 'prod'
 def TOOLS_TAG = 'tools'
 
-def NAMESPACE_APP = '1rdehl'
+def NAMESPACE_APP = '6e0e49'
 def NAMESPACE_BUILD = "${NAMESPACE_APP}"  + '-' + "${TOOLS_TAG}"
 def NAMESPACE_DEPLOY = "${NAMESPACE_APP}" + '-' + "${DESTINATION_TAG}"
 
-def ROCKETCHAT_DEVELOPER_CHANNEL='#registries-search'
+def ROCKETCHAT_DEVELOPER_CHANNEL='#registries-bot'
 
 // Get an image's hash tag
 String getImageTagHash(String imageName, String tag = "") {
@@ -48,7 +47,7 @@ String getImageTagHash(String imageName, String tag = "") {
 // post a notification to rocketchat
 def rocketChatNotification(token, channel, comments) {
   def payload = JsonOutput.toJson([text: comments, channel: channel])
-  def rocketChatUrl = "https://chat.pathfinder.gov.bc.ca/hooks/" + "${token}"
+  def rocketChatUrl = "https://chat.developer.gov.bc.ca/hooks/" + "${token}"
 
   sh(returnStdout: true,
      script: "curl -X POST -H 'Content-Type: application/json' --data \'${payload}\' ${rocketChatUrl}")
@@ -76,7 +75,7 @@ node {
                         openshift.tag("${APP_NAME}@${IMAGE_HASH}", "${APP_NAME}:${DESTINATION_TAG}-prev")
 
                         echo "Tagging ${APP_NAME} for deployment to ${DESTINATION_TAG} ..."
-                        openshift.tag("${APP_NAME}:${SOURCE_TAG}", "${APP_NAME}:${DESTINATION_TAG}")
+						openshift.tag("${APP_NAME}:${SOURCE_TAG}", "${APP_NAME}:${DESTINATION_TAG}")
                     }
                 }
             }
@@ -127,12 +126,11 @@ node {
             currentBuild.result = "SUCCESS"
         } else {
             currentBuild.result = "FAILURE"
-        }
-
-        ROCKETCHAT_TOKEN = sh (
-                script: '''oc get secret/apitest-secrets -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode''',
+            ROCKETCHAT_TOKEN = sh (
+                script: """oc get secret/rocketchat-secret -n ${NAMESPACE_BUILD} -o template --template="{{.data.ROCKETCHAT_TOKEN}}" | base64 --decode""",
                     returnStdout: true).trim()
 
-        // rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
+            rocketChatNotification("${ROCKETCHAT_TOKEN}", "${ROCKETCHAT_DEVELOPER_CHANNEL}", "${APP_NAME} build and deploy to ${DESTINATION_TAG} ${currentBuild.result}!")
+        }
     }
 }
