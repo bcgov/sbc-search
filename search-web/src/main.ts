@@ -10,13 +10,6 @@ import KeyCloakService from 'sbc-common-components/src/services/keycloak.service
 
 Vue.config.productionTip = false
 
-// Setup Hotjar
-Vue.use(Hotjar, {
-  id: `${process.env.HOTJAR_ID}`,
-  isProduction: true,
-  snippetVersion: 6
-})
-
 // main code
 async function start () {
   // fetch config from environment and API
@@ -28,6 +21,13 @@ async function start () {
   await KeyCloakService.setKeycloakConfigUrl(
     `${process.env.VUE_APP_PATH}config/kc/keycloak.json?${random}`
   )
+
+  // Setup Hotjar
+  Vue.use(Hotjar, {
+    id: `${sessionStorage.getItem('HOTJAR_ID')}`,
+    isProduction: true,
+    snippetVersion: 6
+  })
 
   // start Vue application
   console.info('Starting app...') // eslint-disable-line no-console

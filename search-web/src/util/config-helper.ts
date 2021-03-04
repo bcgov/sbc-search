@@ -23,6 +23,9 @@ export default class ConfigHelper {
 
     const corpOnlineUrl: string = response.data['VUE_APP_CORP_ONLINE_ROOT_URL']
     sessionStorage.setItem('VUE_APP_CORP_ONLINE_ROOT_URL', corpOnlineUrl)
+
+    const hotjarId: string = response.data['HOTJAR_ID']
+    sessionStorage.setItem('HOTJAR_ID', hotjarId)
   }
 
   /**
