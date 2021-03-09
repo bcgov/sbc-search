@@ -2,15 +2,16 @@ apiVersion: template.openshift.io/v1
 kind: Template
 metadata:
   labels:
-    app: ${NAME}
+    name: ${NAME}
+    environment: ${TAG}
   name: ${NAME}-pipeline
 objects:
 - apiVersion: v1
   kind: BuildConfig
   metadata:
     labels:
-        app: ${NAME}
-        name: ${NAME}-${TAG}
+      name: ${NAME}
+      environment: ${TAG}
     name: ${NAME}-${TAG}-pipeline
   spec:
     successfulBuildsHistoryLimit: 5
