@@ -28,7 +28,7 @@ jobs:
         run: |
           echo "TAG_NAME=dev" >> $GITHUB_ENV
 
-      - uses: pwei1018/bcrs-cd-action@vaults
+      - uses: pwei1018/bcrs-cd-action@docker-label
         with:
           WORKING_DIRECTORY: "./search-api"
           APP_NAME: "search-api"
