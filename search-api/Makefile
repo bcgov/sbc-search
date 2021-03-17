@@ -7,6 +7,7 @@ MKFILE_PATH:=$(abspath $(lastword $(MAKEFILE_LIST)))
 CURRENT_ABS_DIR:=$(patsubst %/,%,$(dir $(MKFILE_PATH)))
 
 PROJECT_NAME:=search_api
+DOCKER_NAME:=search-api
 
 #################################################################################
 # COMMANDS -- license                                                           #
@@ -58,13 +59,15 @@ install-dev: ## Install local application
 #################################################################################
 # COMMANDS - CI                                                                 #
 #################################################################################
-ci: lint flake8 test ## CI flow
+ci: pylint flake8 test ## CI flow
 
-lint: ## Linting with pylint
+pylint: ## Linting with pylint
 	. venv/bin/activate && pylint --rcfile=setup.cfg  $(PROJECT_NAME)
 
 flake8: ## Linting with flake8
 	. venv/bin/activate && flake8 $(PROJECT_NAME) tests
+
+lint: pylint flake8 ## run all lint type scripts
 
 test: ## Unit testing
 	. venv/bin/activate && pytest
@@ -75,13 +78,31 @@ mac-cov: local-test ## Run the coverage report and display in a browser window (
 #################################################################################
 # COMMANDS - CD                                                               #
 #################################################################################
-cd: build ## CD flow
+cd: build tag ## CD flow
 
 build: ## Build the docker container
-	docker build -t $(PROJECT_NAME) .
+	docker build . -t $(DOCKER_NAME) \
+		--build-arg VCS_REF=$(shell git rev-parse --short HEAD) \
+		--build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
 
 build-nc: ## Build the docker container without caching
-	docker build --no-cache -t $(PROJECT_NAME) .
+	docker build --no-cache -t $(DOCKER_NAME) .
+
+# expects the terminal to be docker login
+# expects export OPENSHIFT_DOCKER_REGISTRY=""
+# expects export OPENSHIFT_REPOSITORY=""
+# expects export OPENSHIFT_SA_TOKEN=""
+# expects export OPENSHIFT_SA_NAME="github-cicd"
+# expects export TAG_NAME="dev/test"
+REGISTRY_IMAGE=$(OPENSHIFT_DOCKER_REGISTRY)/$(OPENSHIFT_REPOSITORY)-tools/$(DOCKER_NAME)
+push: #build ## Push the docker container to the registry & tag dev
+	@echo "$(OPENSHIFT_SA_TOKEN)" | docker login $(OPENSHIFT_DOCKER_REGISTRY) -u $(OPENSHIFT_SA_NAME) --password-stdin ;\
+    docker tag $(DOCKER_NAME) $(REGISTRY_IMAGE):latest ;\
+    docker push $(REGISTRY_IMAGE):latest
+
+tag: push
+	docker tag $(REGISTRY_IMAGE):latest $(REGISTRY_IMAGE):$(TAG_NAME) ;\
+    docker push $(REGISTRY_IMAGE):$(TAG_NAME)
 
 #################################################################################
 # COMMANDS - Local                                                              #

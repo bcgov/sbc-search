@@ -6,6 +6,13 @@ COPY . .
 RUN npm run build
 
 FROM nginx:1.18.0 as production-stage
+
+ARG BUILD_DATE
+ARG VCS_REF
+
+LABEL build_date=$BUILD_DATE
+LABEL vcs_ref=$VCS_REF
+
 RUN echo "hello1"
 COPY nginx.conf /etc/nginx/nginx.conf
 RUN mkdir /app
