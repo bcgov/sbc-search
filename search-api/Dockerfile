@@ -1,6 +1,12 @@
 FROM python:3.8.5-buster
 USER root
 
+ARG BUILD_DATE 
+ARG VCS_REF
+
+LABEL build_date=$BUILD_DATE 
+LABEL vcs_ref=$VCS_REF
+
 # # Installing Oracle instant client
 WORKDIR    /opt/oracle
 RUN        apt-get update && apt-get install -y libaio1 wget unzip \
