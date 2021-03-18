@@ -1,12 +1,5 @@
 [
     {
-        "vault": "shared",
-        "application": [
-            "api-endpoints",
-            "web-urls"
-        ]
-    },
-    {
         "vault": "keycloak",
         "application": [
             "base",
