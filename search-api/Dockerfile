@@ -1,11 +1,14 @@
 FROM python:3.8.5-buster
 USER root
 
-ARG BUILD_DATE 
-ARG VCS_REF
+ARG VCS_REF="missing"
+ARG BUILD_DATE="missing"
 
-LABEL build_date=$BUILD_DATE 
-LABEL vcs_ref=$VCS_REF
+ENV VCS_REF=${VCS_REF}
+ENV BUILD_DATE=${BUILD_DATE}
+
+LABEL org.label-schema.vcs-ref=${VCS_REF} \
+  org.label-schema.build-date=${BUILD_DATE}
 
 # # Installing Oracle instant client
 WORKDIR    /opt/oracle

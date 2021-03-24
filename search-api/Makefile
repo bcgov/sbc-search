@@ -76,9 +76,17 @@ mac-cov: local-test ## Run the coverage report and display in a browser window (
 	open -a "Google Chrome" htmlcov/index.html
 
 #################################################################################
-# COMMANDS - CD                                                               #
+# COMMANDS - CD
+# expects the terminal to be openshift login
+# expects export OPENSHIFT_DOCKER_REGISTRY=""
+# expects export OPENSHIFT_SA_NAME="$(oc whoami)"
+# expects export OPENSHIFT_SA_TOKEN="$(oc whoami -t)"
+# expects export OPENSHIFT_REPOSITORY=""
+# expects export TAG_NAME="dev/test"
+# expects export OP_PARAMETERS=""
+# expects export OPS_REPOSITORY=""                                                        #
 #################################################################################
-cd: build tag ## CD flow
+cd: build update-env tag ## CD flow
 
 build: ## Build the docker container
 	docker build . -t $(DOCKER_NAME) \
@@ -88,21 +96,18 @@ build: ## Build the docker container
 build-nc: ## Build the docker container without caching
 	docker build --no-cache -t $(DOCKER_NAME) .
 
-# expects the terminal to be docker login
-# expects export OPENSHIFT_DOCKER_REGISTRY=""
-# expects export OPENSHIFT_REPOSITORY=""
-# expects export OPENSHIFT_SA_TOKEN=""
-# expects export OPENSHIFT_SA_NAME="github-cicd"
-# expects export TAG_NAME="dev/test"
 REGISTRY_IMAGE=$(OPENSHIFT_DOCKER_REGISTRY)/$(OPENSHIFT_REPOSITORY)-tools/$(DOCKER_NAME)
-push: #build ## Push the docker container to the registry & tag dev
+push: #build ## Push the docker container to the registry & tag latest
 	@echo "$(OPENSHIFT_SA_TOKEN)" | docker login $(OPENSHIFT_DOCKER_REGISTRY) -u $(OPENSHIFT_SA_NAME) --password-stdin ;\
     docker tag $(DOCKER_NAME) $(REGISTRY_IMAGE):latest ;\
     docker push $(REGISTRY_IMAGE):latest
 
-tag: push
-	docker tag $(REGISTRY_IMAGE):latest $(REGISTRY_IMAGE):$(TAG_NAME) ;\
-    docker push $(REGISTRY_IMAGE):$(TAG_NAME)
+VAULTS=`cat devops/vaults.json`
+update-env: ## Update env from 1pass
+	oc -n "$(OPS_REPOSITORY)-tools" exec bcros-cli -- ./scripts/1pass.sh $(OP_PARAMETERS) -m "secret" -e "$(TAG_NAME)" -a "$(DOCKER_NAME)-$(TAG_NAME)" -n "$(OPENSHIFT_REPOSITORY)-$(TAG_NAME)" -v "$(VAULTS)" -r "true"
+
+tag: push ## tag image
+	oc -n "$(OPENSHIFT_REPOSITORY)-tools" tag $(DOCKER_NAME):latest $(DOCKER_NAME):$(TAG_NAME)
 
 #################################################################################
 # COMMANDS - Local                                                              #
