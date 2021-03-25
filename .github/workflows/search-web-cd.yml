@@ -41,7 +41,7 @@ jobs:
       - name: Login Openshift
         shell: bash
         run: |
-          oc login ${{ secrets.OPENSHIFT4_LOGIN_REGISTRY }} --token=${{ secrets.OPENSHIFT_SA_TOKEN }}
+          oc login --server=${{ secrets.OPENSHIFT4_LOGIN_REGISTRY }} --token=${{ secrets.OPENSHIFT4_SA_TOKEN }}
 
       - name: CD Flow (build/update env/push/tag)
         shell: bash
