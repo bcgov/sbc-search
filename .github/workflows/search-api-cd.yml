@@ -20,7 +20,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./search-web
+        working-directory: ./search-api
 
     env:
       APP_NAME: "search-api"
