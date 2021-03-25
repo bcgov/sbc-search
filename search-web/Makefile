@@ -47,13 +47,20 @@ build-nc: ## Build the docker container without caching
 
 REGISTRY_IMAGE=$(OPENSHIFT_DOCKER_REGISTRY)/$(OPENSHIFT_REPOSITORY)-tools/$(DOCKER_NAME)
 push: #build ## Push the docker container to the registry & tag latest
-	@echo "$(OPENSHIFT_SA_TOKEN)" | docker login $(OPENSHIFT_DOCKER_REGISTRY) -u $(OPENSHIFT_SA_NAME) --password-stdin ;\
+	echo "$(OPENSHIFT_SA_TOKEN)" | docker login $(OPENSHIFT_DOCKER_REGISTRY) -u $(OPENSHIFT_SA_NAME) --password-stdin ;\
     docker tag $(DOCKER_NAME) $(REGISTRY_IMAGE):latest ;\
     docker push $(REGISTRY_IMAGE):latest
 
 VAULTS=`cat devops/vaults.json`
 update-env: ## Update env from 1pass
-	oc -n "$(OPS_REPOSITORY)-tools" exec bcros-cli -- ./scripts/1pass.sh $(OP_PARAMETERS) -m "secret" -e "$(TAG_NAME)" -a "$(DOCKER_NAME)-$(TAG_NAME)" -n "$(OPENSHIFT_REPOSITORY)-$(TAG_NAME)" -v "$(VAULTS)" -r "true"
+	oc -n "$(OPS_REPOSITORY)-tools" exec bcros-cli -- ./scripts/1pass.sh $(OP_PARAMETERS) \
+		-m "secret" \
+		-e "$(TAG_NAME)" \
+		-a "$(DOCKER_NAME)-$(TAG_NAME)" \
+		-n "$(OPENSHIFT_REPOSITORY)-$(TAG_NAME)" \
+		-v "$(VAULTS)" \
+		-r "true" \
+		-f "true"
 
 tag: push ## tag image
 	oc -n "$(OPENSHIFT_REPOSITORY)-tools" tag $(DOCKER_NAME):latest $(DOCKER_NAME):$(TAG_NAME)
