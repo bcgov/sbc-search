@@ -3,7 +3,7 @@ name: Search web CI
 on:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - "search-web/**"
 

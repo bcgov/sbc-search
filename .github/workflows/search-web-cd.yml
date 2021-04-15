@@ -3,7 +3,7 @@ name: Search Web CD
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "search-web/**"
   workflow_dispatch:
@@ -33,8 +33,8 @@ jobs:
         run: |
           echo "TAG_NAME=${{ github.event.inputs.environement }}" >> $GITHUB_ENV
 
-      - name: Set env by master branch
-        if: env.TAG_NAME == '' && github.ref == 'refs/heads/master'
+      - name: Set env by main branch
+        if: env.TAG_NAME == '' && github.ref == 'refs/heads/main'
         run: |
           echo "TAG_NAME=dev" >> $GITHUB_ENV
 
