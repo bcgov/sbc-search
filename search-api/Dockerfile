@@ -11,8 +11,8 @@ LABEL org.label-schema.vcs-ref=${VCS_REF} \
   org.label-schema.build-date=${BUILD_DATE}
 
 # # Installing Oracle instant client
-WORKDIR    /opt/oracle
-RUN        apt-get update && apt-get install -y libaio1 wget unzip \
+WORKDIR /opt/oracle
+RUN apt-get update && apt-get install -y libaio1 wget unzip \
   && wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip \
   && unzip instantclient-basiclite-linuxx64.zip \
   && rm -f instantclient-basiclite-linuxx64.zip \
@@ -31,7 +31,6 @@ WORKDIR /opt/app
 
 # Install the requirements
 COPY ./requirements/prod.txt .
-COPY ./requirements/dev.txt .
 COPY ./requirements/repo-libraries.txt .
 
 RUN pip install --no-cache-dir -r prod.txt
