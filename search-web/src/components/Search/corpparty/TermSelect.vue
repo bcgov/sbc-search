@@ -26,6 +26,14 @@ export default {
       select: this.init
     }
   },
+  beforeUpdate () {
+    this.select = this.init
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.select = this.init
+    })
+  },
   watch: {
     select (ns) {
       this.$emit('change', ns)

@@ -7,7 +7,8 @@ export const FIELD_VALUES = [
   { text: 'Any Name', value: 'anyNme' },
   { text: 'Street Address', value: 'addrLine1' },
   { text: 'Postal Code', value: 'postalCd' },
-  { text: 'Company Status', value: 'stateTypCd' }
+  { text: 'Company Status', value: 'stateTypCd' },
+  { text: 'Related Person(s)', value: 'partyTypCd' }
 ]
 
 export const OPERATOR_VALUES = [
@@ -24,6 +25,12 @@ export const TERM_VALUES = {
   stateTypCd: [
     { text: 'Active', value: 'ACT' },
     { text: 'Historical', value: 'HIS' }
+  ],
+  partyTypCd: [
+    { text: 'Director', value: 'DIR' },
+    { text: 'Officer ', value: 'OFF' },
+    { text: 'Incorporator', value: 'INC' },
+    { text: 'Attorney', value: 'ATT' }
   ]
 }
 

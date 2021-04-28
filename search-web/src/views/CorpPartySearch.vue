@@ -347,6 +347,13 @@ export default {
         const field = this.filters[0].field
         const operator = this.filters[0].operator
 
+        if (field === 'partyTypCd') {
+          return {
+            error: true,
+            errorMessage: 'Cannot perform search by Related Person(s) Only'
+          }
+        }
+
         if (field === 'stateTypCd') {
           return {
             error: true,

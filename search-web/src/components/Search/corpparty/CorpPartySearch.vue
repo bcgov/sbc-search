@@ -23,12 +23,12 @@
       }"
     ></OperatorSelect>
     <TermSelect
-      v-if="selectedField === 'stateTypCd'"
+      v-if="selectedField === 'stateTypCd' || selectedField === 'partyTypCd'"
       :items="TERMS"
-      :init="criteria.value || 'ACT'"
+      :init="criteria.value || TERMS_INIT"
+      :selected.sync="selectedTerm"
       @change="handleTermChange"
     ></TermSelect>
-
     <SearchInput
       ref="searchInput"
       v-else
@@ -98,11 +98,23 @@ export default {
         return OPERATOR_VALUES.filter(o => o.value === 'exact')
       } else if (this.selectedField === 'postalCd') {
         return OPERATOR_VALUES.filter(o => o.value === 'exact')
+      } else if (this.selectedField === 'partyTypCd') {
+        return OPERATOR_VALUES.filter(o => o.value === 'exact')
       }
+
       return OPERATOR_VALUES
     },
     TERMS () {
       return TERM_VALUES[this.selectedField]
+    },
+    TERMS_INIT () {
+      if (this.selectedField === 'stateTypCd') {
+        return 'ACT'
+      } else if (this.selectedField === 'partyTypCd') {
+        return 'DIR'
+      }
+
+      return ''
     }
   },
   components: {
@@ -114,7 +126,8 @@ export default {
   data () {
     return {
       selectedField: this.criteria.field,
-      selectedOperator: this.criteria.operator
+      selectedOperator: this.criteria.operator,
+      selectedTerm: this.criteria.term
     }
   },
   methods: {
@@ -130,6 +143,45 @@ export default {
         property: 'field',
         value: field
       })
+      if (field === 'stateTypCd') {
+        this.setSearchPropValue({
+          uid: this.uid,
+          property: 'operator',
+          value: 'exact'
+        })
+        const value = this.criteria.value
+        if (value !== 'ACT' && value !== 'HIS') {
+          this.setSearchPropValue({
+            uid: this.uid,
+            property: 'value',
+            value: 'ACT'
+          })
+          this.setSearchPropValue({
+            uid: this.uid,
+            property: 'term',
+            value: 'ACT'
+          })
+        }
+      } else if (field === 'partyTypCd') {
+        this.setSearchPropValue({
+          uid: this.uid,
+          property: 'operator',
+          value: 'exact'
+        })
+        const value = this.criteria.value
+        if (value !== 'DIR' && value !== 'OFF' && value !== 'INC' && value !== 'ATT') {
+          this.setSearchPropValue({
+            uid: this.uid,
+            property: 'value',
+            value: 'DIR'
+          })
+          this.setSearchPropValue({
+            uid: this.uid,
+            property: 'term',
+            value: 'DIR'
+          })
+        }
+      }
     },
     handleOperatorChange (operator) {
       this.setSearchPropValue({
@@ -139,6 +191,13 @@ export default {
       })
     },
     handleTermChange (value) {
+      this.setSearchPropValue({
+        uid: this.uid,
+        property: 'value',
+        value: value
+      })
+    },
+    handlePartyTypeChange (value) {
       this.setSearchPropValue({
         uid: this.uid,
         property: 'value',
@@ -181,6 +240,11 @@ export default {
             property: 'value',
             value: 'ACT'
           })
+          this.setSearchPropValue({
+            uid: this.uid,
+            property: 'term',
+            value: 'ACT'
+          })
         }
       } else if (nf === 'postalCd') {
         this.setSearchPropValue({
@@ -188,7 +252,28 @@ export default {
           property: 'operator',
           value: 'exact'
         })
+      } else if (nf === 'partyTypCd') {
+        this.setSearchPropValue({
+          uid: this.uid,
+          property: 'operator',
+          value: 'exact'
+        })
+        const value = this.criteria.value
+        if (value !== 'DIR' && value !== 'OFF' && value !== 'INC' && value !== 'ATT') {
+          this.setSearchPropValue({
+            uid: this.uid,
+            property: 'value',
+            value: 'DIR'
+          })
+          this.setSearchPropValue({
+            uid: this.uid,
+            property: 'term',
+            value: 'DIR'
+          })
+        }
       } else if (of === 'stateTypCd') {
+        this.clearTerm()
+      } else if (of === 'partyTypCd') {
         this.clearTerm()
       }
     }
