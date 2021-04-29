@@ -350,7 +350,7 @@ export default {
         if (field === 'partyTypCd') {
           return {
             error: true,
-            errorMessage: 'Cannot perform search by Related Person(s) Only'
+            errorMessage: 'Cannot perform search by Relationship Only'
           }
         }
 
