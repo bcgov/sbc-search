@@ -1,0 +1,19 @@
+# Default values for bcregistry-api.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+bcregistry-api:
+  environment: "prod"
+  image:
+    tag: "prod"
+
+  migrations:
+    enabled: false
+
+  replicas: 2
+
+  autoscaling:
+    # Specifies whether the autoscaling should be created
+    create: true
+    minReplicas: 2
+    maxReplicas: 3

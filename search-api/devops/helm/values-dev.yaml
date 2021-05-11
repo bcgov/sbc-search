@@ -1,0 +1,11 @@
+# Default values for bcregistry-api.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+bcregistry-api:
+  environment: "dev"
+  image:
+    tag: "dev"
+
+  migrations:
+    enabled: false

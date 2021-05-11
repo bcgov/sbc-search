@@ -9,12 +9,35 @@ on:
   workflow_dispatch:
     inputs:
       environement:
-        description: "Environment (dev/test)"
+        description: "Environment (dev/test/prod)"
         required: true
         default: "dev"
 
 jobs:
+  push:
+    runs-on: ubuntu-20.04
+
+    if: github.event_name == 'push' && github.repository == 'bcgov/sbc-search'
+    environment:
+      name: "dev"
+
+    steps:
+      - run: "true"
+
+  dispatch:
+    runs-on: ubuntu-20.04
+
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'bcgov/sbc-search'
+    environment:
+      name: "${{ github.event.inputs.environment }}"
+
+    steps:
+      - run: "true"
+
   search-web-cd:
+    needs: [push, dispatch]
+    if: ${{ always() && contains(needs.*.result, 'success') && !(contains(needs.*.result, 'failure')) }}
+
     runs-on: ubuntu-20.04
 
     defaults:
@@ -23,20 +46,15 @@ jobs:
         working-directory: ./search-web
 
     env:
-      APP_NAME: "search-web"
-
-    if: github.repository == 'bcgov/sbc-search'
+      APP_NAME: "search-api"
+      TAG_NAME: "dev"
 
     steps:
       - uses: actions/checkout@v2
       - name: Set env by input
+        if: github.event.inputs.environment != ''
         run: |
-          echo "TAG_NAME=${{ github.event.inputs.environement }}" >> $GITHUB_ENV
-
-      - name: Set env by main branch
-        if: env.TAG_NAME == '' && github.ref == 'refs/heads/main'
-        run: |
-          echo "TAG_NAME=dev" >> $GITHUB_ENV
+          echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
 
       - name: Login Openshift
         shell: bash
@@ -46,7 +64,6 @@ jobs:
       - name: CD Flow (build/update env/push/tag)
         shell: bash
         env:
-          OP_PARAMETERS: ${{ secrets.OP_PARAMETERS }}
           OPS_REPOSITORY: ${{ secrets.OPS_REPOSITORY }}
           OPENSHIFT_DOCKER_REGISTRY: ${{ secrets.OPENSHIFT4_DOCKER_REGISTRY }}
           OPENSHIFT_SA_NAME: ${{ secrets.OPENSHIFT4_SA_NAME }}
