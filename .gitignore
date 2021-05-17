@@ -142,3 +142,7 @@ search-web/coverage/
 search-web/dist/
 
 .history
+
+#helm charts
+**/devops/helm/charts
+**/devops/helm/Chart.lock
