@@ -18,13 +18,17 @@ defaults:
     shell: bash
     working-directory: ./search-api
 
+env:
+  APP_NAME: "search-api"
+  TAG_NAME: "dev"
+
 jobs:
   push:
     runs-on: ubuntu-20.04
 
     if: github.event_name == 'push' && github.repository == 'bcgov/sbc-search'
     environment:
-      name: "dev"
+      name: ${{ env.TAG_NAME }}
 
     steps:
       - uses: actions/checkout@v2
@@ -39,6 +43,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Set env by input
+        run: |
+          echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
       - run: "true"
 
   search-api-cd:
@@ -47,21 +54,11 @@ jobs:
 
     runs-on: ubuntu-20.04
 
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./search-api
-
-    env:
-      APP_NAME: "search-api"
-      TAG_NAME: "dev"
+    environment:
+      name: ${{ env.TAG_NAME }}
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set env by input
-        if: github.event.inputs.environment != ''
-        run: |
-          echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
 
       - name: Login Openshift
         shell: bash
