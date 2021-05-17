@@ -32,6 +32,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Login Openshift
         shell: bash
         run: |
@@ -77,6 +78,7 @@ jobs:
       - name: Set env by input
         run: |
           echo "TAG_NAME=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+
       - name: Login Openshift
         shell: bash
         run: |
