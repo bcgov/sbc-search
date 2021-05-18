@@ -14,7 +14,7 @@ psycopg2-binary
 requests
 itsdangerous
 sentry-sdk[flask]
-Werkzeug==0.16.1
+Werkzeug
 flask-cors
 xlrd
 xlwt
