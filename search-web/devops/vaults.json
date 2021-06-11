@@ -8,9 +8,25 @@
         ]
     },
     {
-        "vault": "relationship",
+        "vault": "shared",
         "application": [
-            "search-web"
+            "hotjar"
+        ]
+    },
+    {
+        "vault": "API",
+        "application": [
+            "auth-api",
+            "status-api",
+            "search-api"
+        ]
+    },
+    {
+        "vault": "web-url",
+        "application": [
+            "auth-web",
+            "director-search",
+            "bconline"
         ]
     }
 ]
