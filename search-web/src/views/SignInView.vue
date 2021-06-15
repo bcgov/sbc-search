@@ -10,6 +10,7 @@
 import SbcSignin from 'sbc-common-components/src/components/SbcSignin.vue'
 import KeyCloakService from 'sbc-common-components/src/services/keycloak.services'
 import axios from '@/util/axios-auth'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 export default {
   components: {
@@ -31,11 +32,11 @@ export default {
   },
   methods: {
     async syncUserProfile () {
-      const KEYCLOACK_TOKEN = sessionStorage.getItem('KEYCLOAK_TOKEN')
+      const KEYCLOACK_TOKEN = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
       axios.defaults.headers.common['Authorization'] = `Bearer ${KEYCLOACK_TOKEN}`
       await KeyCloakService.initializeToken()
 
-      const CURRENT_ACCOUNT = sessionStorage.getItem('CURRENT_ACCOUNT')
+      const CURRENT_ACCOUNT = sessionStorage.getItem(SessionStorageKeys.CurrentAccount)
       const CURRENT_ACCOUNT_ID = CURRENT_ACCOUNT
         ? JSON.parse(CURRENT_ACCOUNT).id
         : ''

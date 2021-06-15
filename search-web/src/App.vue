@@ -45,6 +45,7 @@ import BackToTop from 'vue-backtotop'
 import SbcHeader from 'sbc-common-components/src/components/SbcHeader.vue'
 import SbcFooter from 'sbc-common-components/src/components/SbcFooter.vue'
 import Snackbar from '@/components/Snackbar.vue'
+import { SessionStorageKeys } from 'sbc-common-components/src/util/constants'
 
 export default Vue.extend({
   components: {
@@ -61,7 +62,7 @@ export default Vue.extend({
       let isSignoutRoute = (this.$route.name === 'signout')
 
       if (!isSigninRoute && !isSigninRedirectRoute && !isSignoutRoute) {
-        const KEYCLOACK_TOKEN = sessionStorage.getItem('KEYCLOAK_TOKEN')
+        const KEYCLOACK_TOKEN = sessionStorage.getItem(SessionStorageKeys.KeyCloakToken)
         if (KEYCLOACK_TOKEN) {
           await KeyCloakService.initializeToken()
 

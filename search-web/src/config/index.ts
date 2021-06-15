@@ -1,4 +1,4 @@
-export const BACKEND_URL = sessionStorage.getItem('VUE_APP_BACKEND_HOST')
+export const BACKEND_URL = sessionStorage.getItem('SEARCH_API_URL')
 
 export const FIELD_VALUES = [
   { text: 'First Name', value: 'firstNme' },

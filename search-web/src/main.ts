@@ -22,12 +22,14 @@ async function start () {
     `${process.env.VUE_APP_PATH}config/kc/keycloak.json?${random}`
   )
 
-  // Setup Hotjar
-  Vue.use(Hotjar, {
-    id: `${sessionStorage.getItem('HOTJAR_ID')}`,
-    isProduction: true,
-    snippetVersion: 6
-  })
+  if (sessionStorage.getItem('HOTJAR_ID')) {
+    // Setup Hotjar
+    Vue.use(Hotjar, {
+      id: `${sessionStorage.getItem('HOTJAR_ID')}`,
+      isProduction: true,
+      snippetVersion: 6
+    })
+  }
 
   // start Vue application
   console.info('Starting app...') // eslint-disable-line no-console
