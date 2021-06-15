@@ -21,9 +21,9 @@ export default class ConfigHelper {
     axios.defaults.baseURL = statusApiUrl
     sessionStorage.setItem('STATUS_API_URL', statusApiUrl)
 
-    const searchApiUrl: string = response.data['SEACH_API_URL'] + response.data['SEACH_API_VERSION']
+    const searchApiUrl: string = response.data['SEARCH_API_URL'] + response.data['SEARCH_API_VERSION']
     axios.defaults.baseURL = searchApiUrl
-    sessionStorage.setItem('SEACH_API_URL', searchApiUrl)
+    sessionStorage.setItem('SEARCH_API_URL', searchApiUrl)
 
     const authWebUrl: string = response.data['AUTH_WEB_URL']
     sessionStorage.setItem('AUTH_WEB_URL', authWebUrl)
