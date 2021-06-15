@@ -1,6 +1,6 @@
 import axios from '../util/axios-auth'
 
-export const API_PREFIX = '/api/v1'
+export const API_PREFIX = ''
 export const DIRECTOR_SEARCH_PREFIX = `${API_PREFIX}/directors`
 export const CORPORATION_SEARCH_PREFIX = `${API_PREFIX}/businesses`
 export const EXPORT_CORPPARTY_URL = `${DIRECTOR_SEARCH_PREFIX}/export`
@@ -48,5 +48,5 @@ export function exportCorporationSearch (queryString) {
 }
 
 export function warmUp () {
-  return axios.get(`/api/v1/auth-check/`)
+  return axios.get(`/auth-check/`)
 }
