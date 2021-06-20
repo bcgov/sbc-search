@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00)](<Redirect-URL>)
 
 # sbc-search
 
@@ -88,4 +88,4 @@ Sqlite - used for testing
 
 ### Benchmarking
 
-With an oracle connection configured in `search-api/.env` 
+With an oracle connection configured in `search-api/.env`

@@ -16,9 +16,10 @@
 from flask import current_app
 from sqlalchemy import func, literal_column
 
-from search_api.constants import STATE_TYP_CD_ACT, STATE_TYP_CD_ACTIVE, STATE_TYP_CD_HIS, ADDITIONAL_COLS_ADDRESS, ADDITIONAL_COLS_ACTIVE
-from search_api.utils.utils import convert_to_snake_case
+from search_api.constants import (
+    ADDITIONAL_COLS_ACTIVE, ADDITIONAL_COLS_ADDRESS, STATE_TYP_CD_ACT, STATE_TYP_CD_ACTIVE, STATE_TYP_CD_HIS)
 from search_api.models.nickname import NickName
+from search_api.utils.utils import convert_to_snake_case
 
 
 def _merge_addr_fields(row):
@@ -35,12 +36,12 @@ def _merge_addr_fields(row):
                     address += ', ' + row.city
                 else:
                     address = row.city
-        except:
+        except:  # pylint: disable=bare-except # noqa: B901
             pass
     else:
         try:
             address = row.address_desc
-        except:
+        except:  # pylint: disable=bare-except # noqa: B901
             pass
 
     return address
@@ -52,11 +53,13 @@ def _is_addr_search(fields):
 
 def _get_model_by_field(field_name):
     # local import to prevent circular import
-    from search_api.models.corp_party import CorpParty  # noqa # pylint: disable=import-outside-toplevel, unused-import, cyclic-import
-    from search_api.models.corporation import Corporation  # noqa # pylint: disable=import-outside-toplevel, unused-import, cyclic-import
-    from search_api.models.corp_name import CorpName  # noqa # pylint: disable=import-outside-toplevel, unused-import
     from search_api.models.address import Address  # noqa # pylint: disable=import-outside-toplevel, unused-import
+    from search_api.models.corp_name import CorpName  # noqa # pylint: disable=import-outside-toplevel, unused-import
+    from search_api.models.corp_party import \
+        CorpParty  # noqa # pylint: disable=import-outside-toplevel, unused-import, cyclic-import
     from search_api.models.corp_state import CorpState  # noqa # pylint: disable=import-outside-toplevel, unused-import
+    from search_api.models.corporation import \
+        Corporation  # noqa # pylint: disable=import-outside-toplevel, unused-import, cyclic-import
 
     if field_name in ['firstNme', 'middleNme', 'lastNme', 'appointmentDt', 'cessationDt',
                       'corpPartyId', 'partyTypCd']:  # CorpParty fields
@@ -143,9 +146,9 @@ def _generate_field_filter(field, operator, value):
         expr = func.upper(field).like(value)
     elif operator == 'excludes':
         expr = func.upper(field) != value
-        # TODO: this is a relatively expensive op, we may want to enforce it's only used in
+        # this is a relatively expensive op, we may want to enforce it's only used in
         # combination with other queries.
-        # TODO: we should consider sorting by similarity (sum of any filters using it) by
+        # we should consider sorting by similarity (sum of any filters using it) by
         # default, if the user chooses any similarity filter.
     elif operator == 'similar':
         expr = func.utl_match.jaro_winkler_similarity(field, value) > 85
@@ -195,7 +198,7 @@ class BadSearchValue(Exception):
 
 
 def _get_state_typ_cd_display_value(state_typ_cd):
-    if state_typ_cd == STATE_TYP_CD_ACT or state_typ_cd == STATE_TYP_CD_ACTIVE:
+    if state_typ_cd in (STATE_TYP_CD_ACT, STATE_TYP_CD_ACTIVE):
         return STATE_TYP_CD_ACT
 
     return STATE_TYP_CD_HIS
