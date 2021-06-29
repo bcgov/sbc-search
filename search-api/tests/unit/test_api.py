@@ -24,8 +24,8 @@ from tests.utilities.factory_utils import factory_auth_header
 from tests.utilities.factory_scenarios import TestJwtClaims
 from search_api import status as http_status
 
-DIRSEARCH_SCHEMA = json.loads(open('/opt/app/tests/unit/schema/director-result.json').read())
-CORPSEARCH_SCHEMA = json.loads(open('/opt/app/tests/unit/schema/corporation-result.json').read())
+DIRSEARCH_SCHEMA = json.loads(open('tests/unit/schema/director-result.json').read())
+CORPSEARCH_SCHEMA = json.loads(open('tests/unit/schema/corporation-result.json').read())
 
 
 def _dir_search(client, jwt, params):

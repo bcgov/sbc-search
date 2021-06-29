@@ -162,7 +162,7 @@ class Corporation(BaseModel):
         if search_field == 'corpNme':
             results = results.filter(
                 # or_(
-                # TODO: This OR query leads to poor performance. We may need a UI control to
+                # This OR query leads to poor performance. We may need a UI control to
                 # choose which field to search.
                 # For now, we only support company names.
                 #    Corporation.corp_num == query.upper(),

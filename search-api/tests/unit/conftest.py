@@ -38,10 +38,7 @@ def db(app):  # pylint: disable=redefined-outer-name, invalid-name
     Drops schema, and recreate.
     """
     with app.app_context():
-
-        # Flask-migrate doesn't work with SQLite, so we create the database using flask-
-        # sqlalchemy's create_all()
-        # Ref: https://github.com/miguelgrinberg/Flask-Migrate/issues/61
+        _db.drop_all()
         _db.create_all()
         populate()
         return _db

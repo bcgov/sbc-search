@@ -1,8 +1,14 @@
 [
     {
-        "vault": "shared",
+        "vault": "API",
         "application": [
-            "api-endpoints"
+            "auth-api"
+        ]
+    },
+    {
+        "vault": "sentry",
+        "application": [
+            "relationship-api"
         ]
     },
     {
@@ -15,7 +21,6 @@
         "vault": "relationship",
         "application": [
             "search-api",
-            "sentry",
             "jwt"
         ]
     }

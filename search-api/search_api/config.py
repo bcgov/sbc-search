@@ -68,9 +68,7 @@ class _Config:  # pylint: disable=too-few-public-methods
     SENTRY_DSN = os.getenv('SENTRY_DSN', '')
 
     # ORACLE - CDEV/CTST/CPRD/db
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        'DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres'
-    )
+    SQLALCHEMY_DATABASE_URI = os.getenv('DB_CONNECTION_URL', 'postgresql://postgres:password@db/postgres')
 
     # Connection pool settings
     DB_MIN_POOL_SIZE = os.getenv('DATABASE_MIN_POOL_SIZE', '5')
@@ -83,7 +81,7 @@ class _Config:  # pylint: disable=too-few-public-methods
         'pool_size': int(DB_MIN_POOL_SIZE),
         'max_overflow': (int(DB_MAX_POOL_SIZE) - int(DB_MIN_POOL_SIZE)),
         'pool_recycle': int(DB_CONN_TIMEOUT),
-        'pool_timeout': int(DB_CONN_WAIT_TIMEOUT)
+        'pool_timeout': int(DB_CONN_WAIT_TIMEOUT),
     }
 
     # Oracle optimizations. For the type of queries we do, we want to avoid the default pagination
@@ -105,13 +103,11 @@ class _Config:  # pylint: disable=too-few-public-methods
     JWT_OIDC_CLIENT_SECRET = os.getenv('JWT_OIDC_CLIENT_SECRET')
     JWT_OIDC_CACHING_ENABLED = os.getenv('JWT_OIDC_CACHING_ENABLED')
     try:
-        JWT_OIDC_JWKS_CACHE_TIMEOUT = int(
-            os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT', '300')
-        )
+        JWT_OIDC_JWKS_CACHE_TIMEOUT = int(os.getenv('JWT_OIDC_JWKS_CACHE_TIMEOUT', '300'))
     except (TypeError, ValueError):
         JWT_OIDC_JWKS_CACHE_TIMEOUT = 300
 
-    AUTH_API_URL = os.getenv('AUTH_API_URL')
+    AUTH_API_URL = f'{os.getenv("AUTH_API_URL")}{os.getenv("AUTH_API_VERSION")}'
 
     TESTING = False
     DEBUG = False
@@ -130,7 +126,7 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
     DEBUG = True
     TESTING = True
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.getenv('DB_CONNECTION_URL', 'postgresql://postgres:postgres@localhost:5432/postgres')
 
     # JWT OIDC settings
     # JWT_OIDC_TEST_MODE will set jwt_manager to use
@@ -143,11 +139,12 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
     JWT_OIDC_TEST_KEYS = {
         'keys': [
             {
-                'kid': 'flask-jwt-oidc-test-client',
+                'kid': 'sbc-auth-web',
                 'kty': 'RSA',
                 'alg': 'RS256',
                 'use': 'sig',
-                'n': 'AN-fWcpCyE5KPzHDjigLaSUVZI0uYrcGcc40InVtl-rQRDmAh-C2W8H4_Hxhr5VLc6crsJ2LiJTV_E72S03pzpOOaaYV6-TzAjCou2GYJIXev7f6Hh512PuG5wyxda_TlBSsI-gvphRTPsKCnPutrbiukCYrnPuWxX5_cES9eStR',  # noqa: E501
+                'n': 'AN-fWcpCyE5KPzHDjigLaSUVZI0uYrcGcc40InVtl-rQRDmAh-C2W8H4_Hxhr5VLc6crsJ2LiJTV_E72S03pzpOOaaYV6-'
+                     'TzAjCou2GYJIXev7f6Hh512PuG5wyxda_TlBSsI-gvphRTPsKCnPutrbiukCYrnPuWxX5_cES9eStR',
                 'e': 'AQAB',
             }
         ]
@@ -156,13 +153,16 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
     JWT_OIDC_TEST_PRIVATE_KEY_JWKS = {
         'keys': [
             {
-                'kid': 'flask-jwt-oidc-test-client',
+                'kid': 'sbc-auth-web',
                 'kty': 'RSA',
                 'alg': 'RS256',
                 'use': 'sig',
-                'n': 'AN-fWcpCyE5KPzHDjigLaSUVZI0uYrcGcc40InVtl-rQRDmAh-C2W8H4_Hxhr5VLc6crsJ2LiJTV_E72S03pzpOOaaYV6-TzAjCou2GYJIXev7f6Hh512PuG5wyxda_TlBSsI-gvphRTPsKCnPutrbiukCYrnPuWxX5_cES9eStR',  # noqa: E501
+                'n': 'AN-fWcpCyE5KPzHDjigLaSUVZI0uYrcGcc40InVtl-rQRDmAh-C2W8H4_Hxhr5VLc6crsJ2LiJTV_E72S03pzpOOaaYV6-'
+                     'TzAjCou2GYJIXev7f6Hh512PuG5wyxda_TlBSsI-gvphRTPsKCnPutrbiukCYrnPuWxX5_cES9eStR',
                 'e': 'AQAB',
-                'd': 'C0G3QGI6OQ6tvbCNYGCqq043YI_8MiBl7C5dqbGZmx1ewdJBhMNJPStuckhskURaDwk4-8VBW9SlvcfSJJrnZhgFMjOYSSsBtPGBIMIdM5eSKbenCCjO8Tg0BUh_xa3CHST1W4RQ5rFXadZ9AeNtaGcWj2acmXNO3DVETXAX3x0',  # noqa: E501
+                'd': 'C0G3QGI6OQ6tvbCNYGCqq043YI_8MiBl7C5dqbGZmx1ewdJBhMNJPStuckhskURaDwk4-'
+                     '8VBW9SlvcfSJJrnZhgFMjOYSSsBtPGBIMIdM5eSKbenCCjO8Tg0BUh_'
+                     'xa3CHST1W4RQ5rFXadZ9AeNtaGcWj2acmXNO3DVETXAX3x0',
                 'p': 'APXcusFMQNHjh6KVD_hOUIw87lvK13WkDEeeuqAydai9Ig9JKEAAfV94W6Aftka7tGgE7ulg1vo3eJoLWJ1zvKM',
                 'q': 'AOjX3OnPJnk0ZFUQBwhduCweRi37I6DAdLTnhDvcPTrrNWuKPg9uGwHjzFCJgKd8KBaDQ0X1rZTZLTqi3peT43s',
                 'dp': 'AN9kBoA5o6_Rl9zeqdsIdWFmv4DB5lEqlEnC7HlAP-3oo3jWFO9KQqArQL1V8w2D4aCd0uJULiC9pCP7aTHvBhc',
@@ -172,8 +172,7 @@ class TestConfig(_Config):  # pylint: disable=too-few-public-methods
         ]
     }
 
-    JWT_OIDC_TEST_PRIVATE_KEY_PEM = """
------BEGIN RSA PRIVATE KEY-----
+    JWT_OIDC_TEST_PRIVATE_KEY_PEM = """-----BEGIN RSA PRIVATE KEY-----
 MIICXQIBAAKBgQDfn1nKQshOSj8xw44oC2klFWSNLmK3BnHONCJ1bZfq0EQ5gIfg
 tlvB+Px8Ya+VS3OnK7Cdi4iU1fxO9ktN6c6TjmmmFevk8wIwqLthmCSF3r+3+h4e
 ddj7hucMsXWv05QUrCPoL6YUUz7Cgpz7ra24rpAmK5z7lsV+f3BEvXkrUQIDAQAB

@@ -222,7 +222,8 @@ class CorpParty(BaseModel):
         &additional_cols=address|active|none
 
         For example, to get everyone who has any name that starts with 'Sky', or last name must be exactly 'Little', do:
-        curl "http://localhost/api/v1/directors/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme&operator=exact&value=Little&mode=ALL"  # noqa
+        curl "http://localhost/api/v1/directors/?field=ANY_NME&operator=startswith&value=Sky&field=last_nme
+                &operator=exact&value=Little&mode=ALL"  # noqa
         """
         fields = args.getlist('field')
         operators = args.getlist('operator')
@@ -241,7 +242,7 @@ class CorpParty(BaseModel):
         return results
 
     @staticmethod
-    def query_corp_parties(args):
+    def query_corp_parties(args):  # pylint: disable=too-many-locals
         """Construct db query for CorpParty search."""
         # local import to prevent circular import
         from search_api.models.corporation import Corporation  # pylint: disable=import-outside-toplevel, cyclic-import
@@ -258,8 +259,8 @@ class CorpParty(BaseModel):
         #  (('last_nme', 'contains', 'Sky'), ('first_nme', 'exact', 'Apple'))
         clauses = list(zip(fields, operators, values))
 
-        eventA = aliased(Event)
-        eventB = aliased(Event)
+        event_a = aliased(Event)
+        event_b = aliased(Event)
 
         results = (
             CorpParty.query.join(Corporation, Corporation.corp_num == CorpParty.corp_num)
@@ -273,7 +274,7 @@ class CorpParty(BaseModel):
                 CorpState,
                 and_(
                     CorpState.corp_num == CorpParty.corp_num,
-                    CorpState.end_event_id == None,  # pylint: disable=singleton-comparison
+                    CorpState.end_event_id == None,  # pylint: disable=singleton-comparison # noqa: E711
                 ),
             )
             .outerjoin(
@@ -293,15 +294,15 @@ class CorpParty(BaseModel):
                 full=True
             )
             .join(
-                eventA,
+                event_a,
                 and_(
-                    eventA.event_id == CorpParty.start_event_id
+                    event_a.event_id == CorpParty.start_event_id
                 ),
             )
             .outerjoin(
-                eventB,
+                event_b,
                 and_(
-                    eventB.event_id == CorpParty.end_event_id
+                    event_b.event_id == CorpParty.end_event_id
                 ),
                 full=True
             )
@@ -312,10 +313,10 @@ class CorpParty(BaseModel):
                 CorpParty.first_nme,
                 CorpParty.middle_nme,
                 CorpParty.last_nme,
-                eventA.event_timestmp.label('appointment_dt'),
-                eventB.event_timestmp.label('cessation_dt'),
+                event_a.event_timestmp.label('appointment_dt'),
+                event_b.event_timestmp.label('cessation_dt'),
                 CorpParty.corp_num,
-                (PartyType.short_desc + " " + OfficerType.short_desc).label('party_typ_cd'),
+                (PartyType.short_desc + ' ' + OfficerType.short_desc).label('party_typ_cd'),
                 CorpName.corp_nme,
                 Corporation.corp_admin_email,
             )
@@ -359,7 +360,7 @@ class CorpParty(BaseModel):
 
         if additional_cols == ADDITIONAL_COLS_ACTIVE:
             state_type_case_stmt = case([(CorpOpState.state_typ_cd == 'ACT', 'ACTIVE'), ],
-                                        else_='HISTORICAL').label("state_typ_cd")
+                                        else_='HISTORICAL').label('state_typ_cd')
 
             query = query.join(CorpOpState, CorpOpState.state_typ_cd == CorpState.state_typ_cd)
             query = query.add_columns(state_type_case_stmt)
