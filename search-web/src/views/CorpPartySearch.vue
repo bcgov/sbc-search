@@ -361,13 +361,6 @@ export default {
           }
         }
 
-        if (field === 'addrLine1') {
-          return {
-            error: true,
-            errorMessage: 'Cannot perform search by address Only'
-          }
-        }
-
         if (field === 'postalCd') {
           return {
             warning: 'true',
