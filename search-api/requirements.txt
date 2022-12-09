@@ -14,7 +14,7 @@ aniso8601==9.0.1
 attrs==21.2.0
 blinker==1.4
 cachelib==0.2.0
-certifi==2021.5.30
+certifi==2022.12.7
 chardet==4.0.0
 click==8.0.1
 cx-Oracle==8.2.1
