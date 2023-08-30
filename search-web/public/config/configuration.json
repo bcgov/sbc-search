@@ -8,5 +8,6 @@
     "SEARCH_API_URL": "https://search-api-dev.apps.silver.devops.gov.bc.ca",
     "SEARCH_API_VERSION": "/api/v1",
     "STATUS_API_URL": "https://status-api-dev.apps.silver.devops.gov.bc.ca",
-    "STATUS_API_VERSION": "/api/v1"
+    "STATUS_API_VERSION": "/api/v1",
+    "BANNER_TEXT": "Effective Sept. 26, a new Director Search will be available in the BC Registry application. The current Director Search will be phased out by end of 2023. <a href='https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-other-assets/new_director_search_application_coming_september_26_2023.pdf' target='_blank'>Learn more</a> on how to transition."
 }

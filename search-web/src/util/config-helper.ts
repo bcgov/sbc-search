@@ -36,6 +36,9 @@ export default class ConfigHelper {
 
     const hotjarId: string = response.data['HOTJAR_ID']
     sessionStorage.setItem('HOTJAR_ID', hotjarId)
+
+    const bannerText: string = response.data['BANNER_TEXT']
+    sessionStorage.setItem('BANNER_TEXT', bannerText)
   }
 
   /**

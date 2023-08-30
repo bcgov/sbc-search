@@ -1,0 +1,38 @@
+/*
+ * Fonts
+ */
+ @font-face {
+    font-family: 'BCSans';
+    font-style: normal;
+    font-weight: normal;
+    src: url('~@/assets/fonts/BCSans-Regular.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: 'BCSans';
+    font-style: italic;
+    font-weight: normal;
+    src: url('~@/assets/fonts/BCSans-Italic.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: 'BCSans';
+    font-style: normal;
+    font-weight: bold;
+    src: url('~@/assets/fonts/BCSans-Bold.woff') format('woff');
+  }
+
+  @font-face {
+    font-family: 'BCSans';
+    font-style: italic;
+    font-weight: bold;
+    src: url('~@/assets/fonts/BCSans-BoldItalic.woff') format('woff');
+  }
+
+
+$gray9: #212529;
+$dk-text: $gray9;
+
+.colour-dk-text {
+    color: $dk-text !important;
+}

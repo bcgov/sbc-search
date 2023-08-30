@@ -23,6 +23,16 @@
             <template v-slot:login-button-text>Log In</template>
           </SbcHeader>
         </div>
+
+        <!-- Alert banner -->
+        <v-alert
+          tile dense
+          type="warning"
+          class="mb-0 text-center colour-dk-text"
+          v-if="bannerText"
+          v-html="bannerText"
+        />
+
         <div class="content-body">
           <v-container :fluid="$vuetify.breakpoint.mdOnly">
             <router-view />
@@ -53,6 +63,12 @@ export default Vue.extend({
     SbcFooter,
     BackToTop,
     Snackbar
+  },
+
+  data () {
+    return {
+      bannerText: `${sessionStorage.getItem('BANNER_TEXT')}`
+    }
   },
 
   async mounted () {
