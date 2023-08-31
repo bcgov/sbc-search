@@ -28,5 +28,11 @@
             "director-search",
             "bconline"
         ]
+    },
+    {
+        "vault": "relationship",
+        "application": [
+            "director-search"
+        ]
     }
 ]

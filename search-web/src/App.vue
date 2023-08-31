@@ -67,7 +67,7 @@ export default Vue.extend({
 
   data () {
     return {
-      bannerText: `${sessionStorage.getItem('BANNER_TEXT')}`
+      bannerText: ''
     }
   },
 
@@ -99,6 +99,8 @@ export default Vue.extend({
             })
         }
       }
+
+      this.bannerText = `${sessionStorage.getItem('BANNER_TEXT')}`
     } catch (e) {
       this.$router.push('/')
     }
